@@ -6,6 +6,7 @@ import { BottomNav } from '../components/navigation/BottomNav';
 import { OfferStrip } from '../components/ui/OfferStrip';
 import { HeroBanner } from '../components/ui/HeroBanner';
 import { ProductSection } from '../components/ui/ProductSection';
+import { FlipkartPromoBanners } from '../components/ui/FlipkartPromoBanners';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { api } from '../services/api';
 
@@ -48,7 +49,7 @@ export const HomePage = () => {
     else if (tab === 'about') navigate('/about');
     else if (tab === 'cart') navigate('/cart');
     else if (tab === 'account') {
-      showToast('Account profile: Welcome to ASM Shine Official Store 🌿');
+      showToast('ZENVORO Inner Power Circle');
     }
   };
 
@@ -59,25 +60,25 @@ export const HomePage = () => {
   // Filter products by selected category or search term
   const filterProducts = (list) => {
     return list.filter((p) => {
-      if (selectedCategory && p.category !== selectedCategory) return false;
-      if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+      if (selectedCategory && selectedCategory !== 'all' && selectedCategory !== 'trio_ritual' && p.category !== selectedCategory) {
+        return false;
+      }
+      if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase()) && !p.description.toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
       }
       return true;
     });
   };
 
-  const bestSellers = filterProducts(allProducts.filter((p) => p.section === 'best_sellers'));
-  const everydayEssentials = filterProducts(allProducts.filter((p) => p.section === 'everyday_essentials'));
-  const recommended = filterProducts(allProducts.filter((p) => p.section === 'recommended'));
+  const displayedProducts = filterProducts(allProducts);
 
   const handleCopyOffer = (code) => {
-    showToast(`Coupon ${code} copied to clipboard! 🎉`);
+    showToast(`Coupon ${code} copied to clipboard`);
   };
 
   const handleExploreHero = () => {
-    setSelectedCategory('floor_care');
-    showToast('Viewing Citrus & Neem Active Range 🍊');
+    const el = document.querySelector('.product-section');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -90,7 +91,7 @@ export const HomePage = () => {
 
       {/* Screen Container */}
       <div className="screen-container">
-        {/* Mobile Header */}
+        {/* Mobile Header with Flipkart Category Bar */}
         <Header
           onSearch={setSearchQuery}
           categories={categories}
@@ -100,56 +101,43 @@ export const HomePage = () => {
         />
 
         <main className="main-content">
-          {/* Promotional Offer Strip */}
+          {/* 1. Promotional Offer Strip */}
           <OfferStrip offer={banners?.announcement} onCopyCode={handleCopyOffer} />
 
-          {/* Hero Feature Banner */}
-          <HeroBanner banner={banners?.hero} onExplore={handleExploreHero} />
+          {/* 2. Interactive Flipkart-Style Sale Carousel */}
+          <HeroBanner
+            banners={banners}
+            banner={banners?.hero}
+            onExplore={handleExploreHero}
+            onSelectProduct={handleSelectProduct}
+          />
 
-          {/* Section 1: Best Sellers (HOT) */}
+          {/* 3. The 3 Flagship Formulations (Rendered ONCE without duplication) */}
           <ProductSection
-            title="Best Sellers"
-            badge="HOT"
+            title="The 3 Sacred Rituals"
+            badge="FLAGSHIP"
+            subtitle="Authentic Ayurvedic Formulations"
             actionText="View All"
             actionLinkStyle="chevron"
-            products={bestSellers}
+            products={displayedProducts}
             showRating={true}
             sizePosition="below"
             onActionClick={() => handleSwitchTab('categories')}
             onSelectProduct={handleSelectProduct}
           />
 
-          {/* Section 2: Everyday Cleaning Essentials */}
-          <ProductSection
-            title="Everyday Cleaning Essentials"
-            actionText="EXPLORE"
-            actionLinkStyle="plain-text"
-            products={everydayEssentials}
-            showRating={false}
-            sizePosition="overlay"
-            onActionClick={() => handleSwitchTab('categories')}
+          {/* 4. Flipkart-Style Promotional Offer Banners & Purity Standards */}
+          <FlipkartPromoBanners
             onSelectProduct={handleSelectProduct}
-          />
-
-          {/* Section 3: Recommended for You */}
-          <ProductSection
-            title="Recommended for You"
-            subtitle="Based on household cleaning trends"
-            actionText="SEE MORE"
-            actionLinkStyle="plain-text"
-            products={recommended}
-            showRating={false}
-            sizePosition="overlay"
-            onActionClick={() => handleSwitchTab('categories')}
-            onSelectProduct={handleSelectProduct}
+            onNavigateCategories={() => handleSwitchTab('categories')}
           />
         </main>
 
-        {/* Desktop Footer */}
+        {/* Desktop & Mobile Footer */}
         <footer className="desktop-footer">
           <div className="desktop-footer-inner">
-            <span>© 2026 ASM Shine E-Commerce Inc. All rights reserved.</span>
-            <span>Premium Botanical Home Hygiene</span>
+            <span>© 2026 ZENVORO Wellness Maison. All rights reserved.</span>
+            <span>ELEVATE YOUR INNER POWER</span>
           </div>
         </footer>
       </div>

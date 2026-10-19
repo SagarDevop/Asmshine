@@ -55,15 +55,15 @@ export const CartPage = ({
     const code = (codeToApply || couponInput).trim().toUpperCase();
     if (!code) return;
 
-    if (code === 'CLEAN30') {
+    if (code === 'POWER20') {
       setAppliedCoupon({
-        code: 'CLEAN30',
-        percent: 30,
-        discount: Math.round(cartData.totalPrice * 0.3)
+        code: 'POWER20',
+        percent: 20,
+        discount: Math.round(cartData.totalPrice * 0.2)
       });
-      showToast('Coupon CLEAN30 applied! Extra 30% off 🎉');
+      showToast('Coupon POWER20 applied! 20% discount activated');
     } else {
-      showToast('Invalid coupon code. Try CLEAN30!');
+      showToast('Invalid coupon code. Try POWER20');
     }
     setCouponInput('');
   };
@@ -110,14 +110,14 @@ export const CartPage = ({
         <div className="cart-address-left">
           <MapPin size={16} className="cart-pin-icon" />
           <div className="cart-address-text">
-            <span>Deliver to: <strong>Banda - 210001</strong></span>
-            <small>Home • Standard Delivery</small>
+            <span>Deliver to: <strong>New Delhi - 110001</strong></span>
+            <small>Home • Free Express Delivery</small>
           </div>
         </div>
         <button
           type="button"
           className="cart-change-addr-btn"
-          onClick={() => showToast('Pincode 210001 verified for Free Next-Day Delivery')}
+          onClick={() => showToast('Pincode 110001 verified for Free Express Delivery')}
         >
           Change
         </button>
@@ -127,42 +127,42 @@ export const CartPage = ({
       {cartData.items.length === 0 && !orderSuccess ? (
         <div className="cart-empty-view">
           <div className="cart-empty-icon-box">
-            <ShoppingBag size={56} color="#94A3B8" />
+            <ShoppingBag size={56} color="#9E887B" />
           </div>
-          <h2 className="cart-empty-title">Your Cart is Empty!</h2>
+          <h2 className="cart-empty-title">Your Wellness Cart is Empty</h2>
           <p className="cart-empty-subtitle">
-            Looks like you haven't added anything to your cart yet. Explore our botanically active home care essentials!
+            Looks like you haven't added any sacred formulations yet. Explore the ZENVORO Inner Power collection!
           </p>
           <button
             type="button"
             className="cart-shop-now-btn"
             onClick={handleExplore}
           >
-            Start Shopping
+            Explore Sacred Rituals
           </button>
         </div>
       ) : orderSuccess ? (
         <div className="cart-order-success-card">
           <div className="order-success-icon-box">
-            <CheckCircle2 size={54} color="#15803D" />
+            <CheckCircle2 size={54} color="#85532F" />
           </div>
-          <h2 className="order-success-title">Order Placed Successfully! 🎉</h2>
+          <h2 className="order-success-title">Order Placed Successfully</h2>
           <div className="order-id-badge">Order ID: #{orderId}</div>
           <p className="order-success-note">
-            Thank you for shopping with ASM Shine. We will dispatch your botanical hygiene pack immediately!
+            Thank you for choosing ZENVORO. Your Inner Power pack is being prepared with utmost artisanal care!
           </p>
           <div className="order-summary-box">
             <div className="order-summary-row">
               <span>Delivery by:</span>
-              <strong>Tomorrow by 5:00 PM</strong>
+              <strong>Tomorrow by 5:00 PM (Express)</strong>
             </div>
             <div className="order-summary-row">
               <span>Delivery Address:</span>
-              <span>Banda, Uttar Pradesh - 210001</span>
+              <span>Connaught Place, New Delhi - 110001</span>
             </div>
             <div className="order-summary-row">
               <span>Payment Mode:</span>
-              <strong style={{ color: '#059669' }}>Cash on Delivery (COD)</strong>
+              <strong style={{ color: '#85532F' }}>Cash on Delivery (COD) / UPI</strong>
             </div>
           </div>
           <button
@@ -173,7 +173,7 @@ export const CartPage = ({
               handleExplore();
             }}
           >
-            Continue Shopping
+            Continue Exploring
           </button>
         </div>
       ) : (
@@ -192,10 +192,10 @@ export const CartPage = ({
 
                   <div className="cart-item-info">
                     <div className="cart-item-brand-row">
-                      <span className="cart-item-brand">ASM SHINE</span>
+                      <span className="cart-item-brand">ZENVORO</span>
                       <span className="cart-assured-pill">
-                        <Zap size={10} fill="#0284C7" />
-                        <span>Assured</span>
+                        <Zap size={10} fill="#CBA243" color="#CBA243" />
+                        <span>Certified</span>
                       </span>
                     </div>
 
@@ -348,7 +348,7 @@ export const CartPage = ({
             </div>
 
             <div className="cart-savings-note">
-              You will save ₹{totalSavings} on this order 🎉
+              You will save ₹{totalSavings} on this order
             </div>
           </div>
 

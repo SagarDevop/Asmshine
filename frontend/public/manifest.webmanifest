@@ -1,21 +1,21 @@
 {
-  "name": "ASM Shine — Home Hygiene & Surface Care",
-  "short_name": "ASM Shine",
-  "description": "Premium cleaning essentials and eco-formulation hygiene products from ASM Shine.",
+  "name": "ZENVORO — Elevate Your Inner Power",
+  "short_name": "ZENVORO",
+  "description": "Pure Himalayan Shilajit Gold, Nootropic Mind & Focus, and Royal Cellular Recovery Elixir.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F8F9FA",
-  "theme_color": "#00878A",
+  "background_color": "#FAF7F2",
+  "theme_color": "#85532F",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/favicon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/favicon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

@@ -46,7 +46,7 @@ export const CartWishlistProvider = ({ children }) => {
         showToast('Removed from wishlist');
       } else {
         next.add(productId);
-        showToast('Added to wishlist ❤️');
+        showToast('Saved to wishlist');
       }
       return next;
     });
@@ -56,7 +56,7 @@ export const CartWishlistProvider = ({ children }) => {
     try {
       await api.addToCart(productId, quantity);
       await refreshCart();
-      showToast('Added to cart 🛒');
+      showToast('Added to cart');
     } catch (e) {
       // ignore
     }
@@ -78,7 +78,7 @@ export const CartWishlistProvider = ({ children }) => {
     try {
       await api.removeFromCart(productId);
       await refreshCart();
-      showToast('Item removed from cart 🗑️');
+      showToast('Item removed from cart');
     } catch (e) {
       // ignore
     }
@@ -94,7 +94,7 @@ export const CartWishlistProvider = ({ children }) => {
     }
   };
 
-  const addComboToCart = async (items = [], customToast = 'Combo bundle added to cart! 🎉') => {
+  const addComboToCart = async (items = [], customToast = 'Combo bundle added to cart') => {
     try {
       await api.addComboToCart(items);
       await refreshCart();

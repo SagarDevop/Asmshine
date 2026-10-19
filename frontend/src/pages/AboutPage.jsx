@@ -3,15 +3,15 @@ import {
   ArrowLeft,
   Sparkles,
   ShieldCheck,
-  Leaf,
-  HeartHandshake,
+  Zap,
+  Brain,
+  Moon,
   Award,
   Phone,
   Mail,
   MapPin,
   CheckCircle2,
   ChevronRight,
-  ExternalLink,
   Share2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -35,8 +35,8 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'ASM Shine — Pure Hygiene & Botanical Care',
-          text: 'Discover ASM Shine: 99.9% hospital-grade germ kill with zero harsh fumes!',
+          title: 'ZENVORO — Elevate Your Inner Power',
+          text: 'Discover ZENVORO: Pure Himalayan Shilajit Gold, Nootropic Focus & Cellular Elixirs',
           url: window.location.href
         });
       } catch (e) {
@@ -44,13 +44,13 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
       }
     } else {
       navigator.clipboard?.writeText?.(window.location.href);
-      showToast('Page link copied to clipboard! 📋');
+      showToast('Page link copied to clipboard');
     }
   };
 
   return (
     <div className="about-page-view">
-      {/* 1. Flipkart-style Top Bar */}
+      {/* 1. Top Bar */}
       <header className="page-top-header">
         <button
           type="button"
@@ -61,8 +61,8 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
           <ArrowLeft size={22} />
         </button>
         <div className="page-header-title-box" onClick={handleBack}>
-          <img src="/images/logo.png" alt="ASM Shine" className="page-mini-logo" />
-          <span className="page-header-title">About ASM Shine</span>
+          <img src="/images/logo.png" alt="ZENVORO" className="page-mini-logo" style={{ borderRadius: '50%' }} />
+          <span className="page-header-title">The ZENVORO Philosophy</span>
         </div>
         <button
           type="button"
@@ -77,166 +77,143 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
       {/* 2. Hero Brand Section */}
       <section className="about-hero-card">
         <div className="about-hero-badge">
-          <Sparkles size={13} fill="#FFE500" color="#FFE500" />
-          <span>OFFICIAL BRAND STORY</span>
+          <Sparkles size={13} fill="#CBA243" color="#CBA243" />
+          <span>OUR SACRED GENESIS</span>
         </div>
         <img
           src="/images/logo.png"
-          alt="ASM Shine"
+          alt="ZENVORO Logo"
           className="about-hero-logo"
+          style={{ width: '84px', height: '84px', borderRadius: '50%', border: '2px solid #CBA243', objectFit: 'cover' }}
         />
-        <h1 className="about-hero-heading">ASM Shine</h1>
+        <h1 className="about-hero-heading">ZENVORO</h1>
         <p className="about-hero-tagline">
-          Pure Hygiene • Botanical Formulations
+          ELEVATE YOUR INNER POWER
         </p>
         <div className="about-hero-meta">
-          <span>Est. 2024</span>
+          <span>Upper Himalayan Sourcing (18,000+ Ft)</span>
           <span className="about-meta-dot">•</span>
-          <span>Made with Pride in India 🇮🇳</span>
+          <span>Made in India 🇮🇳</span>
           <span className="about-meta-dot">•</span>
-          <span>99.9% Bio-Active Protection</span>
+          <span>Ayush & GMP Certified</span>
         </div>
       </section>
 
-      {/* 3. The Brand Mission */}
-      <section className="about-content-card">
-        <div className="about-section-tag">OUR MISSION</div>
-        <h2 className="about-card-title">Clean Homes Shouldn't Mean Toxic Fumes</h2>
-        <p className="about-paragraph">
-          Conventional household floor cleaners and bathroom sprays rely heavily on caustic hydrochloric acid, bleach, and volatile organic compounds that irritate eyes and damage lungs.
+      {/* 3. The 3 Pillars */}
+      <section className="about-section">
+        <div className="about-section-tag">THE 3 ELEVATION PILLARS</div>
+        <h2 className="about-section-title">Where Ancient Alchemy Meets Modern Neurobiology</h2>
+        <p className="about-narrative">
+          <strong>ZENVORO</strong> was created for those who refuse to live at half-capacity. We believe boundless physical stamina, razor-sharp mental focus, and restorative sleep are not privileges — they are your biological birthright.
         </p>
-        <p className="about-paragraph">
-          <strong>ASM Shine</strong> was engineered with a clear purpose: to deliver <strong>hospital-grade 99.9% pathogen eradication</strong> powered by concentrated citrus peel actives, neem extract, and plant-derived surfactants that leave zero toxic chemical residues.
-        </p>
+
+        <div className="about-features-grid">
+          <div className="about-feature-card">
+            <div className="about-feature-icon" style={{ background: '#FBF4E4', color: '#85532F' }}>
+              <Zap size={22} color="#CBA243" />
+            </div>
+            <h3>Pillar I: Physical Inner Power</h3>
+            <p>
+              100% Pure Himalayan Shilajit harvested above 18,000 ft, infused with 24K Swarna Bhasma (Gold) and 80%+ certified Fulvic Acid to supercharge cellular ATP energy and hormonal vigor.
+            </p>
+          </div>
+
+          <div className="about-feature-card">
+            <div className="about-feature-icon" style={{ background: '#FBF4E4', color: '#85532F' }}>
+              <Brain size={22} color="#CBA243" />
+            </div>
+            <h3>Pillar II: Cognitive Zenith</h3>
+            <p>
+              Full-spectrum Lion’s Mane mushroom and organic Brahmi (50% Bacosides) to stimulate Neuro-Growth Factor (NGF), banishing brain fog and powering sustained creative focus.
+            </p>
+          </div>
+
+          <div className="about-feature-card">
+            <div className="about-feature-icon" style={{ background: '#FBF4E4', color: '#85532F' }}>
+              <Moon size={22} color="#CBA243" />
+            </div>
+            <h3>Pillar III: Cellular Restoration</h3>
+            <p>
+              Sublingual elixir drops featuring Kashmiri Saffron and Magnesium Glycinate that calm neurotransmitters, triggering restorative REM sleep and nighttime cellular repair.
+            </p>
+          </div>
+        </div>
       </section>
 
-      {/* 4. 4 Core Pillars */}
-      <section className="about-content-card">
-        <div className="about-section-tag">WHY ASM SHINE</div>
-        <h2 className="about-card-title">The 4 Botanical Pillars</h2>
+      {/* 4. Quality Assurances */}
+      <section className="about-section certs-section">
+        <div className="about-section-tag">UNCOMPROMISING PURITY</div>
+        <h2 className="about-section-title">Verified by Science & Tradition</h2>
 
-        <div className="about-pillars-grid">
-          {/* Pillar 1 */}
-          <div className="about-pillar-item">
-            <div className="about-pillar-icon-box teal">
-              <Leaf size={22} />
-            </div>
-            <div className="about-pillar-content">
-              <h3>Eco-Active Botanical Actives</h3>
-              <p>Formulated with pure neem leaf extracts and cold-pressed citrus essential oils that naturally cut through grease and grime.</p>
+        <div className="about-certs-list">
+          <div className="about-cert-item">
+            <CheckCircle2 size={18} color="#CBA243" />
+            <div>
+              <strong>NABL 3rd-Party Lab Verified</strong>
+              <p>Every single batch is tested for purity, potency, and zero traces of Lead, Mercury, Arsenic or Cadmium.</p>
             </div>
           </div>
 
-          {/* Pillar 2 */}
-          <div className="about-pillar-item">
-            <div className="about-pillar-icon-box blue">
-              <ShieldCheck size={22} />
-            </div>
-            <div className="about-pillar-content">
-              <h3>99.9% Hospital-Grade Disinfection</h3>
-              <p>Certified lab testing verifies destruction of household bacteria, viral strains, and bathroom mould within 30 seconds of application.</p>
+          <div className="about-cert-item">
+            <CheckCircle2 size={18} color="#CBA243" />
+            <div>
+              <strong>100% Plant & Ayurvedic Origins</strong>
+              <p>Zero synthetic caffeine, zero habit-forming sedatives, zero artificial binders or chemical fillers.</p>
             </div>
           </div>
 
-          {/* Pillar 3 */}
-          <div className="about-pillar-item">
-            <div className="about-pillar-icon-box amber">
-              <Sparkles size={22} />
-            </div>
-            <div className="about-pillar-content">
-              <h3>Zero Harsh Fumes (Pet & Kid Safe)</h3>
-              <p>No burning hydrochloric acid, no stinging chlorine bleach fumes. Completely safe for toddlers crawling on floors and curious pets.</p>
-            </div>
-          </div>
-
-          {/* Pillar 4 */}
-          <div className="about-pillar-item">
-            <div className="about-pillar-icon-box green">
-              <Award size={22} />
-            </div>
-            <div className="about-pillar-content">
-              <h3>100% Recyclable Eco-Bottles</h3>
-              <p>Food-grade, BPA-free ergonomic containers designed for reduced plastic footprint and 100% recycling post consumer use.</p>
+          <div className="about-cert-item">
+            <CheckCircle2 size={18} color="#CBA243" />
+            <div>
+              <strong>Ethical High-Altitude Harvesting</strong>
+              <p>Hand-collected by indigenous mountain sherpas preserving the pristine ecosystem of the upper Himalayas.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 5. Quality Certifications */}
-      <section className="about-content-card">
-        <div className="about-section-tag">QUALITY ASSURANCE</div>
-        <h2 className="about-card-title">Standard of Excellence</h2>
-        <div className="about-badges-row">
-          <div className="about-cert-chip">
-            <CheckCircle2 size={16} color="#059669" />
-            <span>ISO 9001:2015 Facility</span>
-          </div>
-          <div className="about-cert-chip">
-            <CheckCircle2 size={16} color="#059669" />
-            <span>Cruelty-Free (Never Tested on Animals)</span>
-          </div>
-          <div className="about-cert-chip">
-            <CheckCircle2 size={16} color="#059669" />
-            <span>Dermatologically Safe</span>
-          </div>
-          <div className="about-cert-chip">
-            <CheckCircle2 size={16} color="#059669" />
-            <span>100% Biodegradable Surfactants</span>
-          </div>
-        </div>
-      </section>
+      {/* 5. Concierge & Contact */}
+      <section className="about-section contact-section">
+        <div className="about-section-tag">PATRON CONCIERGE</div>
+        <h2 className="about-section-title">We Are Here For Your Journey</h2>
 
-      {/* 6. Customer Care & Headquarters */}
-      <section className="about-content-card contact-card">
-        <div className="about-section-tag">GET IN TOUCH</div>
-        <h2 className="about-card-title">Customer Happiness Desk</h2>
+        <div className="about-contact-card">
+          <div className="about-contact-row">
+            <Phone size={18} color="#CBA243" />
+            <div>
+              <span className="contact-label">Toll-Free Wellness Hotline</span>
+              <span className="contact-value">1800-ZENVORO (936-8676)</span>
+            </div>
+          </div>
 
-        <div className="about-contact-list">
-          <a href="tel:180027674463" className="about-contact-row">
-            <div className="about-contact-icon">
-              <Phone size={18} />
+          <a href="mailto:concierge@zenvorowellness.com" className="about-contact-row">
+            <Mail size={18} color="#CBA243" />
+            <div>
+              <span className="contact-label">Patron Concierge Email</span>
+              <span className="contact-value">concierge@zenvorowellness.com</span>
             </div>
-            <div className="about-contact-text">
-              <span className="contact-label">Toll-Free Helpline</span>
-              <span className="contact-value">1800-ASM-SHINE (276-74463)</span>
-            </div>
-            <ExternalLink size={14} className="contact-arrow" />
           </a>
 
-          <a href="mailto:support@asmshine.com" className="about-contact-row">
-            <div className="about-contact-icon">
-              <Mail size={18} />
-            </div>
-            <div className="about-contact-text">
-              <span className="contact-label">Official Support Email</span>
-              <span className="contact-value">support@asmshine.com</span>
-            </div>
-            <ExternalLink size={14} className="contact-arrow" />
-          </a>
-
-          <div className="about-contact-row no-hover">
-            <div className="about-contact-icon">
-              <MapPin size={18} />
-            </div>
-            <div className="about-contact-text">
-              <span className="contact-label">Headquarters</span>
-              <span className="contact-value">Bangalore, Karnataka — 560038, India</span>
+          <div className="about-contact-row">
+            <MapPin size={18} color="#CBA243" />
+            <div>
+              <span className="contact-label">Maison Headquarters</span>
+              <span className="contact-value">Zenvoro Wellness Maison, Barakhamba Road, Connaught Place, New Delhi 110001</span>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* 7. Bottom CTA */}
-      <div className="about-bottom-cta-wrap">
-        <button
-          type="button"
-          className="about-explore-btn"
-          onClick={handleExplore}
-        >
-          <span>Explore All Products</span>
-          <ChevronRight size={18} />
-        </button>
-      </div>
+        <div className="about-cta-box">
+          <button
+            type="button"
+            className="about-explore-btn"
+            onClick={handleExplore}
+          >
+            <span>SHOP THE 3 SACRED RITUALS</span>
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      </section>
     </div>
   );
 };

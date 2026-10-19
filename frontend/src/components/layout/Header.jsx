@@ -3,66 +3,18 @@ import {
   MapPin,
   ChevronRight,
   Search,
-  Ticket,
-  Zap,
-  ShoppingBag,
-  Bath,
-  UtensilsCrossed,
-  Waves,
-  WashingMachine
+  Layers,
+  Flame,
+  Brain,
+  Moon,
+  Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-// Premium Floor Mop icon for Floor Care
-const FloorMopIcon = ({ size = 20, className }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.9"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M12 2v13" />
-    <path d="M5 15h14a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1z" fill="currentColor" fillOpacity="0.22" />
-    <path d="M7 18v3" />
-    <path d="M10 18v3.5" />
-    <path d="M14 18v3.5" />
-    <path d="M17 18v3" />
-  </svg>
-);
-
-// Premium Sparkling Window icon for Glass Care
-const GlassCareIcon = ({ size = 20, className }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.9"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <rect x="3" y="3" width="18" height="18" rx="2" />
-    <line x1="12" y1="3" x2="12" y2="21" />
-    <line x1="3" y1="12" x2="21" y2="12" />
-    <line x1="6.5" y1="6.5" x2="8.5" y2="8.5" strokeWidth="2.2" strokeLinecap="round" />
-    <line x1="15.5" y1="6.5" x2="17.5" y2="8.5" strokeWidth="2.2" strokeLinecap="round" />
-  </svg>
-);
-
-const categoryIconMap = {
-  floor_care: FloorMopIcon,
-  bathroom: Bath,
-  kitchen: UtensilsCrossed,
-  glass_care: GlassCareIcon,
-  dishwash: Waves,
-  laundry: WashingMachine
+const categoryPillMap = {
+  inner_power: { label: 'Shilajit Gold', icon: Flame },
+  brain_focus: { label: 'Mind & Focus', icon: Brain },
+  deep_recovery: { label: 'Deep Sleep', icon: Moon }
 };
 
 export const Header = ({
@@ -74,13 +26,12 @@ export const Header = ({
 }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [location, setLocation] = useState('1, Jhanjhari, Banda, Uttar Pradesh');
+  const [location, setLocation] = useState('110001, Connaught Place');
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      // When scrolled past ~60px, icons tuck away (icon andar) and name sticks
-      setIsScrolled(window.scrollY > 60);
+      setIsScrolled(window.scrollY > 40);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -94,22 +45,22 @@ export const Header = ({
 
   const cycleLocation = () => {
     setLocation((prev) =>
-      prev.includes('Banda')
-        ? '560038, Indiranagar, Bangalore, Karnataka'
-        : '1, Jhanjhari, Banda, Uttar Pradesh'
+      prev.includes('Connaught Place')
+        ? '400001, South Mumbai'
+        : prev.includes('South Mumbai')
+        ? '560001, MG Road, Bengaluru'
+        : '110001, Connaught Place'
     );
   };
 
   return (
     <>
-      {/* 1. Upper Header Section (Scrolls up and out of view on scroll) */}
+      {/* 1. Sleek Minimal Upper Header */}
       <div className="fk-upper-header mobile-only">
-        {/* Row 1: 3 Pill Category / Brand Switchers (as shown in Screenshot 1) */}
-        <div className="fk-pill-switcher-row">
-          {/* Pill 1: Active Brand Pill (Yellow highlight with Logo & ASM Shine) */}
-          <button
-            className="fk-pill-tab active"
-            type="button"
+        <div className="fk-brand-location-bar">
+          {/* Brand Logo & Name */}
+          <div
+            className="fk-brand-identity"
             onClick={() => {
               if (onSwitchTab) onSwitchTab('home');
               else navigate('/');
@@ -117,104 +68,72 @@ export const Header = ({
           >
             <img
               src="/images/logo.png"
-              alt="ASM Shine"
-              className="fk-pill-logo-img"
+              alt="ZENVORO"
+              className="fk-brand-logo-img"
             />
-            <span className="fk-pill-title">ASM Shine</span>
-          </button>
-
-          {/* Pill 2: Super Deals Pill */}
-          <button
-            className="fk-pill-tab white"
-            type="button"
-            onClick={() => {
-              const el = document.querySelector('.offer-strip-banner') || document.querySelector('.main-content');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            <span className="fk-pill-icon-tag">🏷️</span>
-            <span className="fk-pill-text-dark">Super Deals</span>
-          </button>
-
-          {/* Pill 3: Eco Range Pill */}
-          <button
-            className="fk-pill-tab white"
-            type="button"
-            onClick={() => onSelectCategory && onSelectCategory('floor_care')}
-          >
-            <span className="fk-pill-icon-plane">🌱</span>
-            <span className="fk-pill-text-dark">Eco Range</span>
-          </button>
-        </div>
-
-        {/* Row 2: Location & Rewards Row (as shown in Screenshot 1) */}
-        <div className="fk-location-rewards-row">
-          <div className="fk-location-box" onClick={cycleLocation}>
-            <MapPin size={15} className="fk-location-pin" fill="#1E293B" color="#1E293B" />
-            <span className="fk-location-address">{location}</span>
-            <ChevronRight size={14} className="fk-location-chevron" />
-          </div>
-
-          <div className="fk-rewards-box">
-            <div className="fk-reward-chip ticket" title="Coupons">
-              <Ticket size={14} color="#7C3AED" />
-            </div>
-            <div className="fk-reward-chip coins" title="Coins">
-              <Zap size={13} color="#F59E0B" fill="#F59E0B" />
-              <span>0</span>
+            <div className="fk-brand-text-block">
+              <span className="fk-brand-name">ZENVORO</span>
+              <span className="fk-brand-tagline">Ayurvedic Maison</span>
             </div>
           </div>
+
+          {/* Minimal Delivery Location Pill */}
+          <button
+            type="button"
+            className="fk-location-clean-pill"
+            onClick={cycleLocation}
+            title="Change Delivery Location"
+          >
+            <MapPin size={12} color="#85532F" />
+            <span className="fk-location-text">{location}</span>
+            <ChevronRight size={12} color="#85532F" />
+          </button>
         </div>
       </div>
 
-      {/* 2. Sticky Header Section (Search bar + unified category bar) */}
+      {/* 2. Sticky Header with Search & Classy Category Pills */}
       <header className={`fk-sticky-container mobile-only ${isScrolled ? 'scrolled' : ''}`}>
-        {/* Row 3: Rounded Pill Search Bar */}
+        {/* Search Bar */}
         <div className="fk-search-bar-row">
           <div className="fk-search-pill-wrapper">
-            <Search size={18} className="fk-search-blue-icon" />
+            <Search size={16} className="fk-search-icon" />
             <input
               type="text"
               className="fk-search-input-pill"
               value={searchTerm}
               onChange={handleInputChange}
-              placeholder="Search for Products"
+              placeholder="Search Shilajit Gold, Nootropic, Elixir..."
             />
           </div>
         </div>
 
-        {/* Row 4: Unified Category Bar (Icon on top, Name below; on scroll icon tucks inside, name stays stuck) */}
-        <div className="fk-category-track no-scrollbar">
-          {/* Default "For You" Tab */}
+        {/* Minimal Classy Category Filter Track */}
+        <div className="fk-category-pills-row no-scrollbar">
+          {/* "All Rituals" Pill */}
           <button
             type="button"
-            className={`fk-cat-item ${!selectedCategory ? 'active' : ''}`}
+            className={`fk-cat-pill ${!selectedCategory ? 'active' : ''}`}
             onClick={() => onSelectCategory(null)}
           >
-            <div className="fk-cat-icon-box cat-for-you">
-              <ShoppingBag size={20} className="fk-cat-icon-svg" />
-            </div>
-            <span className="fk-cat-name">For You</span>
-            {!selectedCategory && <div className="fk-cat-indicator" />}
+            <Layers size={13} className="fk-cat-pill-icon" />
+            <span>All Rituals</span>
           </button>
 
-          {/* Dynamic Categories */}
+          {/* Dynamic Category Pills */}
           {categories.map((cat) => {
-            const IconComp = categoryIconMap[cat.id] || ShoppingBag;
+            const mapped = categoryPillMap[cat.id] || { label: cat.name, icon: Sparkles };
+            const IconComp = mapped.icon;
             const isActive = selectedCategory === cat.id;
 
             return (
               <button
                 type="button"
                 key={cat.id}
-                className={`fk-cat-item ${isActive ? 'active' : ''}`}
+                className={`fk-cat-pill ${isActive ? 'active' : ''}`}
                 onClick={() => onSelectCategory(isActive ? null : cat.id)}
               >
-                <div className={`fk-cat-icon-box cat-${cat.id}`}>
-                  <IconComp size={20} className="fk-cat-icon-svg" />
-                </div>
-                <span className="fk-cat-name">{cat.name}</span>
-                {isActive && <div className="fk-cat-indicator" />}
+                <IconComp size={13} className="fk-cat-pill-icon" />
+                <span>{mapped.label}</span>
               </button>
             );
           })}

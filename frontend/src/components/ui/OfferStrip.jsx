@@ -1,23 +1,31 @@
-import React from 'react';
-import { Tag } from 'lucide-react';
+import React, { useState } from 'react';
+import { Tag, Check } from 'lucide-react';
 
 export const OfferStrip = ({ offer, onCopyCode }) => {
-  const text = offer?.text || 'Mega Home Cleaning Sale: Flat 30% OFF on Top E...';
-  const code = offer?.code || 'CLEAN30';
+  const code = offer?.code || 'POWER20';
+  const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
     if (onCopyCode) onCopyCode(code);
   };
 
   return (
     <div className="promo-strip" role="region" aria-label="Special Offers">
       <div className="promo-left">
-        <Tag size={15} color="#04383A" strokeWidth={2.4} />
-        <span>{text}</span>
+        <Tag size={13} color="#85532F" strokeWidth={2.4} />
+        <span className="promo-short-text">Flat 20% Off Launch Deal</span>
       </div>
       <button className="promo-badge" onClick={handleCopy} title="Copy coupon code">
-        {code}
+        {copied ? (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+            <Check size={11} strokeWidth={3} /> COPIED
+          </span>
+        ) : (
+          <span>CODE: <strong>{code}</strong></span>
+        )}
       </button>
     </div>
   );

@@ -5,70 +5,22 @@ import {
   ShoppingBag,
   Star,
   Plus,
-  Check,
-  ChevronRight,
-  Filter,
   Sparkles,
   Zap,
-  Bath,
-  UtensilsCrossed,
-  Waves,
-  WashingMachine
+  Brain,
+  Moon,
+  X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { api, STATIC_CATEGORIES } from '../services/api';
 
-// Custom Icons
-const FloorMopIcon = ({ size = 20, className }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.9"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M12 2v13" />
-    <path d="M5 15h14a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1z" fill="currentColor" fillOpacity="0.22" />
-    <path d="M7 18v3" />
-    <path d="M10 18v3.5" />
-    <path d="M14 18v3.5" />
-    <path d="M17 18v3" />
-  </svg>
-);
-
-const GlassCareIcon = ({ size = 20, className }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.9"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <rect x="3" y="3" width="18" height="18" rx="2" />
-    <line x1="12" y1="3" x2="12" y2="21" />
-    <line x1="3" y1="12" x2="21" y2="12" />
-    <line x1="6.5" y1="6.5" x2="8.5" y2="8.5" strokeWidth="2.2" strokeLinecap="round" />
-    <line x1="15.5" y1="6.5" x2="17.5" y2="8.5" strokeWidth="2.2" strokeLinecap="round" />
-  </svg>
-);
-
 const categoryIconMap = {
   all: ShoppingBag,
-  floor_care: FloorMopIcon,
-  bathroom: Bath,
-  kitchen: UtensilsCrossed,
-  glass_care: GlassCareIcon,
-  dishwash: UtensilsCrossed,
-  laundry: WashingMachine
+  inner_power: Zap,
+  brain_focus: Brain,
+  deep_recovery: Moon,
+  trio_ritual: Sparkles
 };
 
 export const CategoriesPage = ({
@@ -80,7 +32,7 @@ export const CategoriesPage = ({
   const [selectedCat, setSelectedCat] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState([]);
-  const { cartCount, addToCart, showToast } = useCartWishlist();
+  const { cartCount, addToCart } = useCartWishlist();
 
   const handleBack = () => {
     if (onBack) onBack();
@@ -103,7 +55,7 @@ export const CategoriesPage = ({
   }, []);
 
   const allCategoriesList = [
-    { id: 'all', name: 'All Products', desc: 'Complete range of botanical hygiene essentials' },
+    { id: 'all', name: 'All 3 Rituals', desc: 'ZENVORO Complete Ayurvedic Flagship Collection' },
     ...STATIC_CATEGORIES
   ];
 
@@ -111,8 +63,8 @@ export const CategoriesPage = ({
 
   const filteredProducts = products.filter((p) => {
     if (selectedCat !== 'all') {
-      if (selectedCat === 'kitchen' || selectedCat === 'dishwash') {
-        if (p.category !== 'kitchen' && p.category !== 'dishwash') return false;
+      if (selectedCat === 'trio_ritual') {
+        return true;
       } else if (p.category !== selectedCat) {
         return false;
       }
@@ -137,8 +89,8 @@ export const CategoriesPage = ({
           <ArrowLeft size={22} />
         </button>
         <div className="page-header-title-box">
-          <span className="page-header-title">All Categories</span>
-          <span className="page-header-subtitle">ASM Shine Catalog</span>
+          <span className="page-header-title">The Sacred Rituals</span>
+          <span className="page-header-subtitle">ZENVORO Flagship Catalog</span>
         </div>
         <div className="pdp-cart-icon-wrap" onClick={handleOpenCart}>
           <button type="button" className="page-action-btn" aria-label="Cart">
@@ -154,7 +106,7 @@ export const CategoriesPage = ({
           <Search size={18} className="cat-search-icon" />
           <input
             type="search"
-            placeholder="Search within categories..."
+            placeholder="Search Shilajit Gold, Nootropic, Elixir..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="cat-search-input"
@@ -164,8 +116,9 @@ export const CategoriesPage = ({
               type="button"
               className="cat-search-clear"
               onClick={() => setSearchQuery('')}
+              aria-label="Clear Search"
             >
-              ✕
+              <X size={14} />
             </button>
           )}
         </div>
@@ -200,18 +153,18 @@ export const CategoriesPage = ({
         <main className="cat-content-pane no-scrollbar">
           {/* Active Category Header Banner */}
           <div className="cat-banner-card">
-            <div className="cat-banner-tag">OFFICIAL CATEGORY</div>
+            <div className="cat-banner-tag">AUTHENTIC AYURVEDIC WELLNESS</div>
             <h2 className="cat-banner-title">{currentCategoryObj.name}</h2>
             <p className="cat-banner-sub">
-              {filteredProducts.length} items available in store
+              {filteredProducts.length} formulations available in collection
             </p>
           </div>
 
           {/* Product Items List */}
           {filteredProducts.length === 0 ? (
             <div className="cat-empty-state">
-              <Sparkles size={32} color="#94A3B8" />
-              <p>No products found matching your search</p>
+              <Sparkles size={32} color="#85532F" />
+              <p>No formulations found matching your search</p>
               <button
                 type="button"
                 className="cat-reset-btn"
@@ -220,7 +173,7 @@ export const CategoriesPage = ({
                   setSelectedCat('all');
                 }}
               >
-                View All Products
+                View All 3 Rituals
               </button>
             </div>
           ) : (
@@ -246,12 +199,12 @@ export const CategoriesPage = ({
                   </div>
 
                   <div className="cat-prod-details">
-                    <div className="cat-prod-brand">ASM SHINE</div>
+                    <div className="cat-prod-brand">ZENVORO WELLNESS</div>
                     <h3 className="cat-prod-name">{product.name}</h3>
 
                     {/* Rating Pill */}
                     <div className="cat-prod-rating-pill">
-                      <span>{product.rating || '4.4'}</span>
+                      <span>{product.rating || '4.9'}</span>
                       <Star size={10} fill="#FFFFFF" color="#FFFFFF" />
                     </div>
 

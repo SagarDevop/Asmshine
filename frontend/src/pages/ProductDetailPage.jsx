@@ -16,7 +16,8 @@ import {
   Copy,
   Zap,
   Leaf,
-  ExternalLink
+  ExternalLink,
+  CreditCard
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
@@ -43,7 +44,7 @@ const AmazonLogo = () => (
 
 const FlipkartLogo = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <rect width="24" height="24" rx="6" fill="#2874F0" />
+    <rect width="24" height="24" rx="6" fill="#85532F" />
     <path
       d="M6.5 7.5H17.5L16.2 17H7.8L6.5 7.5Z"
       fill="#FFE500"
@@ -56,7 +57,7 @@ const FlipkartLogo = () => (
     />
     <path
       d="M10 10.5H14M10 12.8H13M10 15H11.5"
-      stroke="#2874F0"
+      stroke="#85532F"
       strokeWidth="1.5"
       strokeLinecap="round"
     />
@@ -146,7 +147,7 @@ export const ProductDetailPage = ({
       try {
         await navigator.share({
           title: product.name,
-          text: `Check out ${product.name} on ASM Shine!`,
+          text: `Check out ${product.name} on ZENVORO Luxury Wellness!`,
           url: window.location.href
         });
       } catch (err) {
@@ -154,13 +155,13 @@ export const ProductDetailPage = ({
       }
     } else {
       navigator.clipboard?.writeText?.(window.location.href);
-      showToast('Product link copied to clipboard! 📋');
+      showToast('Product link copied to clipboard');
     }
   };
 
   const handleCopyCoupon = (code) => {
     navigator.clipboard?.writeText?.(code);
-    showToast(`Coupon code ${code} copied! Extra 30% off 🎉`);
+    showToast(`Coupon code ${code} copied! Extra 20% discount applied`);
   };
 
   const handleAddCurrentToCart = () => {
@@ -169,7 +170,7 @@ export const ProductDetailPage = ({
 
   const handleBuyNow = () => {
     addToCart(product.id, 1);
-    showToast('Proceeding to Express Checkout 🛍️');
+    showToast('Proceeding to Express Checkout');
   };
 
   const handleAddComboToCart = () => {
@@ -179,7 +180,7 @@ export const ProductDetailPage = ({
         { productId: combo.mainProduct.id, quantity: 1 },
         { productId: combo.companionProduct.id, quantity: 1 }
       ],
-      `Combo Bundle (${combo.mainProduct.shortName || combo.mainProduct.name} + ${combo.companionProduct.shortName || combo.companionProduct.name}) added to cart! 🎉`
+      `Combo Bundle (${combo.mainProduct.shortName || combo.mainProduct.name} + ${combo.companionProduct.shortName || combo.companionProduct.name}) added to cart`
     );
   };
 
@@ -199,7 +200,7 @@ export const ProductDetailPage = ({
         <button
           type="button"
           onClick={() => navigate('/')}
-          style={{ padding: '12px 24px', background: '#00878A', color: '#FFFFFF', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+          style={{ padding: '12px 24px', background: '#85532F', color: '#FFFFFF', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
         >
           Return to Store
         </button>
@@ -237,8 +238,8 @@ export const ProductDetailPage = ({
         </button>
 
         <div className="pdp-header-brand" onClick={() => navigate('/')}>
-          <img src="/images/logo.png" alt="ASM Shine" className="pdp-logo-mini" />
-          <span className="pdp-brand-text">ASM Shine</span>
+          <img src="/images/logo.png" alt="ZENVORO" className="pdp-logo-mini" style={{ borderRadius: '50%' }} />
+          <span className="pdp-brand-text">ZENVORO</span>
         </div>
 
         <div className="pdp-header-actions">
@@ -287,10 +288,10 @@ export const ProductDetailPage = ({
               />
             </button>
 
-            {/* ASM Assured / Genuine Hygiene Badge */}
+            {/* ZENVORO Certified Genuine Formulation Badge */}
             <div className="pdp-assured-tag">
-              <Zap size={13} fill="#0284C7" color="#0284C7" />
-              <span>ASM Assured</span>
+              <Zap size={13} fill="#CBA243" color="#CBA243" />
+              <span>ZENVORO Certified</span>
             </div>
 
             {/* Image Indicator Dots */}
@@ -303,7 +304,7 @@ export const ProductDetailPage = ({
 
         {/* 3. Product Title, Rating & Pricing Section */}
         <section className="pdp-section pdp-info-card">
-          <div className="pdp-brand-tag">ASM SHINE OFFICIAL STORE</div>
+          <div className="pdp-brand-tag">ZENVORO MAISON OFFICIAL</div>
           <h1 className="pdp-product-title">{product.name}</h1>
 
           {/* Rating & Review summary pill */}
@@ -408,15 +409,17 @@ export const ProductDetailPage = ({
           </div>
 
           <div className="pdp-offer-item highlight">
-            <div className="pdp-offer-bullet">🏷️</div>
+            <div className="pdp-offer-bullet">
+              <Tag size={15} color="#85532F" />
+            </div>
             <div className="pdp-offer-text">
-              <strong>Special Coupon:</strong> Flat <strong>30% OFF</strong> using code{' '}
-              <span className="pdp-coupon-code-pill">CLEAN30</span>
+              <strong>Launch Offer:</strong> Flat <strong>20% OFF</strong> using code{' '}
+              <span className="pdp-coupon-code-pill">POWER20</span>
             </div>
             <button
               type="button"
               className="pdp-copy-coupon-btn"
-              onClick={() => handleCopyCoupon('CLEAN30')}
+              onClick={() => handleCopyCoupon('POWER20')}
             >
               <Copy size={13} />
               <span>Copy</span>
@@ -424,16 +427,20 @@ export const ProductDetailPage = ({
           </div>
 
           <div className="pdp-offer-item">
-            <div className="pdp-offer-bullet">💳</div>
+            <div className="pdp-offer-bullet">
+              <CreditCard size={15} color="#85532F" />
+            </div>
             <div className="pdp-offer-text">
-              <strong>Bank Offer:</strong> 5% Unlimited Cashback on Axis Bank & UPI Transactions
+              <strong>Bank Offer:</strong> Extra 5% Instant Discount on UPI & Credit Card Prepayment
             </div>
           </div>
 
           <div className="pdp-offer-item">
-            <div className="pdp-offer-bullet">⚡</div>
+            <div className="pdp-offer-bullet">
+              <Zap size={15} color="#CBA243" fill="#CBA243" />
+            </div>
             <div className="pdp-offer-text">
-              <strong>Partner Offer:</strong> Buy this item & get ₹50 off coupon on next household purchase
+              <strong>Trio Upgrade:</strong> Get the 3-Product Ritual Box & save an extra ₹2,998 today!
             </div>
           </div>
         </section>
@@ -472,30 +479,30 @@ export const ProductDetailPage = ({
           <div className="pdp-delivery-location-row">
             <div className="pdp-delivery-loc-info">
               <MapPin size={16} className="pdp-loc-pin" />
-              <span>Deliver to: <strong>1, Jhanjhari, Banda - 210001</strong></span>
+              <span>Deliver to: <strong>Connaught Place, New Delhi - 110001</strong></span>
             </div>
             <span className="pdp-change-loc-btn">Change</span>
           </div>
 
           <div className="pdp-delivery-speed-row">
-            <Truck size={17} color="#059669" />
+            <Truck size={17} color="#85532F" />
             <span>
-              <strong>FREE Delivery</strong> by <strong>Tomorrow, 5:00 PM</strong>
+              <strong>FREE Express Delivery</strong> by <strong>Tomorrow, 5:00 PM</strong>
             </span>
           </div>
 
           <div className="pdp-assurances-grid">
             <div className="pdp-assurance-pill">
-              <RotateCcw size={16} color="#0284C7" />
-              <span>7 Days Replacement</span>
+              <RotateCcw size={16} color="#85532F" />
+              <span>30-Day Money Back</span>
             </div>
             <div className="pdp-assurance-pill">
-              <ShieldCheck size={16} color="#059669" />
+              <ShieldCheck size={16} color="#85532F" />
               <span>Cash on Delivery</span>
             </div>
             <div className="pdp-assurance-pill">
-              <Leaf size={16} color="#0D9488" />
-              <span>100% Botanical Actives</span>
+              <Leaf size={16} color="#CBA243" />
+              <span>100% Himalayan Pure</span>
             </div>
           </div>
         </section>
@@ -652,11 +659,11 @@ export const ProductDetailPage = ({
           <div className="pdp-specs-table">
             {Object.entries(
               product.specifications || {
-                'Form': 'Active Liquid',
-                'Fragrance': 'Zesty Citrus',
-                'Application Area': 'All Household Surfaces',
-                'Pack of': '1',
-                'Country of Origin': 'India',
+                'Formulation': '24K Gold Grade Purified Resin / Botanical Elixir',
+                'Ingredients': 'Pure Himalayan Shilajit, Fulvic Acid (>80%), Ashwagandha, Swarna Bhasma',
+                'Serving Recommendation': 'Pea-sized portion with warm milk or water',
+                'Pack of': '1 Luxury Amber Glass Jar',
+                'Origin': '18,000+ ft Pristine Himalayan Peaks',
                 'Shelf Life': '24 Months'
               }
             ).map(([k, v]) => (
@@ -674,23 +681,23 @@ export const ProductDetailPage = ({
 
           <div className="pdp-rating-summary-box">
             <div className="pdp-rating-big-score">
-              <span className="pdp-score-num">{product.rating || '4.4'}</span>
-              <Star size={20} fill="#059669" color="#059669" />
-              <span className="pdp-score-sub">{product.ratingsCount || '1,248'} Ratings & {product.reviewCount || '342'} Reviews</span>
+              <span className="pdp-score-num">{product.rating || '4.9'}</span>
+              <Star size={20} fill="#85532F" color="#85532F" />
+              <span className="pdp-score-sub">{product.ratingsCount || '4,920'} Ratings & {product.reviewCount || '1,840'} Reviews</span>
             </div>
 
             <div className="pdp-rating-bars">
               {[
-                { stars: 5, pct: '74%' },
-                { stars: 4, pct: '18%' },
-                { stars: 3, pct: '5%' },
-                { stars: 2, pct: '2%' },
-                { stars: 1, pct: '1%' }
+                { stars: 5, pct: '84%' },
+                { stars: 4, pct: '12%' },
+                { stars: 3, pct: '3%' },
+                { stars: 2, pct: '1%' },
+                { stars: 1, pct: '0%' }
               ].map((b) => (
                 <div className="pdp-bar-row" key={b.stars}>
                   <span className="pdp-bar-label">{b.stars}★</span>
                   <div className="pdp-bar-track">
-                    <div className="pdp-bar-fill" style={{ width: b.pct }} />
+                    <div className="pdp-bar-fill" style={{ width: b.pct, backgroundColor: '#85532F' }} />
                   </div>
                   <span className="pdp-bar-pct">{b.pct}</span>
                 </div>
@@ -702,22 +709,22 @@ export const ProductDetailPage = ({
           <div className="pdp-reviews-list">
             {(product.reviews || [
               {
-                id: 'rev_default_1',
-                author: 'Priya Sharma',
-                location: 'Banda, Uttar Pradesh',
+                id: 'rev_zenvoro_1',
+                author: 'Devendra Rathore',
+                location: 'Mumbai, Maharashtra',
                 rating: 5,
-                date: '2 days ago',
-                title: 'Exceptional clean without chemical fumes!',
-                comment: 'The scent is so natural and refreshing. Shines our tiles instantly without any sticky residue.'
+                date: '3 days ago',
+                title: 'Surge in daily stamina and focus!',
+                comment: 'Within a week of taking the Shilajit Gold with warm almond milk, my morning stamina and afternoon mental clarity have noticeably sharpened. Truly gold-grade pure.'
               },
               {
-                id: 'rev_default_2',
-                author: 'Amit Verma',
-                location: 'Lucknow, Uttar Pradesh',
-                rating: 4,
+                id: 'rev_zenvoro_2',
+                author: 'Ananya Deshmukh',
+                location: 'Bengaluru, Karnataka',
+                rating: 5,
                 date: '1 week ago',
-                title: 'High quality packaging & fast delivery',
-                comment: 'Delivered in Banda within 24 hours. Value for money product.'
+                title: 'Exceptional purity and royal packaging',
+                comment: 'The amber jar and gold spoon feel ultra luxurious. Lab verified test report included gave complete peace of mind. Excellent results.'
               }
             ]).map((rev) => (
               <div className="pdp-review-card" key={rev.id}>
