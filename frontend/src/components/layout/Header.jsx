@@ -10,6 +10,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { SearchOverlay } from '../search/SearchOverlay';
 
 const categoryPillMap = {
   inner_power: { label: 'Shilajit Gold', icon: Flame },
@@ -26,6 +27,7 @@ export const Header = ({
 }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [location, setLocation] = useState('110001, Connaught Place');
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -95,13 +97,26 @@ export const Header = ({
       <header className={`fk-sticky-container mobile-only ${isScrolled ? 'scrolled' : ''}`}>
         {/* Search Bar */}
         <div className="fk-search-bar-row">
-          <div className="fk-search-pill-wrapper">
+          <div
+            className="fk-search-pill-wrapper"
+            onClick={() => setIsSearchOpen(true)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') setIsSearchOpen(true);
+            }}
+          >
             <Search size={16} className="fk-search-icon" />
             <input
               type="text"
               className="fk-search-input-pill"
               value={searchTerm}
-              onChange={handleInputChange}
+              onFocus={() => setIsSearchOpen(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsSearchOpen(true);
+              }}
+              readOnly
               placeholder="Search Shilajit Gold, Nootropic, Elixir..."
             />
           </div>
@@ -139,6 +154,13 @@ export const Header = ({
           })}
         </div>
       </header>
+
+      {/* Flipkart-Style Full White Search Overlay */}
+      <SearchOverlay
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        initialQuery={searchTerm}
+      />
     </>
   );
 };

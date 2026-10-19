@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Search, ShoppingBag, Heart, MapPin, ChevronDown, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../../context/CartWishlistContext';
+import { SearchOverlay } from '../search/SearchOverlay';
 
 export const DesktopNav = ({ onSearch, onSwitchTab }) => {
   const { cartCount, wishlist, showToast } = useCartWishlist();
   const navigate = useNavigate();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const handleNav = (tab) => {
     if (onSwitchTab) {
@@ -56,13 +58,26 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
 
         {/* Global Search Bar */}
         <div className="desktop-search-bar">
-          <div className="search-input-wrapper">
+          <div
+            className="search-input-wrapper"
+            onClick={() => setIsSearchOpen(true)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') setIsSearchOpen(true);
+            }}
+          >
             <Search size={18} className="search-icon" />
             <input
               type="text"
               className="search-input"
               placeholder="Search Shilajit Gold, Nootropic Focus, Cellular Recovery Elixir..."
-              onChange={(e) => onSearch && onSearch(e.target.value)}
+              onFocus={() => setIsSearchOpen(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsSearchOpen(true);
+              }}
+              readOnly
             />
           </div>
         </div>
@@ -107,6 +122,12 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
           </button>
         </div>
       </div>
+
+      {/* Flipkart-Style Full White Search Overlay on Desktop */}
+      <SearchOverlay
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </div>
   );
 };

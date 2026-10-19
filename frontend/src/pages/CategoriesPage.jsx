@@ -14,6 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { api, STATIC_CATEGORIES } from '../services/api';
+import { SearchOverlay } from '../components/search/SearchOverlay';
 
 const categoryIconMap = {
   all: ShoppingBag,
@@ -31,6 +32,7 @@ export const CategoriesPage = ({
   const navigate = useNavigate();
   const [selectedCat, setSelectedCat] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const { cartCount, addToCart } = useCartWishlist();
 
@@ -102,20 +104,36 @@ export const CategoriesPage = ({
 
       {/* 2. Search Input Strip */}
       <div className="cat-search-strip">
-        <div className="cat-search-box">
+        <div
+          className="cat-search-box"
+          onClick={() => setIsSearchOpen(true)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') setIsSearchOpen(true);
+          }}
+        >
           <Search size={18} className="cat-search-icon" />
           <input
             type="search"
             placeholder="Search Shilajit Gold, Nootropic, Elixir..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setIsSearchOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsSearchOpen(true);
+            }}
+            readOnly
             className="cat-search-input"
           />
           {searchQuery && (
             <button
               type="button"
               className="cat-search-clear"
-              onClick={() => setSearchQuery('')}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSearchQuery('');
+              }}
               aria-label="Clear Search"
             >
               <X size={14} />
@@ -237,6 +255,13 @@ export const CategoriesPage = ({
           )}
         </main>
       </div>
+
+      {/* Flipkart-Style Full White Search Overlay */}
+      <SearchOverlay
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        initialQuery={searchQuery}
+      />
     </div>
   );
 };
