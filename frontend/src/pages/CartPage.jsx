@@ -79,10 +79,7 @@ export const CartPage = ({
 
   const handlePlaceOrder = () => {
     if (cartData.items.length === 0) return;
-    const randomId = 'ASM-' + Math.floor(100000 + Math.random() * 900000);
-    setOrderId(randomId);
-    setOrderSuccess(true);
-    clearCart();
+    navigate('/checkout');
   };
 
   return (

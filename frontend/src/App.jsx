@@ -6,6 +6,7 @@ import { CategoriesPage } from './pages/CategoriesPage';
 import { AboutPage } from './pages/AboutPage';
 import { CartPage } from './pages/CartPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
+import { CheckoutPage } from './pages/CheckoutPage';
 import { DesktopNav } from './components/navigation/DesktopNav';
 import { BottomNav } from './components/navigation/BottomNav';
 import './styles/global.css';
@@ -13,7 +14,7 @@ import './styles/responsive.css';
 
 /**
  * HashRedirectHandler:
- * Intercepts any legacy hash routes (e.g. #product/prod_1, #categories, #about, #cart)
+ * Intercepts any legacy hash routes (e.g. #product/prod_1, #categories, #about, #cart, #checkout)
  * and seamlessly redirects to clean URLs (/product/prod_1, /categories, etc.)
  */
 function HashRedirectHandler() {
@@ -34,6 +35,8 @@ function HashRedirectHandler() {
         navigate('/about', { replace: true });
       } else if (hash === '#cart') {
         navigate('/cart', { replace: true });
+      } else if (hash === '#checkout') {
+        navigate('/checkout', { replace: true });
       } else if (hash === '#home' || hash === '#') {
         navigate('/', { replace: true });
       }
@@ -119,6 +122,14 @@ function ProductDetailRoute() {
   );
 }
 
+function CheckoutRoute() {
+  return (
+    <div className="app-shell">
+      <CheckoutPage />
+    </div>
+  );
+}
+
 export function App() {
   return (
     <BrowserRouter>
@@ -131,6 +142,7 @@ export function App() {
           <Route path="/about" element={<AboutRoute />} />
           <Route path="/cart" element={<CartRoute />} />
           <Route path="/product/:id" element={<ProductDetailRoute />} />
+          <Route path="/checkout" element={<CheckoutRoute />} />
           {/* Wildcard redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

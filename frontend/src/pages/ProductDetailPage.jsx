@@ -87,7 +87,8 @@ export const ProductDetailPage = ({
   const navigate = useNavigate();
   const [product, setProduct] = useState(productProp || null);
   const [loading, setLoading] = useState(!productProp);
-  const { cartCount, wishlist, toggleWishlist, addToCart, addComboToCart, showToast } = useCartWishlist();
+  const { cartCount, cartData, wishlist, toggleWishlist, addToCart, addComboToCart, showToast } = useCartWishlist();
+  const [justAdded, setJustAdded] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [combo, setCombo] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -164,13 +165,27 @@ export const ProductDetailPage = ({
     showToast(`Coupon code ${code} copied! Extra 20% discount applied`);
   };
 
-  const handleAddCurrentToCart = () => {
-    addToCart(product.id, 1);
+  const isInCart = Boolean(
+    justAdded ||
+    (product && cartData?.items?.some((item) => item.product?.id === product.id))
+  );
+
+  const handleAddCurrentToCart = async () => {
+    if (isInCart) {
+      navigate('/cart');
+      return;
+    }
+    setJustAdded(true);
+    await addToCart(product.id, 1);
   };
 
-  const handleBuyNow = () => {
-    addToCart(product.id, 1);
-    showToast('Proceeding to Express Checkout');
+  const handleBuyNow = async () => {
+    try {
+      await addToCart(product.id, 1);
+    } catch (e) {
+      // proceed anyway
+    }
+    navigate(`/checkout?buyNow=${product.id}`);
   };
 
   const handleAddComboToCart = () => {
@@ -748,21 +763,32 @@ export const ProductDetailPage = ({
         </section>
       </div>
 
-      {/* 11. Bottom Sticky Action Bar (Flipkart Exact: Yellow Add to Cart + Orange Buy Now) */}
+      {/* 11. Bottom Sticky Action Bar (Flipkart Exact: Added/Go to Cart + Direct Buy Now Checkout) */}
       <div className="pdp-bottom-sticky-bar">
         <button
           type="button"
-          className="pdp-btn-cart"
+          className={`pdp-btn-cart ${isInCart ? 'in-cart' : ''}`}
           onClick={handleAddCurrentToCart}
+          id="pdp-add-to-cart-btn"
         >
-          <ShoppingBag size={18} />
-          <span>ADD TO CART</span>
+          {isInCart ? (
+            <>
+              <Check size={18} strokeWidth={2.6} />
+              <span>GO TO CART</span>
+            </>
+          ) : (
+            <>
+              <ShoppingBag size={18} />
+              <span>ADD TO CART</span>
+            </>
+          )}
         </button>
 
         <button
           type="button"
           className="pdp-btn-buy"
           onClick={handleBuyNow}
+          id="pdp-buy-now-btn"
         >
           <Zap size={18} fill="#FFFFFF" />
           <span>BUY NOW</span>

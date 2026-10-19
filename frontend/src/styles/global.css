@@ -2342,11 +2342,22 @@ a {
   gap: 8px;
   cursor: pointer;
   border: none;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, background-color 0.2s ease;
 }
 
 .pdp-btn-cart:active {
   opacity: 0.9;
+}
+
+.pdp-btn-cart.in-cart {
+  background-color: #FAF4EE;
+  color: #85532F;
+  border-top: 2.5px solid #85532F;
+  font-weight: 800;
+}
+
+.pdp-btn-cart.in-cart svg {
+  color: #15803D;
 }
 
 .pdp-btn-buy {
@@ -4192,6 +4203,892 @@ a {
   .desktop-footer-inner {
     flex-direction: row;
     text-align: left;
+  }
+}
+
+/* ========================================================
+   13. ⭐ FLIPKART AUTHENTIC CHECKOUT UI SYSTEM
+   ======================================================== */
+.fk-checkout-page {
+  min-height: 100vh;
+  background-color: #F1F3F6;
+  color: #212121;
+  font-family: inherit;
+  padding-bottom: 88px;
+}
+
+/* --- Header & Step Tracker --- */
+.fk-checkout-header {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  background-color: #FFFFFF;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid #E4E7EB;
+}
+
+.fk-checkout-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 54px;
+  padding: 0 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.fk-checkout-back-btn {
+  background: none;
+  border: none;
+  color: #212121;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  margin-left: -6px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.15s ease;
+}
+
+.fk-checkout-back-btn:hover {
+  background-color: #F1F5F9;
+}
+
+.fk-checkout-title-wrap {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.fk-checkout-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1E293B;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.fk-checkout-subtitle {
+  font-size: 11px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.fk-checkout-secure-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+  border-radius: 20px;
+  padding: 4px 9px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* Steps Strip */
+.fk-checkout-steps-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px 12px;
+  border-top: 1px solid #F1F5F9;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.fk-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #94A3B8;
+  font-weight: 600;
+}
+
+.fk-step-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #E2E8F0;
+  color: #64748B;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fk-step.active {
+  color: #85532F;
+}
+
+.fk-step.active .fk-step-circle {
+  background-color: #85532F;
+  color: #FFFFFF;
+}
+
+.fk-step.completed {
+  color: #15803D;
+}
+
+.fk-step.completed .fk-step-circle {
+  background-color: #15803D;
+  color: #FFFFFF;
+}
+
+.fk-step-line {
+  flex: 1;
+  height: 2px;
+  background-color: #E2E8F0;
+  margin: 0 10px;
+}
+
+.fk-step-line.completed {
+  background-color: #15803D;
+}
+
+/* --- Checkout Body Layout --- */
+.fk-checkout-body {
+  max-width: 860px;
+  margin: 12px auto 0;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Card Styling */
+.fk-checkout-card {
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 14px 16px;
+  border: 1px solid #E8ECF0;
+}
+
+.fk-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.fk-card-header-simple {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.fk-section-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748B;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+/* --- 1. Address Card --- */
+.fk-deliver-to-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.fk-deliver-lbl {
+  font-size: 12px;
+  color: #64748B;
+}
+
+.fk-deliver-name {
+  font-size: 13.5px;
+  color: #0F172A;
+  font-weight: 700;
+}
+
+.fk-addr-type-pill {
+  background-color: #F1F5F9;
+  color: #475569;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+
+.fk-change-addr-btn {
+  background: none;
+  border: 1px solid #CBD5E1;
+  color: #85532F;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fk-change-addr-btn:hover {
+  background-color: #FAF4EE;
+  border-color: #85532F;
+}
+
+.fk-address-text {
+  font-size: 12.5px;
+  color: #334155;
+  margin: 0 0 4px 0;
+  line-height: 1.4;
+}
+
+.fk-address-phone {
+  font-size: 12px;
+  color: #64748B;
+}
+
+.fk-address-edit-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #E2E8F0;
+}
+
+.fk-addr-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+
+.fk-addr-input:focus {
+  border-color: #85532F;
+}
+
+.fk-addr-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.fk-save-addr-btn {
+  background-color: #85532F;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+/* --- 2. Order Items Card --- */
+.fk-checkout-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fk-checkout-item-row {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.fk-checkout-item-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.fk-item-thumb-box {
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+  background-color: #FAF7F2;
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #EDE7DD;
+}
+
+.fk-item-thumb-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.fk-item-details-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fk-item-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.fk-item-seller-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #64748B;
+}
+
+.fk-certified-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: #15803D;
+  font-weight: 600;
+}
+
+.fk-item-price-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.fk-item-curr-price {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.fk-item-mrp {
+  font-size: 12px;
+  color: #94A3B8;
+  text-decoration: line-through;
+}
+
+.fk-item-disc {
+  font-size: 12px;
+  font-weight: 700;
+  color: #15803D;
+}
+
+.fk-item-delivery-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #15803D;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.fk-item-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.fk-qty-label {
+  font-size: 11.5px;
+  color: #64748B;
+}
+
+.fk-qty-control-pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+}
+
+.fk-qty-btn {
+  background: none;
+  border: none;
+  width: 26px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #334155;
+  transition: background-color 0.1s;
+}
+
+.fk-qty-btn:hover {
+  background-color: #F1F5F9;
+}
+
+.fk-qty-val {
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0F172A;
+  border-left: 1px solid #E2E8F0;
+  border-right: 1px solid #E2E8F0;
+}
+
+/* --- 3. Coupon Card --- */
+.fk-coupon-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fk-coupon-text-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: #475569;
+}
+
+.fk-coupon-text-block strong {
+  font-size: 13px;
+  color: #0F172A;
+}
+
+.fk-applied-coupon-text {
+  color: #15803D;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.fk-coupon-remove-btn {
+  background: none;
+  border: none;
+  color: #DC2626;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.fk-coupon-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.fk-coupon-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.fk-coupon-input:focus {
+  border-color: #85532F;
+}
+
+.fk-coupon-apply-btn {
+  background-color: #85532F;
+  color: #FFFFFF;
+  border: none;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* --- 4. Payment Options Card --- */
+.fk-payment-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fk-payment-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background-color: #FAFAFA;
+}
+
+.fk-payment-opt.selected {
+  border-color: #85532F;
+  background-color: #FAF4EE;
+}
+
+.fk-opt-radio {
+  padding-top: 2px;
+}
+
+.fk-radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #94A3B8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.fk-radio-dot.checked {
+  border-color: #85532F;
+}
+
+.fk-radio-dot.checked::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #85532F;
+}
+
+.fk-opt-info {
+  flex: 1;
+}
+
+.fk-opt-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.fk-opt-title-row strong {
+  font-size: 13px;
+  color: #0F172A;
+}
+
+.fk-upi-instant-badge {
+  background-color: #15803D;
+  color: #FFFFFF;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.3px;
+}
+
+.fk-opt-desc {
+  font-size: 11.5px;
+  color: #64748B;
+  margin: 0;
+}
+
+.fk-upi-suboptions {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(133, 83, 47, 0.15);
+}
+
+.fk-upi-app-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fk-upi-chip {
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #334155;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fk-upi-chip.active {
+  background-color: #85532F;
+  border-color: #85532F;
+  color: #FFFFFF;
+}
+
+/* --- 5. Flipkart Price Details Table --- */
+.fk-price-head-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #878787;
+  letter-spacing: 0.6px;
+}
+
+.fk-price-rows-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fk-price-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #334155;
+}
+
+.fk-green-text {
+  color: #15803D;
+  font-weight: 700;
+}
+
+.fk-striked {
+  text-decoration: line-through;
+  color: #94A3B8;
+  margin-right: 4px;
+  font-weight: 400;
+}
+
+.fk-total-payable-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px dashed #CBD5E1;
+  font-size: 15px;
+}
+
+.fk-total-payable-row strong {
+  color: #0F172A;
+  font-weight: 800;
+}
+
+.fk-total-num {
+  font-size: 17px;
+  color: #0F172A;
+}
+
+.fk-savings-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #F0FDF4;
+  color: #15803D;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-top: 12px;
+  border: 1px solid #BBF7D0;
+}
+
+/* --- 6. Flipkart Safe Guarantee --- */
+.fk-secure-assurance {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  border: 1px solid #E8ECF0;
+}
+
+.fk-secure-assurance-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.fk-secure-assurance-text strong {
+  font-size: 12px;
+  color: #1E293B;
+}
+
+.fk-secure-assurance-text span {
+  font-size: 10.5px;
+  color: #64748B;
+}
+
+/* --- 7. Sticky Bottom Bar (Flipkart Orange Place Order) --- */
+.fk-checkout-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background-color: #FFFFFF;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.fk-bottom-price-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.fk-bottom-total-lbl {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1.1;
+}
+
+.fk-bottom-view-price {
+  font-size: 11px;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.fk-btn-place-order {
+  background-color: #FB641B;
+  color: #FFFFFF;
+  border: none;
+  height: 42px;
+  padding: 0 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 2px 6px rgba(251, 100, 27, 0.35);
+}
+
+.fk-btn-place-order:active {
+  transform: scale(0.98);
+  opacity: 0.95;
+}
+
+/* --- 8. Order Success Modal/Screen --- */
+.fk-order-success-screen {
+  min-height: 100vh;
+  background-color: #F1F3F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+}
+
+.fk-success-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  max-width: 440px;
+  width: 100%;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #E2E8F0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fk-success-icon-wrap {
+  margin-bottom: 12px;
+  animation: fkPulse 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes fkPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
+}
+
+.fk-success-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 4px 0;
+}
+
+.fk-success-sub {
+  font-size: 13px;
+  color: #64748B;
+  margin: 0 0 16px 0;
+}
+
+.fk-order-id-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #FAF4EE;
+  color: #85532F;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #CBA243;
+  margin-bottom: 20px;
+}
+
+.fk-success-details-card {
+  width: 100%;
+  background-color: #F8FAFC;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  text-align: left;
+}
+
+.fk-success-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #475569;
+}
+
+.fk-success-row strong {
+  color: #0F172A;
+}
+
+.fk-success-btn-home {
+  background-color: #85532F;
+  color: #FFFFFF;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.15s;
+}
+
+.fk-success-btn-home:hover {
+  opacity: 0.95;
+}
+
+@media (min-width: 768px) {
+  .fk-checkout-body {
+    margin-top: 20px;
+  }
+
+  .fk-checkout-bottom-bar {
+    max-width: 860px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #E2E8F0;
+    border-bottom: none;
   }
 }
 
