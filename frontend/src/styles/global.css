@@ -2618,273 +2618,620 @@ a {
    ------------------------------------------------------- */
 .about-page-view {
   min-height: 100dvh;
-  background-color: #F8FAFC;
-  padding-bottom: 80px;
+  background-color: #FAF6F0;
+  padding-bottom: 84px;
 }
 
+/* 1. Luxury Hero Card with Cinematic Himalayan Backdrop */
 .about-hero-card {
-  background: linear-gradient(135deg, #85532F 0%, #3D2314 100%);
-  color: #FFFFFF;
-  padding: 32px 20px 28px;
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  background-color: #2D1A10;
+}
+
+.about-hero-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+}
+
+.about-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(32, 17, 8, 0.70) 0%, rgba(32, 17, 8, 0.85) 65%, #FAF6F0 100%);
+  pointer-events: none;
+}
+
+.about-hero-content {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  overflow: hidden;
+  padding: 10px 16px 0 16px;
 }
 
 .about-hero-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  padding: 4px 10px;
-  border-radius: 9999px;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  margin-bottom: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(229, 195, 131, 0.45);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #E5C383;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
 }
 
-.about-hero-logo {
-  height: 60px;
-  width: auto;
-  object-fit: contain;
-  background-color: #FFFFFF;
-  padding: 6px 14px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin-bottom: 12px;
+.about-hero-crest {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 1.5px solid #CBA243;
+  object-fit: cover;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  margin-bottom: 6px;
 }
 
 .about-hero-heading {
-  font-size: 24px;
+  font-size: 23px;
   font-weight: 800;
-  letter-spacing: -0.3px;
-  margin-bottom: 4px;
+  color: #FFFFFF;
+  font-family: serif;
+  letter-spacing: 1px;
+  margin: 0 0 2px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .about-hero-tagline {
-  font-size: 13.5px;
-  color: #CCFBF1;
-  font-weight: 500;
-  margin-bottom: 14px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #E5C383;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin: 0 0 10px 0;
 }
 
-.about-hero-meta {
+.about-hero-meta-strip {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.85);
+  flex-wrap: wrap;
 }
 
-.about-meta-dot {
-  opacity: 0.6;
-}
-
-.about-content-card {
-  background-color: #FFFFFF;
+.about-meta-chip {
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 12px;
-  margin: 12px;
+  padding: 2.5px 8px;
+  font-size: 9px;
+  font-weight: 600;
+  color: #FAF4EE;
+}
+
+/* 2. Manifesto / Philosophy Narrative */
+.about-manifesto-section {
+  margin: 14px;
+  background: #FFFFFF;
+  border: 1px solid #ECE1D3;
+  border-radius: 14px;
   padding: 16px 14px;
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(61, 35, 20, 0.04);
+  text-align: center;
 }
 
 .about-section-tag {
-  font-size: 10.5px;
+  display: inline-block;
+  font-size: 9px;
   font-weight: 800;
   color: #85532F;
   letter-spacing: 0.6px;
+  text-transform: uppercase;
   margin-bottom: 4px;
 }
 
-.about-card-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #0F172A;
-  margin-bottom: 10px;
-  line-height: 1.35;
+.about-manifesto-title {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #2D1A10;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+  font-family: serif;
 }
 
-.about-paragraph {
-  font-size: 13px;
-  line-height: 1.6;
-  color: #475569;
-  margin-bottom: 10px;
+.about-manifesto-text {
+  font-size: 11.5px;
+  color: #6B5547;
+  line-height: 1.5;
+  margin: 0;
 }
 
-.about-pillars-grid {
+/* 3. The Himalayan Sourcing Journey (3-Step Visual Process) */
+.about-process-section {
+  margin: 18px 14px;
+}
+
+.about-steps-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   margin-top: 10px;
 }
 
-.about-pillar-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background-color: #F8FAFC;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #EDF2F7;
+.about-step-card {
+  background: #FFFFFF;
+  border: 1px solid #ECE1D3;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 4px rgba(61, 35, 20, 0.04);
 }
 
-.about-pillar-icon-box {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
+.about-step-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.about-step-num-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FAF4EE;
+  border: 1px solid #E2D2BE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: #85532F;
+  flex-shrink: 0;
+}
+
+.about-step-icon-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #FAF7F2;
+  border: 1px solid #ECE1D3;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.about-pillar-icon-box.teal {
-  background-color: #FAF4EE;
-  color: #85532F;
+.about-step-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #2D1A10;
+  margin: 0;
 }
 
-.about-pillar-icon-box.blue {
-  background-color: #FDF7E7;
-  color: #CBA243;
-}
-
-.about-pillar-icon-box.amber {
-  background-color: #FEF3C7;
-  color: #D97706;
-}
-
-.about-pillar-icon-box.green {
-  background-color: #DCFCE7;
-  color: #15803D;
-}
-
-.about-pillar-content h3 {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #0F172A;
-  margin-bottom: 3px;
-}
-
-.about-pillar-content p {
-  font-size: 12px;
-  color: #64748B;
+.about-step-desc {
+  font-size: 11px;
+  color: #6B5547;
   line-height: 1.45;
+  margin: 0;
 }
 
-.about-badges-row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
+/* 4. The 24-Hour Circadian Biological Flow */
+.about-circadian-section {
+  margin: 20px 14px;
 }
 
-.about-cert-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #F0FDF4;
-  border: 1px solid #DCFCE7;
-  color: #166534;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
+.about-section-sub {
+  font-size: 11px;
+  color: #78716C;
+  margin: -6px 0 12px 0;
+  line-height: 1.4;
 }
 
-.about-contact-list {
+.about-timeline-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 8px;
 }
 
-.about-contact-row {
+.about-time-block {
+  display: grid;
+  grid-template-columns: 66px 1fr;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.about-time-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.about-time-badge {
+  font-size: 9px;
+  font-weight: 800;
+  color: #85532F;
+  background: #FAF4EE;
+  border: 1px solid #E2D2BE;
+  border-radius: 10px;
+  padding: 2px 5px;
+  white-space: nowrap;
+}
+
+.about-time-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #CBA243;
+  box-shadow: 0 0 0 3px rgba(203, 162, 67, 0.22);
+}
+
+.about-time-card {
+  background: #FFFFFF;
+  border: 1px solid #ECE1D3;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 1px 4px rgba(61, 35, 20, 0.04);
+}
+
+.about-time-card:active {
+  transform: scale(0.98);
+}
+
+.about-time-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background-color: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  padding: 12px;
-  border-radius: 10px;
-  color: inherit;
-  text-decoration: none;
-  transition: background-color 0.15s ease;
+  gap: 5px;
+  margin-bottom: 3px;
 }
 
-.about-contact-row:not(.no-hover):hover {
-  background-color: #F1F5F9;
-}
-
-.about-contact-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background-color: #FAF4EE;
+.about-time-phase {
+  font-size: 8.5px;
+  font-weight: 800;
   color: #85532F;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.about-time-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #2D1A10;
+  margin: 0 0 3px 0;
+}
+
+.about-time-detail {
+  font-size: 10.5px;
+  color: #6B5547;
+  line-height: 1.35;
+  margin: 0 0 6px 0;
+}
+
+.about-time-instruction {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #85532F;
+  background: #FAF7F2;
+  border-radius: 6px;
+  padding: 3px 8px;
+  width: fit-content;
+}
+
+/* 5. The 3 Sacred Rituals Product Cards */
+.about-rituals-section {
+  margin: 18px 14px;
+}
+
+.about-section-heading {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #2D1A10;
+  margin: 2px 0 10px 0;
+}
+
+.about-ritual-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-ritual-card {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 12px;
+  background: #FFFFFF;
+  border: 1px solid #ECE1D3;
+  border-radius: 12px;
+  padding: 12px;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(61, 35, 20, 0.04);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.about-ritual-card:active {
+  transform: scale(0.98);
+}
+
+.about-ritual-card:hover {
+  border-color: #CBA243;
+}
+
+.about-ritual-media {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  background: #FAF4EE;
+  border: 1px solid #ECE1D3;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  padding: 6px;
+  overflow: hidden;
 }
 
-.about-contact-text {
-  flex: 1;
+.about-ritual-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.about-ritual-info {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
-.contact-label {
-  font-size: 11px;
-  color: #64748B;
+.about-ritual-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #85532F;
+  letter-spacing: 0.4px;
 }
 
-.contact-value {
-  font-size: 13px;
+.about-ritual-name {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #2D1A10;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.about-compounds-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin: 2px 0 4px 0;
+}
+
+.about-compound-tag {
+  font-size: 8.5px;
   font-weight: 700;
-  color: #0F172A;
+  color: #85532F;
+  background: #FAF4EE;
+  border: 1px solid #ECE1D3;
+  border-radius: 4px;
+  padding: 1.5px 5px;
 }
 
-.contact-arrow {
+.about-ritual-footer {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #85532F;
+}
+
+/* 6. ZENVORO vs Conventional Standard Comparison Table */
+.about-comparison-section {
+  margin: 18px 14px;
+}
+
+.about-compare-table {
+  background: #FFFFFF;
+  border: 1px solid #ECE1D3;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(61, 35, 20, 0.04);
+}
+
+.about-compare-head {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: 6px;
+  background: #FAF6F0;
+  border-bottom: 1px solid #ECE1D3;
+  padding: 8px 10px;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #2D1A10;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.compare-col-feature {
+  color: #78716C;
+}
+
+.compare-col-brand {
+  color: #85532F;
+  font-weight: 800;
+}
+
+.compare-col-other {
   color: #94A3B8;
 }
 
-.about-bottom-cta-wrap {
-  padding: 16px 12px;
+.about-compare-row {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: 6px;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid #F7F1EB;
+  font-size: 9.5px;
+  line-height: 1.25;
 }
 
-.about-explore-btn {
+.about-compare-row:last-child {
+  border-bottom: none;
+}
+
+.about-compare-row .compare-col-feature {
+  font-weight: 600;
+  color: #44403C;
+}
+
+.about-compare-row .compare-col-brand {
+  font-weight: 700;
+  color: #15803D;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.about-compare-row .compare-col-other {
+  font-weight: 500;
+  color: #94A3B8;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* 7. Laboratory Purity Standards */
+.about-purity-section {
+  margin: 18px 14px;
+  background: #FAF4EE;
+  border: 1px solid #ECE1D3;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.about-purity-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.about-purity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #ECE1D3;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.about-purity-item strong {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #2D1A10;
+  margin-bottom: 2px;
+}
+
+.about-purity-item p {
+  font-size: 10.5px;
+  color: #6B5547;
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* 8. Concierge & Contact */
+.about-concierge-section {
+  margin: 18px 14px 22px 14px;
+}
+
+.about-concierge-card {
+  background: #FFFFFF;
+  border: 1px solid #ECE1D3;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.about-concierge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 1px solid #FAF4EE;
+}
+
+.about-concierge-row:last-child {
+  border-bottom: none;
+}
+
+.concierge-lbl {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #8A776A;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.concierge-val {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #2D1A10;
+}
+
+.about-cta-container {
+  margin-top: 14px;
+}
+
+.about-main-cta-btn {
   width: 100%;
+  height: 44px;
   background: linear-gradient(135deg, #85532F 0%, #5D371E 100%);
   color: #FFFFFF;
-  padding: 14px;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  border: none;
   border-radius: 10px;
-  font-size: 15px;
-  font-weight: 700;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  border: none;
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(0, 135, 138, 0.25);
-  transition: all 0.15s ease;
+  box-shadow: 0 3px 10px rgba(133, 83, 47, 0.25);
+  transition: opacity 0.15s ease;
 }
 
-.about-explore-btn:hover {
-  filter: brightness(1.05);
-}
-
-.about-explore-btn:active {
-  transform: scale(0.98);
+.about-main-cta-btn:active {
+  opacity: 0.95;
 }
 
 /* -------------------------------------------------------

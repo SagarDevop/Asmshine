@@ -32,7 +32,7 @@ export const AboutModal = ({ isOpen, onClose }) => {
               </div>
               <div className="about-feature-info">
                 <h4>18,000+ Ft Himalayan Shilajit</h4>
-                <p>Pure grade-A resin with >80% bioactive Fulvic Acid and 24K gold dust.</p>
+                <p>Pure grade-A resin with &gt;80% bioactive Fulvic Acid and 24K gold dust.</p>
               </div>
             </div>
 

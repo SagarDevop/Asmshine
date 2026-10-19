@@ -1,18 +1,26 @@
 import React from 'react';
 import {
   ArrowLeft,
-  Sparkles,
+  Crown,
   ShieldCheck,
-  Zap,
+  Flame,
   Brain,
   Moon,
-  Award,
   Phone,
   Mail,
   MapPin,
   CheckCircle2,
   ChevronRight,
-  Share2
+  Share2,
+  Sparkles,
+  ShoppingBag,
+  Sun,
+  Mountain,
+  Award,
+  Clock,
+  Compass,
+  Check,
+  X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
@@ -50,7 +58,7 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
 
   return (
     <div className="about-page-view">
-      {/* 1. Top Bar */}
+      {/* 1. Sleek Top Bar */}
       <header className="page-top-header">
         <button
           type="button"
@@ -58,10 +66,10 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
           onClick={handleBack}
           aria-label="Back to Home"
         >
-          <ArrowLeft size={22} />
+          <ArrowLeft size={20} />
         </button>
         <div className="page-header-title-box" onClick={handleBack}>
-          <img src="/images/logo.png" alt="ZENVORO" className="page-mini-logo" style={{ borderRadius: '50%' }} />
+          <img src="/images/logo.png" alt="ZENVORO" className="page-mini-logo" />
           <span className="page-header-title">The ZENVORO Philosophy</span>
         </div>
         <button
@@ -70,147 +78,415 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
           onClick={handleShare}
           aria-label="Share page"
         >
-          <Share2 size={20} />
+          <Share2 size={18} />
         </button>
       </header>
 
-      {/* 2. Hero Brand Section */}
+      {/* 2. Luxury Hero Card with Cinematic Himalayan Backdrop */}
       <section className="about-hero-card">
-        <div className="about-hero-badge">
-          <Sparkles size={13} fill="#CBA243" color="#CBA243" />
-          <span>OUR SACRED GENESIS</span>
-        </div>
         <img
-          src="/images/logo.png"
-          alt="ZENVORO Logo"
-          className="about-hero-logo"
-          style={{ width: '84px', height: '84px', borderRadius: '50%', border: '2px solid #CBA243', objectFit: 'cover' }}
+          src="/images/banners/zenvoro_banner_shilajit.jpg"
+          alt="Himalayan Sourcing"
+          className="about-hero-bg-img"
         />
-        <h1 className="about-hero-heading">ZENVORO</h1>
-        <p className="about-hero-tagline">
-          ELEVATE YOUR INNER POWER
+        <div className="about-hero-gradient" />
+
+        <div className="about-hero-content">
+          <div className="about-hero-badge">
+            <Crown size={12} color="#E5C383" />
+            <span>AYURVEDIC LUXURY MAISON</span>
+          </div>
+
+          <img
+            src="/images/logo.png"
+            alt="ZENVORO Crest"
+            className="about-hero-crest"
+          />
+
+          <h1 className="about-hero-heading">ZENVORO</h1>
+          <p className="about-hero-tagline">ELEVATE YOUR INNER POWER</p>
+
+          <div className="about-hero-meta-strip">
+            <span className="about-meta-chip">18,000+ Ft Sourcing</span>
+            <span className="about-meta-chip">24K Gold Grade</span>
+            <span className="about-meta-chip">NABL Lab Tested</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. The Genesis Story / Manifesto */}
+      <section className="about-manifesto-section">
+        <span className="about-section-tag">THE SACRED GENESIS</span>
+        <h2 className="about-manifesto-title">Born For Those Who Refuse Half-Capacity</h2>
+        <p className="about-manifesto-text">
+          Modern living drains human vitality through synthetic stimulants, mental exhaustion, and disrupted sleep cycles. ZENVORO was created to restore human biological potential — uniting authentic 5,000-year-old Vedic Rasashastra with modern clinical neurobiology.
         </p>
-        <div className="about-hero-meta">
-          <span>Upper Himalayan Sourcing (18,000+ Ft)</span>
-          <span className="about-meta-dot">•</span>
-          <span>Made in India 🇮🇳</span>
-          <span className="about-meta-dot">•</span>
-          <span>Ayush & GMP Certified</span>
-        </div>
       </section>
 
-      {/* 3. The 3 Pillars */}
-      <section className="about-section">
-        <div className="about-section-tag">THE 3 ELEVATION PILLARS</div>
-        <h2 className="about-section-title">Where Ancient Alchemy Meets Modern Neurobiology</h2>
-        <p className="about-narrative">
-          <strong>ZENVORO</strong> was created for those who refuse to live at half-capacity. We believe boundless physical stamina, razor-sharp mental focus, and restorative sleep are not privileges — they are your biological birthright.
-        </p>
-
-        <div className="about-features-grid">
-          <div className="about-feature-card">
-            <div className="about-feature-icon" style={{ background: '#FBF4E4', color: '#85532F' }}>
-              <Zap size={22} color="#CBA243" />
-            </div>
-            <h3>Pillar I: Physical Inner Power</h3>
-            <p>
-              100% Pure Himalayan Shilajit harvested above 18,000 ft, infused with 24K Swarna Bhasma (Gold) and 80%+ certified Fulvic Acid to supercharge cellular ATP energy and hormonal vigor.
-            </p>
-          </div>
-
-          <div className="about-feature-card">
-            <div className="about-feature-icon" style={{ background: '#FBF4E4', color: '#85532F' }}>
-              <Brain size={22} color="#CBA243" />
-            </div>
-            <h3>Pillar II: Cognitive Zenith</h3>
-            <p>
-              Full-spectrum Lion’s Mane mushroom and organic Brahmi (50% Bacosides) to stimulate Neuro-Growth Factor (NGF), banishing brain fog and powering sustained creative focus.
-            </p>
-          </div>
-
-          <div className="about-feature-card">
-            <div className="about-feature-icon" style={{ background: '#FBF4E4', color: '#85532F' }}>
-              <Moon size={22} color="#CBA243" />
-            </div>
-            <h3>Pillar III: Cellular Restoration</h3>
-            <p>
-              Sublingual elixir drops featuring Kashmiri Saffron and Magnesium Glycinate that calm neurotransmitters, triggering restorative REM sleep and nighttime cellular repair.
-            </p>
-          </div>
+      {/* 4. The Himalayan Sourcing Journey (3-Step Visual Process) */}
+      <section className="about-process-section">
+        <div className="about-section-header">
+          <span className="about-section-tag">AUTHENTIC ALCHEMY</span>
+          <h3 className="about-section-heading">The 3-Stage Sacred Sourcing Journey</h3>
         </div>
-      </section>
 
-      {/* 4. Quality Assurances */}
-      <section className="about-section certs-section">
-        <div className="about-section-tag">UNCOMPROMISING PURITY</div>
-        <h2 className="about-section-title">Verified by Science & Tradition</h2>
-
-        <div className="about-certs-list">
-          <div className="about-cert-item">
-            <CheckCircle2 size={18} color="#CBA243" />
-            <div>
-              <strong>NABL 3rd-Party Lab Verified</strong>
-              <p>Every single batch is tested for purity, potency, and zero traces of Lead, Mercury, Arsenic or Cadmium.</p>
+        <div className="about-steps-grid">
+          {/* Step 1 */}
+          <div className="about-step-card">
+            <div className="about-step-top">
+              <span className="about-step-num-circle">1</span>
+              <div className="about-step-icon-wrap">
+                <Mountain size={16} color="#85532F" />
+              </div>
+              <h4 className="about-step-title">18,000+ Ft Wildcrafting</h4>
             </div>
+            <p className="about-step-desc">
+              Hand-harvested by indigenous mountain sherpas from high-altitude rock fissures where extreme pressure and pristine cold yield the purest mineral resin.
+            </p>
           </div>
 
-          <div className="about-cert-item">
-            <CheckCircle2 size={18} color="#CBA243" />
-            <div>
-              <strong>100% Plant & Ayurvedic Origins</strong>
-              <p>Zero synthetic caffeine, zero habit-forming sedatives, zero artificial binders or chemical fillers.</p>
+          {/* Step 2 */}
+          <div className="about-step-card">
+            <div className="about-step-top">
+              <span className="about-step-num-circle">2</span>
+              <div className="about-step-icon-wrap">
+                <Sun size={16} color="#CBA243" />
+              </div>
+              <h4 className="about-step-title">90-Day Surya Tapi</h4>
             </div>
+            <p className="about-step-desc">
+              Purified using ancient slow sun-drying in natural Himalayan spring water. Never boiled or chemical-extracted, preserving 84+ ionic trace minerals and &gt;80% fulvic acid.
+            </p>
           </div>
 
-          <div className="about-cert-item">
-            <CheckCircle2 size={18} color="#CBA243" />
-            <div>
-              <strong>Ethical High-Altitude Harvesting</strong>
-              <p>Hand-collected by indigenous mountain sherpas preserving the pristine ecosystem of the upper Himalayas.</p>
+          {/* Step 3 */}
+          <div className="about-step-card">
+            <div className="about-step-top">
+              <span className="about-step-num-circle">3</span>
+              <div className="about-step-icon-wrap">
+                <Sparkles size={16} color="#CBA243" />
+              </div>
+              <h4 className="about-step-title">24K Gold Swarna Bhasma</h4>
             </div>
+            <p className="about-step-desc">
+              Infused with nano-purified 24K edible Gold Bhasma processed according to classical Rasashastra texts to enhance cellular absorption and deep rejuvenation.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* 5. Concierge & Contact */}
-      <section className="about-section contact-section">
-        <div className="about-section-tag">PATRON CONCIERGE</div>
-        <h2 className="about-section-title">We Are Here For Your Journey</h2>
+      {/* 5. The 24-Hour Circadian Biological Flow (Interactive Visual Timeline) */}
+      <section className="about-circadian-section">
+        <div className="about-section-header">
+          <span className="about-section-tag">24-HOUR BIO-HARMONY</span>
+          <h3 className="about-section-heading">How The 3 Rituals Elevate Your Entire Day</h3>
+          <p className="about-section-sub">
+            Engineered as a synergistic 24-hour cycle to harmonize physical power, cognitive focus, and cellular repair.
+          </p>
+        </div>
 
-        <div className="about-contact-card">
-          <div className="about-contact-row">
-            <Phone size={18} color="#CBA243" />
-            <div>
-              <span className="contact-label">Toll-Free Wellness Hotline</span>
-              <span className="contact-value">1800-ZENVORO (936-8676)</span>
+        <div className="about-timeline-list">
+          {/* Morning Power */}
+          <div className="about-time-block morning">
+            <div className="about-time-indicator">
+              <span className="about-time-badge">07:00 AM</span>
+              <div className="about-time-dot" />
+            </div>
+            <div className="about-time-card" onClick={() => navigate('/product/prod_1')}>
+              <div className="about-time-header">
+                <Flame size={15} color="#85532F" />
+                <span className="about-time-phase">MORNING IGNITION</span>
+              </div>
+              <h4 className="about-time-title">Ritual I: Himalayan Shilajit Gold</h4>
+              <p className="about-time-detail">
+                Supercharges mitochondrial ATP energy, fuels natural stamina, and optimizes hormonal vigor without caffeine jitters.
+              </p>
+              <div className="about-time-instruction">
+                <span>Pea-sized resin in warm water or milk</span>
+              </div>
             </div>
           </div>
 
-          <a href="mailto:concierge@zenvorowellness.com" className="about-contact-row">
-            <Mail size={18} color="#CBA243" />
+          {/* Afternoon Focus */}
+          <div className="about-time-block day">
+            <div className="about-time-indicator">
+              <span className="about-time-badge">01:00 PM</span>
+              <div className="about-time-dot" />
+            </div>
+            <div className="about-time-card" onClick={() => navigate('/product/prod_2')}>
+              <div className="about-time-header">
+                <Brain size={15} color="#85532F" />
+                <span className="about-time-phase">MID-DAY CLARITY</span>
+              </div>
+              <h4 className="about-time-title">Ritual II: Nootropic Mind &amp; Focus</h4>
+              <p className="about-time-detail">
+                Full-spectrum Lion’s Mane and organic Brahmi trigger alpha brainwaves, eliminating afternoon brain fog and powering creative flow.
+              </p>
+              <div className="about-time-instruction">
+                <span>2 capsules after lunch with water</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Night Restoration */}
+          <div className="about-time-block night">
+            <div className="about-time-indicator">
+              <span className="about-time-badge">10:00 PM</span>
+              <div className="about-time-dot" />
+            </div>
+            <div className="about-time-card" onClick={() => navigate('/product/prod_3')}>
+              <div className="about-time-header">
+                <Moon size={15} color="#85532F" />
+                <span className="about-time-phase">NIGHT RESTORATION</span>
+              </div>
+              <h4 className="about-time-title">Ritual III: Cellular Recovery Elixir</h4>
+              <p className="about-time-detail">
+                Kashmiri Saffron and bioavailable magnesium calm neurotransmitters, triggering restorative REM sleep and cellular repair.
+              </p>
+              <div className="about-time-instruction">
+                <span>1 full dropper under tongue before sleep</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. The 3 Sacred Rituals Product Cards */}
+      <section className="about-rituals-section">
+        <div className="about-section-header">
+          <span className="about-section-tag">THE FLAGSHIP FORMULATIONS</span>
+          <h3 className="about-section-heading">Touch To Explore Each Sacred Ritual</h3>
+        </div>
+
+        <div className="about-ritual-cards-list">
+          {/* Product 1 */}
+          <div
+            className="about-ritual-card"
+            onClick={() => navigate('/product/prod_1')}
+          >
+            <div className="about-ritual-media">
+              <img
+                src="/images/products/zenvoro_shilajit_gold.png"
+                alt="Shilajit Gold Resin"
+                className="about-ritual-img"
+              />
+            </div>
+            <div className="about-ritual-info">
+              <div className="about-ritual-tag">
+                <Flame size={12} color="#85532F" />
+                <span>RITUAL I • RESIN</span>
+              </div>
+              <h4 className="about-ritual-name">Himalayan Shilajit Gold</h4>
+              <div className="about-compounds-row">
+                <span className="about-compound-tag">&gt;80% Fulvic Acid</span>
+                <span className="about-compound-tag">24K Gold</span>
+              </div>
+              <div className="about-ritual-footer">
+                <span className="about-ritual-link">View Details</span>
+                <ChevronRight size={13} />
+              </div>
+            </div>
+          </div>
+
+          {/* Product 2 */}
+          <div
+            className="about-ritual-card"
+            onClick={() => navigate('/product/prod_2')}
+          >
+            <div className="about-ritual-media">
+              <img
+                src="/images/products/zenvoro_nootropic_focus.png"
+                alt="Nootropic Mind & Focus"
+                className="about-ritual-img"
+              />
+            </div>
+            <div className="about-ritual-info">
+              <div className="about-ritual-tag">
+                <Brain size={12} color="#85532F" />
+                <span>RITUAL II • CAPSULES</span>
+              </div>
+              <h4 className="about-ritual-name">Nootropic Mind &amp; Focus</h4>
+              <div className="about-compounds-row">
+                <span className="about-compound-tag">Lion’s Mane</span>
+                <span className="about-compound-tag">Brahmi 50%</span>
+              </div>
+              <div className="about-ritual-footer">
+                <span className="about-ritual-link">View Details</span>
+                <ChevronRight size={13} />
+              </div>
+            </div>
+          </div>
+
+          {/* Product 3 */}
+          <div
+            className="about-ritual-card"
+            onClick={() => navigate('/product/prod_3')}
+          >
+            <div className="about-ritual-media">
+              <img
+                src="/images/products/zenvoro_recovery_elixir.png"
+                alt="Cellular Recovery Elixir"
+                className="about-ritual-img"
+              />
+            </div>
+            <div className="about-ritual-info">
+              <div className="about-ritual-tag">
+                <Moon size={12} color="#85532F" />
+                <span>RITUAL III • ELIXIR</span>
+              </div>
+              <h4 className="about-ritual-name">Cellular Recovery Elixir</h4>
+              <div className="about-compounds-row">
+                <span className="about-compound-tag">Kashmiri Saffron</span>
+                <span className="about-compound-tag">Magnesium Glycinate</span>
+              </div>
+              <div className="about-ritual-footer">
+                <span className="about-ritual-link">View Details</span>
+                <ChevronRight size={13} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. ZENVORO vs Conventional Standard (Visual Trust Comparison Table) */}
+      <section className="about-comparison-section">
+        <div className="about-section-header">
+          <span className="about-section-tag">PURITY BENCHMARK</span>
+          <h3 className="about-section-heading">Why ZENVORO Sets The Gold Standard</h3>
+        </div>
+
+        <div className="about-compare-table">
+          <div className="about-compare-head">
+            <span className="compare-col-feature">Metric</span>
+            <span className="compare-col-brand">ZENVORO</span>
+            <span className="compare-col-other">Ordinary Brands</span>
+          </div>
+
+          <div className="about-compare-row">
+            <span className="compare-col-feature">Harvest Altitude</span>
+            <span className="compare-col-brand">
+              <Check size={13} color="#15803D" /> Above 18,000 Ft
+            </span>
+            <span className="compare-col-other">
+              <X size={13} color="#DC2626" /> Low commercial hills
+            </span>
+          </div>
+
+          <div className="about-compare-row">
+            <span className="compare-col-feature">Purification</span>
+            <span className="compare-col-brand">
+              <Check size={13} color="#15803D" /> 90-Day Sun Surya Tapi
+            </span>
+            <span className="compare-col-other">
+              <X size={13} color="#DC2626" /> High-heat boiling
+            </span>
+          </div>
+
+          <div className="about-compare-row">
+            <span className="compare-col-feature">Precious Gold</span>
+            <span className="compare-col-brand">
+              <Check size={13} color="#15803D" /> 24K Swarna Bhasma
+            </span>
+            <span className="compare-col-other">
+              <X size={13} color="#DC2626" /> Zero gold added
+            </span>
+          </div>
+
+          <div className="about-compare-row">
+            <span className="compare-col-feature">Heavy Metal Tests</span>
+            <span className="compare-col-brand">
+              <Check size={13} color="#15803D" /> NABL 3rd-Party Lab
+            </span>
+            <span className="compare-col-other">
+              <X size={13} color="#DC2626" /> Often untested
+            </span>
+          </div>
+
+          <div className="about-compare-row">
+            <span className="compare-col-feature">Dependency Risk</span>
+            <span className="compare-col-brand">
+              <Check size={13} color="#15803D" /> Non-habit forming
+            </span>
+            <span className="compare-col-other">
+              <X size={13} color="#DC2626" /> Synthetic caffeine
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. Laboratory Science & Purity Credentials */}
+      <section className="about-purity-section">
+        <span className="about-section-tag">UNCOMPROMISING STANDARDS</span>
+        <h3 className="about-section-heading">Verified By Modern Laboratory Science</h3>
+
+        <div className="about-purity-grid">
+          <div className="about-purity-item">
+            <ShieldCheck size={20} color="#85532F" />
             <div>
-              <span className="contact-label">Patron Concierge Email</span>
-              <span className="contact-value">concierge@zenvorowellness.com</span>
+              <strong>NABL 3rd-Party Certified</strong>
+              <p>Every single batch tested for zero heavy metals, zero lead, and &gt;80% active fulvic acid.</p>
+            </div>
+          </div>
+
+          <div className="about-purity-item">
+            <Sparkles size={20} color="#CBA243" />
+            <div>
+              <strong>24K Swarna Bhasma Infused</strong>
+              <p>Authentic Ayurvedic nano-purified gold prepared according to classical Rasashastra texts.</p>
+            </div>
+          </div>
+
+          <div className="about-purity-item">
+            <CheckCircle2 size={20} color="#85532F" />
+            <div>
+              <strong>100% Ethical &amp; Non-Habit Forming</strong>
+              <p>Zero artificial binders, zero synthetic caffeine, zero habit-forming sleep sedatives.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 9. Patron Concierge & Contact */}
+      <section className="about-concierge-section">
+        <span className="about-section-tag">PATRON CONCIERGE</span>
+        <h3 className="about-section-heading">Dedicated Wellness Concierge</h3>
+
+        <div className="about-concierge-card">
+          <div className="about-concierge-row">
+            <Phone size={16} color="#85532F" />
+            <div>
+              <span className="concierge-lbl">Toll-Free Wellness Hotline</span>
+              <span className="concierge-val">1800-ZENVORO (936-8676)</span>
+            </div>
+          </div>
+
+          <a href="mailto:concierge@zenvorowellness.com" className="about-concierge-row">
+            <Mail size={16} color="#85532F" />
+            <div>
+              <span className="concierge-lbl">Patron Concierge Email</span>
+              <span className="concierge-val">concierge@zenvorowellness.com</span>
             </div>
           </a>
 
-          <div className="about-contact-row">
-            <MapPin size={18} color="#CBA243" />
+          <div className="about-concierge-row">
+            <MapPin size={16} color="#85532F" />
             <div>
-              <span className="contact-label">Maison Headquarters</span>
-              <span className="contact-value">Zenvoro Wellness Maison, Barakhamba Road, Connaught Place, New Delhi 110001</span>
+              <span className="concierge-lbl">Maison Headquarters</span>
+              <span className="concierge-val">Zenvoro Wellness Maison, Connaught Place, New Delhi 110001</span>
             </div>
           </div>
         </div>
 
-        <div className="about-cta-box">
+        {/* Primary CTA */}
+        <div className="about-cta-container">
           <button
             type="button"
-            className="about-explore-btn"
+            className="about-main-cta-btn"
             onClick={handleExplore}
           >
-            <span>SHOP THE 3 SACRED RITUALS</span>
-            <ChevronRight size={16} />
+            <ShoppingBag size={15} />
+            <span>EXPLORE THE 3 RITUALS</span>
+            <ChevronRight size={15} />
           </button>
         </div>
       </section>
