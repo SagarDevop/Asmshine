@@ -36,11 +36,6 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
           loading="lazy"
         />
 
-        {/* Size Pill when positioned on image overlay (e.g. Everyday essentials) */}
-        {sizePosition === 'overlay' && product.size && (
-          <div className="size-pill-overlay">{product.size}</div>
-        )}
-
         {/* Rating Badge (bottom-left overlay on image) */}
         {showRating && product.rating && (
           <div className="rating-badge">
@@ -55,11 +50,6 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
 
       {/* Product Details & Pricing */}
       <div className="product-details">
-        {/* Size Pill when positioned below image (e.g. Best Sellers) */}
-        {sizePosition === 'below' && product.size && (
-          <div className="product-size-pill">{product.size}</div>
-        )}
-
         <h3 className="product-name" title={product.name}>
           {product.shortName || product.name}
         </h3>

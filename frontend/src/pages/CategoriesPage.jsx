@@ -215,18 +215,15 @@ export const CategoriesPage = ({
                   </div>
 
                   <div className="cat-prod-details">
-                    <div className="cat-prod-brand-row">
-                      <span className="cat-prod-brand">ANCHAY BAGS</span>
-                      {product.size && (
-                        <span className="cat-prod-size-badge">{product.size}</span>
-                      )}
-                    </div>
                     <h3 className="cat-prod-name">{product.name}</h3>
 
                     {/* Rating Pill */}
                     <div className="cat-prod-rating-pill">
                       <span>{product.rating || '4.9'}</span>
                       <Star size={10} fill="#FFFFFF" color="#FFFFFF" />
+                      {product.reviewCount && (
+                        <span className="cat-prod-reviews-count">({product.reviewCount})</span>
+                      )}
                     </div>
 
                     {/* Price Row */}
@@ -239,18 +236,6 @@ export const CategoriesPage = ({
                         <span className="cat-prod-disc">{product.discountPercent}% off</span>
                       )}
                     </div>
-
-                    <button
-                      type="button"
-                      className="cat-prod-add-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCart(product.id, 1);
-                      }}
-                    >
-                      <Plus size={14} />
-                      <span>ADD</span>
-                    </button>
                   </div>
                 </div>
               ))}
