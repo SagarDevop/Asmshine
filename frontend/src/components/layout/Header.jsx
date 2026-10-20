@@ -3,24 +3,77 @@ import {
   MapPin,
   ChevronRight,
   Search,
-  Layers,
-  Flame,
-  Brain,
-  Moon,
-  Sparkles
+  Backpack,
+  Briefcase,
+  Luggage,
+  ShoppingBag,
+  Compass,
+  Package
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { SearchOverlay } from '../search/SearchOverlay';
 
-const categoryPillMap = {
-  inner_power: { label: 'Shilajit Gold', icon: Flame },
-  brain_focus: { label: 'Mind & Focus', icon: Brain },
-  deep_recovery: { label: 'Deep Sleep', icon: Moon }
-};
+const CATEGORY_TABS = [
+  {
+    id: 'all',
+    label: 'For You',
+    icon: ShoppingBag,
+    bgColor: '#FFF7ED',       // Warm pastel gold/amber (matches screenshot 'For You')
+    borderColor: '#FED7AA',
+    iconColor: '#EA580C'
+  },
+  {
+    id: 'backpacks',
+    label: 'Backpacks',
+    icon: Backpack,
+    bgColor: '#ECFDF5',       // Soft pastel mint
+    borderColor: '#A7F3D0',
+    iconColor: '#059669'
+  },
+  {
+    id: 'laptop_bags',
+    label: 'Laptop Bags',
+    icon: Briefcase,
+    bgColor: '#EFF6FF',       // Soft pastel sky blue
+    borderColor: '#BFDBFE',
+    iconColor: '#2563EB'
+  },
+  {
+    id: 'travel_duffels',
+    label: 'Travel Duffels',
+    icon: Luggage,
+    bgColor: '#FFF1F2',       // Soft pastel peach / rose
+    borderColor: '#FECDD3',
+    iconColor: '#E11D48'
+  },
+  {
+    id: 'totes',
+    label: 'Tote Bags',
+    icon: ShoppingBag,
+    bgColor: '#FAF5FF',       // Soft pastel lilac / purple
+    borderColor: '#E9D5FF',
+    iconColor: '#9333EA'
+  },
+  {
+    id: 'slings_crossbody',
+    label: 'Slings',
+    icon: Compass,
+    bgColor: '#F0FDFA',       // Soft pastel teal
+    borderColor: '#99F6E4',
+    iconColor: '#0D9488'
+  },
+  {
+    id: 'wallets_organizers',
+    label: 'Organizers',
+    icon: Package,
+    bgColor: '#F8FAFC',       // Soft pastel slate
+    borderColor: '#CBD5E1',
+    iconColor: '#475569'
+  }
+];
 
 export const Header = ({
   onSearch,
-  categories = [],
   selectedCategory = null,
   onSelectCategory = () => {},
   onSwitchTab
@@ -32,17 +85,35 @@ export const Header = ({
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 28);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);
-    if (onSearch) onSearch(e.target.value);
+  const handleTabClick = (tabId, e) => {
+    if (tabId === 'all') {
+      onSelectCategory(null);
+    } else {
+      onSelectCategory(tabId);
+    }
+    if (e?.currentTarget) {
+      e.currentTarget.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest'
+      });
+    }
   };
 
   const cycleLocation = () => {
@@ -70,12 +141,12 @@ export const Header = ({
           >
             <img
               src="/images/logo.png"
-              alt="ZENVORO"
+              alt="ANCHAY"
               className="fk-brand-logo-img"
             />
             <div className="fk-brand-text-block">
-              <span className="fk-brand-name">ZENVORO</span>
-              <span className="fk-brand-tagline">Ayurvedic Maison</span>
+              <span className="fk-brand-name">ANCHAY</span>
+              <span className="fk-brand-tagline">Premium Bags</span>
             </div>
           </div>
 
@@ -86,16 +157,16 @@ export const Header = ({
             onClick={cycleLocation}
             title="Change Delivery Location"
           >
-            <MapPin size={12} color="#85532F" />
+            <MapPin size={12} color="#1C8E8F" />
             <span className="fk-location-text">{location}</span>
-            <ChevronRight size={12} color="#85532F" />
+            <ChevronRight size={12} color="#1C8E8F" />
           </button>
         </div>
       </div>
 
-      {/* 2. Sticky Header with Search & Classy Category Pills */}
+      {/* 2. Sticky Header with Search & Flipkart Squircle Category Tabs */}
       <header className={`fk-sticky-container mobile-only ${isScrolled ? 'scrolled' : ''}`}>
-        {/* Search Bar */}
+        {/* Search Bar Row with subtle light blue ambient gradient */}
         <div className="fk-search-bar-row">
           <div
             className="fk-search-pill-wrapper"
@@ -106,7 +177,7 @@ export const Header = ({
               if (e.key === 'Enter' || e.key === ' ') setIsSearchOpen(true);
             }}
           >
-            <Search size={16} className="fk-search-icon" />
+            <Search size={18} className="fk-search-icon" />
             <input
               type="text"
               className="fk-search-input-pill"
@@ -117,38 +188,41 @@ export const Header = ({
                 setIsSearchOpen(true);
               }}
               readOnly
-              placeholder="Search Shilajit Gold, Nootropic, Elixir..."
+              placeholder="Search for Products"
             />
           </div>
         </div>
 
-        {/* Minimal Classy Category Filter Track */}
-        <div className="fk-category-pills-row no-scrollbar">
-          {/* "All Rituals" Pill */}
-          <button
-            type="button"
-            className={`fk-cat-pill ${!selectedCategory ? 'active' : ''}`}
-            onClick={() => onSelectCategory(null)}
-          >
-            <Layers size={13} className="fk-cat-pill-icon" />
-            <span>All Rituals</span>
-          </button>
-
-          {/* Dynamic Category Pills */}
-          {categories.map((cat) => {
-            const mapped = categoryPillMap[cat.id] || { label: cat.name, icon: Sparkles };
-            const IconComp = mapped.icon;
-            const isActive = selectedCategory === cat.id;
+        {/* Flipkart Category Tabs Track */}
+        <div className="fk-category-tabs-track no-scrollbar">
+          {CATEGORY_TABS.map((cat) => {
+            const isActive = (!selectedCategory && cat.id === 'all') || selectedCategory === cat.id;
+            const IconComp = cat.icon;
 
             return (
               <button
                 type="button"
                 key={cat.id}
-                className={`fk-cat-pill ${isActive ? 'active' : ''}`}
-                onClick={() => onSelectCategory(isActive ? null : cat.id)}
+                className={`fk-cat-tab-btn ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleTabClick(cat.id, e)}
               >
-                <IconComp size={13} className="fk-cat-pill-icon" />
-                <span>{mapped.label}</span>
+                {/* Squircle Icon Box: smoothly disappears/collapses when user scrolls down! */}
+                <div
+                  className="fk-cat-squircle-box"
+                  style={{
+                    backgroundColor: cat.bgColor,
+                    borderColor: cat.borderColor,
+                    color: cat.iconColor
+                  }}
+                >
+                  <IconComp size={21} strokeWidth={1.9} />
+                </div>
+
+                {/* Category Text Label: stays stuck under the search bar */}
+                <span className="fk-cat-tab-label">{cat.label}</span>
+
+                {/* Flipkart Active Underline Indicator Bar */}
+                {isActive && <div className="fk-cat-active-bar" />}
               </button>
             );
           })}
@@ -164,3 +238,4 @@ export const Header = ({
     </>
   );
 };
+

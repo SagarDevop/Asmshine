@@ -32,15 +32,15 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
           >
             <img 
               src="/images/logo.png" 
-              alt="ZENVORO Logo" 
-              style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid #CBA243' }} 
+              alt="ANCHAY Logo" 
+              style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid #1C8E8F' }} 
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '2px', color: '#3D2314', fontFamily: 'serif' }}>
-                ZENVORO
+              <span style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '2px', color: '#0F2327', fontFamily: 'serif' }}>
+                ANCHAY
               </span>
-              <span style={{ fontSize: '0.62rem', fontWeight: '600', letterSpacing: '1.5px', color: '#85532F', marginTop: '-3px' }}>
-                ELEVATE YOUR INNER POWER
+              <span style={{ fontSize: '0.62rem', fontWeight: '600', letterSpacing: '1.5px', color: '#1C8E8F', marginTop: '-3px' }}>
+                PREMIUM BAGS & CARRYWEAR
               </span>
             </div>
           </div>
@@ -50,9 +50,9 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             style={{ marginLeft: '16px' }}
             onClick={() => showToast('Delivery location: Delhi NCR & Pan India (Free Express Shipping)')}
           >
-            <MapPin size={16} color="#85532F" />
+            <MapPin size={16} color="#1C8E8F" />
             <span>Deliver to <span className="location-name">New Delhi 110001</span></span>
-            <ChevronDown size={14} color="#6B5547" />
+            <ChevronDown size={14} color="#3D5A60" />
           </button>
         </div>
 
@@ -71,7 +71,7 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             <input
               type="text"
               className="search-input"
-              placeholder="Search Shilajit Gold, Nootropic Focus, Cellular Recovery Elixir..."
+              placeholder="Search bags, totes, backpacks, duffels, slings..."
               onFocus={() => setIsSearchOpen(true)}
               onClick={(e) => {
                 e.stopPropagation();
@@ -88,15 +88,15 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             className="desktop-nav-btn"
             onClick={() => handleNav('categories')}
           >
-            <Sparkles size={16} color="#CBA243" />
-            <span>The 3 Rituals</span>
+            <Sparkles size={16} color="#1C8E8F" />
+            <span>Catalog</span>
           </button>
 
           <button
             className="desktop-nav-btn"
             onClick={() => showToast(`Wishlist contains ${wishlist.size} saved items`)}
           >
-            <Heart size={18} color={wishlist.size > 0 ? '#DC2626' : '#3D2314'} />
+            <Heart size={18} color={wishlist.size > 0 ? '#DC2626' : '#0F2327'} />
             <span>Wishlist ({wishlist.size})</span>
           </button>
 
@@ -105,7 +105,7 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             style={{ position: 'relative' }}
             onClick={() => handleNav('cart')}
           >
-            <ShoppingBag size={18} color="#85532F" />
+            <ShoppingBag size={18} color="#1C8E8F" />
             <span>Cart</span>
             {cartCount > 0 && (
               <span className="nav-badge-pill" style={{ position: 'relative', top: 'auto', right: 'auto', marginLeft: '4px' }}>

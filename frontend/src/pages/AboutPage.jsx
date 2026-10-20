@@ -3,9 +3,9 @@ import {
   ArrowLeft,
   Crown,
   ShieldCheck,
-  Flame,
-  Brain,
-  Moon,
+  Backpack,
+  Briefcase,
+  Luggage,
   Phone,
   Mail,
   MapPin,
@@ -14,8 +14,7 @@ import {
   Share2,
   Sparkles,
   ShoppingBag,
-  Sun,
-  Mountain,
+  Layers,
   Award,
   Clock,
   Compass,
@@ -36,15 +35,15 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
 
   const handleExplore = () => {
     if (onExploreCatalog) onExploreCatalog();
-    else navigate('/');
+    else navigate('/categories');
   };
 
   const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'ZENVORO — Elevate Your Inner Power',
-          text: 'Discover ZENVORO: Pure Himalayan Shilajit Gold, Nootropic Focus & Cellular Elixirs',
+          title: 'Anchay Bags — Engineered For Modern Journeys',
+          text: 'Discover Anchay: Handcrafted Backpacks, Executive Briefcases, Travel Duffels & Totes',
           url: window.location.href
         });
       } catch (e) {
@@ -69,8 +68,8 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
           <ArrowLeft size={20} />
         </button>
         <div className="page-header-title-box" onClick={handleBack}>
-          <img src="/images/logo.png" alt="ZENVORO" className="page-mini-logo" />
-          <span className="page-header-title">The ZENVORO Philosophy</span>
+          <img src="/images/logo.png" alt="ANCHAY" className="page-mini-logo" />
+          <span className="page-header-title">The Anchay Philosophy</span>
         </div>
         <button
           type="button"
@@ -82,52 +81,52 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
         </button>
       </header>
 
-      {/* 2. Luxury Hero Card with Cinematic Himalayan Backdrop */}
+      {/* 2. Luxury Hero Card with Cinematic Bag Visual */}
       <section className="about-hero-card">
         <img
-          src="/images/banners/zenvoro_banner_shilajit.jpg"
-          alt="Himalayan Sourcing"
+          src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1200&q=80"
+          alt="Anchay Bags Craftsmanship"
           className="about-hero-bg-img"
         />
         <div className="about-hero-gradient" />
 
         <div className="about-hero-content">
           <div className="about-hero-badge">
-            <Crown size={12} color="#E5C383" />
-            <span>AYURVEDIC LUXURY MAISON</span>
+            <Crown size={12} color="#E0F2FE" />
+            <span>PREMIUM CARRYWEAR MAISON</span>
           </div>
 
           <img
             src="/images/logo.png"
-            alt="ZENVORO Crest"
+            alt="ANCHAY Crest"
             className="about-hero-crest"
           />
 
-          <h1 className="about-hero-heading">ZENVORO</h1>
-          <p className="about-hero-tagline">ELEVATE YOUR INNER POWER</p>
+          <h1 className="about-hero-heading">ANCHAY</h1>
+          <p className="about-hero-tagline">CRAFTED FOR MODERN JOURNEYS</p>
 
           <div className="about-hero-meta-strip">
-            <span className="about-meta-chip">18,000+ Ft Sourcing</span>
-            <span className="about-meta-chip">24K Gold Grade</span>
-            <span className="about-meta-chip">NABL Lab Tested</span>
+            <span className="about-meta-chip">Water-Resistant Weave</span>
+            <span className="about-meta-chip">YKK Reverse Hardware</span>
+            <span className="about-meta-chip">1-Year Warranty</span>
           </div>
         </div>
       </section>
 
       {/* 3. The Genesis Story / Manifesto */}
       <section className="about-manifesto-section">
-        <span className="about-section-tag">THE SACRED GENESIS</span>
-        <h2 className="about-manifesto-title">Born For Those Who Refuse Half-Capacity</h2>
+        <span className="about-section-tag">OUR PURPOSE</span>
+        <h2 className="about-manifesto-title">Born For Those Who Live In Motion</h2>
         <p className="about-manifesto-text">
-          Modern living drains human vitality through synthetic stimulants, mental exhaustion, and disrupted sleep cycles. ZENVORO was created to restore human biological potential — uniting authentic 5,000-year-old Vedic Rasashastra with modern clinical neurobiology.
+          Traditional bags either sacrifice durability for aesthetics or look like bulky outdoor gear in executive boardrooms. Anchay was created to bridge this divide — blending architectural minimalism, ergonomic weight balance, and weather-proof resilience into carrywear designed for the contemporary explorer.
         </p>
       </section>
 
-      {/* 4. The Himalayan Sourcing Journey (3-Step Visual Process) */}
+      {/* 4. The 3-Stage Craftsmanship Process */}
       <section className="about-process-section">
         <div className="about-section-header">
-          <span className="about-section-tag">AUTHENTIC ALCHEMY</span>
-          <h3 className="about-section-heading">The 3-Stage Sacred Sourcing Journey</h3>
+          <span className="about-section-tag">ARTISANAL ENGINEERING</span>
+          <h3 className="about-section-heading">The 3 Pillars of Anchay Craftsmanship</h3>
         </div>
 
         <div className="about-steps-grid">
@@ -136,12 +135,12 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             <div className="about-step-top">
               <span className="about-step-num-circle">1</span>
               <div className="about-step-icon-wrap">
-                <Mountain size={16} color="#85532F" />
+                <Compass size={16} color="#1C8E8F" />
               </div>
-              <h4 className="about-step-title">18,000+ Ft Wildcrafting</h4>
+              <h4 className="about-step-title">Ergonomic Weight Modeling</h4>
             </div>
             <p className="about-step-desc">
-              Hand-harvested by indigenous mountain sherpas from high-altitude rock fissures where extreme pressure and pristine cold yield the purest mineral resin.
+              Every strap, harness, and back panel is modeled using spinal pressure mapping to disperse heavy laptop and travel loads evenly across the core.
             </p>
           </div>
 
@@ -150,12 +149,12 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             <div className="about-step-top">
               <span className="about-step-num-circle">2</span>
               <div className="about-step-icon-wrap">
-                <Sun size={16} color="#CBA243" />
+                <ShieldCheck size={16} color="#1C8E8F" />
               </div>
-              <h4 className="about-step-title">90-Day Surya Tapi</h4>
+              <h4 className="about-step-title">All-Weather Material Lab</h4>
             </div>
             <p className="about-step-desc">
-              Purified using ancient slow sun-drying in natural Himalayan spring water. Never boiled or chemical-extracted, preserving 84+ ionic trace minerals and &gt;80% fulvic acid.
+              Constructed with 900D ballistic weaves, water-repellent TPU laminates, and top-grain vegan leathers tested against monsoons, abrasions, and daily friction.
             </p>
           </div>
 
@@ -164,122 +163,122 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             <div className="about-step-top">
               <span className="about-step-num-circle">3</span>
               <div className="about-step-icon-wrap">
-                <Sparkles size={16} color="#CBA243" />
+                <Award size={16} color="#1C8E8F" />
               </div>
-              <h4 className="about-step-title">24K Gold Swarna Bhasma</h4>
+              <h4 className="about-step-title">Stress-Tested YKK Hardware</h4>
             </div>
             <p className="about-step-desc">
-              Infused with nano-purified 24K edible Gold Bhasma processed according to classical Rasashastra texts to enhance cellular absorption and deep rejuvenation.
+              Reinforced box-and-cross bar-tack stitching and Japanese YKK smooth-glide zippers tested to endure over 15,000 open-close cycles and 25kg weight strains.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 5. The 24-Hour Circadian Biological Flow (Interactive Visual Timeline) */}
+      {/* 5. The Carrying Archetypes */}
       <section className="about-circadian-section">
         <div className="about-section-header">
-          <span className="about-section-tag">24-HOUR BIO-HARMONY</span>
-          <h3 className="about-section-heading">How The 3 Rituals Elevate Your Entire Day</h3>
+          <span className="about-section-tag">BUILT FOR EVERY TRANSIT</span>
+          <h3 className="about-section-heading">How Anchay Powers Your Daily Routine</h3>
           <p className="about-section-sub">
-            Engineered as a synergistic 24-hour cycle to harmonize physical power, cognitive focus, and cellular repair.
+            From the morning metro commute to cross-country weekend flights, our bags are tailored to your lifestyle.
           </p>
         </div>
 
         <div className="about-timeline-list">
-          {/* Morning Power */}
+          {/* Tech Commute */}
           <div className="about-time-block morning">
             <div className="about-time-indicator">
-              <span className="about-time-badge">07:00 AM</span>
+              <span className="about-time-badge">WORK & TECH</span>
               <div className="about-time-dot" />
             </div>
-            <div className="about-time-card" onClick={() => navigate('/product/prod_1')}>
+            <div className="about-time-card" onClick={() => navigate('/product/bag_1')}>
               <div className="about-time-header">
-                <Flame size={15} color="#85532F" />
-                <span className="about-time-phase">MORNING IGNITION</span>
+                <Backpack size={15} color="#1C8E8F" />
+                <span className="about-time-phase">DAILY COMMUTE</span>
               </div>
-              <h4 className="about-time-title">Ritual I: Himalayan Shilajit Gold</h4>
+              <h4 className="about-time-title">Apex Urban Pro 28L Backpack</h4>
               <p className="about-time-detail">
-                Supercharges mitochondrial ATP energy, fuels natural stamina, and optimizes hormonal vigor without caffeine jitters.
+                Dedicated 15.6" laptop cradle, anti-theft secret passport pocket, and ventilated 3D air-mesh lumbar support for effortless city navigation.
               </p>
               <div className="about-time-instruction">
-                <span>Pea-sized resin in warm water or milk</span>
+                <span>Explore Tech Backpacks</span>
               </div>
             </div>
           </div>
 
-          {/* Afternoon Focus */}
+          {/* Executive Work */}
           <div className="about-time-block day">
             <div className="about-time-indicator">
-              <span className="about-time-badge">01:00 PM</span>
+              <span className="about-time-badge">EXECUTIVE</span>
               <div className="about-time-dot" />
             </div>
-            <div className="about-time-card" onClick={() => navigate('/product/prod_2')}>
+            <div className="about-time-card" onClick={() => navigate('/product/bag_7')}>
               <div className="about-time-header">
-                <Brain size={15} color="#85532F" />
-                <span className="about-time-phase">MID-DAY CLARITY</span>
+                <Briefcase size={15} color="#1C8E8F" />
+                <span className="about-time-phase">BOARDROOM READINESS</span>
               </div>
-              <h4 className="about-time-title">Ritual II: Nootropic Mind &amp; Focus</h4>
+              <h4 className="about-time-title">Oxford Executive Leather Briefcase</h4>
               <p className="about-time-detail">
-                Full-spectrum Lion’s Mane and organic Brahmi trigger alpha brainwaves, eliminating afternoon brain fog and powering creative flow.
+                Full-grain textured vegan leather with dual tech dividers, luggage trolley strap, and antique brass alloy hardware.
               </p>
               <div className="about-time-instruction">
-                <span>2 capsules after lunch with water</span>
+                <span>Explore Executive Briefcases</span>
               </div>
             </div>
           </div>
 
-          {/* Night Restoration */}
+          {/* Travel & Weekend */}
           <div className="about-time-block night">
             <div className="about-time-indicator">
-              <span className="about-time-badge">10:00 PM</span>
+              <span className="about-time-badge">TRAVEL</span>
               <div className="about-time-dot" />
             </div>
-            <div className="about-time-card" onClick={() => navigate('/product/prod_3')}>
+            <div className="about-time-card" onClick={() => navigate('/product/bag_12')}>
               <div className="about-time-header">
-                <Moon size={15} color="#85532F" />
-                <span className="about-time-phase">NIGHT RESTORATION</span>
+                <Luggage size={15} color="#1C8E8F" />
+                <span className="about-time-phase">WEEKENDER ESCAPES</span>
               </div>
-              <h4 className="about-time-title">Ritual III: Cellular Recovery Elixir</h4>
+              <h4 className="about-time-title">Nomad Weekender 45L Duffel</h4>
               <p className="about-time-detail">
-                Kashmiri Saffron and bioavailable magnesium calm neurotransmitters, triggering restorative REM sleep and cellular repair.
+                Airline overhead cabin approved with independent ventilated shoe tunnel and separate waterproof wet kit pocket.
               </p>
               <div className="about-time-instruction">
-                <span>1 full dropper under tongue before sleep</span>
+                <span>Explore Travel Duffels</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6. The 3 Sacred Rituals Product Cards */}
+      {/* 6. Flagship Highlights */}
       <section className="about-rituals-section">
         <div className="about-section-header">
-          <span className="about-section-tag">THE FLAGSHIP FORMULATIONS</span>
-          <h3 className="about-section-heading">Touch To Explore Each Sacred Ritual</h3>
+          <span className="about-section-tag">FLAGSHIP CREATIONS</span>
+          <h3 className="about-section-heading">Touch To Explore Featured Styles</h3>
         </div>
 
         <div className="about-ritual-cards-list">
-          {/* Product 1 */}
+          {/* Bag 1 */}
           <div
             className="about-ritual-card"
-            onClick={() => navigate('/product/prod_1')}
+            onClick={() => navigate('/product/bag_1')}
           >
             <div className="about-ritual-media">
               <img
-                src="/images/products/zenvoro_shilajit_gold.png"
-                alt="Shilajit Gold Resin"
+                src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80"
+                alt="Apex Urban Pro 28L"
                 className="about-ritual-img"
               />
             </div>
             <div className="about-ritual-info">
               <div className="about-ritual-tag">
-                <Flame size={12} color="#85532F" />
-                <span>RITUAL I • RESIN</span>
+                <Backpack size={12} color="#1C8E8F" />
+                <span>BACKPACK • 28L</span>
               </div>
-              <h4 className="about-ritual-name">Himalayan Shilajit Gold</h4>
+              <h4 className="about-ritual-name">Apex Urban Pro 28L</h4>
               <div className="about-compounds-row">
-                <span className="about-compound-tag">&gt;80% Fulvic Acid</span>
-                <span className="about-compound-tag">24K Gold</span>
+                <span className="about-compound-tag">15.6" Laptop</span>
+                <span className="about-compound-tag">Waterproof</span>
               </div>
               <div className="about-ritual-footer">
                 <span className="about-ritual-link">View Details</span>
@@ -288,27 +287,27 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             </div>
           </div>
 
-          {/* Product 2 */}
+          {/* Bag 7 */}
           <div
             className="about-ritual-card"
-            onClick={() => navigate('/product/prod_2')}
+            onClick={() => navigate('/product/bag_7')}
           >
             <div className="about-ritual-media">
               <img
-                src="/images/products/zenvoro_nootropic_focus.png"
-                alt="Nootropic Mind & Focus"
+                src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80"
+                alt="Oxford Executive Briefcase"
                 className="about-ritual-img"
               />
             </div>
             <div className="about-ritual-info">
               <div className="about-ritual-tag">
-                <Brain size={12} color="#85532F" />
-                <span>RITUAL II • CAPSULES</span>
+                <Briefcase size={12} color="#1C8E8F" />
+                <span>BRIEFCASE • 15.6"</span>
               </div>
-              <h4 className="about-ritual-name">Nootropic Mind &amp; Focus</h4>
+              <h4 className="about-ritual-name">Oxford Leather Briefcase</h4>
               <div className="about-compounds-row">
-                <span className="about-compound-tag">Lion’s Mane</span>
-                <span className="about-compound-tag">Brahmi 50%</span>
+                <span className="about-compound-tag">Full-Grain Leather</span>
+                <span className="about-compound-tag">Brass Sliders</span>
               </div>
               <div className="about-ritual-footer">
                 <span className="about-ritual-link">View Details</span>
@@ -317,27 +316,27 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             </div>
           </div>
 
-          {/* Product 3 */}
+          {/* Bag 12 */}
           <div
             className="about-ritual-card"
-            onClick={() => navigate('/product/prod_3')}
+            onClick={() => navigate('/product/bag_12')}
           >
             <div className="about-ritual-media">
               <img
-                src="/images/products/zenvoro_recovery_elixir.png"
-                alt="Cellular Recovery Elixir"
+                src="https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=600&q=80"
+                alt="Nomad Weekender 45L"
                 className="about-ritual-img"
               />
             </div>
             <div className="about-ritual-info">
               <div className="about-ritual-tag">
-                <Moon size={12} color="#85532F" />
-                <span>RITUAL III • ELIXIR</span>
+                <Luggage size={12} color="#1C8E8F" />
+                <span>DUFFEL • 45L</span>
               </div>
-              <h4 className="about-ritual-name">Cellular Recovery Elixir</h4>
+              <h4 className="about-ritual-name">Nomad Weekender 45L</h4>
               <div className="about-compounds-row">
-                <span className="about-compound-tag">Kashmiri Saffron</span>
-                <span className="about-compound-tag">Magnesium Glycinate</span>
+                <span className="about-compound-tag">Shoe Tunnel</span>
+                <span className="about-compound-tag">Cabin Approved</span>
               </div>
               <div className="about-ritual-footer">
                 <span className="about-ritual-link">View Details</span>
@@ -348,131 +347,99 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
         </div>
       </section>
 
-      {/* 7. ZENVORO vs Conventional Standard (Visual Trust Comparison Table) */}
+      {/* 7. Anchay vs Generic Market Bags Comparison Table */}
       <section className="about-comparison-section">
         <div className="about-section-header">
-          <span className="about-section-tag">PURITY BENCHMARK</span>
-          <h3 className="about-section-heading">Why ZENVORO Sets The Gold Standard</h3>
+          <span className="about-section-tag">QUALITY BENCHMARK</span>
+          <h3 className="about-section-heading">Why Anchay Sets The Gold Standard</h3>
         </div>
 
         <div className="about-compare-table">
           <div className="about-compare-head">
-            <span className="compare-col-feature">Metric</span>
-            <span className="compare-col-brand">ZENVORO</span>
-            <span className="compare-col-other">Ordinary Brands</span>
+            <span className="compare-col-feature">Feature</span>
+            <span className="compare-col-brand">ANCHAY</span>
+            <span className="compare-col-other">Generic Bags</span>
           </div>
 
           <div className="about-compare-row">
-            <span className="compare-col-feature">Harvest Altitude</span>
+            <span className="compare-col-feature">Exterior Weave</span>
             <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> Above 18,000 Ft
+              <Check size={13} color="#15803D" /> 900D Ballistic Poly
             </span>
             <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> Low commercial hills
-            </span>
-          </div>
-
-          <div className="about-compare-row">
-            <span className="compare-col-feature">Purification</span>
-            <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> 90-Day Sun Surya Tapi
-            </span>
-            <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> High-heat boiling
+              <X size={13} color="#DC2626" /> Flimsy 200D fabric
             </span>
           </div>
 
           <div className="about-compare-row">
-            <span className="compare-col-feature">Precious Gold</span>
+            <span className="compare-col-feature">Zipper Sliders</span>
             <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> 24K Swarna Bhasma
+              <Check size={13} color="#15803D" /> Japanese YKK Zips
             </span>
             <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> Zero gold added
+              <X size={13} color="#DC2626" /> Jamming unbranded zips
             </span>
           </div>
 
           <div className="about-compare-row">
-            <span className="compare-col-feature">Heavy Metal Tests</span>
+            <span className="compare-col-feature">Laptop Protection</span>
             <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> NABL 3rd-Party Lab
+              <Check size={13} color="#15803D" /> Suspended EVA Foam
             </span>
             <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> Often untested
+              <X size={13} color="#DC2626" /> Thin sponge padding
             </span>
           </div>
 
           <div className="about-compare-row">
-            <span className="compare-col-feature">Dependency Risk</span>
+            <span className="compare-col-feature">Water Resistance</span>
             <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> Non-habit forming
+              <Check size={13} color="#15803D" /> IPX4 Weatherproof
             </span>
             <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> Synthetic caffeine
+              <X size={13} color="#DC2626" /> Soaks in light drizzle
+            </span>
+          </div>
+
+          <div className="about-compare-row">
+            <span className="compare-col-feature">Craftsmanship Warranty</span>
+            <span className="compare-col-brand">
+              <Check size={13} color="#15803D" /> 1-Year Guarantee
+            </span>
+            <span className="compare-col-other">
+              <X size={13} color="#DC2626" /> No warranty support
             </span>
           </div>
         </div>
       </section>
 
-      {/* 8. Laboratory Science & Purity Credentials */}
-      <section className="about-purity-section">
-        <span className="about-section-tag">UNCOMPROMISING STANDARDS</span>
-        <h3 className="about-section-heading">Verified By Modern Laboratory Science</h3>
-
-        <div className="about-purity-grid">
-          <div className="about-purity-item">
-            <ShieldCheck size={20} color="#85532F" />
-            <div>
-              <strong>NABL 3rd-Party Certified</strong>
-              <p>Every single batch tested for zero heavy metals, zero lead, and &gt;80% active fulvic acid.</p>
-            </div>
-          </div>
-
-          <div className="about-purity-item">
-            <Sparkles size={20} color="#CBA243" />
-            <div>
-              <strong>24K Swarna Bhasma Infused</strong>
-              <p>Authentic Ayurvedic nano-purified gold prepared according to classical Rasashastra texts.</p>
-            </div>
-          </div>
-
-          <div className="about-purity-item">
-            <CheckCircle2 size={20} color="#85532F" />
-            <div>
-              <strong>100% Ethical &amp; Non-Habit Forming</strong>
-              <p>Zero artificial binders, zero synthetic caffeine, zero habit-forming sleep sedatives.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 9. Patron Concierge & Contact */}
+      {/* 8. Patron Concierge & Contact */}
       <section className="about-concierge-section">
-        <span className="about-section-tag">PATRON CONCIERGE</span>
-        <h3 className="about-section-heading">Dedicated Wellness Concierge</h3>
+        <span className="about-section-tag">CUSTOMER CONCIERGE</span>
+        <h3 className="about-section-heading">Dedicated Carrywear Support</h3>
 
         <div className="about-concierge-card">
           <div className="about-concierge-row">
-            <Phone size={16} color="#85532F" />
+            <Phone size={16} color="#1C8E8F" />
             <div>
-              <span className="concierge-lbl">Toll-Free Wellness Hotline</span>
-              <span className="concierge-val">1800-ZENVORO (936-8676)</span>
+              <span className="concierge-lbl">Customer Support Hotline</span>
+              <span className="concierge-val">1800-ANCHAY-BAGS (262-429)</span>
             </div>
           </div>
 
-          <a href="mailto:concierge@zenvorowellness.com" className="about-concierge-row">
-            <Mail size={16} color="#85532F" />
+          <a href="mailto:support@anchaybags.com" className="about-concierge-row">
+            <Mail size={16} color="#1C8E8F" />
             <div>
-              <span className="concierge-lbl">Patron Concierge Email</span>
-              <span className="concierge-val">concierge@zenvorowellness.com</span>
+              <span className="concierge-lbl">Customer Concierge Email</span>
+              <span className="concierge-val">concierge@anchaybags.com</span>
             </div>
           </a>
 
           <div className="about-concierge-row">
-            <MapPin size={16} color="#85532F" />
+            <MapPin size={16} color="#1C8E8F" />
             <div>
-              <span className="concierge-lbl">Maison Headquarters</span>
-              <span className="concierge-val">Zenvoro Wellness Maison, Connaught Place, New Delhi 110001</span>
+              <span className="concierge-lbl">Design Studio & HQ</span>
+              <span className="concierge-val">Anchay Carrywear Studio, Connaught Place, New Delhi 110001</span>
             </div>
           </div>
         </div>
@@ -485,7 +452,7 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             onClick={handleExplore}
           >
             <ShoppingBag size={15} />
-            <span>EXPLORE THE 3 RITUALS</span>
+            <span>EXPLORE ALL 28 BAGS</span>
             <ChevronRight size={15} />
           </button>
         </div>
@@ -493,3 +460,4 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
     </div>
   );
 };
+export default AboutPage;

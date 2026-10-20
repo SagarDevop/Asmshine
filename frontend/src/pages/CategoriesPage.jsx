@@ -6,9 +6,12 @@ import {
   Star,
   Plus,
   Sparkles,
-  Zap,
-  Brain,
-  Moon,
+  Layers,
+  Backpack,
+  Briefcase,
+  Luggage,
+  Compass,
+  Package,
   X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -17,11 +20,13 @@ import { api, STATIC_CATEGORIES } from '../services/api';
 import { SearchOverlay } from '../components/search/SearchOverlay';
 
 const categoryIconMap = {
-  all: ShoppingBag,
-  inner_power: Zap,
-  brain_focus: Brain,
-  deep_recovery: Moon,
-  trio_ritual: Sparkles
+  all: Layers,
+  backpacks: Backpack,
+  laptop_bags: Briefcase,
+  travel_duffels: Luggage,
+  totes: ShoppingBag,
+  slings_crossbody: Compass,
+  wallets_organizers: Package
 };
 
 export const CategoriesPage = ({
@@ -57,19 +62,15 @@ export const CategoriesPage = ({
   }, []);
 
   const allCategoriesList = [
-    { id: 'all', name: 'All 3 Rituals', desc: 'ZENVORO Complete Ayurvedic Flagship Collection' },
+    { id: 'all', name: 'All Bags', desc: 'Anchay Complete Carrywear & Bag Collection' },
     ...STATIC_CATEGORIES
   ];
 
   const currentCategoryObj = allCategoriesList.find((c) => c.id === selectedCat) || allCategoriesList[0];
 
   const filteredProducts = products.filter((p) => {
-    if (selectedCat !== 'all') {
-      if (selectedCat === 'trio_ritual') {
-        return true;
-      } else if (p.category !== selectedCat) {
-        return false;
-      }
+    if (selectedCat !== 'all' && p.category !== selectedCat) {
+      return false;
     }
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -91,8 +92,8 @@ export const CategoriesPage = ({
           <ArrowLeft size={22} />
         </button>
         <div className="page-header-title-box">
-          <span className="page-header-title">The Sacred Rituals</span>
-          <span className="page-header-subtitle">ZENVORO Flagship Catalog</span>
+          <span className="page-header-title">Anchay Bag Collection</span>
+          <span className="page-header-subtitle">28 Handcrafted Varieties</span>
         </div>
         <div className="pdp-cart-icon-wrap" onClick={handleOpenCart}>
           <button type="button" className="page-action-btn" aria-label="Cart">
@@ -116,7 +117,7 @@ export const CategoriesPage = ({
           <Search size={18} className="cat-search-icon" />
           <input
             type="search"
-            placeholder="Search Shilajit Gold, Nootropic, Elixir..."
+            placeholder="Search backpacks, briefcases, duffels, totes..."
             value={searchQuery}
             onFocus={() => setIsSearchOpen(true)}
             onClick={(e) => {
@@ -171,18 +172,18 @@ export const CategoriesPage = ({
         <main className="cat-content-pane no-scrollbar">
           {/* Active Category Header Banner */}
           <div className="cat-banner-card">
-            <div className="cat-banner-tag">AUTHENTIC AYURVEDIC WELLNESS</div>
+            <div className="cat-banner-tag">AUTHENTIC ANCHAY CARRYWEAR</div>
             <h2 className="cat-banner-title">{currentCategoryObj.name}</h2>
             <p className="cat-banner-sub">
-              {filteredProducts.length} formulations available in collection
+              {filteredProducts.length} varieties available in collection
             </p>
           </div>
 
           {/* Product Items List */}
           {filteredProducts.length === 0 ? (
             <div className="cat-empty-state">
-              <Sparkles size={32} color="#85532F" />
-              <p>No formulations found matching your search</p>
+              <Sparkles size={32} color="#1C8E8F" />
+              <p>No bags found matching your search</p>
               <button
                 type="button"
                 className="cat-reset-btn"
@@ -217,7 +218,7 @@ export const CategoriesPage = ({
                   </div>
 
                   <div className="cat-prod-details">
-                    <div className="cat-prod-brand">ZENVORO WELLNESS</div>
+                    <div className="cat-prod-brand">ANCHAY BAGS</div>
                     <h3 className="cat-prod-name">{product.name}</h3>
 
                     {/* Rating Pill */}

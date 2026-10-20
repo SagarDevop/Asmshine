@@ -16,21 +16,20 @@ export const FlipkartPromoBanners = ({ onSelectProduct }) => {
     e.stopPropagation();
     addComboToCart(
       [
-        { productId: 'prod_1', quantity: 1 },
-        { productId: 'prod_2', quantity: 1 },
-        { productId: 'prod_3', quantity: 1 }
+        { productId: 'bag_1', quantity: 1 },
+        { productId: 'bag_21', quantity: 1 }
       ],
-      'The Sacred Trio Box added to cart! Flat ₹2,998 saved.'
+      'The Urban Commuter Duo Set (Backpack + Sling) added to cart! Flat ₹1,500 saved.'
     );
   };
 
   return (
     <section className="fk-minimal-promo-section" aria-label="Special Offers and Guarantees">
-      {/* 1. Full-Width Luxury Sacred Trio Box Banner */}
+      {/* 1. Full-Width Luxury Urban Duo Box Banner */}
       <div className="fk-trio-feature-banner" onClick={handleAddTrioCombo}>
         <img
-          src="/images/banners/zenvoro_banner_bundle.jpg"
-          alt="The Sacred Trio Ritual Box"
+          src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80"
+          alt="The Urban Commuter Duo Set"
           className="fk-trio-bg-img"
         />
         <div className="fk-trio-gradient-overlay" />
@@ -38,19 +37,19 @@ export const FlipkartPromoBanners = ({ onSelectProduct }) => {
         <div className="fk-trio-content-overlay">
           <div className="fk-trio-tag-row">
             <span className="fk-trio-deal-tag">
-              <Sparkles size={11} /> LIMITED LAUNCH DEAL
+              <Sparkles size={11} /> LIMITED BUNDLE DEAL
             </span>
-            <span className="fk-trio-save-badge">SAVE FLAT ₹2,998</span>
+            <span className="fk-trio-save-badge">SAVE FLAT ₹1,500</span>
           </div>
 
-          <h3 className="fk-trio-title">The Sacred Trio Ritual Box</h3>
-          <p className="fk-trio-subtitle">All 3 Flagship Formulations + Complimentary Gold Dosing Spoon</p>
+          <h3 className="fk-trio-title">The Urban Commuter Duo Set</h3>
+          <p className="fk-trio-subtitle">Apex Tech Backpack 28L + Matrix Modular Crossbody Sling 6L</p>
 
           <div className="fk-trio-cta-row">
             <div className="fk-trio-pricing">
-              <span className="fk-trio-price">₹3,999</span>
-              <span className="fk-trio-mrp">₹6,997</span>
-              <span className="fk-trio-off">43% OFF</span>
+              <span className="fk-trio-price">₹2,999</span>
+              <span className="fk-trio-mrp">₹6,798</span>
+              <span className="fk-trio-off">55% OFF</span>
             </div>
 
             <button
@@ -59,7 +58,7 @@ export const FlipkartPromoBanners = ({ onSelectProduct }) => {
               onClick={handleAddTrioCombo}
             >
               <ShoppingBag size={14} />
-              <span>ADD TRIO TO CART</span>
+              <span>ADD DUO TO CART</span>
             </button>
           </div>
         </div>
@@ -68,19 +67,19 @@ export const FlipkartPromoBanners = ({ onSelectProduct }) => {
       {/* 2. Spacious, Clean 4-Item Trust & Assurance Strip */}
       <div className="fk-minimal-trust-strip">
         <div className="fk-min-trust-item">
-          <ShieldCheck size={18} color="#85532F" />
-          <span>100% Himalayan Certified</span>
+          <ShieldCheck size={18} color="#1C8E8F" />
+          <span>Water-Resistant Weave</span>
         </div>
         <div className="fk-min-trust-item">
-          <Truck size={18} color="#85532F" />
+          <Truck size={18} color="#1C8E8F" />
           <span>Free Express Air Delivery</span>
         </div>
         <div className="fk-min-trust-item">
-          <RotateCcw size={18} color="#85532F" />
-          <span>7-Day Quality Assured</span>
+          <RotateCcw size={18} color="#1C8E8F" />
+          <span>1-Year Quality Warranty</span>
         </div>
         <div className="fk-min-trust-item">
-          <Zap size={18} color="#85532F" />
+          <Zap size={18} color="#1C8E8F" />
           <span>Instant 5% Prepaid UPI Off</span>
         </div>
       </div>

@@ -44,7 +44,7 @@ const AmazonLogo = () => (
 
 const FlipkartLogo = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <rect width="24" height="24" rx="6" fill="#85532F" />
+    <rect width="24" height="24" rx="6" fill="#1C8E8F" />
     <path
       d="M6.5 7.5H17.5L16.2 17H7.8L6.5 7.5Z"
       fill="#FFE500"
@@ -57,7 +57,7 @@ const FlipkartLogo = () => (
     />
     <path
       d="M10 10.5H14M10 12.8H13M10 15H11.5"
-      stroke="#85532F"
+      stroke="#1C8E8F"
       strokeWidth="1.5"
       strokeLinecap="round"
     />
@@ -148,7 +148,7 @@ export const ProductDetailPage = ({
       try {
         await navigator.share({
           title: product.name,
-          text: `Check out ${product.name} on ZENVORO Luxury Wellness!`,
+          text: `Check out ${product.name} on Anchay Bags Official!`,
           url: window.location.href
         });
       } catch (err) {
@@ -215,7 +215,7 @@ export const ProductDetailPage = ({
         <button
           type="button"
           onClick={() => navigate('/')}
-          style={{ padding: '12px 24px', background: '#85532F', color: '#FFFFFF', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+          style={{ padding: '12px 24px', background: '#1C8E8F', color: '#FFFFFF', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
         >
           Return to Store
         </button>
@@ -253,8 +253,8 @@ export const ProductDetailPage = ({
         </button>
 
         <div className="pdp-header-brand" onClick={() => navigate('/')}>
-          <img src="/images/logo.png" alt="ZENVORO" className="pdp-logo-mini" style={{ borderRadius: '50%' }} />
-          <span className="pdp-brand-text">ZENVORO</span>
+          <img src="/images/logo.png" alt="ANCHAY" className="pdp-logo-mini" style={{ borderRadius: '50%' }} />
+          <span className="pdp-brand-text">ANCHAY</span>
         </div>
 
         <div className="pdp-header-actions">
@@ -303,10 +303,10 @@ export const ProductDetailPage = ({
               />
             </button>
 
-            {/* ZENVORO Certified Genuine Formulation Badge */}
+            {/* Anchay Certified Genuine Carrywear Badge */}
             <div className="pdp-assured-tag">
-              <Zap size={13} fill="#CBA243" color="#CBA243" />
-              <span>ZENVORO Certified</span>
+              <Zap size={13} fill="#1C8E8F" color="#1C8E8F" />
+              <span>Anchay Certified</span>
             </div>
 
             {/* Image Indicator Dots */}
@@ -319,7 +319,7 @@ export const ProductDetailPage = ({
 
         {/* 3. Product Title, Rating & Pricing Section */}
         <section className="pdp-section pdp-info-card">
-          <div className="pdp-brand-tag">ZENVORO MAISON OFFICIAL</div>
+          <div className="pdp-brand-tag">ANCHAY BAGS OFFICIAL</div>
           <h1 className="pdp-product-title">{product.name}</h1>
 
           {/* Rating & Review summary pill */}
@@ -425,7 +425,7 @@ export const ProductDetailPage = ({
 
           <div className="pdp-offer-item highlight">
             <div className="pdp-offer-bullet">
-              <Tag size={15} color="#85532F" />
+              <Tag size={15} color="#1C8E8F" />
             </div>
             <div className="pdp-offer-text">
               <strong>Launch Offer:</strong> Flat <strong>20% OFF</strong> using code{' '}
@@ -443,7 +443,7 @@ export const ProductDetailPage = ({
 
           <div className="pdp-offer-item">
             <div className="pdp-offer-bullet">
-              <CreditCard size={15} color="#85532F" />
+              <CreditCard size={15} color="#1C8E8F" />
             </div>
             <div className="pdp-offer-text">
               <strong>Bank Offer:</strong> Extra 5% Instant Discount on UPI & Credit Card Prepayment
@@ -452,7 +452,7 @@ export const ProductDetailPage = ({
 
           <div className="pdp-offer-item">
             <div className="pdp-offer-bullet">
-              <Zap size={15} color="#CBA243" fill="#CBA243" />
+              <Zap size={15} color="#1C8E8F" fill="#1C8E8F" />
             </div>
             <div className="pdp-offer-text">
               <strong>Trio Upgrade:</strong> Get the 3-Product Ritual Box & save an extra ₹2,998 today!
@@ -500,7 +500,7 @@ export const ProductDetailPage = ({
           </div>
 
           <div className="pdp-delivery-speed-row">
-            <Truck size={17} color="#85532F" />
+            <Truck size={17} color="#1C8E8F" />
             <span>
               <strong>FREE Express Delivery</strong> by <strong>Tomorrow, 5:00 PM</strong>
             </span>
@@ -508,15 +508,15 @@ export const ProductDetailPage = ({
 
           <div className="pdp-assurances-grid">
             <div className="pdp-assurance-pill">
-              <RotateCcw size={16} color="#85532F" />
+              <RotateCcw size={16} color="#1C8E8F" />
               <span>30-Day Money Back</span>
             </div>
             <div className="pdp-assurance-pill">
-              <ShieldCheck size={16} color="#85532F" />
+              <ShieldCheck size={16} color="#1C8E8F" />
               <span>Cash on Delivery</span>
             </div>
             <div className="pdp-assurance-pill">
-              <Leaf size={16} color="#CBA243" />
+              <Leaf size={16} color="#1C8E8F" />
               <span>100% Himalayan Pure</span>
             </div>
           </div>
@@ -674,12 +674,12 @@ export const ProductDetailPage = ({
           <div className="pdp-specs-table">
             {Object.entries(
               product.specifications || {
-                'Formulation': '24K Gold Grade Purified Resin / Botanical Elixir',
-                'Ingredients': 'Pure Himalayan Shilajit, Fulvic Acid (>80%), Ashwagandha, Swarna Bhasma',
-                'Serving Recommendation': 'Pea-sized portion with warm milk or water',
-                'Pack of': '1 Luxury Amber Glass Jar',
-                'Origin': '18,000+ ft Pristine Himalayan Peaks',
-                'Shelf Life': '24 Months'
+                'Material': '900D Water-Repellent Ballistic Weave',
+                'Zippers': 'Heavy-Duty Reverse Coil YKK Zips',
+                'Laptop Fit': 'Dedicated Padded Cradle (up to 15.6")',
+                'Water Resistance': 'IPX4 Water & Splash Resistant',
+                'Warranty': '1 Year Anchay Craftsmanship Warranty',
+                'Country of Origin': 'India'
               }
             ).map(([k, v]) => (
               <div className="pdp-spec-row" key={k}>
@@ -697,7 +697,7 @@ export const ProductDetailPage = ({
           <div className="pdp-rating-summary-box">
             <div className="pdp-rating-big-score">
               <span className="pdp-score-num">{product.rating || '4.9'}</span>
-              <Star size={20} fill="#85532F" color="#85532F" />
+              <Star size={20} fill="#F59E0B" color="#F59E0B" />
               <span className="pdp-score-sub">{product.ratingsCount || '4,920'} Ratings & {product.reviewCount || '1,840'} Reviews</span>
             </div>
 
@@ -712,7 +712,7 @@ export const ProductDetailPage = ({
                 <div className="pdp-bar-row" key={b.stars}>
                   <span className="pdp-bar-label">{b.stars}★</span>
                   <div className="pdp-bar-track">
-                    <div className="pdp-bar-fill" style={{ width: b.pct, backgroundColor: '#85532F' }} />
+                    <div className="pdp-bar-fill" style={{ width: b.pct, backgroundColor: '#1C8E8F' }} />
                   </div>
                   <span className="pdp-bar-pct">{b.pct}</span>
                 </div>
@@ -724,22 +724,22 @@ export const ProductDetailPage = ({
           <div className="pdp-reviews-list">
             {(product.reviews || [
               {
-                id: 'rev_zenvoro_1',
+                id: 'rev_anchay_1',
                 author: 'Devendra Rathore',
                 location: 'Mumbai, Maharashtra',
                 rating: 5,
                 date: '3 days ago',
-                title: 'Surge in daily stamina and focus!',
-                comment: 'Within a week of taking the Shilajit Gold with warm almond milk, my morning stamina and afternoon mental clarity have noticeably sharpened. Truly gold-grade pure.'
+                title: 'Phenomenal build quality and zipper glide',
+                comment: 'Carries my 15.6" laptop, charger and notebooks effortlessly. The water-resistant finish and shoulder strap comfort are exceptional.'
               },
               {
-                id: 'rev_zenvoro_2',
+                id: 'rev_anchay_2',
                 author: 'Ananya Deshmukh',
                 location: 'Bengaluru, Karnataka',
                 rating: 5,
                 date: '1 week ago',
-                title: 'Exceptional purity and royal packaging',
-                comment: 'The amber jar and gold spoon feel ultra luxurious. Lab verified test report included gave complete peace of mind. Excellent results.'
+                title: 'Looks and feels like a luxury designer bag',
+                comment: 'The stitching, teal accent details, and sturdy hardware feel ultra premium. Best bag purchase I have made this year.'
               }
             ]).map((rev) => (
               <div className="pdp-review-card" key={rev.id}>

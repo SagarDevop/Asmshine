@@ -15,7 +15,7 @@ export const OfferStrip = ({ offer, onCopyCode }) => {
   return (
     <div className="promo-strip" role="region" aria-label="Special Offers">
       <div className="promo-left">
-        <Tag size={13} color="#85532F" strokeWidth={2.4} />
+        <Tag size={13} color="#1C8E8F" strokeWidth={2.4} />
         <span className="promo-short-text">Flat 20% Off Launch Deal</span>
       </div>
       <button className="promo-badge" onClick={handleCopy} title="Copy coupon code">

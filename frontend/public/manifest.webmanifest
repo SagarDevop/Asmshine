@@ -1,12 +1,12 @@
 {
-  "name": "ZENVORO — Elevate Your Inner Power",
-  "short_name": "ZENVORO",
-  "description": "Pure Himalayan Shilajit Gold, Nootropic Mind & Focus, and Royal Cellular Recovery Elixir.",
+  "name": "Anchay Bags — Premium Carrywear",
+  "short_name": "Anchay",
+  "description": "Handcrafted premium backpacks, travel duffels, work totes, and daily carrywear.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FAF7F2",
-  "theme_color": "#85532F",
+  "background_color": "#F6FAFA",
+  "theme_color": "#1C8E8F",
   "icons": [
     {
       "src": "/favicon.png",

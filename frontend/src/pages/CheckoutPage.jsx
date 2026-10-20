@@ -162,12 +162,12 @@ export const CheckoutPage = () => {
             Order Reference: <strong>{orderId}</strong>
           </p>
           <span className="fk-success-badge">
-            <ShieldCheck size={13} /> 100% Authentic Ayurvedic Formulation
+            <ShieldCheck size={13} /> 100% Authentic Anchay Craftsmanship
           </span>
 
           <div className="fk-success-delivery-box">
             <div className="fk-delivery-date-row">
-              <Truck size={18} color="#85532F" />
+              <Truck size={18} color="#1C8E8F" />
               <div>
                 <strong>Estimated Delivery: Tomorrow by 8:00 PM</strong>
                 <span>Pan-India Express Air Shipping</span>
@@ -221,7 +221,7 @@ export const CheckoutPage = () => {
           </button>
           <div className="fk-checkout-title-wrap">
             <h1 className="fk-checkout-title">Order Summary</h1>
-            <span className="fk-checkout-subtitle">Step 2 of 3 • ZENVORO Official</span>
+            <span className="fk-checkout-subtitle">Step 2 of 3 • Anchay Official</span>
           </div>
           <div className="fk-checkout-secure-pill">
             <Lock size={12} />
@@ -346,7 +346,7 @@ export const CheckoutPage = () => {
                 <div className="fk-item-details-box">
                   <h3 className="fk-item-title">{item.product.name}</h3>
                   <div className="fk-item-seller-line">
-                    <span className="fk-seller-name">Seller: ZENVORO Maison</span>
+                    <span className="fk-seller-name">Seller: Anchay Bags Official</span>
                     <span className="fk-certified-tag">
                       <CheckCircle2 size={11} color="#15803D" /> Certified
                     </span>
@@ -399,7 +399,7 @@ export const CheckoutPage = () => {
         {/* 4. Flipkart Coupon Strip */}
         <section className="fk-checkout-card fk-coupon-card">
           <div className="fk-coupon-header">
-            <Tag size={16} color="#85532F" />
+            <Tag size={16} color="#1C8E8F" />
             <div className="fk-coupon-text-block">
               <strong>Coupons &amp; Offers</strong>
               {appliedCoupon ? (
@@ -609,10 +609,10 @@ export const CheckoutPage = () => {
 
         {/* 7. Flipkart Safe & Secure Guarantee */}
         <div className="fk-secure-assurance">
-          <ShieldCheck size={20} color="#85532F" />
+          <ShieldCheck size={20} color="#1C8E8F" />
           <div className="fk-secure-assurance-text">
             <strong>Safe and Secure Payments. 100% Authentic Products.</strong>
-            <span>Directly dispatched from ZENVORO Ayurvedic Maison</span>
+            <span>Directly dispatched from Anchay Carrywear Studio</span>
           </div>
         </div>
       </main>

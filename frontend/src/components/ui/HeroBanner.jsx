@@ -5,30 +5,30 @@ export const HeroBanner = ({ banners, banner, onExplore, onSelectProduct }) => {
   const slides = banners?.heroSlides || [
     {
       id: 'slide_1',
-      tag: 'LAUNCH OFFER • 40% OFF',
-      title: 'Himalayan Shilajit Gold',
-      subtitle: 'Pure 24K Resin • Sourced at 18,000+ ft',
-      ctaText: 'Order Now',
-      productId: 'prod_1',
-      image: '/images/banners/zenvoro_banner_shilajit.jpg'
+      tag: 'URBAN TECH • 45% OFF',
+      title: 'Anchay Apex Urban Pro 28L',
+      subtitle: 'Water-Resistant Weave • 15.6" Laptop Armour',
+      ctaText: 'Shop Backpack',
+      productId: 'bag_1',
+      image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80'
     },
     {
       id: 'slide_2',
-      tag: 'THE SACRED TRIO',
-      title: 'Complete 3-Ritual Box',
-      subtitle: 'Save Flat ₹2,998 + Free Brass Spoon',
-      ctaText: 'Claim Deal',
-      productId: 'prod_1',
-      image: '/images/banners/zenvoro_banner_bundle.jpg'
+      tag: 'TRAVEL & WEEKENDER',
+      title: 'Anchay Nomad Weekender 45L',
+      subtitle: 'Flight Cabin Approved • Dedicated Shoe Tunnel',
+      ctaText: 'Explore Travel',
+      productId: 'bag_12',
+      image: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=800&q=80'
     },
     {
       id: 'slide_3',
-      tag: 'DAILY FOCUS • 35% OFF',
-      title: 'Mind & Focus Zenith',
-      subtitle: 'Zero Brain Fog • 100% Herbal Synergy',
-      ctaText: 'Explore',
-      productId: 'prod_2',
-      image: '/images/banners/zenvoro_hero_banner.png'
+      tag: 'EXECUTIVE COLLECTION',
+      title: 'Anchay Oxford Leather Briefcase',
+      subtitle: 'Handcrafted Full-Grain Finish • Padded Dividers',
+      ctaText: 'View Briefcase',
+      productId: 'bag_7',
+      image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80'
     }
   ];
 

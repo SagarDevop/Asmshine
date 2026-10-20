@@ -49,7 +49,7 @@ export const HomePage = () => {
     else if (tab === 'about') navigate('/about');
     else if (tab === 'cart') navigate('/cart');
     else if (tab === 'account') {
-      showToast('ZENVORO Inner Power Circle');
+      showToast('Anchay Circle: Welcome to the VIP Carrywear Club');
     }
   };
 
@@ -112,11 +112,11 @@ export const HomePage = () => {
             onSelectProduct={handleSelectProduct}
           />
 
-          {/* 3. The 3 Flagship Formulations (Rendered ONCE without duplication) */}
+          {/* 3. Featured Bags (Rendered cleanly without duplication) */}
           <ProductSection
-            title="The 3 Sacred Rituals"
-            badge="FLAGSHIP"
-            subtitle="Authentic Ayurvedic Formulations"
+            title="Featured Bags & Carrywear"
+            badge="BESTSELLERS"
+            subtitle="Engineered for Daily Commute, Work & Travel"
             actionText="View All"
             actionLinkStyle="chevron"
             products={displayedProducts}
@@ -136,8 +136,8 @@ export const HomePage = () => {
         {/* Desktop & Mobile Footer */}
         <footer className="desktop-footer">
           <div className="desktop-footer-inner">
-            <span>© 2026 ZENVORO Wellness Maison. All rights reserved.</span>
-            <span>ELEVATE YOUR INNER POWER</span>
+            <span>© 2026 Anchay Bags. All rights reserved.</span>
+            <span>CRAFTED FOR MODERN JOURNEYS</span>
           </div>
         </footer>
       </div>

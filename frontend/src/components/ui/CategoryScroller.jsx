@@ -1,20 +1,21 @@
 import React from 'react';
 import {
   Sparkles,
-  Bath,
-  UtensilsCrossed,
-  LayoutGrid,
-  Waves,
-  Shirt
+  Backpack,
+  Briefcase,
+  Luggage,
+  ShoppingBag,
+  Compass,
+  Package
 } from 'lucide-react';
 
 const iconMap = {
-  floor_care: Sparkles,
-  bathroom: Bath,
-  kitchen: UtensilsCrossed,
-  glass_care: LayoutGrid,
-  dishwash: Waves,
-  laundry: Shirt
+  backpacks: Backpack,
+  laptop_bags: Briefcase,
+  travel_duffels: Luggage,
+  totes: ShoppingBag,
+  slings_crossbody: Compass,
+  wallets_organizers: Package
 };
 
 export const CategoryScroller = ({ categories = [], selectedCategory, onSelectCategory }) => {
@@ -32,7 +33,7 @@ export const CategoryScroller = ({ categories = [], selectedCategory, onSelectCa
               onClick={() => onSelectCategory && onSelectCategory(cat.id === selectedCategory ? null : cat.id)}
             >
               <div className="category-icon-box">
-                <IconComp size={22} strokeWidth={1.9} color="#007377" />
+                <IconComp size={22} strokeWidth={1.9} color="#1C8E8F" />
               </div>
               <span className="category-name">{cat.name}</span>
             </div>

@@ -5,9 +5,9 @@ import {
   X,
   ChevronRight,
   Star,
-  Flame,
-  Brain,
-  Moon,
+  Backpack,
+  Briefcase,
+  Luggage,
   TrendingUp,
   Sparkles,
   CheckCircle2
@@ -16,41 +16,41 @@ import { useNavigate } from 'react-router-dom';
 import { api, STATIC_PRODUCTS } from '../../services/api';
 
 const TRENDING_SEARCHES = [
-  { text: 'Himalayan Shilajit Gold', query: 'Shilajit' },
-  { text: 'Nootropic Mind & Focus', query: 'Nootropic' },
-  { text: 'Cellular Recovery Elixir', query: 'Elixir' },
-  { text: '24K Gold Grade Resin', query: 'Gold' },
-  { text: 'Pure Fulvic Acid 80%', query: 'Fulvic' },
-  { text: 'Deep Sleep Night Ritual', query: 'Sleep' }
+  { text: 'Tech Laptop Backpack', query: 'Backpack' },
+  { text: 'Executive Leather Briefcase', query: 'Briefcase' },
+  { text: 'Weekender Travel Duffel', query: 'Duffel' },
+  { text: 'Luxury Work Tote', query: 'Tote' },
+  { text: 'Modular Crossbody Sling', query: 'Sling' },
+  { text: 'Water-Resistant Commuter Bag', query: 'Water' }
 ];
 
 const RITUAL_CARDS = [
   {
-    id: 'prod_1',
-    category: 'inner_power',
-    name: 'Shilajit Gold Resin',
-    subtitle: 'Boundless Physical Stamina',
-    discount: '40% OFF',
-    icon: Flame,
-    color: '#85532F'
+    id: 'bag_1',
+    category: 'backpacks',
+    name: 'Apex Urban Pro 28L',
+    subtitle: '15.6" Laptop Armour',
+    discount: '45% OFF',
+    icon: Backpack,
+    color: '#1C8E8F'
   },
   {
-    id: 'prod_2',
-    category: 'brain_focus',
-    name: 'Nootropic Mind Zenith',
-    subtitle: 'Zero Brain Fog & Focus',
-    discount: '35% OFF',
-    icon: Brain,
-    color: '#2563EB'
+    id: 'bag_12',
+    category: 'travel_duffels',
+    name: 'Nomad Weekender 45L',
+    subtitle: 'Flight Cabin Approved',
+    discount: '42% OFF',
+    icon: Luggage,
+    color: '#0284C7'
   },
   {
-    id: 'prod_3',
-    category: 'deep_recovery',
-    name: 'Cellular Recovery Elixir',
-    subtitle: 'Circadian REM Sleep',
-    discount: '30% OFF',
-    icon: Moon,
-    color: '#7C3AED'
+    id: 'bag_7',
+    category: 'laptop_bags',
+    name: 'Oxford Leather Briefcase',
+    subtitle: 'Executive Top-Grain Finish',
+    discount: '42% OFF',
+    icon: Briefcase,
+    color: '#126364'
   }
 ];
 
@@ -152,7 +152,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
             className="fk-search-live-input"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search Shilajit Gold, Nootropic, Elixir..."
+            placeholder="Search backpacks, briefcases, duffels, totes..."
             autoComplete="off"
             autoCorrect="off"
             spellCheck="false"
@@ -176,7 +176,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
         {query.trim() && filteredProducts.length > 0 && (
           <div className="fk-search-results-section">
             <div className="fk-search-results-heading">
-              <span>MATCHING FORMULATIONS ({filteredProducts.length})</span>
+              <span>MATCHING BAGS ({filteredProducts.length})</span>
             </div>
 
             <div className="fk-search-results-list">
@@ -205,11 +205,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
                   <div className="fk-result-info">
                     <div className="fk-result-tag-row">
                       <span className="fk-result-category-pill">
-                        {prod.category === 'inner_power'
-                          ? 'INNER POWER'
-                          : prod.category === 'brain_focus'
-                          ? 'MIND & FOCUS'
-                          : 'DEEP SLEEP'}
+                        {prod.category?.toUpperCase()?.replace('_', ' ') || 'BAGS'}
                       </span>
                       {prod.badge && (
                         <span className="fk-result-badge-pill">{prod.badge}</span>
@@ -235,7 +231,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
                         {prod.rating || 4.9} <Star size={10} fill="#FFFFFF" color="#FFFFFF" />
                       </span>
                       <span className="fk-result-certified">
-                        <CheckCircle2 size={12} color="#15803D" /> Certified 100% Pure
+                        <CheckCircle2 size={12} color="#15803D" /> Authentic Anchay
                       </span>
                     </div>
                   </div>
@@ -253,11 +249,11 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
         {query.trim() && filteredProducts.length === 0 && (
           <div className="fk-search-empty-state">
             <div className="fk-empty-search-icon">
-              <Search size={32} color="#85532F" />
+              <Search size={32} color="#1C8E8F" />
             </div>
-            <h3 className="fk-empty-search-title">No Formulations Found</h3>
+            <h3 className="fk-empty-search-title">No Bags Found</h3>
             <p className="fk-empty-search-text">
-              We couldn't find any formulation matching "<strong>{query}</strong>".
+              We couldn't find any bag matching "<strong>{query}</strong>".
             </p>
             <div className="fk-empty-search-suggestions">
               <span className="fk-suggestions-label">Try searching for:</span>
@@ -284,7 +280,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
             {/* Trending Searches */}
             <section className="fk-trending-section">
               <div className="fk-section-title-row">
-                <TrendingUp size={15} color="#85532F" />
+                <TrendingUp size={15} color="#1C8E8F" />
                 <span className="fk-section-title-text">POPULAR SEARCHES</span>
               </div>
               <div className="fk-trending-chips">
@@ -302,11 +298,11 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
               </div>
             </section>
 
-            {/* Explore The 3 Sacred Rituals */}
+            {/* Explore Popular Bag Styles */}
             <section className="fk-rituals-section">
               <div className="fk-section-title-row">
-                <Sparkles size={15} color="#85532F" />
-                <span className="fk-section-title-text">EXPLORE THE 3 RITUALS</span>
+                <Sparkles size={15} color="#1C8E8F" />
+                <span className="fk-section-title-text">POPULAR BAG STYLES</span>
               </div>
               <div className="fk-ritual-cards-grid">
                 {RITUAL_CARDS.map((ritual) => {
@@ -345,11 +341,11 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
             <div className="fk-search-assurances">
               <div className="fk-assurance-item">
                 <CheckCircle2 size={13} color="#15803D" />
-                <span>100% Certified Himalayan Ayurveda</span>
+                <span>100% Water-Resistant & Heavy-Duty YKK Zips</span>
               </div>
               <div className="fk-assurance-item">
                 <CheckCircle2 size={13} color="#15803D" />
-                <span>Zero Sugar • NABL Lab Verified</span>
+                <span>1-Year Craftsmanship Warranty</span>
               </div>
               <div className="fk-assurance-item">
                 <CheckCircle2 size={13} color="#15803D" />

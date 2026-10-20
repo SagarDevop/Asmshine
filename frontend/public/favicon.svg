@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
     <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00878A" />
-      <stop offset="100%" stop-color="#0E5B5E" />
+      <stop offset="0%" stop-color="#1C8E8F" />
+      <stop offset="100%" stop-color="#126364" />
     </linearGradient>
   </defs>
   <rect width="100" height="100" rx="28" fill="url(#tealGrad)" />
   <circle cx="50" cy="50" r="32" fill="#ffffff" />
-  <text x="50" y="62" font-family="system-ui, -apple-system, sans-serif" font-size="38" font-weight="800" fill="#00878A" text-anchor="middle">C</text>
+  <text x="50" y="63" font-family="system-ui, -apple-system, sans-serif" font-size="38" font-weight="800" fill="#1C8E8F" text-anchor="middle">A</text>
 </svg>

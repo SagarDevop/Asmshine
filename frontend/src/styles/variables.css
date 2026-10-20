@@ -1,46 +1,52 @@
 :root {
-  /* ZENVORO Luxury Brand Palette - Light Chocolate Brown, Warm Cream & Gold */
-  --color-primary: #85532F;             /* Elegant Light Chocolate Brown */
-  --color-primary-dark: #543118;        /* Deep Cocoa Brown */
-  --color-primary-light: #F7F1EB;       /* Soft Cream / Milk Foam */
-  --color-primary-hover: #6E3F1F;       /* Warm Roast Brown */
+  /* ANCHAY BAGS Brand Palette - Refreshing Logo Teal & Light Blue Psychology */
+  --color-primary: #1C8E8F;             /* Signature Anchay Refreshing Teal from Logo */
+  --color-primary-dark: #126364;        /* Deep Anchored Teal */
+  --color-primary-light: #EBF7F7;       /* Soft Refreshing Aqua Ice Tint */
+  --color-primary-hover: #15797A;       /* Vibrant Interactive Teal */
   
-  --color-accent-gold: #CBA243;          /* Royal Metallic Gold */
-  --color-accent-gold-dark: #A98028;     /* Burnished Gold */
-  --color-accent-gold-light: #FDF7E7;    /* Champagne Shimmer */
-  --color-accent-cyan: #CBA243;          /* Map legacy cyan to gold */
-  --color-accent-cyan-light: #FBF4E4;
+  --color-accent-blue: #0284C7;         /* Refreshing Bag Buyer Sky Blue */
+  --color-accent-light-blue: #E0F2FE;   /* Crisp Light Blue Pill / Badge */
+  --color-accent-cyan: #1C8E8F;         /* Harmonious Logo Teal */
+  --color-accent-cyan-light: #EBF8F8;   /* Light Sky-Teal Surface */
   
-  --color-eco-dark: #543118;
-  --color-hot-bg: #F9EEDB;
-  --color-hot-text: #8C5511;
-  --color-discount: #85532F;
-  --color-star: #D4AF37;
+  --color-accent-gold: #1C8E8F;         /* Modern Logo Teal Accent */
+  --color-accent-gold-dark: #126364;    /* Deep Teal Accent */
+  --color-accent-gold-light: #E8F7F7;   /* Ice Aqua Shimmer */
+  
+  --color-eco-dark: #126364;            /* Deep Eco Teal */
+  --color-hot-bg: #E0F7F6;              /* Refreshing Mint/Teal Badge BG */
+  --color-hot-text: #0E6B6C;            /* Crisp Teal Badge Text */
+  --color-discount: #0D9488;            /* Teal Deal Tag */
+  --color-star: #F59E0B;                /* Warm Amber Star */
 
-  /* Surfaces & Backgrounds */
-  --bg-page: #FAF7F2;                   /* Creamy Off-White */
-  --bg-card: #FFFFFF;
-  --bg-muted: #F3ECE2;
-  --bg-category: #F6F0E7;
-  --bg-chocolate-header: #3D2314;       /* Rich Deep Espresso */
+  /* Surfaces & Backgrounds - Clean, Modern, Airy & Refreshing */
+  --bg-page: #F6FAFA;                   /* Refreshing Airy Cool White */
+  --bg-card: #FFFFFF;                   /* Pure White */
+  --bg-muted: #EEF6F6;                  /* Soft Air Cool Tint */
+  --bg-category: #EAF4F5;               /* Clean Light Blue/Teal Tint */
+  --bg-header: #0E4E50;                 /* Deep Oceanic Teal */
+  --bg-chocolate-header: #0E4E50;       /* Aliased for full backwards compatibility */
   
-  /* Text */
-  --text-primary: #291A10;              /* Espresso Black-Brown */
-  --text-secondary: #6B5547;            /* Warm Cocoa Medium */
-  --text-muted: #9E887B;
+  /* Text - High Contrast, Modern, Premium Slate & Teal-Black */
+  --text-primary: #0F2327;              /* Deep Slate Teal-Black (Crisp & Readable) */
+  --text-secondary: #3D5A60;            /* Modern Cool Slate Medium */
+  --text-muted: #6B8B91;                /* Clean Muted Cyan-Slate */
   --text-white: #FFFFFF;
-  --text-gold: #B88928;
+  --text-gold: #1C8E8F;                 /* Refreshing Teal Text */
+  --text-accent: #0284C7;               /* Refreshing Light Blue Highlight Text */
 
-  /* Borders & Dividers */
-  --border-light: #ECE1D3;
-  --border-subtle: #F5EEE4;
-  --border-gold: rgba(203, 162, 67, 0.35);
+  /* Borders & Dividers - Clean Crisp Lines */
+  --border-light: #D4E8E8;              /* Soft Refreshing Aqua Border */
+  --border-subtle: #E8F3F3;             /* Ultra Subtle Divider */
+  --border-gold: rgba(28, 142, 143, 0.35); /* Logo Teal Glow Border */
+  --border-primary: rgba(28, 142, 143, 0.25);
 
-  /* Shadows - Warm Chocolate Undertone */
-  --shadow-sm: 0 1px 3px rgba(61, 35, 20, 0.05);
-  --shadow-card: 0 2px 8px rgba(61, 35, 20, 0.06), 0 1px 3px rgba(61, 35, 20, 0.04);
-  --shadow-hover: 0 14px 28px -4px rgba(61, 35, 20, 0.12), 0 6px 12px -2px rgba(61, 35, 20, 0.06);
-  --shadow-bottom-nav: 0 -2px 14px rgba(61, 35, 20, 0.07);
+  /* Shadows - Cool Refreshing Undertone */
+  --shadow-sm: 0 1px 3px rgba(15, 35, 39, 0.05);
+  --shadow-card: 0 2px 8px rgba(15, 35, 39, 0.06), 0 1px 3px rgba(15, 35, 39, 0.04);
+  --shadow-hover: 0 14px 28px -4px rgba(15, 35, 39, 0.12), 0 6px 12px -2px rgba(15, 35, 39, 0.06);
+  --shadow-bottom-nav: 0 -2px 14px rgba(15, 35, 39, 0.07);
 
   /* Radius */
   --radius-sm: 6px;
