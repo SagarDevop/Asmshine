@@ -209,16 +209,18 @@ export const CategoriesPage = ({
                       alt={product.name}
                       className="cat-prod-img"
                     />
-                    {product.size && (
-                      <span className="cat-prod-size">{product.size}</span>
-                    )}
                     {product.badge && (
                       <span className="cat-prod-badge">{product.badge}</span>
                     )}
                   </div>
 
                   <div className="cat-prod-details">
-                    <div className="cat-prod-brand">ANCHAY BAGS</div>
+                    <div className="cat-prod-brand-row">
+                      <span className="cat-prod-brand">ANCHAY BAGS</span>
+                      {product.size && (
+                        <span className="cat-prod-size-badge">{product.size}</span>
+                      )}
+                    </div>
                     <h3 className="cat-prod-name">{product.name}</h3>
 
                     {/* Rating Pill */}

@@ -101,10 +101,7 @@ export const HomePage = () => {
         />
 
         <main className="main-content">
-          {/* 1. Promotional Offer Strip */}
-          <OfferStrip offer={banners?.announcement} onCopyCode={handleCopyOffer} />
-
-          {/* 2. Interactive Flipkart-Style Sale Carousel */}
+          {/* 1. Interactive Flipkart-Style Sale Carousel */}
           <HeroBanner
             banners={banners}
             banner={banners?.hero}

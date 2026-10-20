@@ -80,9 +80,9 @@ a {
 /* ANCHAY Mobile Header (Sleek Minimal Upper Section + Sticky Search & Classy Category Pills) */
 .fk-upper-header {
   width: 100%;
-  background: linear-gradient(180deg, #E6F4F4 0%, #F6FAFA 100%);
+  background: #FFFFFF;
   padding: 8px 14px 6px 14px;
-  border-bottom: 1px solid #D4E8E8;
+  border-bottom: 1px solid #EEF2F6;
 }
 
 .fk-brand-location-bar {
@@ -165,10 +165,10 @@ a {
   top: 0;
   z-index: 99;
   width: 100%;
-  background: linear-gradient(180deg, #E0F2FE 0%, #F4FAFC 44px, #FFFFFF 44px, #FFFFFF 100%);
+  background: #FFFFFF;
   border-bottom: 1px solid #EEF2F6;
   box-shadow: 0 1px 4px rgba(15, 35, 39, 0.04);
-  transition: box-shadow 0.22s ease, background 0.22s ease;
+  transition: box-shadow 0.22s ease;
 }
 
 .fk-sticky-container.scrolled {
@@ -833,9 +833,9 @@ a {
 .product-card {
   background-color: #FFFFFF;
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 1.5px 6px rgba(15, 35, 39, 0.05);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -845,7 +845,7 @@ a {
 .product-media-container {
   position: relative;
   width: 100%;
-  padding-top: 100%; /* 1:1 square aspect ratio */
+  padding-top: 106%; /* Slightly taller for bag silhouettes */
   background-color: #FAFAFA;
   overflow: hidden;
 }
@@ -857,7 +857,7 @@ a {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 6px;
+  padding: 4px;
 }
 
 /* Floating Badges on Product Image */
@@ -928,7 +928,7 @@ a {
 }
 
 .product-details {
-  padding: 8px 10px 10px 10px;
+  padding: 10px 12px 12px 12px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -936,25 +936,26 @@ a {
 
 .product-size-pill {
   align-self: flex-start;
-  background-color: var(--bg-muted);
-  color: var(--text-secondary);
+  background-color: #EBF7F7;
+  color: #126364;
+  border: 1px solid #D1EDED;
   font-size: 10px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
   margin-bottom: 4px;
 }
 
 .product-name {
-  font-size: 12.5px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-primary);
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 34px;
+  min-height: 35px;
   margin-bottom: 6px;
 }
 
@@ -3546,69 +3547,77 @@ a {
 .cat-product-card {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   border: 1px solid #D4E8E8;
-  border-radius: 10px;
-  padding: 10px;
+  border-radius: 14px;
+  padding: 12px;
   background-color: #FFFFFF;
   cursor: pointer;
+  box-shadow: 0 1px 4px rgba(15, 35, 39, 0.04);
   transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .cat-product-card:active {
   transform: scale(0.99);
   border-color: #1C8E8F;
-  box-shadow: 0 2px 8px rgba(28, 142, 143, 0.1);
+  box-shadow: 0 3px 10px rgba(28, 142, 143, 0.12);
 }
 
+/* Enlarged Product Image Thumbnail - Much bigger & clearer */
 .cat-prod-img-wrap {
   position: relative;
-  width: 85px;
-  height: 85px;
+  width: 112px;
+  height: 112px;
   flex-shrink: 0;
-  background-color: #F6FAFA;
-  border-radius: 8px;
-  padding: 4px;
+  background-color: #F8FAFC;
+  border-radius: 12px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #EDF7F7;
+  border: 1px solid #EDF2F7;
+  overflow: hidden;
 }
 
 .cat-prod-img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  transition: transform 0.2s ease;
 }
 
-.cat-prod-size {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  background: rgba(255, 255, 255, 0.92);
-  font-size: 9px;
-  font-weight: 700;
-  padding: 1px 4px;
-  border-radius: 3px;
-  color: #57534E;
-  border: 1px solid #D4E8E8;
+.cat-product-card:hover .cat-prod-img {
+  transform: scale(1.05);
 }
 
+/* TOP RATED / BESTSELLER Badge - Neatly placed top-left, NO overlapping */
 .cat-prod-badge {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 6px;
+  left: 6px;
   background-color: #1C8E8F;
   color: #FFFFFF;
   font-size: 8.5px;
   font-weight: 800;
-  padding: 1px 4px;
-  border-radius: 3px;
+  padding: 2.5px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 1px 3px rgba(15, 35, 39, 0.18);
+  z-index: 2;
 }
 
 .cat-prod-details {
   flex: 1;
   min-width: 0;
+}
+
+/* Brand & Capacity Tag Row */
+.cat-prod-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 3px;
 }
 
 .cat-prod-brand {
@@ -3618,12 +3627,24 @@ a {
   letter-spacing: 0.4px;
 }
 
+/* Capacity Tag (e.g. 32L Capacity) displayed neatly without colliding */
+.cat-prod-size-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #126364;
+  background-color: #EBF7F7;
+  border: 1px solid #D1EDED;
+  padding: 1.5px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
 .cat-prod-name {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #0F2327;
   line-height: 1.3;
-  margin: 2px 0 4px;
+  margin: 2px 0 5px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
