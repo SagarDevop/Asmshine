@@ -1,52 +1,64 @@
 :root {
-  /* ANCHAY BAGS Brand Palette - Refreshing Logo Teal & Light Blue Psychology */
-  --color-primary: #1C8E8F;             /* Signature Anchay Refreshing Teal from Logo */
-  --color-primary-dark: #126364;        /* Deep Anchored Teal */
-  --color-primary-light: #EBF7F7;       /* Soft Refreshing Aqua Ice Tint */
-  --color-primary-hover: #15797A;       /* Vibrant Interactive Teal */
+  /* ========================================================
+     WHITE WARM & BOTANICAL EMERALD MINT TEMPLATE
+     - Base: Warm White (#FAF9F6) & Pure White Cards
+     - Accents: Botanical Emerald Green (#059669) & Fresh Mint (#10B981)
+     - Text: Warm Slate Charcoal (#1E293B)
+     - Eco-Hygiene / Sparkling Clean Natural Vibe
+     ======================================================== */
+
+  /* Botanical Emerald & Mint Brand Palette */
+  --color-primary: #059669;             /* Botanical Emerald Green */
+  --color-primary-dark: #047857;        /* Deep Forest Emerald for High Contrast */
+  --color-primary-light: #ECFDF5;       /* Soft Mint Ice Wash */
+  --color-primary-hover: #10B981;       /* Vibrant Interactive Fresh Mint */
+  --color-mint-vibrant: #34D399;        /* Lively Mint 400 */
+  --color-mint-soft: #A7F3D0;           /* Soft Mint Border & Badge Ring */
   
-  --color-accent-blue: #0284C7;         /* Refreshing Bag Buyer Sky Blue */
-  --color-accent-light-blue: #E0F2FE;   /* Crisp Light Blue Pill / Badge */
-  --color-accent-cyan: #1C8E8F;         /* Harmonious Logo Teal */
-  --color-accent-cyan-light: #EBF8F8;   /* Light Sky-Teal Surface */
+  --color-accent-blue: #059669;         /* Primary Accent */
+  --color-accent-light-blue: #D1FAE5;   /* Crisp Mint Pill / Badge */
+  --color-accent-cyan: #059669;         /* Accent Green */
+  --color-accent-cyan-light: #ECFDF5;   /* Soft Mint Surface Wash */
   
-  --color-accent-gold: #1C8E8F;         /* Modern Logo Teal Accent */
-  --color-accent-gold-dark: #126364;    /* Deep Teal Accent */
-  --color-accent-gold-light: #E8F7F7;   /* Ice Aqua Shimmer */
+  --color-accent-gold: #10B981;         /* Fresh Mint Accent */
+  --color-accent-gold-dark: #059669;    /* Deep Emerald Accent */
+  --color-accent-gold-light: #D1FAE5;   /* Soft Mint Shimmer */
   
-  --color-eco-dark: #126364;            /* Deep Eco Teal */
-  --color-hot-bg: #E0F7F6;              /* Refreshing Mint/Teal Badge BG */
-  --color-hot-text: #0E6B6C;            /* Crisp Teal Badge Text */
-  --color-discount: #0D9488;            /* Teal Deal Tag */
+  --color-eco-dark: #064E3B;            /* Deep Botanical Forest */
+  --color-hot-bg: #D1FAE5;              /* Refreshing Mint Badge BG */
+  --color-hot-text: #047857;            /* Deep Emerald Badge Text */
+  --color-discount: #059669;            /* Emerald Deal Tag */
   --color-star: #F59E0B;                /* Warm Amber Star */
 
-  /* Surfaces & Backgrounds - Clean, Modern, Airy & Refreshing */
-  --bg-page: #F6FAFA;                   /* Refreshing Airy Cool White */
-  --bg-card: #FFFFFF;                   /* Pure White */
-  --bg-muted: #EEF6F6;                  /* Soft Air Cool Tint */
-  --bg-category: #EAF4F5;               /* Clean Light Blue/Teal Tint */
-  --bg-header: #0E4E50;                 /* Deep Oceanic Teal */
-  --bg-chocolate-header: #0E4E50;       /* Aliased for full backwards compatibility */
+  /* Surfaces & Backgrounds - Warm White & Botanical Mint */
+  --bg-page: #FAF9F6;                   /* Warm Off-White / Cozy Linen Pearl Base */
+  --bg-page-alt: #F5F3ED;               /* Warm Soft Sand Tint */
+  --bg-card: #FFFFFF;                   /* Pure Crisp White */
+  --bg-muted: #F5F3EF;                  /* Soft Warm White Tint */
+  --bg-category: #F0FDF4;               /* Clean Botanical Mint / Honeydew Tint */
+  --bg-header: #FFFFFF;                 /* Pure Crisp White Header */
+  --bg-chocolate-header: #064E3B;       /* Deep Botanical Forest Header fallback */
   
-  /* Text - High Contrast, Modern, Premium Slate & Teal-Black */
-  --text-primary: #0F2327;              /* Deep Slate Teal-Black (Crisp & Readable) */
-  --text-secondary: #3D5A60;            /* Modern Cool Slate Medium */
-  --text-muted: #6B8B91;                /* Clean Muted Cyan-Slate */
+  /* Text - High Contrast, Slate Charcoal & Emerald Highlights */
+  --text-primary: #1E293B;              /* Deep Slate Charcoal (Warm & Readable) */
+  --text-secondary: #475569;            /* Balanced Slate Grey */
+  --text-muted: #94A3B8;                /* Light Slate Grey */
   --text-white: #FFFFFF;
-  --text-gold: #1C8E8F;                 /* Refreshing Teal Text */
-  --text-accent: #0284C7;               /* Refreshing Light Blue Highlight Text */
+  --text-gold: #059669;                 /* Emerald Highlight Text */
+  --text-accent: #059669;               /* Refreshing Emerald Highlight Text */
 
-  /* Borders & Dividers - Clean Crisp Lines */
-  --border-light: #D4E8E8;              /* Soft Refreshing Aqua Border */
-  --border-subtle: #E8F3F3;             /* Ultra Subtle Divider */
-  --border-gold: rgba(28, 142, 143, 0.35); /* Logo Teal Glow Border */
-  --border-primary: rgba(28, 142, 143, 0.25);
+  /* Borders & Dividers - Warm Neutral with Mint Accents */
+  --border-light: #E5E1D8;              /* Warm Neutral Border */
+  --border-subtle: #F0ECE4;             /* Very Soft Warm Divider */
+  --border-mint: #A7F3D0;               /* Crisp Botanical Mint Border */
+  --border-gold: rgba(5, 150, 105, 0.35); /* Emerald Glow Border */
+  --border-primary: rgba(5, 150, 105, 0.25);
 
-  /* Shadows - Cool Refreshing Undertone */
-  --shadow-sm: 0 1px 3px rgba(15, 35, 39, 0.05);
-  --shadow-card: 0 2px 8px rgba(15, 35, 39, 0.06), 0 1px 3px rgba(15, 35, 39, 0.04);
-  --shadow-hover: 0 14px 28px -4px rgba(15, 35, 39, 0.12), 0 6px 12px -2px rgba(15, 35, 39, 0.06);
-  --shadow-bottom-nav: 0 -2px 14px rgba(15, 35, 39, 0.07);
+  /* Shadows - Warm Soft Undertone with Subtle Mint Glow */
+  --shadow-sm: 0 1px 3px rgba(30, 41, 59, 0.05);
+  --shadow-card: 0 2px 10px rgba(30, 41, 59, 0.05), 0 1px 3px rgba(30, 41, 59, 0.03);
+  --shadow-hover: 0 12px 24px -4px rgba(5, 150, 105, 0.18), 0 4px 10px -2px rgba(30, 41, 59, 0.04);
+  --shadow-bottom-nav: 0 -2px 14px rgba(30, 41, 59, 0.06);
 
   /* Radius */
   --radius-sm: 6px;
@@ -59,4 +71,9 @@
   --mobile-max-width: 480px;
   --desktop-max-width: 1240px;
   --bottom-nav-height: 58px;
+
+  /* Flipkart Typography */
+  --font-base: 'Inter', Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-roboto: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }

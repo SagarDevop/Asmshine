@@ -7,11 +7,14 @@ import {
   Plus,
   Sparkles,
   Layers,
-  Backpack,
-  Briefcase,
-  Luggage,
-  Compass,
-  Package,
+  ShieldCheck,
+  Bath,
+  SprayCan,
+  Brush,
+  Utensils,
+  CookingPot,
+  Shirt,
+  Droplets,
   X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -21,12 +24,14 @@ import { SearchOverlay } from '../components/search/SearchOverlay';
 
 const categoryIconMap = {
   all: Layers,
-  backpacks: Backpack,
-  laptop_bags: Briefcase,
-  travel_duffels: Luggage,
-  totes: ShoppingBag,
-  slings_crossbody: Compass,
-  wallets_organizers: Package
+  toilet_care: ShieldCheck,
+  bathroom_care: Bath,
+  glass_care: SprayCan,
+  floor_care: Brush,
+  dishwash: Utensils,
+  kitchen_care: CookingPot,
+  laundry_care: Shirt,
+  hand_hygiene: Droplets
 };
 
 export const CategoriesPage = ({
@@ -62,7 +67,7 @@ export const CategoriesPage = ({
   }, []);
 
   const allCategoriesList = [
-    { id: 'all', name: 'All Bags', desc: 'Anchay Complete Carrywear & Bag Collection' },
+    { id: 'all', name: 'All Products', desc: 'ASM Shine Home Hygiene & Cleaning Collection' },
     ...STATIC_CATEGORIES
   ];
 
@@ -92,8 +97,8 @@ export const CategoriesPage = ({
           <ArrowLeft size={22} />
         </button>
         <div className="page-header-title-box">
-          <span className="page-header-title">Anchay Bag Collection</span>
-          <span className="page-header-subtitle">28 Handcrafted Varieties</span>
+          <span className="page-header-title">ASM Shine Cleaning Range</span>
+          <span className="page-header-subtitle">Spotless Hygiene &amp; Care</span>
         </div>
         <div className="pdp-cart-icon-wrap" onClick={handleOpenCart}>
           <button type="button" className="page-action-btn" aria-label="Cart">
@@ -117,7 +122,7 @@ export const CategoriesPage = ({
           <Search size={18} className="cat-search-icon" />
           <input
             type="search"
-            placeholder="Search backpacks, briefcases, duffels, totes..."
+            placeholder="Search toilet, bathroom, glass Colin, floor cleaner..."
             value={searchQuery}
             onFocus={() => setIsSearchOpen(true)}
             onClick={(e) => {
@@ -172,7 +177,7 @@ export const CategoriesPage = ({
         <main className="cat-content-pane no-scrollbar">
           {/* Active Category Header Banner */}
           <div className="cat-banner-card">
-            <div className="cat-banner-tag">AUTHENTIC ANCHAY CARRYWEAR</div>
+            <div className="cat-banner-tag">AUTHENTIC ASM SHINE HYGIENE</div>
             <h2 className="cat-banner-title">{currentCategoryObj.name}</h2>
             <p className="cat-banner-sub">
               {filteredProducts.length} varieties available in collection
@@ -182,8 +187,8 @@ export const CategoriesPage = ({
           {/* Product Items List */}
           {filteredProducts.length === 0 ? (
             <div className="cat-empty-state">
-              <Sparkles size={32} color="#1C8E8F" />
-              <p>No bags found matching your search</p>
+              <Sparkles size={32} color="#0284C7" />
+              <p>No cleaning products found matching your search</p>
               <button
                 type="button"
                 className="cat-reset-btn"

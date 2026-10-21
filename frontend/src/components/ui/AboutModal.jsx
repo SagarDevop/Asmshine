@@ -9,10 +9,10 @@ export const AboutModal = ({ isOpen, onClose }) => {
       <div className="about-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="about-modal-header">
           <div className="about-brand-row">
-            <img src="/images/logo.png" alt="ANCHAY Logo" className="about-logo" style={{ borderRadius: '50%' }} />
+            <img src="/favicon.svg" alt="ASM SHINE Logo" className="about-logo" style={{ borderRadius: '10px' }} />
             <div>
-              <h3 className="about-title">About ANCHAY</h3>
-              <p className="about-subtitle">Premium Bags & Carrywear</p>
+              <h3 className="about-title">About ASM SHINE</h3>
+              <p className="about-subtitle">Hygiene &amp; Cleaning Solutions</p>
             </div>
           </div>
           <button className="about-close-btn" onClick={onClose} aria-label="Close modal">
@@ -22,62 +22,62 @@ export const AboutModal = ({ isOpen, onClose }) => {
 
         <div className="about-body">
           <p className="about-intro">
-            <strong>ANCHAY</strong> is India’s foremost modern carrywear maison, crafting premium <strong>backpacks, totes, travel duffels, and everyday carry essentials</strong> for the modern lifestyle.
+            <strong>ASM SHINE</strong> is India’s premier home and commercial hygiene brand, engineering specialized <strong>power toilet cleaners, Colin-style glass sprays, bathroom descalers, disinfectant floor washes, and dishwash gels</strong> for sparkling spotless spaces.
           </p>
 
           <div className="about-features-grid">
             <div className="about-feature-card">
-              <div className="about-feature-icon" style={{ background: '#EBF8F8', color: '#1C8E8F' }}>
-                <Zap size={20} color="#1C8E8F" />
+              <div className="about-feature-icon" style={{ background: '#E0F2FE', color: '#0284C7' }}>
+                <ShieldCheck size={20} color="#0284C7" />
               </div>
               <div className="about-feature-info">
-                <h4>Ergonomic Weight Balance</h4>
-                <p>Designed for comfort with pressure-relieving air-mesh straps and reinforced balance.</p>
+                <h4>99.9% Certified Germ Kill</h4>
+                <p>NABL lab certified bactericidal and antiviral formulations for complete home safety.</p>
               </div>
             </div>
 
             <div className="about-feature-card">
-              <div className="about-feature-icon" style={{ background: '#EBF8F8', color: '#1C8E8F' }}>
-                <Brain size={20} color="#1C8E8F" />
+              <div className="about-feature-icon" style={{ background: '#E0F2FE', color: '#0284C7' }}>
+                <Sparkles size={20} color="#0284C7" />
               </div>
               <div className="about-feature-info">
-                <h4>Smart Modular Storage</h4>
-                <p>Padded laptop sleeves, quick-access pockets, and organized everyday compartments.</p>
+                <h4>Streak-Free Mirror Shine</h4>
+                <p>Anti-dust shield technology delivering crystal clarity across glass, mirrors & tiles.</p>
               </div>
             </div>
 
             <div className="about-feature-card">
-              <div className="about-feature-icon" style={{ background: '#EBF8F8', color: '#1C8E8F' }}>
-                <Moon size={20} color="#1C8E8F" />
+              <div className="about-feature-icon" style={{ background: '#E0F2FE', color: '#0284C7' }}>
+                <Zap size={20} color="#0284C7" />
               </div>
               <div className="about-feature-info">
-                <h4>Weather-Resistant Fabric</h4>
-                <p>Water-repellent durable outer weave engineered to withstand urban commutes & travel.</p>
+                <h4>10X Hard Water Descaling</h4>
+                <p>Dissolves stubborn yellow limescale and calcium marks without abrasive scrubbing.</p>
               </div>
             </div>
 
             <div className="about-feature-card">
-              <div className="about-feature-icon" style={{ background: '#EBF8F8', color: '#1C8E8F' }}>
-                <ShieldCheck size={20} color="#1C8E8F" />
+              <div className="about-feature-icon" style={{ background: '#E0F2FE', color: '#0284C7' }}>
+                <Award size={20} color="#0284C7" />
               </div>
               <div className="about-feature-info">
-                <h4>Rigorous Quality Assurance</h4>
-                <p>Reinforced stitching, Japanese YKK zippers, and 1-year craftsmanship warranty.</p>
+                <h4>Zero Choking Acid Fumes</h4>
+                <p>Gentle on lungs, tiles, and fittings with refreshing ocean and citrus essential oils.</p>
               </div>
             </div>
           </div>
 
           <div className="about-contact-box">
-            <h4>Customer Concierge & Support</h4>
-            <p>Email: <strong>concierge@anchaybags.com</strong></p>
-            <p>Toll-Free: <strong>1800-ANCHAY-BAGS (262-429)</strong></p>
+            <h4>Customer Care &amp; Institutional Supply</h4>
+            <p>Email: <strong>care@asmshine.com</strong></p>
+            <p>Toll-Free Helpline: <strong>1800-ASM-SHINE (276-744)</strong></p>
             <p>New Delhi 110001, India</p>
           </div>
         </div>
 
         <div className="about-footer">
           <button className="about-done-btn" onClick={onClose}>
-            Back to Bag Collection
+            Back to Cleaning Range
           </button>
         </div>
       </div>

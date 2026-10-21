@@ -5,9 +5,10 @@ import {
   X,
   ChevronRight,
   Star,
-  Backpack,
-  Briefcase,
-  Luggage,
+  ShieldCheck,
+  Bath,
+  SprayCan,
+  Brush,
   TrendingUp,
   Sparkles,
   CheckCircle2
@@ -16,41 +17,41 @@ import { useNavigate } from 'react-router-dom';
 import { api, STATIC_PRODUCTS } from '../../services/api';
 
 const TRENDING_SEARCHES = [
-  { text: 'Tech Laptop Backpack', query: 'Backpack' },
-  { text: 'Executive Leather Briefcase', query: 'Briefcase' },
-  { text: 'Weekender Travel Duffel', query: 'Duffel' },
-  { text: 'Luxury Work Tote', query: 'Tote' },
-  { text: 'Modular Crossbody Sling', query: 'Sling' },
-  { text: 'Water-Resistant Commuter Bag', query: 'Water' }
+  { text: 'Power Toilet Cleaner (Harpic Power)', query: 'Toilet' },
+  { text: 'Colin Glass & Mirror Spray', query: 'Glass' },
+  { text: 'Bathroom & Tiles Hard Water Descaler', query: 'Bathroom' },
+  { text: 'Citrus Fresh Floor Disinfectant', query: 'Floor' },
+  { text: 'Turbo Lemon Dishwash Gel', query: 'Dishwash' },
+  { text: 'Kitchen Chimney Degreaser', query: 'Degreaser' }
 ];
 
 const RITUAL_CARDS = [
   {
-    id: 'bag_1',
-    category: 'backpacks',
-    name: 'Apex Urban Pro 28L',
-    subtitle: '15.6" Laptop Armour',
-    discount: '45% OFF',
-    icon: Backpack,
-    color: '#1C8E8F'
+    id: 'asm_toilet_1',
+    category: 'toilet_care',
+    name: 'Power Toilet Cleaner 1L',
+    subtitle: '10x Limescale Removal',
+    discount: '27% OFF',
+    icon: ShieldCheck,
+    color: '#4F46E5'
   },
   {
-    id: 'bag_12',
-    category: 'travel_duffels',
-    name: 'Nomad Weekender 45L',
-    subtitle: 'Flight Cabin Approved',
-    discount: '42% OFF',
-    icon: Luggage,
+    id: 'asm_glass_1',
+    category: 'glass_care',
+    name: 'Colin Glass Spray 500ml',
+    subtitle: 'Streak-Free Mirror Shine',
+    discount: '28% OFF',
+    icon: SprayCan,
     color: '#0284C7'
   },
   {
-    id: 'bag_7',
-    category: 'laptop_bags',
-    name: 'Oxford Leather Briefcase',
-    subtitle: 'Executive Top-Grain Finish',
-    discount: '42% OFF',
-    icon: Briefcase,
-    color: '#126364'
+    id: 'asm_bath_1',
+    category: 'bathroom_care',
+    name: 'Bathroom Tiles Descaler',
+    subtitle: 'Removes Hard Water Stains',
+    discount: '28% OFF',
+    icon: Bath,
+    color: '#0D9488'
   }
 ];
 
@@ -152,7 +153,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
             className="fk-search-live-input"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search backpacks, briefcases, duffels, totes..."
+            placeholder="Search toilet, Colin glass, floor cleaner, bathroom descaler..."
             autoComplete="off"
             autoCorrect="off"
             spellCheck="false"
@@ -176,7 +177,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
         {query.trim() && filteredProducts.length > 0 && (
           <div className="fk-search-results-section">
             <div className="fk-search-results-heading">
-              <span>MATCHING BAGS ({filteredProducts.length})</span>
+              <span>MATCHING CLEANING PRODUCTS ({filteredProducts.length})</span>
             </div>
 
             <div className="fk-search-results-list">
@@ -231,7 +232,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
                         {prod.rating || 4.9} <Star size={10} fill="#FFFFFF" color="#FFFFFF" />
                       </span>
                       <span className="fk-result-certified">
-                        <CheckCircle2 size={12} color="#15803D" /> Authentic Anchay
+                        <CheckCircle2 size={12} color="#15803D" /> Authentic ASM Shine
                       </span>
                     </div>
                   </div>

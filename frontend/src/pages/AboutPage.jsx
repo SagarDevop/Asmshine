@@ -3,9 +3,9 @@ import {
   ArrowLeft,
   Crown,
   ShieldCheck,
-  Backpack,
-  Briefcase,
-  Luggage,
+  Bath,
+  SprayCan,
+  Brush,
   Phone,
   Mail,
   MapPin,
@@ -17,7 +17,7 @@ import {
   Layers,
   Award,
   Clock,
-  Compass,
+  Zap,
   Check,
   X
 } from 'lucide-react';
@@ -42,8 +42,8 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Anchay Bags — Engineered For Modern Journeys',
-          text: 'Discover Anchay: Handcrafted Backpacks, Executive Briefcases, Travel Duffels & Totes',
+          title: 'ASM Shine — Spotless Clean & Powerful Hygiene',
+          text: 'Discover ASM Shine: High-performance Toilet Cleaners, Glass Colin Sprays, Bathroom Descalers & Floor Cleansers',
           url: window.location.href
         });
       } catch (e) {
@@ -68,8 +68,8 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
           <ArrowLeft size={20} />
         </button>
         <div className="page-header-title-box" onClick={handleBack}>
-          <img src="/images/logo.png" alt="ANCHAY" className="page-mini-logo" />
-          <span className="page-header-title">The Anchay Philosophy</span>
+          <img src="/favicon.svg" alt="ASM SHINE" className="page-mini-logo" />
+          <span className="page-header-title">The ASM Shine Standard</span>
         </div>
         <button
           type="button"
@@ -81,11 +81,11 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
         </button>
       </header>
 
-      {/* 2. Luxury Hero Card with Cinematic Bag Visual */}
+      {/* 2. Hero Card with Cleaning Visual */}
       <section className="about-hero-card">
         <img
-          src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1200&q=80"
-          alt="Anchay Bags Craftsmanship"
+          src="/images/banners/hero_banner_photo.png"
+          alt="ASM Shine Hygiene Formulations"
           className="about-hero-bg-img"
         />
         <div className="about-hero-gradient" />
@@ -93,40 +93,40 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
         <div className="about-hero-content">
           <div className="about-hero-badge">
             <Crown size={12} color="#E0F2FE" />
-            <span>PREMIUM CARRYWEAR MAISON</span>
+            <span>ADVANCED HYGIENE &amp; CLEANING</span>
           </div>
 
           <img
-            src="/images/logo.png"
-            alt="ANCHAY Crest"
+            src="/favicon.svg"
+            alt="ASM SHINE Crest"
             className="about-hero-crest"
           />
 
-          <h1 className="about-hero-heading">ANCHAY</h1>
-          <p className="about-hero-tagline">CRAFTED FOR MODERN JOURNEYS</p>
+          <h1 className="about-hero-heading">ASM SHINE</h1>
+          <p className="about-hero-tagline">SPOTLESS CLEAN • SPARKLING SHINE</p>
 
           <div className="about-hero-meta-strip">
-            <span className="about-meta-chip">Water-Resistant Weave</span>
-            <span className="about-meta-chip">YKK Reverse Hardware</span>
-            <span className="about-meta-chip">1-Year Warranty</span>
+            <span className="about-meta-chip">99.9% Certified Germ Kill</span>
+            <span className="about-meta-chip">10X Limescale Cutter</span>
+            <span className="about-meta-chip">Zero Harsh Acid Fumes</span>
           </div>
         </div>
       </section>
 
       {/* 3. The Genesis Story / Manifesto */}
       <section className="about-manifesto-section">
-        <span className="about-section-tag">OUR PURPOSE</span>
-        <h2 className="about-manifesto-title">Born For Those Who Live In Motion</h2>
+        <span className="about-section-tag">OUR MISSION</span>
+        <h2 className="about-manifesto-title">Formulated For Indian Water &amp; Homes</h2>
         <p className="about-manifesto-text">
-          Traditional bags either sacrifice durability for aesthetics or look like bulky outdoor gear in executive boardrooms. Anchay was created to bridge this divide — blending architectural minimalism, ergonomic weight balance, and weather-proof resilience into carrywear designed for the contemporary explorer.
+          Conventional cleaners in India rely on harsh, choking hydrochloric acid or watery detergents that fail against heavy borewell water stains and stubborn kitchen grease. ASM Shine was formulated to redefine hygiene — combining thick vertical-clinging polymers, bio-active descalers, and natural essential oils that eradicate 99.9% of bacteria while leaving surfaces sparkling like mirrors.
         </p>
       </section>
 
-      {/* 4. The 3-Stage Craftsmanship Process */}
+      {/* 4. The 3-Stage Formulation Process */}
       <section className="about-process-section">
         <div className="about-section-header">
-          <span className="about-section-tag">ARTISANAL ENGINEERING</span>
-          <h3 className="about-section-heading">The 3 Pillars of Anchay Craftsmanship</h3>
+          <span className="about-section-tag">SCIENTIFIC PURITY</span>
+          <h3 className="about-section-heading">The 3 Pillars of ASM Shine Clean</h3>
         </div>
 
         <div className="about-steps-grid">
@@ -135,12 +135,12 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             <div className="about-step-top">
               <span className="about-step-num-circle">1</span>
               <div className="about-step-icon-wrap">
-                <Compass size={16} color="#1C8E8F" />
+                <ShieldCheck size={16} color="#0284C7" />
               </div>
-              <h4 className="about-step-title">Ergonomic Weight Modeling</h4>
+              <h4 className="about-step-title">10X Limescale Dissolution</h4>
             </div>
             <p className="about-step-desc">
-              Every strap, harness, and back panel is modeled using spinal pressure mapping to disperse heavy laptop and travel loads evenly across the core.
+              Organic descaling agents break molecular calcium and yellow mineral deposits in commodes and bathroom tiles in under 5 minutes without eroding grout or chrome faucets.
             </p>
           </div>
 
@@ -149,12 +149,12 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             <div className="about-step-top">
               <span className="about-step-num-circle">2</span>
               <div className="about-step-icon-wrap">
-                <ShieldCheck size={16} color="#1C8E8F" />
+                <SprayCan size={16} color="#0284C7" />
               </div>
-              <h4 className="about-step-title">All-Weather Material Lab</h4>
+              <h4 className="about-step-title">Streak-Free Colin Power</h4>
             </div>
             <p className="about-step-desc">
-              Constructed with 900D ballistic weaves, water-repellent TPU laminates, and top-grain vegan leathers tested against monsoons, abrasions, and daily friction.
+              Anti-static polymer film repels dust and dissolves oily fingerprints instantly, ensuring 100% crystal transparency on mirrors, dining tables, and car windshields.
             </p>
           </div>
 
@@ -163,283 +163,100 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             <div className="about-step-top">
               <span className="about-step-num-circle">3</span>
               <div className="about-step-icon-wrap">
-                <Award size={16} color="#1C8E8F" />
+                <Sparkles size={16} color="#0284C7" />
               </div>
-              <h4 className="about-step-title">Stress-Tested YKK Hardware</h4>
+              <h4 className="about-step-title">99.9% Antimicrobial Shield</h4>
             </div>
             <p className="about-step-desc">
-              Reinforced box-and-cross bar-tack stitching and Japanese YKK smooth-glide zippers tested to endure over 15,000 open-close cycles and 25kg weight strains.
+              Hospital-grade disinfection verified by NABL labs, eradicating viruses, bacteria, and mold while releasing fresh ocean and citrus aromatherapy notes.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 5. The Carrying Archetypes */}
-      <section className="about-circadian-section">
+      {/* 5. Comparison Table */}
+      <section className="about-compare-section">
         <div className="about-section-header">
-          <span className="about-section-tag">BUILT FOR EVERY TRANSIT</span>
-          <h3 className="about-section-heading">How Anchay Powers Your Daily Routine</h3>
-          <p className="about-section-sub">
-            From the morning metro commute to cross-country weekend flights, our bags are tailored to your lifestyle.
-          </p>
-        </div>
-
-        <div className="about-timeline-list">
-          {/* Tech Commute */}
-          <div className="about-time-block morning">
-            <div className="about-time-indicator">
-              <span className="about-time-badge">WORK & TECH</span>
-              <div className="about-time-dot" />
-            </div>
-            <div className="about-time-card" onClick={() => navigate('/product/bag_1')}>
-              <div className="about-time-header">
-                <Backpack size={15} color="#1C8E8F" />
-                <span className="about-time-phase">DAILY COMMUTE</span>
-              </div>
-              <h4 className="about-time-title">Apex Urban Pro 28L Backpack</h4>
-              <p className="about-time-detail">
-                Dedicated 15.6" laptop cradle, anti-theft secret passport pocket, and ventilated 3D air-mesh lumbar support for effortless city navigation.
-              </p>
-              <div className="about-time-instruction">
-                <span>Explore Tech Backpacks</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Executive Work */}
-          <div className="about-time-block day">
-            <div className="about-time-indicator">
-              <span className="about-time-badge">EXECUTIVE</span>
-              <div className="about-time-dot" />
-            </div>
-            <div className="about-time-card" onClick={() => navigate('/product/bag_7')}>
-              <div className="about-time-header">
-                <Briefcase size={15} color="#1C8E8F" />
-                <span className="about-time-phase">BOARDROOM READINESS</span>
-              </div>
-              <h4 className="about-time-title">Oxford Executive Leather Briefcase</h4>
-              <p className="about-time-detail">
-                Full-grain textured vegan leather with dual tech dividers, luggage trolley strap, and antique brass alloy hardware.
-              </p>
-              <div className="about-time-instruction">
-                <span>Explore Executive Briefcases</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Travel & Weekend */}
-          <div className="about-time-block night">
-            <div className="about-time-indicator">
-              <span className="about-time-badge">TRAVEL</span>
-              <div className="about-time-dot" />
-            </div>
-            <div className="about-time-card" onClick={() => navigate('/product/bag_12')}>
-              <div className="about-time-header">
-                <Luggage size={15} color="#1C8E8F" />
-                <span className="about-time-phase">WEEKENDER ESCAPES</span>
-              </div>
-              <h4 className="about-time-title">Nomad Weekender 45L Duffel</h4>
-              <p className="about-time-detail">
-                Airline overhead cabin approved with independent ventilated shoe tunnel and separate waterproof wet kit pocket.
-              </p>
-              <div className="about-time-instruction">
-                <span>Explore Travel Duffels</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Flagship Highlights */}
-      <section className="about-rituals-section">
-        <div className="about-section-header">
-          <span className="about-section-tag">FLAGSHIP CREATIONS</span>
-          <h3 className="about-section-heading">Touch To Explore Featured Styles</h3>
-        </div>
-
-        <div className="about-ritual-cards-list">
-          {/* Bag 1 */}
-          <div
-            className="about-ritual-card"
-            onClick={() => navigate('/product/bag_1')}
-          >
-            <div className="about-ritual-media">
-              <img
-                src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80"
-                alt="Apex Urban Pro 28L"
-                className="about-ritual-img"
-              />
-            </div>
-            <div className="about-ritual-info">
-              <div className="about-ritual-tag">
-                <Backpack size={12} color="#1C8E8F" />
-                <span>BACKPACK • 28L</span>
-              </div>
-              <h4 className="about-ritual-name">Apex Urban Pro 28L</h4>
-              <div className="about-compounds-row">
-                <span className="about-compound-tag">15.6" Laptop</span>
-                <span className="about-compound-tag">Waterproof</span>
-              </div>
-              <div className="about-ritual-footer">
-                <span className="about-ritual-link">View Details</span>
-                <ChevronRight size={13} />
-              </div>
-            </div>
-          </div>
-
-          {/* Bag 7 */}
-          <div
-            className="about-ritual-card"
-            onClick={() => navigate('/product/bag_7')}
-          >
-            <div className="about-ritual-media">
-              <img
-                src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80"
-                alt="Oxford Executive Briefcase"
-                className="about-ritual-img"
-              />
-            </div>
-            <div className="about-ritual-info">
-              <div className="about-ritual-tag">
-                <Briefcase size={12} color="#1C8E8F" />
-                <span>BRIEFCASE • 15.6"</span>
-              </div>
-              <h4 className="about-ritual-name">Oxford Leather Briefcase</h4>
-              <div className="about-compounds-row">
-                <span className="about-compound-tag">Full-Grain Leather</span>
-                <span className="about-compound-tag">Brass Sliders</span>
-              </div>
-              <div className="about-ritual-footer">
-                <span className="about-ritual-link">View Details</span>
-                <ChevronRight size={13} />
-              </div>
-            </div>
-          </div>
-
-          {/* Bag 12 */}
-          <div
-            className="about-ritual-card"
-            onClick={() => navigate('/product/bag_12')}
-          >
-            <div className="about-ritual-media">
-              <img
-                src="https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=600&q=80"
-                alt="Nomad Weekender 45L"
-                className="about-ritual-img"
-              />
-            </div>
-            <div className="about-ritual-info">
-              <div className="about-ritual-tag">
-                <Luggage size={12} color="#1C8E8F" />
-                <span>DUFFEL • 45L</span>
-              </div>
-              <h4 className="about-ritual-name">Nomad Weekender 45L</h4>
-              <div className="about-compounds-row">
-                <span className="about-compound-tag">Shoe Tunnel</span>
-                <span className="about-compound-tag">Cabin Approved</span>
-              </div>
-              <div className="about-ritual-footer">
-                <span className="about-ritual-link">View Details</span>
-                <ChevronRight size={13} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Anchay vs Generic Market Bags Comparison Table */}
-      <section className="about-comparison-section">
-        <div className="about-section-header">
-          <span className="about-section-tag">QUALITY BENCHMARK</span>
-          <h3 className="about-section-heading">Why Anchay Sets The Gold Standard</h3>
+          <span className="about-section-tag">THE VERDICT</span>
+          <h3 className="about-section-heading">ASM Shine vs Conventional Cleaners</h3>
         </div>
 
         <div className="about-compare-table">
-          <div className="about-compare-head">
-            <span className="compare-col-feature">Feature</span>
-            <span className="compare-col-brand">ANCHAY</span>
-            <span className="compare-col-other">Generic Bags</span>
+          <div className="about-compare-header">
+            <span>Cleaning Standard</span>
+            <span className="th-brand">ASM SHINE</span>
+            <span className="th-other">Ordinary Cleaners</span>
           </div>
 
           <div className="about-compare-row">
-            <span className="compare-col-feature">Exterior Weave</span>
+            <span className="compare-col-feature">Hard Water TDS Removal</span>
             <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> 900D Ballistic Poly
+              <Check size={13} color="#15803D" /> 10X Fast Descaling
             </span>
             <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> Flimsy 200D fabric
-            </span>
-          </div>
-
-          <div className="about-compare-row">
-            <span className="compare-col-feature">Zipper Sliders</span>
-            <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> Japanese YKK Zips
-            </span>
-            <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> Jamming unbranded zips
+              <X size={13} color="#DC2626" /> Requires hard scrubbing
             </span>
           </div>
 
           <div className="about-compare-row">
-            <span className="compare-col-feature">Laptop Protection</span>
+            <span className="compare-col-feature">Fume Safety</span>
             <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> Suspended EVA Foam
+              <Check size={13} color="#15803D" /> Zero Choking Fumes
             </span>
             <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> Thin sponge padding
+              <X size={13} color="#DC2626" /> Pungent acid odor
             </span>
           </div>
 
           <div className="about-compare-row">
-            <span className="compare-col-feature">Water Resistance</span>
+            <span className="compare-col-feature">Vertical Cling Viscosity</span>
             <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> IPX4 Weatherproof
+              <Check size={13} color="#15803D" /> Thick Active Gel
             </span>
             <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> Soaks in light drizzle
+              <X size={13} color="#DC2626" /> Watery runoff
             </span>
           </div>
 
           <div className="about-compare-row">
-            <span className="compare-col-feature">Craftsmanship Warranty</span>
+            <span className="compare-col-feature">Mirror &amp; Glass Clarity</span>
             <span className="compare-col-brand">
-              <Check size={13} color="#15803D" /> 1-Year Guarantee
+              <Check size={13} color="#15803D" /> 100% Zero Streaks
             </span>
             <span className="compare-col-other">
-              <X size={13} color="#DC2626" /> No warranty support
+              <X size={13} color="#DC2626" /> Leaves cloudy film
             </span>
           </div>
         </div>
       </section>
 
-      {/* 8. Patron Concierge & Contact */}
+      {/* 6. Concierge & Contact */}
       <section className="about-concierge-section">
-        <span className="about-section-tag">CUSTOMER CONCIERGE</span>
-        <h3 className="about-section-heading">Dedicated Carrywear Support</h3>
+        <span className="about-section-tag">CUSTOMER CARE</span>
+        <h3 className="about-section-heading">Direct Manufacturer Support</h3>
 
         <div className="about-concierge-card">
           <div className="about-concierge-row">
-            <Phone size={16} color="#1C8E8F" />
+            <Phone size={16} color="#0284C7" />
             <div>
-              <span className="concierge-lbl">Customer Support Hotline</span>
-              <span className="concierge-val">1800-ANCHAY-BAGS (262-429)</span>
+              <span className="concierge-lbl">Customer Care Helpline</span>
+              <span className="concierge-val">1800-ASM-SHINE (276-744)</span>
             </div>
           </div>
 
-          <a href="mailto:support@anchaybags.com" className="about-concierge-row">
-            <Mail size={16} color="#1C8E8F" />
+          <a href="mailto:care@asmshine.com" className="about-concierge-row">
+            <Mail size={16} color="#0284C7" />
             <div>
-              <span className="concierge-lbl">Customer Concierge Email</span>
-              <span className="concierge-val">concierge@anchaybags.com</span>
+              <span className="concierge-lbl">Institutional &amp; Home Supply</span>
+              <span className="concierge-val">care@asmshine.com</span>
             </div>
           </a>
 
           <div className="about-concierge-row">
-            <MapPin size={16} color="#1C8E8F" />
+            <MapPin size={16} color="#0284C7" />
             <div>
-              <span className="concierge-lbl">Design Studio & HQ</span>
-              <span className="concierge-val">Anchay Carrywear Studio, Connaught Place, New Delhi 110001</span>
+              <span className="concierge-lbl">Headquarters &amp; Laboratories</span>
+              <span className="concierge-val">ASM Shine Hygiene Labs Pvt Ltd, New Delhi 110001</span>
             </div>
           </div>
         </div>
@@ -452,7 +269,7 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
             onClick={handleExplore}
           >
             <ShoppingBag size={15} />
-            <span>EXPLORE ALL 28 BAGS</span>
+            <span>EXPLORE ALL CLEANING PRODUCTS</span>
             <ChevronRight size={15} />
           </button>
         </div>
@@ -460,4 +277,5 @@ export const AboutPage = ({ onBack, onExploreCatalog }) => {
     </div>
   );
 };
+
 export default AboutPage;

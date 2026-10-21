@@ -1,34 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
-export const HeroBanner = ({ banners, banner, onExplore, onSelectProduct }) => {
+export const HeroBanner = ({ banners, onExplore, onSelectProduct }) => {
   const slides = banners?.heroSlides || [
     {
-      id: 'slide_1',
-      tag: 'URBAN TECH • 45% OFF',
-      title: 'Anchay Apex Urban Pro 28L',
-      subtitle: 'Water-Resistant Weave • 15.6" Laptop Armour',
-      ctaText: 'Shop Backpack',
-      productId: 'bag_1',
-      image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80'
+      id: 'slide_diwali_toilet',
+      title: 'ASM Smart Clean Toilet Cleaner 500ml @ ₹69',
+      productId: 'asm_toilet_1',
+      image: '/images/banners/banner_diwali_toilet.png'
     },
     {
-      id: 'slide_2',
-      tag: 'TRAVEL & WEEKENDER',
-      title: 'Anchay Nomad Weekender 45L',
-      subtitle: 'Flight Cabin Approved • Dedicated Shoe Tunnel',
-      ctaText: 'Explore Travel',
-      productId: 'bag_12',
-      image: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=800&q=80'
-    },
-    {
-      id: 'slide_3',
-      tag: 'EXECUTIVE COLLECTION',
-      title: 'Anchay Oxford Leather Briefcase',
-      subtitle: 'Handcrafted Full-Grain Finish • Padded Dividers',
-      ctaText: 'View Briefcase',
-      productId: 'bag_7',
-      image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80'
+      id: 'slide_floor_cleaner_5l',
+      title: 'ASM Shine Floor Cleaner 5 Litre @ ₹249',
+      productId: 'asm_floor_1',
+      image: '/images/banners/banner_floor_cleaner_5l.jpg'
     }
   ];
 
@@ -84,39 +69,16 @@ export const HeroBanner = ({ banners, banner, onExplore, onSelectProduct }) => {
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      aria-label="Sale Banners"
+      aria-label="Promotional Posters"
     >
-      {/* Full-Image Slide Card */}
+      {/* Pure Flipkart-Style Graphic Poster Banner without HTML text overlay */}
       <div className="fk-hero-full-slide" onClick={handleCtaClick}>
-        {/* 100% Full Background Image */}
         <img
           src={currentSlide.image}
           alt={currentSlide.title}
           className="fk-hero-full-img"
           loading="eager"
         />
-
-        {/* Minimal Luxury Dark-to-Transparent Gradient Overlay */}
-        <div className="fk-hero-gradient-overlay" />
-
-        {/* Minimal Text Content (Left-Aligned, Short & Punchy) */}
-        <div className="fk-hero-overlay-content">
-          <span className="fk-hero-mini-tag">{currentSlide.tag}</span>
-          <h2 className="fk-hero-main-title">{currentSlide.title}</h2>
-          <p className="fk-hero-main-sub">{currentSlide.subtitle}</p>
-
-          <button
-            type="button"
-            className="fk-hero-cta-pill"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCtaClick();
-            }}
-          >
-            <span>{currentSlide.ctaText}</span>
-            <ChevronRight size={13} strokeWidth={2.8} />
-          </button>
-        </div>
       </div>
 
       {/* Prev / Next Minimal Arrow Buttons */}
@@ -124,7 +86,7 @@ export const HeroBanner = ({ banners, banner, onExplore, onSelectProduct }) => {
         type="button"
         className="fk-carousel-nav-btn prev"
         onClick={handlePrev}
-        aria-label="Previous Slide"
+        aria-label="Previous Poster"
       >
         <ChevronLeft size={16} />
       </button>
@@ -132,12 +94,12 @@ export const HeroBanner = ({ banners, banner, onExplore, onSelectProduct }) => {
         type="button"
         className="fk-carousel-nav-btn next"
         onClick={handleNext}
-        aria-label="Next Slide"
+        aria-label="Next Poster"
       >
         <ChevronRight size={16} />
       </button>
 
-      {/* Sleek Bottom Dots */}
+      {/* Sleek Flipkart Bottom Dots */}
       <div className="fk-carousel-dots-row">
         {slides.map((s, idx) => (
           <button

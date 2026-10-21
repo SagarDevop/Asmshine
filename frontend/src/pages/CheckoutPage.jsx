@@ -162,7 +162,7 @@ export const CheckoutPage = () => {
             Order Reference: <strong>{orderId}</strong>
           </p>
           <span className="fk-success-badge">
-            <ShieldCheck size={13} /> 100% Authentic Anchay Craftsmanship
+            <ShieldCheck size={13} /> 100% Authentic ASM Shine Hygiene Formulation
           </span>
 
           <div className="fk-success-delivery-box">
@@ -221,7 +221,7 @@ export const CheckoutPage = () => {
           </button>
           <div className="fk-checkout-title-wrap">
             <h1 className="fk-checkout-title">Order Summary</h1>
-            <span className="fk-checkout-subtitle">Step 2 of 3 • Anchay Official</span>
+            <span className="fk-checkout-subtitle">Step 2 of 3 • ASM Shine Official</span>
           </div>
           <div className="fk-checkout-secure-pill">
             <Lock size={12} />
@@ -346,7 +346,7 @@ export const CheckoutPage = () => {
                 <div className="fk-item-details-box">
                   <h3 className="fk-item-title">{item.product.name}</h3>
                   <div className="fk-item-seller-line">
-                    <span className="fk-seller-name">Seller: Anchay Bags Official</span>
+                    <span className="fk-seller-name">Seller: ASM Shine Official Store</span>
                     <span className="fk-certified-tag">
                       <CheckCircle2 size={11} color="#15803D" /> Certified
                     </span>
@@ -612,7 +612,7 @@ export const CheckoutPage = () => {
           <ShieldCheck size={20} color="#1C8E8F" />
           <div className="fk-secure-assurance-text">
             <strong>Safe and Secure Payments. 100% Authentic Products.</strong>
-            <span>Directly dispatched from Anchay Carrywear Studio</span>
+            <span>Directly dispatched from ASM Shine Hygiene Labs</span>
           </div>
         </div>
       </main>

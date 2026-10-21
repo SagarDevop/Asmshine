@@ -1,21 +1,37 @@
 import React from 'react';
 import {
   Sparkles,
-  Backpack,
-  Briefcase,
-  Luggage,
-  ShoppingBag,
-  Compass,
-  Package
+  ShieldCheck,
+  Bath,
+  SprayCan,
+  Brush,
+  Utensils,
+  CookingPot,
+  Shirt,
+  Droplets
 } from 'lucide-react';
 
+const imageMap = {
+  all: '/images/categories/all.jpg',
+  toilet_care: '/images/categories/toilet_care.jpg',
+  bathroom_care: '/images/categories/bathroom_care.jpg',
+  glass_care: '/images/categories/glass_care.jpg',
+  floor_care: '/images/categories/floor_care.jpg',
+  dishwash: '/images/categories/dishwash.jpg',
+  kitchen_care: '/images/categories/kitchen_care.jpg',
+  laundry_care: '/images/categories/laundry_care.jpg',
+  hand_hygiene: '/images/categories/hand_hygiene.jpg'
+};
+
 const iconMap = {
-  backpacks: Backpack,
-  laptop_bags: Briefcase,
-  travel_duffels: Luggage,
-  totes: ShoppingBag,
-  slings_crossbody: Compass,
-  wallets_organizers: Package
+  toilet_care: ShieldCheck,
+  bathroom_care: Bath,
+  glass_care: SprayCan,
+  floor_care: Brush,
+  dishwash: Utensils,
+  kitchen_care: CookingPot,
+  laundry_care: Shirt,
+  hand_hygiene: Droplets
 };
 
 export const CategoryScroller = ({ categories = [], selectedCategory, onSelectCategory }) => {
@@ -23,6 +39,7 @@ export const CategoryScroller = ({ categories = [], selectedCategory, onSelectCa
     <section className="categories-section" aria-label="Product Categories">
       <div className="categories-track no-scrollbar">
         {categories.map((cat) => {
+          const imgUrl = imageMap[cat.id];
           const IconComp = iconMap[cat.id] || Sparkles;
           const isSelected = selectedCategory === cat.id;
 
@@ -33,7 +50,11 @@ export const CategoryScroller = ({ categories = [], selectedCategory, onSelectCa
               onClick={() => onSelectCategory && onSelectCategory(cat.id === selectedCategory ? null : cat.id)}
             >
               <div className="category-icon-box">
-                <IconComp size={22} strokeWidth={1.9} color="#1C8E8F" />
+                {imgUrl ? (
+                  <img src={imgUrl} alt={cat.name} className="desktop-cat-img" loading="lazy" />
+                ) : (
+                  <IconComp size={22} strokeWidth={1.9} color="#059669" />
+                )}
               </div>
               <span className="category-name">{cat.name}</span>
             </div>

@@ -148,7 +148,7 @@ export const ProductDetailPage = ({
       try {
         await navigator.share({
           title: product.name,
-          text: `Check out ${product.name} on Anchay Bags Official!`,
+          text: `Check out ${product.name} on ASM Shine Official Store!`,
           url: window.location.href
         });
       } catch (err) {
@@ -253,8 +253,8 @@ export const ProductDetailPage = ({
         </button>
 
         <div className="pdp-header-brand" onClick={() => navigate('/')}>
-          <img src="/images/logo.png" alt="ANCHAY" className="pdp-logo-mini" style={{ borderRadius: '50%' }} />
-          <span className="pdp-brand-text">ANCHAY</span>
+          <img src="/favicon.svg" alt="ASM SHINE" className="pdp-logo-mini" style={{ borderRadius: '8px' }} />
+          <span className="pdp-brand-text">ASM SHINE</span>
         </div>
 
         <div className="pdp-header-actions">
@@ -303,10 +303,10 @@ export const ProductDetailPage = ({
               />
             </button>
 
-            {/* Anchay Certified Genuine Carrywear Badge */}
+            {/* ASM Shine Certified Clean Badge */}
             <div className="pdp-assured-tag">
-              <Zap size={13} fill="#1C8E8F" color="#1C8E8F" />
-              <span>Anchay Certified</span>
+              <Zap size={13} fill="#0284C7" color="#0284C7" />
+              <span>ASM Certified Pure</span>
             </div>
 
             {/* Image Indicator Dots */}
@@ -319,7 +319,7 @@ export const ProductDetailPage = ({
 
         {/* 3. Product Title, Rating & Pricing Section */}
         <section className="pdp-section pdp-info-card">
-          <div className="pdp-brand-tag">ANCHAY BAGS OFFICIAL</div>
+          <div className="pdp-brand-tag">ASM SHINE OFFICIAL STORE</div>
           <h1 className="pdp-product-title">{product.name}</h1>
 
           {/* Rating & Review summary pill */}
@@ -674,11 +674,11 @@ export const ProductDetailPage = ({
           <div className="pdp-specs-table">
             {Object.entries(
               product.specifications || {
-                'Material': '900D Water-Repellent Ballistic Weave',
-                'Zippers': 'Heavy-Duty Reverse Coil YKK Zips',
-                'Laptop Fit': 'Dedicated Padded Cradle (up to 15.6")',
-                'Water Resistance': 'IPX4 Water & Splash Resistant',
-                'Warranty': '1 Year Anchay Craftsmanship Warranty',
+                'Formulation': 'Active Micro-Enzyme Liquid Gel',
+                'Germ Protection': '99.9% NABL Lab Certified',
+                'Fragrance': 'Refreshing Essential Oils',
+                'Fumes': 'Zero Choking Acid Fumes',
+                'Shelf Life': '24 Months from Mfd',
                 'Country of Origin': 'India'
               }
             ).map(([k, v]) => (
@@ -724,22 +724,22 @@ export const ProductDetailPage = ({
           <div className="pdp-reviews-list">
             {(product.reviews || [
               {
-                id: 'rev_anchay_1',
-                author: 'Devendra Rathore',
-                location: 'Mumbai, Maharashtra',
+                id: 'rev_asm_1',
+                author: 'Rohit Verma',
+                location: 'New Delhi',
                 rating: 5,
                 date: '3 days ago',
-                title: 'Phenomenal build quality and zipper glide',
-                comment: 'Carries my 15.6" laptop, charger and notebooks effortlessly. The water-resistant finish and shoulder strap comfort are exceptional.'
+                title: 'Outstanding cleaning and descaling power',
+                comment: 'Removed months-old hard water stains in under 10 minutes. Leaves a refreshing scent and no choking fumes.'
               },
               {
-                id: 'rev_anchay_2',
-                author: 'Ananya Deshmukh',
-                location: 'Bengaluru, Karnataka',
+                id: 'rev_asm_2',
+                author: 'Pooja Sharma',
+                location: 'Jaipur, Rajasthan',
                 rating: 5,
                 date: '1 week ago',
-                title: 'Looks and feels like a luxury designer bag',
-                comment: 'The stitching, teal accent details, and sturdy hardware feel ultra premium. Best bag purchase I have made this year.'
+                title: 'Best streak-free shine and germ protection',
+                comment: 'All surfaces shine like brand new. Very impressed with the thick clinging formulation and premium quality.'
               }
             ]).map((rev) => (
               <div className="pdp-review-card" key={rev.id}>

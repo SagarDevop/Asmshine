@@ -29,13 +29,13 @@ export const BottomNav = ({ activeTab: activeTabProp, onTabChange }) => {
     else if (tabId === 'about') navigate('/about');
     else if (tabId === 'cart') navigate('/cart');
     else if (tabId === 'account') {
-      showToast('Anchay Club: Welcome to the VIP Carrywear Circle');
+      showToast('ASM Shine Club: Welcome to the Clean Home Rewards Circle');
     }
   };
 
   const tabs = [
     { id: 'home', label: 'Home', icon: Home },
-    { id: 'categories', label: 'Bags', icon: Grid2X2 },
+    { id: 'categories', label: 'Products', icon: Grid2X2 },
     { id: 'about', label: 'About', icon: BadgeCheck },
     { id: 'cart', label: 'Cart', icon: ShoppingBag, badge: cartCount },
     { id: 'account', label: 'Account', icon: User }
@@ -59,7 +59,7 @@ export const BottomNav = ({ activeTab: activeTabProp, onTabChange }) => {
                 <IconComponent
                   size={20}
                   strokeWidth={isActive ? 2.3 : 1.8}
-                  fill={isActive && tab.id === 'home' ? 'rgba(28, 142, 143, 0.15)' : 'none'}
+                  fill={isActive && tab.id === 'home' ? 'rgba(5, 150, 105, 0.15)' : 'none'}
                 />
                 {tab.badge !== null && tab.badge !== undefined && (
                   <span className="nav-badge-pill">{tab.badge}</span>

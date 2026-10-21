@@ -1,7 +1,7 @@
 {
-  "name": "cleanora-ecommerce-pwa",
+  "name": "asm-shine-ecommerce-pwa",
   "version": "1.0.0",
-  "description": "Cleanora E-Commerce Progressive Web App reproduced from Google Stitch Project 5980683010556273707",
+  "description": "ASM Shine - Premium Home & Commercial Cleaning Products E-Commerce Progressive Web App",
   "scripts": {
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "dev:backend": "npm --prefix backend run dev",

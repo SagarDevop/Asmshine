@@ -126,27 +126,27 @@ export const CartPage = ({
           <div className="cart-empty-icon-box">
             <ShoppingBag size={56} color="#9E887B" />
           </div>
-          <h2 className="cart-empty-title">Your Bag Cart is Empty</h2>
+          <h2 className="cart-empty-title">Your Cart is Empty</h2>
           <p className="cart-empty-subtitle">
-            Looks like you haven't added any bags yet. Explore the Anchay carrywear collection!
+            Looks like you haven't added any cleaning products yet. Explore the ASM Shine collection!
           </p>
           <button
             type="button"
             className="cart-shop-now-btn"
             onClick={handleExplore}
           >
-            Explore Bag Collection
+            Explore Cleaning Collection
           </button>
         </div>
       ) : orderSuccess ? (
         <div className="cart-order-success-card">
           <div className="order-success-icon-box">
-            <CheckCircle2 size={54} color="#1C8E8F" />
+            <CheckCircle2 size={54} color="#0284C7" />
           </div>
           <h2 className="order-success-title">Order Placed Successfully</h2>
           <div className="order-id-badge">Order ID: #{orderId}</div>
           <p className="order-success-note">
-            Thank you for choosing Anchay Bags. Your carrywear order is being packed with utmost care!
+            Thank you for choosing ASM Shine. Your hygiene essentials order is being packed with utmost care!
           </p>
           <div className="order-summary-box">
             <div className="order-summary-row">
@@ -159,7 +159,7 @@ export const CartPage = ({
             </div>
             <div className="order-summary-row">
               <span>Payment Mode:</span>
-              <strong style={{ color: '#1C8E8F' }}>Cash on Delivery (COD) / UPI</strong>
+              <strong style={{ color: '#0284C7' }}>Cash on Delivery (COD) / UPI</strong>
             </div>
           </div>
           <button
@@ -189,9 +189,9 @@ export const CartPage = ({
 
                   <div className="cart-item-info">
                     <div className="cart-item-brand-row">
-                      <span className="cart-item-brand">ANCHAY</span>
+                      <span className="cart-item-brand">ASM SHINE</span>
                       <span className="cart-assured-pill">
-                        <Zap size={10} fill="#1C8E8F" color="#1C8E8F" />
+                        <Zap size={10} fill="#0284C7" color="#0284C7" />
                         <span>Certified</span>
                       </span>
                     </div>

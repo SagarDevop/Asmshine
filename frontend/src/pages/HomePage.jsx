@@ -5,6 +5,8 @@ import { DesktopNav } from '../components/navigation/DesktopNav';
 import { BottomNav } from '../components/navigation/BottomNav';
 import { OfferStrip } from '../components/ui/OfferStrip';
 import { HeroBanner } from '../components/ui/HeroBanner';
+import { DealsForYou } from '../components/ui/DealsForYou';
+import { DiwaliSaleSection } from '../components/ui/DiwaliSaleSection';
 import { ProductSection } from '../components/ui/ProductSection';
 import { FlipkartPromoBanners } from '../components/ui/FlipkartPromoBanners';
 import { useCartWishlist } from '../context/CartWishlistContext';
@@ -49,7 +51,7 @@ export const HomePage = () => {
     else if (tab === 'about') navigate('/about');
     else if (tab === 'cart') navigate('/cart');
     else if (tab === 'account') {
-      showToast('Anchay Circle: Welcome to the VIP Carrywear Club');
+      showToast('ASM Shine Club: Welcome to the Clean Home Rewards Circle');
     }
   };
 
@@ -101,7 +103,7 @@ export const HomePage = () => {
         />
 
         <main className="main-content">
-          {/* 1. Interactive Flipkart-Style Sale Carousel */}
+          {/* 1. Interactive Flipkart-Style Sale Carousel (Festive Posters) */}
           <HeroBanner
             banners={banners}
             banner={banners?.hero}
@@ -109,11 +111,23 @@ export const HomePage = () => {
             onSelectProduct={handleSelectProduct}
           />
 
-          {/* 3. Featured Bags (Rendered cleanly without duplication) */}
+          {/* 2. Deals for You (Live Timer & Fast Horizontal Rail) */}
+          <DealsForYou
+            onSelectProduct={handleSelectProduct}
+            onNavigateAll={() => handleSwitchTab('categories')}
+          />
+
+          {/* 3. Diwali Mega Sale (Festive Deep Cleaning Specials) */}
+          <DiwaliSaleSection
+            onSelectProduct={handleSelectProduct}
+            onNavigateAll={() => handleSwitchTab('categories')}
+          />
+
+          {/* 4. Bestsellers Cleaning Essentials */}
           <ProductSection
-            title="Featured Bags & Carrywear"
-            badge="BESTSELLERS"
-            subtitle="Engineered for Daily Commute, Work & Travel"
+            title="Bestsellers"
+            badge="4.8★ & ABOVE"
+            subtitle="Most loved cleaning essentials trusted by 50,000+ homes"
             actionText="View All"
             actionLinkStyle="chevron"
             products={displayedProducts}
@@ -123,7 +137,7 @@ export const HomePage = () => {
             onSelectProduct={handleSelectProduct}
           />
 
-          {/* 4. Flipkart-Style Promotional Offer Banners & Purity Standards */}
+          {/* 5. Clean Trust & Assurance Strip */}
           <FlipkartPromoBanners
             onSelectProduct={handleSelectProduct}
             onNavigateCategories={() => handleSwitchTab('categories')}
@@ -133,8 +147,8 @@ export const HomePage = () => {
         {/* Desktop & Mobile Footer */}
         <footer className="desktop-footer">
           <div className="desktop-footer-inner">
-            <span>© 2026 Anchay Bags. All rights reserved.</span>
-            <span>CRAFTED FOR MODERN JOURNEYS</span>
+            <span>© 2026 ASM Shine. All rights reserved.</span>
+            <span>ADVANCED CLEANING &amp; HYGIENE SOLUTIONS</span>
           </div>
         </footer>
       </div>

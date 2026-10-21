@@ -3,72 +3,68 @@ import {
   MapPin,
   ChevronRight,
   Search,
-  Backpack,
-  Briefcase,
-  Luggage,
-  ShoppingBag,
-  Compass,
-  Package
+  Sparkles,
+  ShieldCheck,
+  Bath,
+  SprayCan,
+  Brush,
+  Utensils,
+  CookingPot,
+  Shirt,
+  Droplets,
+  Plane,
+  Tag,
+  Zap
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { SearchOverlay } from '../search/SearchOverlay';
+import { useCartWishlist } from '../../context/CartWishlistContext';
 
 const CATEGORY_TABS = [
   {
     id: 'all',
-    label: 'For You',
-    icon: ShoppingBag,
-    bgColor: '#FFF7ED',       // Warm pastel gold/amber (matches screenshot 'For You')
-    borderColor: '#FED7AA',
-    iconColor: '#EA580C'
+    label: 'All Shine',
+    image: '/images/categories/all.jpg'
   },
   {
-    id: 'backpacks',
-    label: 'Backpacks',
-    icon: Backpack,
-    bgColor: '#ECFDF5',       // Soft pastel mint
-    borderColor: '#A7F3D0',
-    iconColor: '#059669'
+    id: 'toilet_care',
+    label: 'Toilet',
+    image: '/images/categories/toilet_care.jpg'
   },
   {
-    id: 'laptop_bags',
-    label: 'Laptop Bags',
-    icon: Briefcase,
-    bgColor: '#EFF6FF',       // Soft pastel sky blue
-    borderColor: '#BFDBFE',
-    iconColor: '#2563EB'
+    id: 'bathroom_care',
+    label: 'Bathroom',
+    image: '/images/categories/bathroom_care.jpg'
   },
   {
-    id: 'travel_duffels',
-    label: 'Travel Duffels',
-    icon: Luggage,
-    bgColor: '#FFF1F2',       // Soft pastel peach / rose
-    borderColor: '#FECDD3',
-    iconColor: '#E11D48'
+    id: 'glass_care',
+    label: 'Glass & Colin',
+    image: '/images/categories/glass_care.jpg'
   },
   {
-    id: 'totes',
-    label: 'Tote Bags',
-    icon: ShoppingBag,
-    bgColor: '#FAF5FF',       // Soft pastel lilac / purple
-    borderColor: '#E9D5FF',
-    iconColor: '#9333EA'
+    id: 'floor_care',
+    label: 'Floor Cleaner',
+    image: '/images/categories/floor_care.jpg'
   },
   {
-    id: 'slings_crossbody',
-    label: 'Slings',
-    icon: Compass,
-    bgColor: '#F0FDFA',       // Soft pastel teal
-    borderColor: '#99F6E4',
-    iconColor: '#0D9488'
+    id: 'dishwash',
+    label: 'Dishwash',
+    image: '/images/categories/dishwash.jpg'
   },
   {
-    id: 'wallets_organizers',
-    label: 'Organizers',
-    icon: Package,
-    bgColor: '#F8FAFC',       // Soft pastel slate
-    borderColor: '#CBD5E1',
-    iconColor: '#475569'
+    id: 'kitchen_care',
+    label: 'Kitchen Care',
+    image: '/images/categories/kitchen_care.jpg'
+  },
+  {
+    id: 'laundry_care',
+    label: 'Laundry Care',
+    image: '/images/categories/laundry_care.jpg'
+  },
+  {
+    id: 'hand_hygiene',
+    label: 'Hand Wash',
+    image: '/images/categories/hand_hygiene.jpg'
   }
 ];
 
@@ -79,9 +75,11 @@ export const Header = ({
   onSwitchTab
 }) => {
   const navigate = useNavigate();
+  const { showToast } = useCartWishlist();
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [location, setLocation] = useState('110001, Connaught Place');
+  const [location, setLocation] = useState('1, Jhanjhari, Banda, Uttar Pradesh');
+  const [activeMode, setActiveMode] = useState('asm_shine');
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -116,88 +114,153 @@ export const Header = ({
     }
   };
 
+  const handleModeChange = (mode) => {
+    setActiveMode(mode);
+    if (mode === 'asm_shine') {
+      onSelectCategory(null);
+      showToast('ASM Shine: Official Hygiene & Cleaners Store');
+    } else if (mode === 'combos') {
+      showToast('Super Combos: Complete Home Hygiene Kits at 40% OFF!');
+    } else if (mode === 'refills') {
+      showToast('Refill Store: Eco-friendly bulk refill packs & jars');
+    }
+  };
+
   const cycleLocation = () => {
-    setLocation((prev) =>
-      prev.includes('Connaught Place')
-        ? '400001, South Mumbai'
-        : prev.includes('South Mumbai')
-        ? '560001, MG Road, Bengaluru'
-        : '110001, Connaught Place'
-    );
+    setLocation((prev) => {
+      let nextLoc = '1, Jhanjhari, Banda, Uttar Pradesh';
+      if (prev.includes('Jhanjhari')) nextLoc = '110001, Connaught Place, New Delhi';
+      else if (prev.includes('Connaught Place')) nextLoc = '400001, South Mumbai';
+      else if (prev.includes('South Mumbai')) nextLoc = '560001, MG Road, Bengaluru';
+      else nextLoc = '1, Jhanjhari, Banda, Uttar Pradesh';
+
+      showToast(`Delivering to ${nextLoc}`);
+      return nextLoc;
+    });
   };
 
   return (
     <>
-      {/* 1. Sleek Minimal Upper Header */}
-      <div className="fk-upper-header mobile-only">
-        <div className="fk-brand-location-bar">
-          {/* Brand Logo & Name */}
-          <div
-            className="fk-brand-identity"
-            onClick={() => {
-              if (onSwitchTab) onSwitchTab('home');
-              else navigate('/');
-            }}
-          >
-            <img
-              src="/images/logo.png"
-              alt="ANCHAY"
-              className="fk-brand-logo-img"
-            />
-            <div className="fk-brand-text-block">
-              <span className="fk-brand-name">ANCHAY</span>
-              <span className="fk-brand-tagline">Premium Bags</span>
+      <header className={`fk-mobile-header-root mobile-only ${isScrolled ? 'scrolled' : ''}`}>
+        {/* Full Sky Blue to White Gradient Wrapper (Exactly matching screenshot) */}
+        <div className="fk-header-gradient-wrapper">
+          {/* 1. Top 3 Mode Pills (ASM SHINE Yellow / Super Combos / Refill Store) */}
+          <div className="fk-top-pills-row">
+            {/* Active Yellow Brand Pill: ASM on top, SHINE niche */}
+            <button
+              type="button"
+              className={`fk-top-pill-btn ${activeMode === 'asm_shine' ? 'pill-yellow' : 'pill-white'}`}
+              onClick={() => handleModeChange('asm_shine')}
+            >
+              
+              <div className="fk-brand-pill-text">
+                <span className="fk-pill-asm">ASM</span>
+                <span className="fk-pill-shine">SHINE</span>
+              </div>
+            </button>
+
+            {/* Cleaning Combos White Pill */}
+            <button
+              type="button"
+              className={`fk-top-pill-btn ${activeMode === 'combos' ? 'pill-yellow' : 'pill-white'}`}
+              onClick={() => handleModeChange('combos')}
+            >
+              <div className="fk-pill-icon-wrap">
+                <div className="fk-tag-badge-icon">
+                  <SprayCan size={17} color="#059669" />
+              
+                </div>
+              </div>
+              <span className="fk-pill-label">Super Combos</span>
+            </button>
+
+            {/* Cleaning Refill Store White Pill */}
+            <button
+              type="button"
+              className={`fk-top-pill-btn ${activeMode === 'refills' ? 'pill-yellow' : 'pill-white'}`}
+              onClick={() => handleModeChange('refills')}
+            >
+              <div className="fk-pill-icon-wrap">
+                <Droplets size={17} color="#0284C7" fill="#BAE6FD" />
+              </div>
+              <span className="fk-pill-label">Refill Store</span>
+            </button>
+          </div>
+
+          {/* 2. Middle Location & Rewards/Coins Row */}
+          <div className="fk-location-rewards-row">
+            <div
+              className="fk-location-clickable"
+              onClick={cycleLocation}
+              title="Click to change location"
+            >
+              <MapPin size={15} className="fk-loc-pin-icon" fill="#1E293B" color="#1E293B" />
+              <span className="fk-location-name-text">{location}</span>
+              <ChevronRight size={14} className="fk-loc-chevron-icon" />
+            </div>
+
+            <div className="fk-header-rewards-group">
+              {/* Purple Voucher Button */}
+              <button
+                type="button"
+                className="fk-voucher-btn"
+                onClick={() => showToast('🎟️ 15% OFF Flipkart Voucher applied!')}
+                title="Special Coupons"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#7C3AED">
+                  <path d="M2 9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V9z"/>
+                  <circle cx="9" cy="12" r="1.5" fill="#FFFFFF"/>
+                  <circle cx="15" cy="12" r="1.5" fill="#FFFFFF"/>
+                </svg>
+              </button>
+
+              {/* SuperCoin Pill Button */}
+              <button
+                type="button"
+                className="fk-supercoin-btn"
+                onClick={() => showToast('Flipkart SuperCoin Balance: 0')}
+                title="SuperCoins"
+              >
+                <div className="fk-coin-icon-circle">
+                  <Zap size={10} color="#F59E0B" fill="#F59E0B" />
+                </div>
+                <span className="fk-supercoin-balance">0</span>
+              </button>
             </div>
           </div>
 
-          {/* Minimal Delivery Location Pill */}
-          <button
-            type="button"
-            className="fk-location-clean-pill"
-            onClick={cycleLocation}
-            title="Change Delivery Location"
-          >
-            <MapPin size={12} color="#1C8E8F" />
-            <span className="fk-location-text">{location}</span>
-            <ChevronRight size={12} color="#1C8E8F" />
-          </button>
-        </div>
-      </div>
-
-      {/* 2. Sticky Header with Search & Flipkart Squircle Category Tabs */}
-      <header className={`fk-sticky-container mobile-only ${isScrolled ? 'scrolled' : ''}`}>
-        {/* Search Bar Row with subtle light blue ambient gradient */}
-        <div className="fk-search-bar-row">
-          <div
-            className="fk-search-pill-wrapper"
-            onClick={() => setIsSearchOpen(true)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') setIsSearchOpen(true);
-            }}
-          >
-            <Search size={18} className="fk-search-icon" />
-            <input
-              type="text"
-              className="fk-search-input-pill"
-              value={searchTerm}
-              onFocus={() => setIsSearchOpen(true)}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsSearchOpen(true);
+          {/* 3. Flipkart Blue Border Search Bar */}
+          <div className="fk-search-bar-row">
+            <div
+              className="fk-search-pill-wrapper"
+              onClick={() => setIsSearchOpen(true)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') setIsSearchOpen(true);
               }}
-              readOnly
-              placeholder="Search for Products"
-            />
+            >
+              <Search size={18} className="fk-search-icon" />
+              <input
+                type="text"
+                className="fk-search-input-pill"
+                value={searchTerm}
+                onFocus={() => setIsSearchOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsSearchOpen(true);
+                }}
+                readOnly
+                placeholder="Search for Products"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Flipkart Category Tabs Track */}
+        {/* 4. Flipkart Category Tabs Track */}
         <div className="fk-category-tabs-track no-scrollbar">
           {CATEGORY_TABS.map((cat) => {
             const isActive = (!selectedCategory && cat.id === 'all') || selectedCategory === cat.id;
-            const IconComp = cat.icon;
 
             return (
               <button
@@ -206,19 +269,17 @@ export const Header = ({
                 className={`fk-cat-tab-btn ${isActive ? 'active' : ''}`}
                 onClick={(e) => handleTabClick(cat.id, e)}
               >
-                {/* Squircle Icon Box: smoothly disappears/collapses when user scrolls down! */}
-                <div
-                  className="fk-cat-squircle-box"
-                  style={{
-                    backgroundColor: cat.bgColor,
-                    borderColor: cat.borderColor,
-                    color: cat.iconColor
-                  }}
-                >
-                  <IconComp size={21} strokeWidth={1.9} />
+                {/* 3D Glossy E-Commerce Category Icon Image Box */}
+                <div className="fk-cat-squircle-box">
+                  <img
+                    src={cat.image}
+                    alt={cat.label}
+                    className="fk-cat-img"
+                    loading="lazy"
+                  />
                 </div>
 
-                {/* Category Text Label: stays stuck under the search bar */}
+                {/* Category Text Label */}
                 <span className="fk-cat-tab-label">{cat.label}</span>
 
                 {/* Flipkart Active Underline Indicator Bar */}
@@ -238,4 +299,3 @@ export const Header = ({
     </>
   );
 };
-

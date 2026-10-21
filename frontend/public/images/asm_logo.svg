@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" fill="none">
+  <defs>
+    <linearGradient id="asmIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="shineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Circular Badge -->
+  <rect x="6" y="6" width="48" height="48" rx="14" fill="url(#asmIconGrad)" />
+  <circle cx="30" cy="30" r="21" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="1.5" />
+  <!-- Sparkle Shape -->
+  <path d="M30 15 Q30 27 18 27 Q30 27 30 39 Q30 27 42 27 Q30 27 30 15 Z" fill="#FFFFFF" />
+  <path d="M41 19 Q41 23 37 23 Q41 23 41 27 Q41 23 45 23 Q41 23 41 19 Z" fill="#FDE047" />
+
+  <!-- Text Group -->
+  <text x="66" y="32" font-family="'Inter', system-ui, sans-serif" font-size="22" font-weight="900" letter-spacing="1.2" fill="#0F172A">
+    ASM <tspan fill="url(#shineGrad)">SHINE</tspan>
+  </text>
+  <text x="67" y="46" font-family="'Inter', system-ui, sans-serif" font-size="8.5" font-weight="700" letter-spacing="2" fill="#0284C7">
+    CLEANING &amp; HYGIENE
+  </text>
+</svg>
