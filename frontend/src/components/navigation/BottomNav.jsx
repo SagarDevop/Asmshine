@@ -59,7 +59,7 @@ export const BottomNav = ({ activeTab: activeTabProp, onTabChange }) => {
                 <IconComponent
                   size={20}
                   strokeWidth={isActive ? 2.3 : 1.8}
-                  fill={isActive && tab.id === 'home' ? 'rgba(5, 150, 105, 0.15)' : 'none'}
+                  fill={isActive && tab.id === 'home' ? 'rgba(40, 116, 240, 0.15)' : 'none'}
                 />
                 {tab.badge !== null && tab.badge !== undefined && (
                   <span className="nav-badge-pill">{tab.badge}</span>

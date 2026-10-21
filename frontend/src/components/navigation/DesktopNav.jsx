@@ -37,9 +37,9 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{ fontSize: '1.3rem', fontWeight: '900', letterSpacing: '1.2px', color: '#1E293B', fontFamily: 'var(--font-base)' }}>
-                ASM <span style={{ color: '#059669' }}>SHINE</span>
+                ASM <span style={{ color: '#2874F0' }}>SHINE</span>
               </span>
-              <span style={{ fontSize: '0.62rem', fontWeight: '700', letterSpacing: '1.5px', color: '#059669', marginTop: '-2px' }}>
+              <span style={{ fontSize: '0.62rem', fontWeight: '700', letterSpacing: '1.5px', color: '#2874F0', marginTop: '-2px' }}>
                 HYGIENE &amp; CLEANING
               </span>
             </div>
@@ -50,7 +50,7 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             style={{ marginLeft: '16px' }}
             onClick={() => showToast('Delivery location: Delhi NCR & Pan India (Free Express Shipping)')}
           >
-            <MapPin size={16} color="#059669" />
+            <MapPin size={16} color="#2874F0" />
             <span>Deliver to <span className="location-name">New Delhi 110001</span></span>
             <ChevronDown size={14} color="#64748B" />
           </button>
@@ -88,7 +88,7 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             className="desktop-nav-btn"
             onClick={() => handleNav('categories')}
           >
-            <Sparkles size={16} color="#059669" />
+            <Sparkles size={16} color="#2874F0" />
             <span>Catalog</span>
           </button>
 
@@ -105,7 +105,7 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             style={{ position: 'relative' }}
             onClick={() => handleNav('cart')}
           >
-            <ShoppingBag size={18} color="#059669" />
+            <ShoppingBag size={18} color="#2874F0" />
             <span>Cart</span>
             {cartCount > 0 && (
               <span className="nav-badge-pill" style={{ position: 'relative', top: 'auto', right: 'auto', marginLeft: '4px' }}>

@@ -98,7 +98,9 @@ export const HomePage = () => {
           onSearch={setSearchQuery}
           categories={categories}
           selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+          onSelectCategory={(catId) => {
+            navigate(`/categories?category=${catId || 'all'}`, { state: { category: catId || 'all' } });
+          }}
           onSwitchTab={handleSwitchTab}
         />
 

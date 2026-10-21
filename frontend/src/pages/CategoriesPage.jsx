@@ -17,7 +17,7 @@ import {
   Droplets,
   X
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { api, STATIC_CATEGORIES } from '../services/api';
 import { SearchOverlay } from '../components/search/SearchOverlay';
@@ -40,11 +40,48 @@ export const CategoriesPage = ({
   initialCategory = 'all'
 }) => {
   const navigate = useNavigate();
-  const [selectedCat, setSelectedCat] = useState(initialCategory);
+  const location = useLocation();
+  const { categoryId: routeCatId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Resolve active category with priority: route param > query param > location state > prop default
+  const resolvedCategory =
+    routeCatId ||
+    searchParams.get('category') ||
+    location.state?.category ||
+    initialCategory;
+
+  const [selectedCat, setSelectedCat] = useState(resolvedCategory);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const { cartCount, addToCart } = useCartWishlist();
+
+  // Sync selectedCat if URL or location state changes externally
+  useEffect(() => {
+    const current =
+      routeCatId ||
+      searchParams.get('category') ||
+      location.state?.category;
+    if (current && current !== selectedCat) {
+      setSelectedCat(current);
+    }
+  }, [routeCatId, searchParams, location.state]);
+
+  // Smoothly scroll active category item in sidebar & reset right pane on category switch
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const activeElem = document.querySelector('.cat-side-item.active');
+      if (activeElem) {
+        activeElem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+      const contentPane = document.querySelector('.cat-content-pane');
+      if (contentPane) {
+        contentPane.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 60);
+    return () => clearTimeout(timer);
+  }, [selectedCat]);
 
   const handleBack = () => {
     if (onBack) onBack();
@@ -58,6 +95,11 @@ export const CategoriesPage = ({
   const handleSelectProduct = (product) => {
     if (onSelectProduct) onSelectProduct(product);
     else navigate(`/product/${product.id}`);
+  };
+
+  const handleCategoryClick = (catId) => {
+    setSelectedCat(catId);
+    setSearchParams({ category: catId }, { replace: true });
   };
 
   useEffect(() => {
@@ -161,7 +203,7 @@ export const CategoriesPage = ({
                 type="button"
                 key={cat.id}
                 className={`cat-side-item ${isActive ? 'active' : ''}`}
-                onClick={() => setSelectedCat(cat.id)}
+                onClick={() => handleCategoryClick(cat.id)}
               >
                 <div className={`cat-side-icon-box ${isActive ? 'active' : ''}`}>
                   <IconComp size={20} />

@@ -1,33 +1,33 @@
 :root {
   /* ========================================================
-     WHITE WARM & BOTANICAL EMERALD MINT TEMPLATE
+     WHITE WARM & FLIPKART SKY/ROYAL BLUE TEMPLATE
      - Base: Warm White (#FAF9F6) & Pure White Cards
-     - Accents: Botanical Emerald Green (#059669) & Fresh Mint (#10B981)
+     - Accents: Flipkart Royal Blue (#2874F0) & Sky Blue (#0EA5E9)
      - Text: Warm Slate Charcoal (#1E293B)
      - Eco-Hygiene / Sparkling Clean Natural Vibe
      ======================================================== */
 
   /* Botanical Emerald & Mint Brand Palette */
-  --color-primary: #059669;             /* Botanical Emerald Green */
-  --color-primary-dark: #047857;        /* Deep Forest Emerald for High Contrast */
-  --color-primary-light: #ECFDF5;       /* Soft Mint Ice Wash */
-  --color-primary-hover: #10B981;       /* Vibrant Interactive Fresh Mint */
-  --color-mint-vibrant: #34D399;        /* Lively Mint 400 */
-  --color-mint-soft: #A7F3D0;           /* Soft Mint Border & Badge Ring */
+  --color-primary: #2874F0;             /* Botanical Emerald Green */
+  --color-primary-dark: #1E40AF;        /* Deep Forest Emerald for High Contrast */
+  --color-primary-light: #EFF6FF;       /* Soft Mint Ice Wash */
+  --color-primary-hover: #3B82F6;       /* Vibrant Interactive Fresh Mint */
+  --color-mint-vibrant: #38BDF8;        /* Lively Mint 400 */
+  --color-mint-soft: #BAE6FD;           /* Soft Mint Border & Badge Ring */
   
-  --color-accent-blue: #059669;         /* Primary Accent */
-  --color-accent-light-blue: #D1FAE5;   /* Crisp Mint Pill / Badge */
-  --color-accent-cyan: #059669;         /* Accent Green */
-  --color-accent-cyan-light: #ECFDF5;   /* Soft Mint Surface Wash */
+  --color-accent-blue: #2874F0;         /* Primary Accent */
+  --color-accent-light-blue: #DBEAFE;   /* Crisp Mint Pill / Badge */
+  --color-accent-cyan: #0284C7;         /* Accent Green */
+  --color-accent-cyan-light: #EFF6FF;   /* Soft Mint Surface Wash */
   
-  --color-accent-gold: #10B981;         /* Fresh Mint Accent */
-  --color-accent-gold-dark: #059669;    /* Deep Emerald Accent */
-  --color-accent-gold-light: #D1FAE5;   /* Soft Mint Shimmer */
+  --color-accent-gold: #2874F0;         /* Fresh Mint Accent */
+  --color-accent-gold-dark: #1E40AF;    /* Deep Emerald Accent */
+  --color-accent-gold-light: #DBEAFE;   /* Soft Mint Shimmer */
   
-  --color-eco-dark: #064E3B;            /* Deep Botanical Forest */
-  --color-hot-bg: #D1FAE5;              /* Refreshing Mint Badge BG */
-  --color-hot-text: #047857;            /* Deep Emerald Badge Text */
-  --color-discount: #059669;            /* Emerald Deal Tag */
+  --color-eco-dark: #1E3A8A;            /* Deep Botanical Forest */
+  --color-hot-bg: #EFF6FF;              /* Refreshing Mint Badge BG */
+  --color-hot-text: #1E40AF;            /* Deep Emerald Badge Text */
+  --color-discount: #2874F0;            /* Emerald Deal Tag */
   --color-star: #F59E0B;                /* Warm Amber Star */
 
   /* Surfaces & Backgrounds - Warm White & Botanical Mint */
@@ -35,29 +35,29 @@
   --bg-page-alt: #F5F3ED;               /* Warm Soft Sand Tint */
   --bg-card: #FFFFFF;                   /* Pure Crisp White */
   --bg-muted: #F5F3EF;                  /* Soft Warm White Tint */
-  --bg-category: #F0FDF4;               /* Clean Botanical Mint / Honeydew Tint */
+  --bg-category: #EFF6FF;               /* Clean Botanical Mint / Honeydew Tint */
   --bg-header: #FFFFFF;                 /* Pure Crisp White Header */
-  --bg-chocolate-header: #064E3B;       /* Deep Botanical Forest Header fallback */
+  --bg-chocolate-header: #1E3A8A;       /* Deep Botanical Forest Header fallback */
   
   /* Text - High Contrast, Slate Charcoal & Emerald Highlights */
   --text-primary: #1E293B;              /* Deep Slate Charcoal (Warm & Readable) */
   --text-secondary: #475569;            /* Balanced Slate Grey */
   --text-muted: #94A3B8;                /* Light Slate Grey */
   --text-white: #FFFFFF;
-  --text-gold: #059669;                 /* Emerald Highlight Text */
-  --text-accent: #059669;               /* Refreshing Emerald Highlight Text */
+  --text-gold: #2874F0;                 /* Emerald Highlight Text */
+  --text-accent: #2874F0;               /* Refreshing Emerald Highlight Text */
 
   /* Borders & Dividers - Warm Neutral with Mint Accents */
   --border-light: #E5E1D8;              /* Warm Neutral Border */
   --border-subtle: #F0ECE4;             /* Very Soft Warm Divider */
-  --border-mint: #A7F3D0;               /* Crisp Botanical Mint Border */
-  --border-gold: rgba(5, 150, 105, 0.35); /* Emerald Glow Border */
-  --border-primary: rgba(5, 150, 105, 0.25);
+  --border-mint: #BAE6FD;               /* Crisp Botanical Mint Border */
+  --border-gold: rgba(40, 116, 240, 0.35); /* Emerald Glow Border */
+  --border-primary: rgba(40, 116, 240, 0.25);
 
   /* Shadows - Warm Soft Undertone with Subtle Mint Glow */
   --shadow-sm: 0 1px 3px rgba(30, 41, 59, 0.05);
   --shadow-card: 0 2px 10px rgba(30, 41, 59, 0.05), 0 1px 3px rgba(30, 41, 59, 0.03);
-  --shadow-hover: 0 12px 24px -4px rgba(5, 150, 105, 0.18), 0 4px 10px -2px rgba(30, 41, 59, 0.04);
+  --shadow-hover: 0 12px 24px -4px rgba(40, 116, 240, 0.18), 0 4px 10px -2px rgba(30, 41, 59, 0.04);
   --shadow-bottom-nav: 0 -2px 14px rgba(30, 41, 59, 0.06);
 
   /* Radius */

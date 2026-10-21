@@ -83,34 +83,50 @@ export const Header = ({
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    let isScrolledRef = false;
     let ticking = false;
+
+    const updateScrollState = () => {
+      const y = window.scrollY;
+
+      // Hysteresis prevents the oscillation / stutter bug when scrolling slightly up:
+      // - Collapse only after scrolling clearly down past 90px
+      // - Expand back only when scrolled all the way back to the top (<= 12px)
+      if (!isScrolledRef && y > 90) {
+        isScrolledRef = true;
+        setIsScrolled(true);
+      } else if (isScrolledRef && y <= 12) {
+        isScrolledRef = false;
+        setIsScrolled(false);
+      }
+      ticking = false;
+    };
+
     const handleScroll = () => {
       if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 28);
-          ticking = false;
-        });
+        window.requestAnimationFrame(updateScrollState);
         ticking = true;
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    updateScrollState();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleTabClick = (tabId, e) => {
-    if (tabId === 'all') {
-      onSelectCategory(null);
-    } else {
-      onSelectCategory(tabId);
-    }
     if (e?.currentTarget) {
       e.currentTarget.scrollIntoView({
         behavior: 'smooth',
         inline: 'center',
         block: 'nearest'
       });
+    }
+
+    if (onSelectCategory) {
+      onSelectCategory(tabId);
+    } else {
+      navigate(`/categories?category=${tabId}`, { state: { category: tabId } });
     }
   };
 
@@ -167,7 +183,7 @@ export const Header = ({
             >
               <div className="fk-pill-icon-wrap">
                 <div className="fk-tag-badge-icon">
-                  <SprayCan size={17} color="#059669" />
+                  <SprayCan size={17} color="#2874F0" />
               
                 </div>
               </div>

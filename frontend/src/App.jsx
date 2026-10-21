@@ -29,8 +29,10 @@ function HashRedirectHandler() {
       if (hash.startsWith('#product/')) {
         const pid = hash.replace('#product/', '');
         navigate(`/product/${pid}`, { replace: true });
-      } else if (hash === '#categories') {
-        navigate('/categories', { replace: true });
+      } else if (hash.startsWith('#categories')) {
+        const queryIndex = hash.indexOf('?');
+        const query = queryIndex !== -1 ? hash.substring(queryIndex) : '';
+        navigate(`/categories${query}`, { replace: true });
       } else if (hash === '#about') {
         navigate('/about', { replace: true });
       } else if (hash === '#cart') {
@@ -139,6 +141,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/categories" element={<CategoriesRoute />} />
+          <Route path="/categories/:categoryId" element={<CategoriesRoute />} />
           <Route path="/about" element={<AboutRoute />} />
           <Route path="/cart" element={<CartRoute />} />
           <Route path="/product/:id" element={<ProductDetailRoute />} />
