@@ -23,7 +23,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.4;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 button {
@@ -76,34 +76,40 @@ a {
   position: relative;
 }
 
-/* Header */
 /* ========================================================
    FLIPKART OFFICIAL SKY BLUE GRADIENT APP HEADER
    ======================================================== */
-.fk-mobile-header-root {
+
+/* 1. Top Section: Full Sky Blue Gradient Banner (Pills & Delivery Location) */
+.fk-header-top-banner {
+  background: linear-gradient(180deg, #51A4FB 0%, #7CB6FD 30%, #BCE0FD 70%, #E9F4FE 100%);
+  padding: 10px 12px 6px 12px;
   width: 100%;
+  box-sizing: border-box;
+}
+
+/* Sentinel trigger for zero-lag compact category transition */
+.fk-header-sentinel {
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* 2. Pure Sticky Header (Search Bar + Category Tabs - ALWAYS STUCK!) */
+.fk-mobile-sticky-header {
   position: -webkit-sticky;
   position: sticky;
   top: 0;
   z-index: 99;
   background: #FFFFFF;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  box-sizing: border-box;
+  width: 100%;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   transform: translateZ(0);
-  transition: box-shadow 0.2s ease;
-}
-
-.fk-mobile-header-root.scrolled {
-  box-shadow: 0 3px 12px rgba(30, 41, 59, 0.08);
-}
-
-/* Full Sky Blue to White Gradient Wrapper (Exact Match to Flipkart Mobile App) */
-.fk-header-gradient-wrapper {
-  background: linear-gradient(180deg, #51A4FB 0%, #7CB6FD 26%, #BCE0FD 60%, #E9F4FE 84%, #FFFFFF 100%);
-  padding: 10px 12px 2px 12px;
-  width: 100%;
-  box-sizing: border-box;
-  transition: padding 0.2s ease, background 0.2s ease;
 }
 
 /* 1. Top 3 Mode Pills (Flipkart Yellow / Value 365 / Travel) */
@@ -113,10 +119,6 @@ a {
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  transition: max-height 0.22s ease, opacity 0.18s ease, margin-bottom 0.2s ease;
-  max-height: 60px;
-  opacity: 1;
-  overflow: hidden;
 }
 
 .fk-top-pill-btn {
@@ -215,12 +217,8 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 9px 2px 8px 2px;
+  margin: 8px 2px 4px 2px;
   gap: 8px;
-  transition: max-height 0.22s ease, opacity 0.18s ease, margin 0.2s ease;
-  max-height: 40px;
-  opacity: 1;
-  overflow: hidden;
 }
 
 .fk-location-clickable {
@@ -317,24 +315,12 @@ a {
   color: #1E293B;
 }
 
-/* On scroll down: smoothly collapse top pills & location */
-.fk-mobile-header-root.scrolled .fk-top-pills-row,
-.fk-mobile-header-root.scrolled .fk-location-rewards-row {
-  max-height: 0;
-  opacity: 0;
-  margin: 0;
-  pointer-events: none;
-}
 
-.fk-mobile-header-root.scrolled .fk-header-gradient-wrapper {
-  background: #FFFFFF;
-  padding-top: 6px;
-}
 
 /* 3. Flipkart Blue Border Search Bar */
 .fk-search-bar-row {
-  padding: 2px 0 6px 0;
-  background: transparent;
+  padding: 8px 12px 4px 12px;
+  background: #FFFFFF;
 }
 
 .fk-search-pill-wrapper {
@@ -345,9 +331,9 @@ a {
   border: 1.6px solid #2874F0;
   border-radius: 24px;
   padding: 0 14px;
-  height: 42px;
+  height: 40px;
   gap: 10px;
-  box-shadow: 0 2px 6px rgba(40, 116, 240, 0.09);
+  box-shadow: 0 1.5px 5px rgba(40, 116, 240, 0.08);
   cursor: pointer;
   user-select: none;
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
@@ -381,17 +367,23 @@ a {
   font-weight: 500;
 }
 
-/* Flipkart Squircle Category Tabs Track */
+/* Flipkart Squircle Category Tabs Track (Sticky Header Child) */
 .fk-category-tabs-track {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
-  padding: 4px 14px 0 14px;
+  gap: 10px;
+  padding: 4px 12px 6px 12px;
   overflow-x: auto;
   background: #FFFFFF;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: none;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  transition: padding 0.16s ease;
+}
+
+.fk-mobile-sticky-header.is-scrolled .fk-category-tabs-track {
+  padding: 3px 10px 5px 10px;
+  gap: 8px;
 }
 
 .fk-cat-tab-btn {
@@ -401,14 +393,19 @@ a {
   justify-content: flex-end;
   position: relative;
   flex-shrink: 0;
-  min-width: 60px;
-  padding: 4px 6px 6px 6px;
+  min-width: 58px;
+  padding: 2px 4px 5px 4px;
   background: transparent;
   border: none;
   cursor: pointer;
   user-select: none;
   text-decoration: none;
-  transition: padding-top 0.18s ease;
+  transition: padding 0.16s ease;
+}
+
+.fk-mobile-sticky-header.is-scrolled .fk-cat-tab-btn {
+  padding: 5px 8px 6px 8px;
+  min-width: max-content;
 }
 
 .fk-cat-tab-btn:active {
@@ -417,25 +414,30 @@ a {
 
 /* SQUIRCLE ICON BOX - Exactly matching Flipkart 3D E-commerce style */
 .fk-cat-squircle-box {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 4px;
-  box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.06);
+  margin-bottom: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   border: 1px solid #E2E8F0;
   background-color: #FFFFFF;
-  transition: max-height 0.2s ease,
-              opacity 0.15s ease,
-              margin-bottom 0.2s ease,
-              transform 0.2s ease;
-  max-height: 52px;
-  opacity: 1;
-  transform: scale(1);
   overflow: hidden;
-  will-change: max-height, opacity, transform;
+  transition: height 0.16s ease, margin-bottom 0.16s ease, opacity 0.14s ease, transform 0.16s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* WHEN SCROLLED: ICONS SLIDE UP & VANISH, CATEGORY NAMES STAY STUCK UNDER SEARCH! */
+.fk-mobile-sticky-header.is-scrolled .fk-cat-squircle-box {
+  height: 0;
+  margin-bottom: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  border-width: 0;
+  pointer-events: none;
 }
 
 .fk-cat-img {
@@ -459,22 +461,6 @@ a {
   display: block;
 }
 
-/* WHEN SCROLLED DOWN: ICON DISAPPEARS/COLLAPSES, TEXT STAYS EXACT SAME SIZE! */
-.fk-mobile-header-root.scrolled .fk-cat-squircle-box,
-.fk-sticky-container.scrolled .fk-cat-squircle-box {
-  max-height: 0;
-  opacity: 0;
-  margin-bottom: 0;
-  transform: translateY(-4px) scale(0.6);
-  pointer-events: none;
-}
-
-.fk-mobile-header-root.scrolled .fk-cat-tab-btn,
-.fk-sticky-container.scrolled .fk-cat-tab-btn {
-  padding: 8px 6px 6px 6px;
-  min-width: 60px;
-}
-
 /* Category Tab Label - Stays constant 11.5px always, no lag */
 .fk-cat-tab-label {
   font-size: 11.5px;
@@ -486,15 +472,15 @@ a {
   transition: color 0.15s ease;
 }
 
-/* Font size remains strictly 11.5px on scroll */
-.fk-mobile-header-root.scrolled .fk-cat-tab-label,
-.fk-sticky-container.scrolled .fk-cat-tab-label {
-  font-size: 11.5px;
-  font-weight: 500;
+.fk-mobile-sticky-header.is-scrolled .fk-cat-tab-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  padding-bottom: 1px;
 }
 
 .fk-cat-tab-btn.active .fk-cat-tab-label {
-  color: #1E293B;
+  color: #2874F0;
   font-weight: 700;
 }
 
