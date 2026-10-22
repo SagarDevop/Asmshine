@@ -712,164 +712,242 @@ a {
   gap: 12px;
 }
 
-.fk-trio-feature-banner {
+/* =======================================================
+   SPOTLESS HOME COMBO POSTER (AUTHENTIC COMMERCIAL POSTER)
+   ======================================================= */
+.fk-combo-poster-block {
   position: relative;
-  height: 190px;
   width: 100%;
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 3px 12px rgba(30, 41, 59, 0.08);
-  background-color: #1E293B;
+  border: 1.5px solid #38BDF8;
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.16);
+  isolation: isolate;
+  background-color: #071A40;
 }
 
-.fk-trio-bg-img {
+.fk-combo-poster-backdrop {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
-  display: block;
-  transition: transform 0.4s ease;
-}
-
-.fk-trio-feature-banner:hover .fk-trio-bg-img {
-  transform: scale(1.03);
-}
-
-.fk-trio-gradient-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(30, 41, 59, 0.90) 0%, rgba(30, 41, 59, 0.58) 55%, transparent 100%);
+  z-index: 0;
   pointer-events: none;
 }
 
-.fk-trio-content-overlay {
+.fk-combo-poster-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(7, 26, 64, 0.72) 0%, rgba(14, 52, 115, 0.62) 40%, rgba(7, 26, 64, 0.88) 100%);
+}
+
+.fk-combo-poster-content {
+  position: relative;
+  z-index: 2;
+  padding: 13px 12px 11px 12px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  padding: 0 16px;
-  max-width: 76%;
-  z-index: 2;
 }
 
-.fk-trio-tag-row {
+.fk-combo-poster-header {
+  margin-bottom: 11px;
+}
+
+.fk-combo-poster-tag-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
-.fk-trio-deal-tag {
+.fk-combo-poster-tag {
   font-size: 8.5px;
   font-weight: 800;
-  color: #7DD3FC;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #0369A1;
+  background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+  border: 1px solid #38BDF8;
+  padding: 2px 7px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.fk-combo-poster-more-btn {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-}
-
-.fk-trio-save-badge {
-  background-color: #15803D;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
   color: #FFFFFF;
-  font-size: 8.5px;
-  font-weight: 800;
-  padding: 1.5px 5px;
-  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
 }
 
-.fk-trio-title {
-  font-size: 16px;
+.fk-combo-poster-more-btn:hover {
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+.fk-combo-poster-title {
+  font-size: 17px;
   font-weight: 800;
   color: #FFFFFF;
   margin: 0;
   line-height: 1.2;
+  letter-spacing: 0.2px;
   font-family: var(--font-base);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
-.fk-trio-subtitle {
-  font-size: 10px;
+.fk-combo-poster-sub {
+  font-size: 10.5px;
+  font-weight: 500;
   color: #BAE6FD;
-  line-height: 1.35;
-  margin: 1px 0 4px 0;
+  margin: 2px 0 0 0;
+  line-height: 1.3;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
-.fk-trio-cta-row {
-  display: flex;
-  align-items: center;
+/* Embedded 2-Card Layout */
+.fk-combo-poster-cards-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-top: 3px;
-  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-.fk-trio-pricing {
+.fk-poster-product-card.fk-combo-card {
+  border-color: #BAE6FD;
+}
+
+.fk-poster-product-card.fk-combo-card:hover {
+  border-color: #0284C7;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25);
+}
+
+.fk-poster-card-badge.fk-combo-badge {
+  background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+  color: #0369A1;
+  border: 1px solid #7DD3FC;
+}
+
+/* Footer Guarantee Strip Inside Poster */
+.fk-combo-poster-footer {
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(186, 230, 253, 0.25);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 9.5px;
+  color: #E0F2FE;
+  font-weight: 600;
   display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-
-.fk-trio-price {
-  font-size: 16px;
-  font-weight: 800;
-  color: #FFFFFF;
-}
-
-.fk-trio-mrp {
-  font-size: 10.5px;
-  color: #94A3B8;
-  text-decoration: line-through;
-}
-
-.fk-trio-off {
-  font-size: 10.5px;
-  font-weight: 800;
-  color: #4ADE80;
-}
-
-.fk-trio-add-btn {
-  display: inline-flex;
   align-items: center;
-  gap: 5px;
-  background: linear-gradient(135deg, #2874F0 0%, #0EA5E9 100%);
-  color: #1E293B;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 6px 12px;
-  border-radius: 18px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-  transition: opacity 0.15s ease, transform 0.1s ease;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  letter-spacing: 0.1px;
 }
 
-.fk-trio-add-btn:active {
-  transform: scale(0.97);
+.fk-combo-poster-dot {
+  color: #38BDF8;
+  font-weight: 900;
 }
 
-/* 3. Spacious 4-Item Minimal Trust Strip */
-.fk-minimal-trust-strip {
+/* 3. Minimal 4-Item Trust & Assurance Grid with 3D Visual Badges */
+.fk-trust-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  background-color: #FAF9F6;
-  border: 1px solid #BAE6FD;
-  border-radius: 12px;
-  padding: 10px 12px;
 }
 
-.fk-min-trust-item {
+@media (min-width: 768px) {
+  .fk-trust-cards-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+.fk-trust-card {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10.5px;
-  font-weight: 600;
-  color: #1E40AF;
-  line-height: 1.2;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
+
+.fk-trust-card:hover {
+  border-color: #BAE6FD;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+  transform: translateY(-1px);
+}
+
+.fk-trust-icon-box {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 9px;
+  background: #F0F9FF;
+  border: 1px solid #BAE6FD;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fk-trust-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fk-trust-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  flex: 1;
+}
+
+.fk-trust-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.1px;
+}
+
+.fk-trust-desc {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #0284C7;
+  margin: 1.5px 0 0 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 /* =======================================================
    FLIPKART "DEALS FOR YOU" HORIZONTAL RAIL (MINIMAL & FAST)
