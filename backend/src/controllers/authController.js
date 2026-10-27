@@ -224,6 +224,7 @@ exports.verifySignupOtp = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'Account verified and created successfully.',
+      token,
       user: user.toSafeObject()
     });
   } catch (error) {
@@ -344,6 +345,7 @@ exports.register = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'Account created successfully.',
+      token,
       user: user.toSafeObject()
     });
   } catch (error) {
@@ -396,6 +398,7 @@ exports.login = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Logged in successfully.',
+      token,
       user: user.toSafeObject()
     });
   } catch (error) {
@@ -491,6 +494,7 @@ exports.googleLogin = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Google sign-in successful.',
+      token,
       user: user.toSafeObject()
     });
   } catch (error) {

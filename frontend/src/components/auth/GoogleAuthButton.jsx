@@ -51,8 +51,20 @@ export const GoogleAuthButton = ({ onSuccess, onError, disabled = false }) => {
         </button>
 
         {configNotice && (
-          <div className="auth-alert-notice" role="alert" style={{ marginTop: '10px' }}>
-            <strong>Google OAuth Setup Note:</strong> Google Sign-In requires <code>VITE_GOOGLE_CLIENT_ID</code> in <code>frontend/.env</code> and <code>GOOGLE_CLIENT_ID</code> in <code>backend/.env</code>. Please configure valid Google Cloud credentials to use live OAuth.
+          <div
+            style={{
+              marginTop: '10px',
+              padding: '10px 14px',
+              backgroundColor: '#EFF6FF',
+              border: '1px solid #BFDBFE',
+              borderRadius: '8px',
+              fontSize: '12px',
+              color: '#1E40AF',
+              lineHeight: '1.4',
+              textAlign: 'center'
+            }}
+          >
+            Google Sign-In is currently being set up. Please use <strong>Email &amp; Password</strong> or <strong>Create Account with Email OTP</strong> to continue!
           </div>
         )}
       </div>

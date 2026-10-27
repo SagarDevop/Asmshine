@@ -20,7 +20,7 @@ const sanitizeRedirect = (target) => {
 export const AuthPage = ({ initialTab = 'login' }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, loginWithGoogle, register } = useAuth();
+  const { login, loginWithGoogle, sendSignupOtp, verifySignupOtp, resendSignupOtp } = useAuth();
 
   const [activeTab, setActiveTab] = useState(
     location.pathname === '/signup' ? 'signup' : initialTab
@@ -32,6 +32,11 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // OTP Signup state
+  const [signupStep, setSignupStep] = useState('FORM'); // 'FORM' | 'OTP'
+  const [otp, setOtp] = useState('');
+  const [cooldown, setCooldown] = useState(0);
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -49,14 +54,27 @@ export const AuthPage = ({ initialTab = 'login' }) => {
     }
   }, [location.pathname]);
 
+  // 60-second OTP cooldown ticker
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const interval = setInterval(() => {
+      setCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [cooldown]);
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setErrorMessage('');
     setSuccessNotice('');
+    if (tab === 'login') {
+      setSignupStep('FORM');
+      setOtp('');
+    }
   };
 
   // -------------------------------------------------------------
-  // Login Submit Handler
+  // Login Submit Handler (Email & Password)
   // -------------------------------------------------------------
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -80,9 +98,9 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   };
 
   // -------------------------------------------------------------
-  // Direct Signup Submit Handler (No OTP Verification Barrier)
+  // Step 1: Send Registration OTP Handler
   // -------------------------------------------------------------
-  const handleSignupSubmit = async (e) => {
+  const handleSendOtpSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessNotice('');
@@ -109,14 +127,71 @@ export const AuthPage = ({ initialTab = 'login' }) => {
 
     setSubmitting(true);
     try {
-      await register({
+      const res = await sendSignupOtp({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         password
       });
+      setSignupStep('OTP');
+      setCooldown(60);
+      if (res && res.devOtp) {
+        setSuccessNotice(`Verification code sent! (Dev OTP: ${res.devOtp})`);
+      } else {
+        setSuccessNotice(res?.message || `A 6-digit verification code has been sent to ${email.trim()}`);
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Failed to send verification code. Please check your details and try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // Step 2: Verify Registration OTP Handler
+  // -------------------------------------------------------------
+  const handleVerifyOtpSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setSuccessNotice('');
+
+    const cleanOtp = otp.trim();
+    if (!cleanOtp || cleanOtp.length !== 6) {
+      setErrorMessage('Please enter the complete 6-digit verification code.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await verifySignupOtp({
+        email: email.trim().toLowerCase(),
+        otp: cleanOtp
+      });
       navigate(from, { replace: true });
     } catch (err) {
-      setErrorMessage(err.message || 'Registration failed. Please check your details and try again.');
+      setErrorMessage(err.message || 'Invalid or expired verification code. Please request a new code.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // Resend OTP Code
+  // -------------------------------------------------------------
+  const handleResendOtp = async () => {
+    if (cooldown > 0) return;
+    setErrorMessage('');
+    setSuccessNotice('');
+    setSubmitting(true);
+    try {
+      const res = await resendSignupOtp(email.trim().toLowerCase());
+      setCooldown(60);
+      if (res && res.devOtp) {
+        setSuccessNotice(`Fresh verification code sent! (Dev OTP: ${res.devOtp})`);
+      } else {
+        setSuccessNotice(res?.message || 'A fresh verification code has been sent to your email.');
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Failed to resend code. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -252,7 +327,6 @@ export const AuthPage = ({ initialTab = 'login' }) => {
             </div>
           )}
 
-
           {/* ========================================================= */}
           {/* VIEW A: LOGIN                                             */}
           {/* ========================================================= */}
@@ -314,46 +388,6 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                 >
                   {submitting ? 'Signing in...' : 'Sign In'}
                 </button>
-
-                {/* Quick Auto-Fill Demo Credentials Helper */}
-                <div
-                  style={{
-                    backgroundColor: '#EFF6FF',
-                    border: '1px dashed #93C5FD',
-                    borderRadius: '8px',
-                    padding: '10px 12px',
-                    marginTop: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '8px'
-                  }}
-                >
-                  <div style={{ fontSize: '12px', color: '#1E40AF', lineHeight: '1.4' }}>
-                    <span style={{ fontWeight: 700 }}>Demo Test Account:</span>
-                    <div><code>demo@asmshine.com</code> | <code>asmshine123</code></div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEmail('demo@asmshine.com');
-                      setPassword('asmshine123');
-                    }}
-                    style={{
-                      background: '#2874F0',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      borderRadius: '6px',
-                      padding: '6px 12px',
-                      fontSize: '11.5px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      flexShrink: 0
-                    }}
-                  >
-                    Auto-Fill
-                  </button>
-                </div>
               </form>
 
               <div className="auth-divider">
@@ -377,11 +411,11 @@ export const AuthPage = ({ initialTab = 'login' }) => {
           )}
 
           {/* ========================================================= */}
-          {/* VIEW B: SIGNUP (Direct Email & Password Registration)     */}
+          {/* VIEW B: SIGNUP (Two-Step Email & OTP Verification Flow)  */}
           {/* ========================================================= */}
-          {activeTab === 'signup' && (
+          {activeTab === 'signup' && signupStep === 'FORM' && (
             <div>
-              <form onSubmit={handleSignupSubmit} className="auth-form" noValidate>
+              <form onSubmit={handleSendOtpSubmit} className="auth-form" noValidate>
                 <div className="auth-field">
                   <label className="auth-label" htmlFor="auth-signup-name">
                     Full Name
@@ -471,9 +505,9 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                   type="submit"
                   className="auth-submit-btn"
                   disabled={submitting}
-                  id="signup-submit-button"
+                  id="signup-send-otp-button"
                 >
-                  {submitting ? 'Creating Account...' : 'Create Account & Sign In'}
+                  {submitting ? 'Sending Verification Code...' : 'Send Verification Code'}
                 </button>
 
                 <div className="auth-divider">
@@ -493,6 +527,91 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                   </span>{' '}
                   and Privacy Policy.
                 </p>
+              </form>
+            </div>
+          )}
+
+          {/* ========================================================= */}
+          {/* VIEW C: SIGNUP STEP 2 (OTP Input & Verification)          */}
+          {/* ========================================================= */}
+          {activeTab === 'signup' && signupStep === 'OTP' && (
+            <div className="otp-verification-panel">
+              <div style={{ marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '17px', fontWeight: 800, color: '#0F172A', marginBottom: '4px' }}>
+                  Enter Verification Code
+                </h3>
+                <p style={{ fontSize: '13px', color: '#64748B', lineHeight: '1.4' }}>
+                  We sent a 6-digit verification code to <strong style={{ color: '#0F172A' }}>{email}</strong>
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSignupStep('FORM');
+                    setOtp('');
+                    setErrorMessage('');
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#2874F0',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    padding: '4px 0',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Change Email Address
+                </button>
+              </div>
+
+              <form onSubmit={handleVerifyOtpSubmit} className="auth-form" noValidate>
+                <div className="auth-field">
+                  <label className="auth-label" htmlFor="auth-otp-input">
+                    6-Digit Verification Code
+                  </label>
+                  <div className="auth-input-wrapper">
+                    <input
+                      id="auth-otp-input"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={6}
+                      className="auth-input otp-input-field"
+                      placeholder="••••••"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      autoFocus
+                      required
+                      disabled={submitting}
+                    />
+                  </div>
+                </div>
+
+                <div className="otp-resend-row" style={{ marginTop: '8px', marginBottom: '18px' }}>
+                  <span>Didn't receive code?</span>
+                  {cooldown > 0 ? (
+                    <span style={{ color: '#94A3B8', fontWeight: 600 }}>Resend in {cooldown}s</span>
+                  ) : (
+                    <button
+                      type="button"
+                      className="otp-resend-btn"
+                      onClick={handleResendOtp}
+                      disabled={submitting}
+                    >
+                      Resend Code
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  className="auth-submit-btn"
+                  disabled={submitting || otp.trim().length !== 6}
+                  id="signup-verify-otp-button"
+                >
+                  {submitting ? 'Verifying & Creating Account...' : 'Verify & Create Account'}
+                </button>
               </form>
             </div>
           )}
