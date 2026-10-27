@@ -1,3 +1,4 @@
+
 // ASM SHINE - Client-side Database & API Layer
 const STORAGE_CART_KEY = 'asm_shine_cart_v1';
 
@@ -1447,6 +1448,10 @@ const getAuthHeaders = (extraHeaders = {}) => {
   };
 };
 
+const hasAuthToken = () => {
+  return typeof window !== 'undefined' && Boolean(localStorage.getItem('cleanora_token'));
+};
+
 const apiFetch = (endpoint, options = {}) => {
   const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
   return fetch(url, {
@@ -1543,6 +1548,9 @@ export const api = {
   },
 
   getCurrentUser: async () => {
+    if (!hasAuthToken()) {
+      return null;
+    }
     const res = await apiFetch('/api/v1/auth/me', {
       method: 'GET',
       headers: {
@@ -1640,6 +1648,9 @@ export const api = {
   },
 
   getAddresses: async () => {
+    if (!hasAuthToken()) {
+      return [];
+    }
     const res = await apiFetch('/api/v1/auth/addresses', {
       method: 'GET',
       headers: {
@@ -1690,6 +1701,9 @@ export const api = {
   },
 
   getOrders: async () => {
+    if (!hasAuthToken()) {
+      return [];
+    }
     const res = await apiFetch('/api/v1/auth/orders', {
       method: 'GET',
       headers: {
@@ -1862,22 +1876,24 @@ export const api = {
 
   // Get current Cart summary
   getCart: async () => {
-    try {
-      const res = await apiFetch('/api/v1/cart', {
-        headers: { 'Accept': 'application/json' },
-        credentials: 'include'
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.success) {
-          return {
-            totalCount: data.totalCount || 0,
-            data: data.items || data.data || []
-          };
+    if (hasAuthToken()) {
+      try {
+        const res = await apiFetch('/api/v1/cart', {
+          headers: { 'Accept': 'application/json' },
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success) {
+            return {
+              totalCount: data.totalCount || 0,
+              data: data.items || data.data || []
+            };
+          }
         }
+      } catch (e) {
+        // Fallback to guest storage if network fails
       }
-    } catch (e) {
-      // Unauthenticated or offline: fallback to guest storage
     }
 
     const items = getStoredGuestCart();
@@ -1890,19 +1906,21 @@ export const api = {
 
   // Get fully populated cart with live database prices and totals
   getCartFullDetails: async () => {
-    try {
-      const res = await apiFetch('/api/v1/cart', {
-        headers: { 'Accept': 'application/json' },
-        credentials: 'include'
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.success && Array.isArray(data.items)) {
-          return data;
+    if (hasAuthToken()) {
+      try {
+        const res = await apiFetch('/api/v1/cart', {
+          headers: { 'Accept': 'application/json' },
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success && Array.isArray(data.items)) {
+            return data;
+          }
         }
+      } catch (e) {
+        // Fallback to guest calculation if network fails
       }
-    } catch (e) {
-      // Unauthenticated or offline: fallback to guest calculation
     }
 
     const rawGuestItems = getStoredGuestCart();
@@ -1911,21 +1929,23 @@ export const api = {
 
   // Add single item to cart
   addToCart: async (productId, quantity = 1, size = '') => {
-    try {
-      const res = await apiFetch('/api/v1/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ productId, quantity, size })
-      });
-      if (res.ok) {
-        return await res.json();
+    if (hasAuthToken()) {
+      try {
+        const res = await apiFetch('/api/v1/cart/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ productId, quantity, size })
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (e) {
+        // Fallback to guest storage if network fails
       }
-    } catch (e) {
-      // Unauthenticated: fallback to guest storage
     }
 
     const cart = getStoredGuestCart();
@@ -1943,21 +1963,23 @@ export const api = {
 
   // Update item quantity
   updateCartQuantity: async (productId, quantity, size = '') => {
-    try {
-      const res = await apiFetch('/api/v1/cart/update', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ productId, quantity, size })
-      });
-      if (res.ok) {
-        return await res.json();
+    if (hasAuthToken()) {
+      try {
+        const res = await apiFetch('/api/v1/cart/update', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ productId, quantity, size })
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (e) {
+        // Fallback to guest storage if network fails
       }
-    } catch (e) {
-      // Unauthenticated: fallback to guest storage
     }
 
     let cart = getStoredGuestCart();
@@ -1981,18 +2003,20 @@ export const api = {
 
   // Remove single item from cart
   removeFromCart: async (productId, size = '') => {
-    try {
-      const query = size ? `?size=${encodeURIComponent(size)}` : '';
-      const res = await apiFetch(`/api/v1/cart/remove/${encodeURIComponent(productId)}${query}`, {
-        method: 'DELETE',
-        headers: { 'Accept': 'application/json' },
-        credentials: 'include'
-      });
-      if (res.ok) {
-        return await res.json();
+    if (hasAuthToken()) {
+      try {
+        const query = size ? `?size=${encodeURIComponent(size)}` : '';
+        const res = await apiFetch(`/api/v1/cart/remove/${encodeURIComponent(productId)}${query}`, {
+          method: 'DELETE',
+          headers: { 'Accept': 'application/json' },
+          credentials: 'include'
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (e) {
+        // Fallback to guest storage if network fails
       }
-    } catch (e) {
-      // Unauthenticated: fallback to guest storage
     }
 
     let cart = getStoredGuestCart().filter(
@@ -2004,13 +2028,15 @@ export const api = {
 
   // Clear entire cart
   clearCart: async () => {
-    try {
-      await apiFetch('/api/v1/cart/clear', {
-        method: 'DELETE',
-        headers: { 'Accept': 'application/json' },
-        credentials: 'include'
-      });
-    } catch (e) {}
+    if (hasAuthToken()) {
+      try {
+        await apiFetch('/api/v1/cart/clear', {
+          method: 'DELETE',
+          headers: { 'Accept': 'application/json' },
+          credentials: 'include'
+        });
+      } catch (e) {}
+    }
 
     clearStoredGuestCart();
     return {
@@ -2034,7 +2060,7 @@ export const api = {
 
   // Merge guest cart items into authenticated user's MongoDB cart upon login
   syncCart: async (guestItems = []) => {
-    if (!Array.isArray(guestItems) || guestItems.length === 0) {
+    if (!hasAuthToken() || !Array.isArray(guestItems) || guestItems.length === 0) {
       return api.getCartFullDetails();
     }
     const res = await apiFetch('/api/v1/cart/sync', {
@@ -2059,34 +2085,38 @@ export const api = {
   // -------------------------------------------------------------
 
   getWishlist: async () => {
-    try {
-      const res = await apiFetch('/api/v1/auth/wishlist', {
-        headers: { 'Accept': 'application/json' },
-        credentials: 'include'
-      });
-      if (res.ok) {
-        const data = await res.json();
-        return data.wishlist || [];
-      }
-    } catch (e) {}
+    if (hasAuthToken()) {
+      try {
+        const res = await apiFetch('/api/v1/auth/wishlist', {
+          headers: { 'Accept': 'application/json' },
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return data.wishlist || [];
+        }
+      } catch (e) {}
+    }
     return getStoredGuestWishlist();
   },
 
   toggleWishlist: async (productId) => {
-    try {
-      const res = await apiFetch('/api/v1/auth/wishlist/toggle', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ productId })
-      });
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch (e) {}
+    if (hasAuthToken()) {
+      try {
+        const res = await apiFetch('/api/v1/auth/wishlist/toggle', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ productId })
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (e) {}
+    }
 
     // Guest fallback
     let list = getStoredGuestWishlist();
@@ -2105,7 +2135,7 @@ export const api = {
   },
 
   syncWishlist: async (productIds = []) => {
-    if (!Array.isArray(productIds) || productIds.length === 0) {
+    if (!hasAuthToken() || !Array.isArray(productIds) || productIds.length === 0) {
       return api.getWishlist();
     }
     const res = await apiFetch('/api/v1/auth/wishlist/sync', {
@@ -2147,6 +2177,9 @@ export const api = {
   },
 
   getOrders: async () => {
+    if (!hasAuthToken()) {
+      return [];
+    }
     const res = await apiFetch('/api/v1/orders', {
       headers: { 'Accept': 'application/json' },
       credentials: 'include'
@@ -2159,6 +2192,9 @@ export const api = {
   },
 
   getOrderById: async (orderId) => {
+    if (!hasAuthToken()) {
+      return null;
+    }
     const res = await apiFetch(`/api/v1/orders/${encodeURIComponent(orderId)}`, {
       headers: { 'Accept': 'application/json' },
       credentials: 'include'
