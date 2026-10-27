@@ -1,70 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, ChevronRight } from 'lucide-react';
+import { api } from '../../services/api';
 
 export const DealsForYou = ({ onSelectProduct, onNavigateAll }) => {
-  // Curated Flash & Budget Deals matching the store's top offers
-  const deals = [
-    {
-      id: 'asm_toilet_1',
-      name: 'ASM Smart Clean Toilet Cleaner',
-      size: '500 ml Pack',
-      dealPrice: 69,
-      mrp: 135,
-      discount: '49% off',
-      badge: 'SPECIAL ₹69',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg'
-    },
-    {
-      id: 'asm_dish_1',
-      name: 'ASM Shine Smart Wash Dishwash Liquid',
-      size: '500 ml Bottle',
-      dealPrice: 89,
-      mrp: 125,
-      discount: '29% off',
-      badge: 'UNDER ₹99',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg'
-    },
-    {
-      id: 'asm_glass_1',
-      name: 'ASM Crystal Clear Glass Spray',
-      size: '500 ml Trigger',
-      dealPrice: 119,
-      mrp: 165,
-      discount: '28% off',
-      badge: 'TOP DEAL',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg'
-    },
-    {
-      id: 'asm_hand_1',
-      name: 'ASM PureShield Handwash Refill',
-      size: '500 ml Pump',
-      dealPrice: 79,
-      mrp: 110,
-      discount: '28% off',
-      badge: 'STEAL DEAL',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg'
-    },
-    {
-      id: 'asm_bath_1',
-      name: 'ASM Shine Bathroom Descaler',
-      size: '1 Liter Bottle',
-      dealPrice: 129,
-      mrp: 179,
-      discount: '28% off',
-      badge: 'HARD WATER',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg'
-    },
-    {
-      id: 'asm_floor_1',
-      name: 'ASM Shine Surface & Floor Cleaner',
-      size: '1 Liter Bottle',
-      dealPrice: 149,
-      mrp: 219,
-      discount: '32% off',
-      badge: 'BEST VALUE',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg'
-    }
-  ];
+  const [deals, setDeals] = useState([]);
+
+  useEffect(() => {
+    api.getProducts().then((products) => {
+      if (Array.isArray(products) && products.length > 0) {
+        const formatted = products.slice(0, 6).map((p) => ({
+          id: p.id || p._id,
+          name: p.shortName || p.name,
+          size: p.size || 'Standard Pack',
+          dealPrice: p.price,
+          mrp: p.originalPrice || Math.round(p.price * 1.3),
+          discount: p.discountPercent ? `${p.discountPercent}% off` : 'Special Offer',
+          badge: p.badge || (p.price < 99 ? 'UNDER ₹99' : 'TOP DEAL'),
+          image: p.image
+        }));
+        setDeals(formatted);
+      }
+    }).catch(() => {});
+  }, []);
 
   // Subtle live countdown timer: 05h : 24m : 18s
   const [timeLeft, setTimeLeft] = useState({ hours: 5, minutes: 24, seconds: 18 });
@@ -93,6 +50,8 @@ export const DealsForYou = ({ onSelectProduct, onNavigateAll }) => {
       onSelectProduct({ id: deal.id });
     }
   };
+
+  if (deals.length === 0) return null;
 
   return (
     <section className="fk-deals-section" aria-label="Deals for You">

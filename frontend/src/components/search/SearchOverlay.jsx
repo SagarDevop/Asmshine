@@ -14,7 +14,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { api, STATIC_PRODUCTS } from '../../services/api';
+import { api } from '../../services/api';
 
 const TRENDING_SEARCHES = [
   { text: 'Power Toilet Cleaner (Harpic Power)', query: 'Toilet' },
@@ -59,7 +59,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [query, setQuery] = useState(initialQuery);
-  const [products, setProducts] = useState(STATIC_PRODUCTS);
+  const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   // Load products on mount

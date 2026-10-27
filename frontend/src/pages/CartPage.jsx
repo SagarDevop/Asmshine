@@ -32,7 +32,7 @@ export const CartPage = ({
     clearCart,
     showToast
   } = useCartWishlist();
-  const { selectedAddress } = useAuth();
+  const { user, selectedAddress } = useAuth();
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
 
   const handleBack = () => {
@@ -113,42 +113,61 @@ export const CartPage = ({
         </div>
       </header>
 
-      {/* 2. Delivery Address Banner */}
-      <div className="cart-address-banner">
-        <div className="cart-address-left">
-          <MapPin size={16} className="cart-pin-icon" />
-          <div className="cart-address-text">
-            {selectedAddress ? (
-              <>
-                <span>
-                  Deliver to:{' '}
-                  <strong>
-                    {selectedAddress.fullName || selectedAddress.name || 'Your Location'}, {selectedAddress.city} - {selectedAddress.pincode}
-                  </strong>
-                </span>
-                <small>{selectedAddress.street ? `${selectedAddress.street} • ` : ''}Free Express Delivery</small>
-              </>
-            ) : (
-              <>
-                <span>
-                  <strong>Select Delivery Location</strong>
-                </span>
-                <small>Enter PIN code to check delivery speed & availability</small>
-              </>
-            )}
+      {/* 2. Delivery Address Banner (Authenticated Users) */}
+      {user && (
+        <div className="cart-address-banner">
+          <div className="cart-address-left">
+            <MapPin size={16} className="cart-pin-icon" />
+            <div className="cart-address-text">
+              {selectedAddress ? (
+                <>
+                  <span>
+                    Deliver to:{' '}
+                    <strong>
+                      {selectedAddress.fullName || selectedAddress.name || 'Your Location'}, {selectedAddress.city} - {selectedAddress.pincode}
+                    </strong>
+                  </span>
+                  <small>{selectedAddress.street ? `${selectedAddress.street} • ` : ''}Free Express Delivery</small>
+                </>
+              ) : (
+                <>
+                  <span>
+                    <strong>Select Delivery Location</strong>
+                  </span>
+                  <small>Enter PIN code to check delivery speed & availability</small>
+                </>
+              )}
+            </div>
           </div>
+          <button
+            type="button"
+            className="cart-change-addr-btn"
+            onClick={() => setIsAddressModalOpen(true)}
+          >
+            Change
+          </button>
         </div>
-        <button
-          type="button"
-          className="cart-change-addr-btn"
-          onClick={() => setIsAddressModalOpen(true)}
-        >
-          Change
-        </button>
-      </div>
+      )}
 
-      {/* 3. Empty State or Cart Items */}
-      {cartItems.length === 0 && !orderSuccess ? (
+      {/* 3. Empty State, Login Required, or Cart Items */}
+      {!user ? (
+        <div className="cart-empty-view">
+          <div className="cart-empty-icon-box">
+            <ShoppingBag size={56} color="#0284C7" />
+          </div>
+          <h2 className="cart-empty-title">Please Log In</h2>
+          <p className="cart-empty-subtitle">
+            Log in to your ASM Shine account to view your cart items, track orders, and checkout seamlessly.
+          </p>
+          <button
+            type="button"
+            className="cart-shop-now-btn"
+            onClick={() => navigate('/login', { state: { from: '/cart' } })}
+          >
+            Login to Continue
+          </button>
+        </div>
+      ) : cartItems.length === 0 && !orderSuccess ? (
         <div className="cart-empty-view">
           <div className="cart-empty-icon-box">
             <ShoppingBag size={56} color="#9E887B" />

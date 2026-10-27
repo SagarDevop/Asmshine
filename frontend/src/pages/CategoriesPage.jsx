@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
-import { api, STATIC_CATEGORIES } from '../services/api';
+import { api } from '../services/api';
 import { SearchOverlay } from '../components/search/SearchOverlay';
 import { CatProductCardSkeleton } from '../components/ui/CatProductCardSkeleton';
 
@@ -137,7 +137,7 @@ export const CategoriesPage = ({
     return () => { isMounted = false; };
   }, []);
 
-  const distinctCategories = (categories.length > 0 ? categories : STATIC_CATEGORIES).filter(
+  const distinctCategories = categories.filter(
     (c) => c && c.id && c.id !== 'all' && c.name
   );
 
