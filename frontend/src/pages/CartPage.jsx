@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
+import { useAuth } from '../context/AuthContext';
+import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 
 export const CartPage = ({
   onBack,
@@ -30,6 +32,8 @@ export const CartPage = ({
     clearCart,
     showToast
   } = useCartWishlist();
+  const { selectedAddress } = useAuth();
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
 
   const handleBack = () => {
     if (onBack) onBack();
@@ -51,6 +55,13 @@ export const CartPage = ({
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState('');
 
+  // Safe fallback properties ensuring zero crashes even during asynchronous hydration
+  const cartItems = Array.isArray(cartData?.items) ? cartData.items : [];
+  const totalCount = typeof cartData?.totalCount === 'number' ? cartData.totalCount : cartItems.length;
+  const totalMRP = cartData?.totalMRP || 0;
+  const totalPrice = cartData?.totalPrice || 0;
+  const totalDiscount = cartData?.totalDiscount || 0;
+
   const handleApplyCoupon = (codeToApply) => {
     const code = (codeToApply || couponInput).trim().toUpperCase();
     if (!code) return;
@@ -59,7 +70,7 @@ export const CartPage = ({
       setAppliedCoupon({
         code: 'POWER20',
         percent: 20,
-        discount: Math.round(cartData.totalPrice * 0.2)
+        discount: Math.round(totalPrice * 0.2)
       });
       showToast('Coupon POWER20 applied! 20% discount activated');
     } else {
@@ -74,11 +85,11 @@ export const CartPage = ({
   };
 
   const couponDiscount = appliedCoupon?.discount || 0;
-  const finalPrice = Math.max(cartData.totalPrice - couponDiscount, 0);
-  const totalSavings = cartData.totalDiscount + couponDiscount;
+  const finalPrice = Math.max(totalPrice - couponDiscount, 0);
+  const totalSavings = totalDiscount + couponDiscount;
 
   const handlePlaceOrder = () => {
-    if (cartData.items.length === 0) return;
+    if (cartItems.length === 0) return;
     navigate('/checkout');
   };
 
@@ -97,7 +108,7 @@ export const CartPage = ({
         <div className="page-header-title-box">
           <span className="page-header-title">My Cart</span>
           <span className="page-header-subtitle">
-            {cartData.totalCount} {cartData.totalCount === 1 ? 'item' : 'items'}
+            {totalCount} {totalCount === 1 ? 'item' : 'items'}
           </span>
         </div>
       </header>
@@ -107,21 +118,37 @@ export const CartPage = ({
         <div className="cart-address-left">
           <MapPin size={16} className="cart-pin-icon" />
           <div className="cart-address-text">
-            <span>Deliver to: <strong>New Delhi - 110001</strong></span>
-            <small>Home • Free Express Delivery</small>
+            {selectedAddress ? (
+              <>
+                <span>
+                  Deliver to:{' '}
+                  <strong>
+                    {selectedAddress.fullName || selectedAddress.name || 'Your Location'}, {selectedAddress.city} - {selectedAddress.pincode}
+                  </strong>
+                </span>
+                <small>{selectedAddress.street ? `${selectedAddress.street} • ` : ''}Free Express Delivery</small>
+              </>
+            ) : (
+              <>
+                <span>
+                  <strong>Select Delivery Location</strong>
+                </span>
+                <small>Enter PIN code to check delivery speed & availability</small>
+              </>
+            )}
           </div>
         </div>
         <button
           type="button"
           className="cart-change-addr-btn"
-          onClick={() => showToast('Pincode 110001 verified for Free Express Delivery')}
+          onClick={() => setIsAddressModalOpen(true)}
         >
           Change
         </button>
       </div>
 
       {/* 3. Empty State or Cart Items */}
-      {cartData.items.length === 0 && !orderSuccess ? (
+      {cartItems.length === 0 && !orderSuccess ? (
         <div className="cart-empty-view">
           <div className="cart-empty-icon-box">
             <ShoppingBag size={56} color="#9E887B" />
@@ -155,7 +182,11 @@ export const CartPage = ({
             </div>
             <div className="order-summary-row">
               <span>Delivery Address:</span>
-              <span>Connaught Place, New Delhi - 110001</span>
+              <span>
+                {selectedAddress
+                  ? `${selectedAddress.street ? `${selectedAddress.street}, ` : ''}${selectedAddress.city} - ${selectedAddress.pincode}`
+                  : 'Select Delivery Location'}
+              </span>
             </div>
             <div className="order-summary-row">
               <span>Payment Mode:</span>
@@ -177,7 +208,7 @@ export const CartPage = ({
         <div className="cart-content-container">
           {/* Cart Item Cards List */}
           <div className="cart-items-list">
-            {cartData.items.map(({ productId, product, quantity, itemTotal, itemMRP, itemSavings }) => (
+            {cartItems.map(({ productId, product, quantity, itemTotal, itemMRP, itemSavings }) => (
               <div key={productId} className="cart-item-card">
                 <div className="cart-item-top-row">
                   <div
@@ -312,17 +343,17 @@ export const CartPage = ({
           {/* Price Details Breakdown Card (Flipkart Exact) */}
           <div className="cart-section-card cart-price-details-card">
             <h3 className="cart-price-heading">
-              PRICE DETAILS ({cartData.totalCount} {cartData.totalCount === 1 ? 'Item' : 'Items'})
+              PRICE DETAILS ({totalCount} {totalCount === 1 ? 'Item' : 'Items'})
             </h3>
 
             <div className="cart-breakdown-row">
               <span>Total MRP</span>
-              <span>₹{cartData.totalMRP}</span>
+              <span>₹{totalMRP}</span>
             </div>
 
             <div className="cart-breakdown-row discount">
               <span>Discount on MRP</span>
-              <span className="green-text">- ₹{cartData.totalDiscount}</span>
+              <span className="green-text">- ₹{totalDiscount}</span>
             </div>
 
             {appliedCoupon && (
@@ -358,7 +389,7 @@ export const CartPage = ({
       )}
 
       {/* 4. Flipkart Sticky Bottom Checkout Bar */}
-      {cartData.items.length > 0 && !orderSuccess && (
+      {cartItems.length > 0 && !orderSuccess && (
         <div className="cart-bottom-checkout-bar">
           <div className="checkout-bar-price-col">
             <span className="checkout-bar-price">₹{finalPrice}</span>
@@ -375,6 +406,12 @@ export const CartPage = ({
           </button>
         </div>
       )}
+
+      {/* Dynamic Delivery Address Selection Modal */}
+      <AddressSelectModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
+      />
     </div>
   );
 };

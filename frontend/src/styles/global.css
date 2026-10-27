@@ -292,6 +292,24 @@ a {
   transform: scale(0.92);
 }
 
+.fk-account-mobile-btn {
+  width: 28px;
+  height: 26px;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+  cursor: pointer;
+  border: none;
+  transition: transform 0.12s ease;
+}
+
+.fk-account-mobile-btn:active {
+  transform: scale(0.92);
+}
+
 .fk-coin-icon-circle {
   width: 16px;
   height: 16px;
@@ -1793,29 +1811,60 @@ a {
   border: 1.5px solid #FFFFFF;
 }
 
-/* Toast Notification for Cart/Wishlist */
+/* Toast Notification for Cart/Wishlist — Clean White Pill Single-Line Theme */
 .toast-notice {
   position: fixed;
-  bottom: calc(var(--bottom-nav-height) + 12px);
+  bottom: 74px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #0F172A;
-  color: #FFFFFF;
-  font-size: 12.5px;
-  font-weight: 500;
-  padding: 8px 16px;
-  border-radius: var(--radius-pill);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  display: flex;
+  background-color: #FFFFFF;
+  color: #0F172A;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.14), 0 1px 3px rgba(0, 0, 0, 0.06);
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  z-index: 60;
-  animation: fadeIn 0.2s ease;
+  justify-content: center;
+  gap: 7px;
+  z-index: 9999;
+  white-space: nowrap;
+  max-width: min(92vw, 360px);
+  pointer-events: none;
+  animation: toastSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translate(-50%, 10px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+.toast-notice .toast-icon {
+  color: #16A34A;
+  flex-shrink: 0;
+}
+
+.toast-notice .toast-text,
+.toast-notice span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 290px;
+  line-height: 1.3;
+}
+
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@media (min-width: 768px) {
+  .toast-notice {
+    bottom: 36px;
+  }
 }
 
 .flipkart-header-badge.orange {
@@ -2050,21 +2099,21 @@ a {
   z-index: 60;
 }
 
-/* 1. PDP Top Header */
+/* 1. PDP Top Header — Signature Flipkart Blue Theme */
 .pdp-top-header {
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
   height: 52px;
-  background-color: #FFFFFF;
+  background-color: #2874F0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 12px;
   z-index: 100;
-  border-bottom: 1px solid #E2E8F0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 4px rgba(40, 116, 240, 0.2);
 }
 
 .pdp-nav-btn {
@@ -2074,14 +2123,15 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0F172A;
+  color: #FFFFFF;
   background: transparent;
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
 
-.pdp-nav-btn:hover {
-  background-color: #F1F5F9;
+.pdp-nav-btn:hover,
+.pdp-nav-btn:active {
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 .pdp-header-brand {
@@ -2095,12 +2145,14 @@ a {
   height: 24px;
   width: auto;
   object-fit: contain;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
 }
 
 .pdp-brand-text {
   font-size: 15px;
   font-weight: 800;
-  color: #0F172A;
+  color: #FFFFFF;
   letter-spacing: -0.2px;
 }
 
@@ -2120,17 +2172,18 @@ a {
   position: absolute;
   top: -2px;
   right: -2px;
-  background: #EF4444;
-  color: #FFFFFF;
+  background: #FFE500;
+  color: #111827;
   font-size: 10px;
   font-weight: 800;
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid #2874F0;
 }
 
 /* 2. PDP Main Content Container */
@@ -3337,25 +3390,25 @@ a {
    11. ⭐ DEDICATED FULL PAGES: HEADER, ABOUT, CATEGORIES, CART
    ======================================================= */
 
-/* Common Full-Page Top Sticky Bar */
+/* Common Full-Page Top Sticky Bar — Signature Flipkart Blue Theme */
 .page-top-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: #FFFFFF;
+  background-color: #2874F0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  border-bottom: 1px solid #E2E8F0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 5px rgba(40, 116, 240, 0.2);
 }
 
 .page-back-btn,
 .page-action-btn {
   background: none;
   border: none;
-  color: #1E293B;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3366,8 +3419,10 @@ a {
 }
 
 .page-back-btn:active,
-.page-action-btn:active {
-  background-color: #F1F5F9;
+.page-action-btn:active,
+.page-back-btn:hover,
+.page-action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 .page-header-title-box {
@@ -3378,21 +3433,35 @@ a {
 }
 
 .page-mini-logo {
-  height: 20px;
+  height: 22px;
   width: auto;
   object-fit: contain;
   margin-bottom: 2px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .page-header-title {
   font-size: 15px;
   font-weight: 700;
-  color: #0F172A;
+  color: #FFFFFF;
+  letter-spacing: -0.1px;
 }
 
 .page-header-subtitle {
   font-size: 11px;
-  color: #64748B;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+/* Align Cart Page header like native Flipkart app */
+.cart-page-view .page-top-header {
+  justify-content: flex-start;
+  gap: 14px;
+}
+
+.cart-page-view .page-header-title-box {
+  align-items: flex-start;
 }
 
 /* -------------------------------------------------------
@@ -5053,14 +5122,13 @@ a {
   padding-bottom: 88px;
 }
 
-/* --- Header & Step Tracker --- */
+/* --- Header & Step Tracker — Signature Flipkart Blue Theme --- */
 .fk-checkout-header {
   position: sticky;
   top: 0;
   z-index: 90;
-  background-color: #FFFFFF;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  border-bottom: 1px solid #E4E7EB;
+  background-color: #2874F0;
+  box-shadow: 0 2px 5px rgba(40, 116, 240, 0.18);
 }
 
 .fk-checkout-header-bar {
@@ -5071,12 +5139,13 @@ a {
   padding: 0 16px;
   max-width: 900px;
   margin: 0 auto;
+  background-color: #2874F0;
 }
 
 .fk-checkout-back-btn {
   background: none;
   border: none;
-  color: #212121;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5087,8 +5156,9 @@ a {
   transition: background-color 0.15s ease;
 }
 
-.fk-checkout-back-btn:hover {
-  background-color: #F1F5F9;
+.fk-checkout-back-btn:hover,
+.fk-checkout-back-btn:active {
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 .fk-checkout-title-wrap {
@@ -5099,14 +5169,14 @@ a {
 .fk-checkout-title {
   font-size: 16px;
   font-weight: 700;
-  color: #1E293B;
+  color: #FFFFFF;
   margin: 0;
   line-height: 1.2;
 }
 
 .fk-checkout-subtitle {
   font-size: 11px;
-  color: #64748B;
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 500;
 }
 
@@ -5114,9 +5184,9 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background-color: #EFF6FF;
-  color: #065F46;
-  border: 1px solid #BAE6FD;
+  background-color: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 20px;
   padding: 4px 9px;
   font-size: 10.5px;
@@ -5130,8 +5200,10 @@ a {
   align-items: center;
   justify-content: center;
   padding: 10px 16px 12px;
-  border-top: 1px solid #F1F5F9;
-  max-width: 520px;
+  background-color: #FFFFFF;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid #E2E8F0;
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -5953,25 +6025,25 @@ a {
   }
 }
 
-/* Fixed Header Bar */
+/* Fixed Header Bar — Signature Flipkart Blue Theme */
 .fk-search-overlay-header {
   position: sticky;
   top: 0;
-  background-color: #FFFFFF;
+  background-color: #2874F0;
   height: 56px;
   display: flex;
   align-items: center;
   padding: 0 12px;
   gap: 10px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  border-bottom: 1px solid #E4E7EB;
+  box-shadow: 0 2px 5px rgba(40, 116, 240, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   z-index: 10;
 }
 
 .fk-search-back-btn {
   background: none;
   border: none;
-  color: #1E293B;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5982,15 +6054,16 @@ a {
   flex-shrink: 0;
 }
 
-.fk-search-back-btn:hover {
-  background-color: #F1F5F9;
+.fk-search-back-btn:hover,
+.fk-search-back-btn:active {
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 .fk-search-input-box {
   flex: 1;
   display: flex;
   align-items: center;
-  background-color: #F1F3F6;
+  background-color: #FFFFFF;
   border-radius: 8px;
   height: 40px;
   padding: 0 12px;
@@ -6001,8 +6074,8 @@ a {
 
 .fk-search-input-box:focus-within {
   background-color: #FFFFFF;
-  border-color: #2874F0;
-  box-shadow: 0 0 0 3px rgba(40, 116, 240, 0.1);
+  border-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
 }
 
 .fk-search-box-icon {

@@ -6,12 +6,21 @@
   "type": "commonjs",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node src/server.js"
+    "dev": "node --watch src/server.js",
+    "seed": "node src/scripts/seed.js",
+    "migrate:images": "node src/scripts/migrateImagesToCloudinary.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongoose": "^8.4.0"
+    "express-rate-limit": "^8.7.1",
+    "google-auth-library": "^11.3.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.4.0",
+    "nodemailer": "^10.2.1"
   }
 }

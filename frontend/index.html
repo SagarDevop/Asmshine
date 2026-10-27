@@ -6,7 +6,7 @@
     <title>ASM Shine — Sparkling Clean &amp; Powerful Hygiene | Official Store</title>
     <meta name="description" content="ASM Shine: India's premier home hygiene brand. High-performance toilet cleaners, Colin-style glass sprays, bathroom descalers, floor disinfectants, and dishwash gels." />
     <meta name="theme-color" content="#2874F0" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="ASM Shine" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -19,14 +19,20 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
+      // Unregister any stale service workers on development/localhost to prevent FetchEvent network errors
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then((reg) => {
-            reg.update();
-          }).catch((err) => {
-            console.warn('Service worker registration error:', err);
-          });
-        });
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const reg of registrations) {
+            reg.unregister();
+          }
+        }).catch(() => {});
+        if ('caches' in window) {
+          caches.keys().then((names) => {
+            for (const name of names) {
+              caches.delete(name);
+            }
+          }).catch(() => {});
+        }
       }
     </script>
   </body>

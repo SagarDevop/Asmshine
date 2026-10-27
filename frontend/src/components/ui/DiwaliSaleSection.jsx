@@ -12,7 +12,7 @@ export const DiwaliSaleSection = ({ onSelectProduct, onNavigateAll }) => {
       price: 69,
       mrp: 135,
       discount: '49% off',
-      image: '/images/products/product_disinfectant.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg'
     },
     {
       id: 'asm_floor_1',
@@ -22,7 +22,7 @@ export const DiwaliSaleSection = ({ onSelectProduct, onNavigateAll }) => {
       price: 249,
       mrp: 399,
       discount: '38% off',
-      image: '/images/banners/banner_floor_cleaner_5l.jpg',
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938229/asm-shine/banners/banner_floor_cleaner_5l.jpg',
       isBannerThumb: true
     }
   ];
@@ -37,7 +37,7 @@ export const DiwaliSaleSection = ({ onSelectProduct, onNavigateAll }) => {
     <section className="fk-diwali-poster-block" aria-label="Diwali Mega Sale Poster">
       {/* Background Poster Artwork */}
       <img
-        src="/images/banners/diwali_poster_bg.jpg"
+        src="https://res.cloudinary.com/dheyj35ys/image/upload/v1792938233/asm-shine/banners/diwali_poster_bg.jpg"
         alt="Diwali Festive Background"
         className="fk-diwali-poster-backdrop"
         loading="lazy"

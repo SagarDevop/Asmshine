@@ -1,0 +1,370 @@
+/* ==========================================================================
+   ASM SHINE — Skeleton Loading & Perceived Performance Styles
+   Matches existing clean, Flipkart-inspired aesthetic & design tokens.
+   Pure CSS animations with zero runtime JS overhead.
+   ========================================================================== */
+
+/* Shimmer animation keyframe */
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Base shimmer class */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #F1F5F9 0%,
+    #F8FAFC 25%,
+    #E2E8F0 50%,
+    #F8FAFC 75%,
+    #F1F5F9 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.6s ease-in-out infinite;
+}
+
+/* Accessibility: disable shimmer animation when user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none;
+    background: #E2E8F0;
+  }
+}
+
+/* Reusable Primitive Skeleton Blocks */
+.skeleton-box {
+  display: block;
+  border-radius: 8px;
+}
+
+.skeleton-text {
+  display: block;
+  border-radius: 4px;
+  height: 12px;
+  margin-bottom: 6px;
+}
+
+.skeleton-text:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-circle {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-pill {
+  border-radius: 9999px;
+}
+
+/* --------------------------------------------------------------------------
+   Product Card Skeleton (Matches .product-card exactly)
+   -------------------------------------------------------------------------- */
+.product-card.skeleton-card {
+  pointer-events: none;
+  user-select: none;
+  border-color: #E2E8F0;
+  background-color: #FFFFFF;
+}
+
+.product-card.skeleton-card .product-media-container {
+  background-color: #F8FAFC;
+}
+
+.skeleton-media-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.skeleton-rating-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  width: 44px;
+  height: 18px;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+.skeleton-details-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 14px 12px;
+  flex: 1;
+}
+
+.skeleton-title-line {
+  height: 13px;
+  border-radius: 4px;
+}
+
+.skeleton-price-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.skeleton-price-pill {
+  height: 17px;
+  width: 52px;
+  border-radius: 4px;
+}
+
+.skeleton-mrp-pill {
+  height: 13px;
+  width: 38px;
+  border-radius: 4px;
+}
+
+.skeleton-disc-pill {
+  height: 13px;
+  width: 44px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Categories Page Card Skeleton (Matches .cat-product-card)
+   -------------------------------------------------------------------------- */
+.cat-product-card.skeleton-card {
+  pointer-events: none;
+  user-select: none;
+  border-color: #E2E8F0;
+  background-color: #FFFFFF;
+}
+
+.cat-prod-img-wrap.skeleton-wrap {
+  background-color: #F8FAFC;
+  border-color: #E2E8F0;
+}
+
+.skeleton-cat-thumb {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.skeleton-cat-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Product Detail Page (PDP) Skeleton (Matches .pdp-page structure)
+   -------------------------------------------------------------------------- */
+.pdp-skeleton-viewport {
+  width: 100%;
+  height: 380px;
+  border-radius: 12px;
+}
+
+@media (min-width: 480px) {
+  .pdp-skeleton-viewport {
+    height: 420px;
+  }
+}
+
+.pdp-skeleton-tag {
+  height: 12px;
+  width: 130px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+.pdp-skeleton-title-1 {
+  height: 22px;
+  width: 85%;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.pdp-skeleton-title-2 {
+  height: 22px;
+  width: 55%;
+  border-radius: 5px;
+  margin-bottom: 14px;
+}
+
+.pdp-skeleton-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.pdp-skeleton-pill {
+  height: 20px;
+  width: 50px;
+  border-radius: 12px;
+}
+
+.pdp-skeleton-reviews-text {
+  height: 14px;
+  width: 140px;
+  border-radius: 4px;
+}
+
+.pdp-skeleton-price-block {
+  padding-top: 10px;
+  border-top: 1px dashed #E2E8F0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pdp-skeleton-price-main {
+  height: 30px;
+  width: 110px;
+  border-radius: 6px;
+}
+
+.pdp-skeleton-subnote {
+  height: 12px;
+  width: 220px;
+  border-radius: 4px;
+}
+
+/* Marketplace Buttons Skeleton */
+.pdp-skeleton-mp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.pdp-skeleton-mp-btn {
+  height: 52px;
+  border-radius: 10px;
+  border: 1px solid #E2E8F0;
+}
+
+/* Variants Chips Skeleton */
+.pdp-skeleton-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.pdp-skeleton-chip {
+  height: 64px;
+  border-radius: 10px;
+  border: 1px solid #E2E8F0;
+}
+
+/* Offers Strip Skeleton */
+.pdp-skeleton-offer-item {
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  margin-top: 8px;
+}
+
+/* Delivery Skeleton */
+.pdp-skeleton-delivery-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pdp-skeleton-pin {
+  height: 16px;
+  width: 220px;
+  border-radius: 4px;
+}
+
+.pdp-skeleton-badges {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pdp-skeleton-badge-pill {
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+/* PDP Bottom Sticky Bar Skeleton */
+.pdp-skeleton-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: #FFFFFF;
+  border-top: 1px solid #E2E8F0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 10px;
+  z-index: 100;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.pdp-skeleton-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   Search Overlay Live Result Skeleton
+   -------------------------------------------------------------------------- */
+.search-skeleton-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.search-skeleton-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.search-skeleton-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   Image Smooth Fade-In Utility (Prevents layout shift & flash)
+   -------------------------------------------------------------------------- */
+.img-fade {
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+}
+
+.img-fade.loaded {
+  opacity: 1;
+}
+
+.img-container-placeholder {
+  background: #F8FAFC;
+  background-image: linear-gradient(90deg, #F1F5F9 0%, #F8FAFC 50%, #F1F5F9 100%);
+  background-size: 200% 100%;
+}

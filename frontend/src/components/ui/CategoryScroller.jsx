@@ -12,15 +12,15 @@ import {
 } from 'lucide-react';
 
 const imageMap = {
-  all: '/images/categories/all.jpg',
-  toilet_care: '/images/categories/toilet_care.jpg',
-  bathroom_care: '/images/categories/bathroom_care.jpg',
-  glass_care: '/images/categories/glass_care.jpg',
-  floor_care: '/images/categories/floor_care.jpg',
-  dishwash: '/images/categories/dishwash.jpg',
-  kitchen_care: '/images/categories/kitchen_care.jpg',
-  laundry_care: '/images/categories/laundry_care.jpg',
-  hand_hygiene: '/images/categories/hand_hygiene.jpg'
+  all: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938241/asm-shine/categories/all.jpg',
+  toilet_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938256/asm-shine/categories/toilet_care.jpg',
+  bathroom_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938242/asm-shine/categories/bathroom_care.jpg',
+  glass_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938247/asm-shine/categories/glass_care.jpg',
+  floor_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938246/asm-shine/categories/floor_care.jpg',
+  dishwash: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938244/asm-shine/categories/dishwash.jpg',
+  kitchen_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938253/asm-shine/categories/kitchen_care.jpg',
+  laundry_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938254/asm-shine/categories/laundry_care.jpg',
+  hand_hygiene: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938250/asm-shine/categories/hand_hygiene.jpg'
 };
 
 const iconMap = {

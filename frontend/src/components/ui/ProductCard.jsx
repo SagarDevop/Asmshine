@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const ProductCard = ({ product, showRating = true, sizePosition = 'below', onSelectProduct }) => {
   const navigate = useNavigate();
+  const [imgLoaded, setImgLoaded] = React.useState(false);
 
   const handleCardClick = () => {
     if (onSelectProduct) {
@@ -28,12 +29,13 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
       }}
     >
       {/* Product Image Area with overlays */}
-      <div className="product-media-container">
+      <div className="product-media-container img-container-placeholder">
         <img
           src={product.image}
           alt={product.name}
-          className="product-img"
+          className={`product-img img-fade ${imgLoaded ? 'loaded' : ''}`}
           loading="lazy"
+          onLoad={() => setImgLoaded(true)}
         />
 
         {/* Rating Badge (bottom-left overlay on image) */}

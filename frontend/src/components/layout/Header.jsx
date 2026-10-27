@@ -14,57 +14,60 @@ import {
   Droplets,
   Plane,
   Tag,
-  Zap
+  Zap,
+  User
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { SearchOverlay } from '../search/SearchOverlay';
+import { AddressSelectModal } from '../ui/AddressSelectModal';
 import { useCartWishlist } from '../../context/CartWishlistContext';
+import { useAuth } from '../../context/AuthContext';
 
 const CATEGORY_TABS = [
   {
     id: 'all',
     label: 'All Shine',
-    image: '/images/categories/all.jpg'
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938241/asm-shine/categories/all.jpg'
   },
   {
     id: 'toilet_care',
     label: 'Toilet',
-    image: '/images/categories/toilet_care.jpg'
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938256/asm-shine/categories/toilet_care.jpg'
   },
   {
     id: 'bathroom_care',
     label: 'Bathroom',
-    image: '/images/categories/bathroom_care.jpg'
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938242/asm-shine/categories/bathroom_care.jpg'
   },
   {
     id: 'glass_care',
     label: 'Glass & Colin',
-    image: '/images/categories/glass_care.jpg'
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938247/asm-shine/categories/glass_care.jpg'
   },
   {
     id: 'floor_care',
     label: 'Floor Cleaner',
-    image: '/images/categories/floor_care.jpg'
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938246/asm-shine/categories/floor_care.jpg'
   },
   {
     id: 'dishwash',
     label: 'Dishwash',
-    image: '/images/categories/dishwash.jpg'
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938244/asm-shine/categories/dishwash.jpg'
   },
   {
     id: 'kitchen_care',
     label: 'Kitchen Care',
-    image: '/images/categories/kitchen_care.jpg'
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938253/asm-shine/categories/kitchen_care.jpg'
   },
   {
     id: 'laundry_care',
     label: 'Laundry Care',
-    image: '/images/categories/laundry_care.jpg'
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938254/asm-shine/categories/laundry_care.jpg'
   },
   {
     id: 'hand_hygiene',
     label: 'Hand Wash',
-    image: '/images/categories/hand_hygiene.jpg'
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938250/asm-shine/categories/hand_hygiene.jpg'
   }
 ];
 
@@ -76,12 +79,17 @@ export const Header = ({
 }) => {
   const navigate = useNavigate();
   const { showToast } = useCartWishlist();
+  const { user, selectedAddress } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [location, setLocation] = useState('1, Jhanjhari, Banda, Uttar Pradesh');
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [activeMode, setActiveMode] = useState('asm_shine');
   const sentinelRef = useRef(null);
   const headerRef = useRef(null);
+
+  const displayLocation = selectedAddress
+    ? `${selectedAddress.fullName || selectedAddress.name || 'Deliver to'}, ${selectedAddress.city || selectedAddress.state} - ${selectedAddress.pincode}`
+    : 'Select Delivery Location';
 
   useEffect(() => {
     if (!sentinelRef.current || !headerRef.current) return;
@@ -133,19 +141,6 @@ export const Header = ({
     }
   };
 
-  const cycleLocation = () => {
-    setLocation((prev) => {
-      let nextLoc = '1, Jhanjhari, Banda, Uttar Pradesh';
-      if (prev.includes('Jhanjhari')) nextLoc = '110001, Connaught Place, New Delhi';
-      else if (prev.includes('Connaught Place')) nextLoc = '400001, South Mumbai';
-      else if (prev.includes('South Mumbai')) nextLoc = '560001, MG Road, Bengaluru';
-      else nextLoc = '1, Jhanjhari, Banda, Uttar Pradesh';
-
-      showToast(`Delivering to ${nextLoc}`);
-      return nextLoc;
-    });
-  };
-
   return (
     <>
       {/* 1. Top Section: Flipkart Sky Blue Gradient Banner (Pills & Location) */}
@@ -195,11 +190,11 @@ export const Header = ({
         <div className="fk-location-rewards-row">
           <div
             className="fk-location-clickable"
-            onClick={cycleLocation}
-            title="Click to change location"
+            onClick={() => setIsAddressModalOpen(true)}
+            title="Click to select or change delivery location"
           >
             <MapPin size={15} className="fk-loc-pin-icon" fill="#1E293B" color="#1E293B" />
-            <span className="fk-location-name-text">{location}</span>
+            <span className="fk-location-name-text">{displayLocation}</span>
             <ChevronRight size={14} className="fk-loc-chevron-icon" />
           </div>
 
@@ -208,7 +203,7 @@ export const Header = ({
             <button
               type="button"
               className="fk-voucher-btn"
-              onClick={() => showToast('🎟️ 15% OFF Flipkart Voucher applied!')}
+              onClick={() => showToast('🎟️ 15% OFF ASM Shine Coupon applied!')}
               title="Special Coupons"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="#7C3AED">
@@ -222,13 +217,25 @@ export const Header = ({
             <button
               type="button"
               className="fk-supercoin-btn"
-              onClick={() => showToast('Flipkart SuperCoin Balance: 0')}
-              title="SuperCoins"
+              onClick={() => showToast('ASM Shine Reward Coins: 0')}
+              title="Reward Coins"
             >
               <div className="fk-coin-icon-circle">
                 <Zap size={10} color="#F59E0B" fill="#F59E0B" />
               </div>
               <span className="fk-supercoin-balance">0</span>
+            </button>
+
+            {/* Mobile Account Profile Icon */}
+            <button
+              type="button"
+              className="fk-account-mobile-btn"
+              onClick={() => navigate(user ? '/account' : '/login')}
+              title={user ? `Account (${user.name})` : 'Sign In / Account'}
+              aria-label="Account"
+              id="mobile-header-account-btn"
+            >
+              <User size={15} color="#2874F0" />
             </button>
           </div>
         </div>
@@ -304,6 +311,12 @@ export const Header = ({
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         initialQuery={searchTerm}
+      />
+
+      {/* Dynamic Delivery Address Selection Modal */}
+      <AddressSelectModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
       />
     </>
   );

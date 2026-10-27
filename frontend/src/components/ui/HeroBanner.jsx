@@ -7,13 +7,13 @@ export const HeroBanner = ({ banners, onExplore, onSelectProduct }) => {
       id: 'slide_diwali_toilet',
       title: 'ASM Smart Clean Toilet Cleaner 500ml @ ₹69',
       productId: 'asm_toilet_1',
-      image: '/images/banners/banner_diwali_toilet.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938228/asm-shine/banners/banner_diwali_toilet.png'
     },
     {
       id: 'slide_floor_cleaner_5l',
       title: 'ASM Shine Floor Cleaner 5 Litre @ ₹249',
       productId: 'asm_floor_1',
-      image: '/images/banners/banner_floor_cleaner_5l.jpg'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938229/asm-shine/banners/banner_floor_cleaner_5l.jpg'
     }
   ];
 
@@ -74,10 +74,14 @@ export const HeroBanner = ({ banners, onExplore, onSelectProduct }) => {
       {/* Pure Flipkart-Style Graphic Poster Banner without HTML text overlay */}
       <div className="fk-hero-full-slide" onClick={handleCtaClick}>
         <img
-          src={currentSlide.image}
-          alt={currentSlide.title}
+          src={currentSlide?.image || 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938228/asm-shine/banners/banner_diwali_toilet.png'}
+          alt={currentSlide?.title || 'ASM Shine Promotional Poster'}
           className="fk-hero-full-img"
           loading="eager"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = '/images/banners/banner_diwali_toilet.png';
+          }}
         />
       </div>
 

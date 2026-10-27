@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
-import { Search, ShoppingBag, Heart, MapPin, ChevronDown, Sparkles } from 'lucide-react';
+import { Search, ShoppingBag, Heart, MapPin, ChevronDown, Sparkles, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../../context/CartWishlistContext';
+import { useAuth } from '../../context/AuthContext';
 import { SearchOverlay } from '../search/SearchOverlay';
+import { AddressSelectModal } from '../ui/AddressSelectModal';
 
 export const DesktopNav = ({ onSearch, onSwitchTab }) => {
   const { cartCount, wishlist, showToast } = useCartWishlist();
+  const { user, selectedAddress } = useAuth();
   const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+
+  const displayLocation = selectedAddress
+    ? `${selectedAddress.city} - ${selectedAddress.pincode}`
+    : 'Select Location';
 
   const handleNav = (tab) => {
     if (onSwitchTab) {
@@ -48,10 +56,11 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
           <button
             className="delivery-location-btn"
             style={{ marginLeft: '16px' }}
-            onClick={() => showToast('Delivery location: Delhi NCR & Pan India (Free Express Shipping)')}
+            onClick={() => setIsAddressModalOpen(true)}
+            title="Click to select or change delivery address"
           >
             <MapPin size={16} color="#2874F0" />
-            <span>Deliver to <span className="location-name">New Delhi 110001</span></span>
+            <span>Deliver to <span className="location-name">{displayLocation}</span></span>
             <ChevronDown size={14} color="#64748B" />
           </button>
         </div>
@@ -116,6 +125,15 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
 
           <button
             className="desktop-nav-btn"
+            onClick={() => navigate(user ? '/account' : '/login')}
+            id="desktop-account-btn"
+          >
+            <User size={18} color="#2874F0" />
+            <span>{user ? user.name.split(' ')[0] : 'Sign In'}</span>
+          </button>
+
+          <button
+            className="desktop-nav-btn"
             onClick={() => handleNav('about')}
           >
             <span>Our Philosophy</span>
@@ -127,6 +145,12 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
       <SearchOverlay
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
+      />
+
+      {/* Dynamic Address Selection Modal */}
+      <AddressSelectModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
       />
     </div>
   );

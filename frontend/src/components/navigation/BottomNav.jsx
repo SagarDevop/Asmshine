@@ -2,9 +2,11 @@ import React from 'react';
 import { Home, Grid2X2, BadgeCheck, ShoppingBag, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCartWishlist } from '../../context/CartWishlistContext';
+import { useAuth } from '../../context/AuthContext';
 
 export const BottomNav = ({ activeTab: activeTabProp, onTabChange }) => {
   const { cartCount, showToast } = useCartWishlist();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -14,11 +16,18 @@ export const BottomNav = ({ activeTab: activeTabProp, onTabChange }) => {
     if (location.pathname === '/categories') activeTab = 'categories';
     else if (location.pathname === '/about') activeTab = 'about';
     else if (location.pathname === '/cart') activeTab = 'cart';
+    else if (location.pathname === '/account' || location.pathname === '/login' || location.pathname === '/signup') activeTab = 'account';
     else if (location.pathname === '/') activeTab = 'home';
     else activeTab = '';
   }
 
   const handleTabClick = (tabId) => {
+    if (tabId === 'account') {
+      navigate(user ? '/account' : '/login');
+      if (onTabChange) onTabChange(tabId);
+      return;
+    }
+
     if (onTabChange) {
       onTabChange(tabId);
       return;
@@ -28,9 +37,6 @@ export const BottomNav = ({ activeTab: activeTabProp, onTabChange }) => {
     else if (tabId === 'categories') navigate('/categories');
     else if (tabId === 'about') navigate('/about');
     else if (tabId === 'cart') navigate('/cart');
-    else if (tabId === 'account') {
-      showToast('ASM Shine Club: Welcome to the Clean Home Rewards Circle');
-    }
   };
 
   const tabs = [

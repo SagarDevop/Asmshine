@@ -20,27 +20,30 @@ export const HomePage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const { toastMessage, showToast } = useCartWishlist();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [cats, bans, prods] = await Promise.all([
-          api.getCategories(),
-          api.getBanners(),
-          api.getProducts()
-        ]);
-        setCategories(cats);
-        setBanners(bans);
-        setAllProducts(prods);
-      } catch (err) {
-        console.error('Failed to load home page data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setLoadError(null);
+      const [cats, bans, prods] = await Promise.all([
+        api.getCategories(),
+        api.getBanners(),
+        api.getProducts()
+      ]);
+      setCategories(cats || []);
+      setBanners(bans);
+      setAllProducts(prods || []);
+    } catch (err) {
+      console.error('Failed to load home page data:', err);
+      setLoadError(err.message || 'Unable to connect to live catalog server');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -50,9 +53,7 @@ export const HomePage = () => {
     else if (tab === 'categories') navigate('/categories');
     else if (tab === 'about') navigate('/about');
     else if (tab === 'cart') navigate('/cart');
-    else if (tab === 'account') {
-      showToast('ASM Shine Club: Welcome to the Clean Home Rewards Circle');
-    }
+    else if (tab === 'account') navigate('/account');
   };
 
   const handleSelectProduct = (product) => {
@@ -105,6 +106,19 @@ export const HomePage = () => {
         />
 
         <main className="main-content">
+          {loadError && (
+            <div style={{ margin: '14px 14px 6px 14px', padding: '14px 16px', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+              <span style={{ color: '#991B1B', fontWeight: 600, fontSize: '12px' }}>{loadError}</span>
+              <button
+                type="button"
+                onClick={fetchData}
+                style={{ background: '#0284C7', color: '#FFFFFF', border: 'none', padding: '6px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
           {/* 1. Interactive Flipkart-Style Sale Carousel (Festive Posters) */}
           <HeroBanner
             banners={banners}
@@ -133,6 +147,7 @@ export const HomePage = () => {
             actionText="View All"
             actionLinkStyle="chevron"
             products={displayedProducts}
+            loading={loading}
             showRating={true}
             sizePosition="below"
             onActionClick={() => handleSwitchTab('categories')}
@@ -160,13 +175,6 @@ export const HomePage = () => {
         activeTab="home"
         onTabChange={handleSwitchTab}
       />
-
-      {/* Interactive Toast Notification */}
-      {toastMessage && (
-        <div className="toast-notice" role="alert">
-          <span>{toastMessage}</span>
-        </div>
-      )}
     </div>
   );
 };

@@ -194,7 +194,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
                     }
                   }}
                 >
-                  <div className="fk-result-thumb-box">
+                  <div className="fk-result-thumb-box img-container-placeholder">
                     <img
                       src={prod.image}
                       alt={prod.name}
@@ -206,7 +206,7 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
                   <div className="fk-result-info">
                     <div className="fk-result-tag-row">
                       <span className="fk-result-category-pill">
-                        {prod.category?.toUpperCase()?.replace('_', ' ') || 'BAGS'}
+                        {prod.category?.toUpperCase()?.replace('_', ' ') || 'HYGIENE'}
                       </span>
                       {prod.badge && (
                         <span className="fk-result-badge-pill">{prod.badge}</span>
@@ -252,9 +252,9 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
             <div className="fk-empty-search-icon">
               <Search size={32} color="#1C8E8F" />
             </div>
-            <h3 className="fk-empty-search-title">No Bags Found</h3>
+            <h3 className="fk-empty-search-title">No Products Found</h3>
             <p className="fk-empty-search-text">
-              We couldn't find any bag matching "<strong>{query}</strong>".
+              We couldn't find any cleaning formulation matching "<strong>{query}</strong>".
             </p>
             <div className="fk-empty-search-suggestions">
               <span className="fk-suggestions-label">Try searching for:</span>

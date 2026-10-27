@@ -63,13 +63,13 @@ export const STATIC_BANNERS = {
       "id": "slide_diwali_toilet",
       "title": "ASM Smart Clean Toilet Cleaner 500ml @ ₹69",
       "productId": "asm_toilet_1",
-      "image": "/images/banners/banner_diwali_toilet.png"
+      "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938228/asm-shine/banners/banner_diwali_toilet.png"
     },
     {
       "id": "slide_floor_cleaner_5l",
       "title": "ASM Shine Floor Cleaner 5 Litre @ ₹249",
       "productId": "asm_floor_1",
-      "image": "/images/banners/banner_floor_cleaner_5l.jpg"
+      "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938229/asm-shine/banners/banner_floor_cleaner_5l.jpg"
     }
   ],
   "hero": {
@@ -77,15 +77,14 @@ export const STATIC_BANNERS = {
     "title": "Spotless Clean, Sparkling Shine",
     "subtitle": "Complete Range of High-Performance Home, Kitchen & Bathroom Cleaning Essentials",
     "ctaText": "EXPLORE ALL CLEANERS",
-    "image": "/images/banners/banner_floor_cleaner_5l.jpg"
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938229/asm-shine/banners/banner_floor_cleaner_5l.jpg"
   }
 };
 
 export const STATIC_PRODUCTS = [
-  // 1. Ultra Power Toilet Cleaner (Harpic Style)
   {
     "id": "asm_toilet_1",
-    "name": "ASM Shine Ultra Power Disinfectant Toilet Cleaner (Thick Blue Gel)",
+    "name": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel)",
     "shortName": "ASM Shine Ultra Power Toilet Cleaner 1L...",
     "brand": "ASM SHINE",
     "category": "toilet_care",
@@ -97,7 +96,7 @@ export const STATIC_PRODUCTS = [
     "rating": 4.9,
     "reviewCount": "3,420",
     "ratingsCount": "8,950",
-    "image": "/images/products/product_disinfectant.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
     "badge": "BEST SELLER",
     "inStock": true,
     "assured": true,
@@ -110,25 +109,53 @@ export const STATIC_PRODUCTS = [
         "size": "500 ml Bottle",
         "price": 99,
         "originalPrice": 135,
-        "discount": "26% off"
+        "discount": "26% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+          "publicId": "asm-shine/products/asm_tile_cleaner_500ml",
+          "alt": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel) - 500 ml Bottle"
+        }
       },
       {
         "size": "1 Liter Power Pack",
         "price": 189,
         "originalPrice": 260,
-        "discount": "27% off"
+        "discount": "27% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+          "publicId": "asm-shine/products/asm_tile_cleaner_1l",
+          "alt": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel) - 1 Liter Power Pack"
+        }
       },
       {
         "size": "Twin Pack (1L x 2)",
         "price": 349,
         "originalPrice": 520,
-        "discount": "33% off"
+        "discount": "33% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+          "publicId": "asm-shine/products/asm_tile_cleaner_1l",
+          "alt": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel) - Twin Pack (1L x 2)"
+        }
       },
       {
         "size": "5 Liter Economy Can",
         "price": 699,
         "originalPrice": 1050,
-        "discount": "33% off"
+        "discount": "33% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
+          "publicId": "asm-shine/products/asm_tile_cleaner_5l",
+          "alt": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel) - 5 Liter Economy Can"
+        }
       }
     ],
     "highlights": [
@@ -165,13 +192,21 @@ export const STATIC_PRODUCTS = [
         "title": "Sparkling clean commode",
         "comment": "Smells like a premium fresh hotel restroom. Very satisfied with ASM Shine quality."
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+      "publicId": "asm-shine/products/asm_tile_cleaner_500ml",
+      "alt": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel)",
+      "format": "jpg",
+      "bytes": 74867,
+      "width": 1200,
+      "height": 1600
+    }
   },
-
-  // 2. Crystal Clear Glass & Surface Cleaner (Colin Style)
   {
     "id": "asm_glass_1",
-    "name": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Colin Power)",
+    "name": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free)",
     "shortName": "ASM Shine Crystal Clear Glass Spray 500ml...",
     "brand": "ASM SHINE",
     "category": "glass_care",
@@ -183,7 +218,7 @@ export const STATIC_PRODUCTS = [
     "rating": 4.8,
     "reviewCount": "2,810",
     "ratingsCount": "6,400",
-    "image": "/images/products/product_glass_cleaner.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
     "badge": "TRENDING",
     "inStock": true,
     "assured": true,
@@ -196,25 +231,53 @@ export const STATIC_PRODUCTS = [
         "size": "500 ml Trigger Spray",
         "price": 119,
         "originalPrice": 165,
-        "discount": "28% off"
+        "discount": "28% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+          "publicId": "asm-shine/products/asm_glass_cleaner_500ml",
+          "alt": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free) - 500 ml Trigger Spray"
+        }
       },
       {
         "size": "1 Liter Refill Pouch",
         "price": 179,
         "originalPrice": 250,
-        "discount": "28% off"
+        "discount": "28% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+          "publicId": "asm-shine/products/asm_glass_cleaner_500ml",
+          "alt": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free) - 1 Liter Refill Pouch"
+        }
       },
       {
         "size": "Twin Pack (500ml Spray + 1L Refill)",
         "price": 279,
         "originalPrice": 415,
-        "discount": "33% off"
+        "discount": "33% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+          "publicId": "asm-shine/products/asm_glass_cleaner_500ml",
+          "alt": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free) - Twin Pack (500ml Spray + 1L Refill)"
+        }
       },
       {
         "size": "5 Liter Bulk Can",
         "price": 599,
         "originalPrice": 899,
-        "discount": "33% off"
+        "discount": "33% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+          "publicId": "asm-shine/products/asm_glass_cleaner_500ml",
+          "alt": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free) - 5 Liter Bulk Can"
+        }
       }
     ],
     "highlights": [
@@ -242,10 +305,18 @@ export const STATIC_PRODUCTS = [
         "title": "Zero streaks on dressing table mirror",
         "comment": "Used it on dining glass and car windshield. Dries in seconds with absolute zero haze or cloudy lines!"
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
+      "publicId": "asm-shine/products/asm_glass_cleaner_500ml",
+      "alt": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free)",
+      "format": "jpg",
+      "bytes": 150647,
+      "width": 1024,
+      "height": 1536
+    }
   },
-
-  // 3. Heavy-Duty Bathroom & Tiles Cleaner Descaler
   {
     "id": "asm_bath_1",
     "name": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner",
@@ -260,7 +331,7 @@ export const STATIC_PRODUCTS = [
     "rating": 4.9,
     "reviewCount": "2,450",
     "ratingsCount": "5,800",
-    "image": "/images/products/product_bathroom_cleaner.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
     "badge": "HARD WATER SPECIALIST",
     "inStock": true,
     "assured": true,
@@ -273,25 +344,53 @@ export const STATIC_PRODUCTS = [
         "size": "500 ml Spray Bottle",
         "price": 129,
         "originalPrice": 179,
-        "discount": "28% off"
+        "discount": "28% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+          "publicId": "asm-shine/products/asm_tile_cleaner_500ml",
+          "alt": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner - 500 ml Spray Bottle"
+        }
       },
       {
         "size": "1 Liter Deep Clean Pack",
         "price": 179,
         "originalPrice": 249,
-        "discount": "28% off"
+        "discount": "28% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+          "publicId": "asm-shine/products/asm_tile_cleaner_1l",
+          "alt": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner - 1 Liter Deep Clean Pack"
+        }
       },
       {
         "size": "Pack of 2 (1L x 2)",
         "price": 329,
         "originalPrice": 498,
-        "discount": "34% off"
+        "discount": "34% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+          "publicId": "asm-shine/products/asm_tile_cleaner_1l",
+          "alt": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner - Pack of 2 (1L x 2)"
+        }
       },
       {
         "size": "5 Liter Master Can",
         "price": 679,
         "originalPrice": 999,
-        "discount": "32% off"
+        "discount": "32% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
+          "publicId": "asm-shine/products/asm_tile_cleaner_5l",
+          "alt": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner - 5 Liter Master Can"
+        }
       }
     ],
     "highlights": [
@@ -319,13 +418,21 @@ export const STATIC_PRODUCTS = [
         "title": "Finally something that cleaned our Borewell water stains",
         "comment": "Our water has severe TDS and creates white crust on bathroom tiles. ASM Shine descaler dissolved it effortlessly."
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
+      "publicId": "asm-shine/products/asm_tile_cleaner_1l",
+      "alt": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner",
+      "format": "jpg",
+      "bytes": 119723,
+      "width": 1023,
+      "height": 1537
+    }
   },
-
-  // 4. Citrus Fresh Surface & Floor Cleaner Liquid Disinfectant
   {
     "id": "asm_floor_1",
-    "name": "ASM Shine Citrus Fresh Surface & Floor Cleaner Liquid Disinfectant",
+    "name": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant",
     "shortName": "ASM Shine Citrus Fresh Floor Cleaner 2L...",
     "brand": "ASM SHINE",
     "category": "floor_care",
@@ -337,7 +444,7 @@ export const STATIC_PRODUCTS = [
     "rating": 4.8,
     "reviewCount": "4,120",
     "ratingsCount": "10,200",
-    "image": "/images/products/product_floor_cleaner.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
     "badge": "FAMILY FAVORITE",
     "inStock": true,
     "assured": true,
@@ -347,22 +454,56 @@ export const STATIC_PRODUCTS = [
     "description": "All-in-one floor sanitizing formula that delivers spotless shine with hospital-grade disinfection. Dissolves sticky food spills, muddy paw marks, and greasy footwear grime across marble, granite, mosaic, and vitrified tiles.",
     "availableSizes": [
       {
+        "size": "500 ml Bottle",
+        "price": 99,
+        "originalPrice": 145,
+        "discount": "32% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936173/asm-shine/products/asm_floor_cleaner_lemon_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936173/asm-shine/products/asm_floor_cleaner_lemon_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936173/asm-shine/products/asm_floor_cleaner_lemon_500ml.jpg",
+          "publicId": "asm-shine/products/asm_floor_cleaner_lemon_500ml",
+          "alt": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant - 500 ml Bottle"
+        }
+      },
+      {
         "size": "1 Liter Bottle",
         "price": 149,
         "originalPrice": 219,
-        "discount": "32% off"
+        "discount": "32% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+          "publicId": "asm-shine/products/asm_floor_cleaner_lemon_1l",
+          "alt": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant - 1 Liter Bottle"
+        }
       },
       {
         "size": "2 Liters Family Pack",
         "price": 269,
         "originalPrice": 399,
-        "discount": "33% off"
+        "discount": "33% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+          "publicId": "asm-shine/products/asm_floor_cleaner_lemon_1l",
+          "alt": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant - 2 Liters Family Pack"
+        }
       },
       {
         "size": "5 Liters Jumbo Can",
         "price": 579,
         "originalPrice": 899,
-        "discount": "36% off"
+        "discount": "36% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+          "publicId": "asm-shine/products/asm_floor_cleaner_lemon_1l",
+          "alt": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant - 5 Liters Jumbo Can"
+        }
       }
     ],
     "highlights": [
@@ -390,13 +531,21 @@ export const STATIC_PRODUCTS = [
         "title": "Fragrance lasts for hours",
         "comment": "Floors shine like a mirror and the citrus fragrance makes the entire living room feel like a 5-star spa."
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
+      "publicId": "asm-shine/products/asm_floor_cleaner_lemon_1l",
+      "alt": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant",
+      "format": "jpg",
+      "bytes": 111974,
+      "width": 1087,
+      "height": 1447
+    }
   },
-
-  // 5. Turbo Lemon Concentrated Dishwash Gel (Anti-Grease)
   {
     "id": "asm_dish_1",
-    "name": "ASM Shine Turbo Lemon Concentrated Dishwash Gel (Anti-Grease)",
+    "name": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting)",
     "shortName": "ASM Shine Turbo Lemon Dishwash Gel 1L...",
     "brand": "ASM SHINE",
     "category": "dishwash",
@@ -408,7 +557,7 @@ export const STATIC_PRODUCTS = [
     "rating": 4.9,
     "reviewCount": "3,190",
     "ratingsCount": "7,800",
-    "image": "/images/products/product_dishwash_gel.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
     "badge": "HIGH FOAM",
     "inStock": true,
     "assured": true,
@@ -421,25 +570,53 @@ export const STATIC_PRODUCTS = [
         "size": "500 ml Squeeze Bottle",
         "price": 89,
         "originalPrice": 125,
-        "discount": "29% off"
+        "discount": "29% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+          "publicId": "asm-shine/products/asm_dishwash_liquid_500ml",
+          "alt": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting) - 500 ml Squeeze Bottle"
+        }
       },
       {
         "size": "1 Liter Dispenser Pack",
         "price": 149,
         "originalPrice": 210,
-        "discount": "29% off"
+        "discount": "29% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+          "publicId": "asm-shine/products/asm_dishwash_liquid_500ml",
+          "alt": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting) - 1 Liter Dispenser Pack"
+        }
       },
       {
         "size": "2 Liters Value Refill",
         "price": 269,
         "originalPrice": 390,
-        "discount": "31% off"
+        "discount": "31% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+          "publicId": "asm-shine/products/asm_dishwash_liquid_500ml",
+          "alt": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting) - 2 Liters Value Refill"
+        }
       },
       {
         "size": "5 Liters Commercial Can",
         "price": 549,
         "originalPrice": 850,
-        "discount": "35% off"
+        "discount": "35% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936179/asm-shine/products/asm_dishwash_liquid_5l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936179/asm-shine/products/asm_dishwash_liquid_5l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936179/asm-shine/products/asm_dishwash_liquid_5l.jpg",
+          "publicId": "asm-shine/products/asm_dishwash_liquid_5l",
+          "alt": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting) - 5 Liters Commercial Can"
+        }
       }
     ],
     "highlights": [
@@ -467,13 +644,21 @@ export const STATIC_PRODUCTS = [
         "title": "Best dishwash gel, hands do not become dry",
         "comment": "Takes out fried food oil with one touch of sponge and hands stay moisturized."
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
+      "publicId": "asm-shine/products/asm_dishwash_liquid_500ml",
+      "alt": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting)",
+      "format": "jpg",
+      "bytes": 111870,
+      "width": 1086,
+      "height": 1448
+    }
   },
-
-  // 6. Kitchen Degreaser & Chimney Oil Stain Cleaner Spray
   {
     "id": "asm_kitchen_1",
-    "name": "ASM Shine Kitchen Degreaser & Chimney Oil Stain Cleaner Spray",
+    "name": "ASM Shine Multipurpose Kitchen & Surface Cleaner Spray (Lemon Power)",
     "shortName": "ASM Shine Kitchen Degreaser & Chimney Spray...",
     "brand": "ASM SHINE",
     "category": "kitchen_care",
@@ -485,7 +670,7 @@ export const STATIC_PRODUCTS = [
     "rating": 4.8,
     "reviewCount": "1,740",
     "ratingsCount": "4,200",
-    "image": "/images/products/product_disinfectant.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
     "badge": "HEAVY DUTY",
     "inStock": true,
     "assured": true,
@@ -498,19 +683,40 @@ export const STATIC_PRODUCTS = [
         "size": "500 ml Foaming Spray",
         "price": 199,
         "originalPrice": 299,
-        "discount": "33% off"
+        "discount": "33% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+          "publicId": "asm-shine/products/asm_multipurpose_cleaner_500ml",
+          "alt": "ASM Shine Multipurpose Kitchen & Surface Cleaner Spray (Lemon Power) - 500 ml Foaming Spray"
+        }
       },
       {
         "size": "1 Liter Refill Pouch",
         "price": 329,
         "originalPrice": 499,
-        "discount": "34% off"
+        "discount": "34% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+          "publicId": "asm-shine/products/asm_multipurpose_cleaner_500ml",
+          "alt": "ASM Shine Multipurpose Kitchen & Surface Cleaner Spray (Lemon Power) - 1 Liter Refill Pouch"
+        }
       },
       {
         "size": "Twin Set (Spray + 1L Refill)",
         "price": 479,
         "originalPrice": 749,
-        "discount": "36% off"
+        "discount": "36% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+          "publicId": "asm-shine/products/asm_multipurpose_cleaner_500ml",
+          "alt": "ASM Shine Multipurpose Kitchen & Surface Cleaner Spray (Lemon Power) - Twin Set (Spray + 1L Refill)"
+        }
       }
     ],
     "highlights": [
@@ -538,10 +744,18 @@ export const STATIC_PRODUCTS = [
         "title": "Cleaned our kitchen chimney filters like brand new",
         "comment": "Just sprayed, waited 5 minutes, and rinsed with warm water. All black sticky grease melted away!"
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
+      "publicId": "asm-shine/products/asm_multipurpose_cleaner_500ml",
+      "alt": "ASM Shine Multipurpose Kitchen & Surface Cleaner Spray (Lemon Power)",
+      "format": "jpg",
+      "bytes": 126495,
+      "width": 1088,
+      "height": 1445
+    }
   },
-
-  // 7. Matic Ultra Laundry Detergent Liquid
   {
     "id": "asm_laundry_1",
     "name": "ASM Shine Matic Ultra Laundry Detergent Liquid (Stain Defender)",
@@ -549,14 +763,14 @@ export const STATIC_PRODUCTS = [
     "brand": "ASM SHINE",
     "category": "laundry_care",
     "section": "everyday_essentials",
-    "size": "2 Liters Concentrated Jug",
+    "size": "5 Liters Economy Canister",
     "price": 349,
     "originalPrice": 499,
     "discountPercent": 30,
     "rating": 4.8,
     "reviewCount": "2,110",
     "ratingsCount": "5,300",
-    "image": "/images/products/product_laundry_liquid.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
     "badge": "FABRIC CARE",
     "inStock": true,
     "assured": true,
@@ -569,19 +783,40 @@ export const STATIC_PRODUCTS = [
         "size": "1 Liter Bottle",
         "price": 199,
         "originalPrice": 280,
-        "discount": "29% off"
+        "discount": "29% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+          "publicId": "asm-shine/products/asm_laundry_detergent_5l",
+          "alt": "ASM Shine Matic Ultra Laundry Detergent Liquid (Stain Defender) - 1 Liter Bottle"
+        }
       },
       {
         "size": "2 Liters Easy-Pour Jug",
         "price": 349,
         "originalPrice": 499,
-        "discount": "30% off"
+        "discount": "30% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+          "publicId": "asm-shine/products/asm_laundry_detergent_5l",
+          "alt": "ASM Shine Matic Ultra Laundry Detergent Liquid (Stain Defender) - 2 Liters Easy-Pour Jug"
+        }
       },
       {
         "size": "5 Liters Mega Value Tub",
         "price": 799,
         "originalPrice": 1199,
-        "discount": "33% off"
+        "discount": "33% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+          "publicId": "asm-shine/products/asm_laundry_detergent_5l",
+          "alt": "ASM Shine Matic Ultra Laundry Detergent Liquid (Stain Defender) - 5 Liters Mega Value Tub"
+        }
       }
     ],
     "highlights": [
@@ -609,13 +844,21 @@ export const STATIC_PRODUCTS = [
         "title": "Clothes smell amazing even after 3 days",
         "comment": "No white residue on black shirts. Truly high-performance liquid detergent."
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
+      "publicId": "asm-shine/products/asm_laundry_detergent_5l",
+      "alt": "ASM Shine Matic Ultra Laundry Detergent Liquid (Stain Defender)",
+      "format": "jpg",
+      "bytes": 123146,
+      "width": 1122,
+      "height": 1402
+    }
   },
-
-  // 8. PureShield Antibacterial Liquid Handwash
   {
     "id": "asm_hand_1",
-    "name": "ASM Shine PureShield Antibacterial Liquid Handwash (Aloe & Vitamin E)",
+    "name": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care)",
     "shortName": "ASM Shine PureShield Antibacterial Handwash 1.5L...",
     "brand": "ASM SHINE",
     "category": "hand_hygiene",
@@ -627,7 +870,7 @@ export const STATIC_PRODUCTS = [
     "rating": 4.9,
     "reviewCount": "1,920",
     "ratingsCount": "4,800",
-    "image": "/images/products/product_dishwash_gel.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
     "badge": "MOISTURIZING",
     "inStock": true,
     "assured": true,
@@ -640,25 +883,53 @@ export const STATIC_PRODUCTS = [
         "size": "250 ml Pump Dispenser",
         "price": 79,
         "originalPrice": 110,
-        "discount": "28% off"
+        "discount": "28% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
+          "publicId": "asm-shine/products/asm_handwash_lavender_500ml",
+          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care) - 250 ml Pump Dispenser"
+        }
       },
       {
-        "size": "750 ml Refill Pack",
-        "price": 119,
-        "originalPrice": 175,
-        "discount": "32% off"
+        "size": "500 ml Pump Dispenser",
+        "price": 129,
+        "originalPrice": 185,
+        "discount": "30% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
+          "publicId": "asm-shine/products/asm_handwash_lavender_500ml",
+          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care) - 500 ml Pump Dispenser"
+        }
       },
       {
         "size": "1.5 Liters Value Refill Pouch",
         "price": 179,
         "originalPrice": 260,
-        "discount": "31% off"
+        "discount": "31% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
+          "publicId": "asm-shine/products/asm_handwash_lavender_2kg",
+          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care) - 1.5 Liters Value Refill Pouch"
+        }
       },
       {
-        "size": "5 Liters Institutional Can",
-        "price": 499,
-        "originalPrice": 799,
-        "discount": "38% off"
+        "size": "2 kg Value Refill Jug",
+        "price": 249,
+        "originalPrice": 380,
+        "discount": "34% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
+          "publicId": "asm-shine/products/asm_handwash_lavender_2kg",
+          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care) - 2 kg Value Refill Jug"
+        }
       }
     ],
     "highlights": [
@@ -686,25 +957,33 @@ export const STATIC_PRODUCTS = [
         "title": "Very soft on hands, great germicidal action",
         "comment": "Being a doctor I wash my hands 20 times a day. This handwash prevents drying and smells refreshing."
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
+      "publicId": "asm-shine/products/asm_handwash_lavender_500ml",
+      "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care)",
+      "format": "jpg",
+      "bytes": 128890,
+      "width": 1088,
+      "height": 1445
+    }
   },
-
-  // 9. Herbal White Pine Phenyle Floor Sanitizer (Insect Repellent)
   {
     "id": "asm_pine_1",
-    "name": "ASM Shine Herbal White Pine Phenyle Floor Sanitizer (Insect Repellent)",
+    "name": "ASM Shine White Floor Cleaner (Clean Floors, Brighter Homes)",
     "shortName": "ASM Shine Herbal White Pine Phenyle 5L...",
     "brand": "ASM SHINE",
     "category": "floor_care",
     "section": "recommended",
-    "size": "5 Liters Master Value Canister",
+    "size": "1 Liter Bottle",
     "price": 399,
     "originalPrice": 599,
     "discountPercent": 33,
     "rating": 4.7,
     "reviewCount": "1,640",
     "ratingsCount": "3,900",
-    "image": "/images/products/product_floor_cleaner.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
     "badge": "HERBAL PINE",
     "inStock": true,
     "assured": true,
@@ -717,13 +996,27 @@ export const STATIC_PRODUCTS = [
         "size": "1 Liter Bottle",
         "price": 99,
         "originalPrice": 145,
-        "discount": "32% off"
+        "discount": "32% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
+          "publicId": "asm-shine/products/asm_white_floor_cleaner_1l",
+          "alt": "ASM Shine White Floor Cleaner (Clean Floors, Brighter Homes) - 1 Liter Bottle"
+        }
       },
       {
         "size": "5 Liters Master Can",
         "price": 399,
         "originalPrice": 599,
-        "discount": "33% off"
+        "discount": "33% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
+          "publicId": "asm-shine/products/asm_white_floor_cleaner_1l",
+          "alt": "ASM Shine White Floor Cleaner (Clean Floors, Brighter Homes) - 5 Liters Master Can"
+        }
       }
     ],
     "highlights": [
@@ -749,10 +1042,18 @@ export const STATIC_PRODUCTS = [
         "title": "Keeps houseflies away completely",
         "comment": "Very strong natural pine scent and repels insects from the courtyard."
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
+      "publicId": "asm-shine/products/asm_white_floor_cleaner_1l",
+      "alt": "ASM Shine White Floor Cleaner (Clean Floors, Brighter Homes)",
+      "format": "jpg",
+      "bytes": 72093,
+      "width": 947,
+      "height": 1600
+    }
   },
-
-  // 10. RapidAction Drain Unclogger & Odor Eliminator Gel
   {
     "id": "asm_drain_1",
     "name": "ASM Shine RapidAction Drain Unclogger & Odor Eliminator Gel",
@@ -767,7 +1068,7 @@ export const STATIC_PRODUCTS = [
     "rating": 4.8,
     "reviewCount": "1,290",
     "ratingsCount": "3,100",
-    "image": "/images/products/product_bathroom_cleaner.png",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
     "badge": "INSTANT SINK CLOG FIX",
     "inStock": true,
     "assured": true,
@@ -812,239 +1113,1067 @@ export const STATIC_PRODUCTS = [
         "title": "Unclogged kitchen sink in 15 mins",
         "comment": "Water was overflowing in the sink. Poured half a bottle, waited 15 minutes, flushed with hot water and problem was solved."
       }
-    ]
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
+      "publicId": "asm-shine/products/asm_tile_cleaner_500ml",
+      "alt": "ASM Shine RapidAction Drain Unclogger & Odor Eliminator Gel",
+      "format": "jpg",
+      "bytes": 74867,
+      "width": 1200,
+      "height": 1600
+    }
+  },
+  {
+    "id": "asm_floor_apple",
+    "name": "ASM Shine Green Apple Surface & Floor Cleaner Liquid Disinfectant",
+    "shortName": "ASM Shine Green Apple Floor Cleaner 1L...",
+    "brand": "ASM SHINE",
+    "category": "floor_care",
+    "section": "everyday_essentials",
+    "size": "1 Liter Bottle",
+    "price": 149,
+    "originalPrice": 219,
+    "discountPercent": 32,
+    "rating": 4.8,
+    "reviewCount": "2,150",
+    "ratingsCount": "5,120",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
+    "badge": "NATURAL APPLE",
+    "inStock": true,
+    "assured": true,
+    "companionId": "asm_floor_1",
+    "comboDiscount": 45,
+    "comboSavingsPercent": 18,
+    "description": "Enriched with natural green apple extracts. Delivers high-gloss shine, hospital-grade germ defense, and long-lasting freshness on marble, tiles, granite, and mosaic.",
+    "availableSizes": [
+      {
+        "size": "500 ml Bottle",
+        "price": 99,
+        "originalPrice": 145,
+        "discount": "32% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936192/asm-shine/products/asm_floor_cleaner_apple_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936192/asm-shine/products/asm_floor_cleaner_apple_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936192/asm-shine/products/asm_floor_cleaner_apple_500ml.jpg",
+          "publicId": "asm-shine/products/asm_floor_cleaner_apple_500ml",
+          "alt": "ASM Shine Green Apple Surface & Floor Cleaner Liquid Disinfectant - 500 ml Bottle"
+        }
+      },
+      {
+        "size": "1 Liter Bottle",
+        "price": 149,
+        "originalPrice": 219,
+        "discount": "32% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
+          "publicId": "asm-shine/products/asm_floor_cleaner_apple_1l",
+          "alt": "ASM Shine Green Apple Surface & Floor Cleaner Liquid Disinfectant - 1 Liter Bottle"
+        }
+      },
+      {
+        "size": "5 Liters Jumbo Can",
+        "price": 579,
+        "originalPrice": 899,
+        "discount": "36% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
+          "publicId": "asm-shine/products/asm_floor_cleaner_apple_1l",
+          "alt": "ASM Shine Green Apple Surface & Floor Cleaner Liquid Disinfectant - 5 Liters Jumbo Can"
+        }
+      }
+    ],
+    "highlights": [
+      "Natural Green Apple Extract formulation",
+      "99.9% Germ Defense certified laboratory tested",
+      "Leaves zero sticky streaks on tiles & Italian marble",
+      "Child & pet safe formulation"
+    ],
+    "specifications": {
+      "Form": "Concentrated Disinfectant Liquid",
+      "Fragrance": "Crisp Green Apple",
+      "Surfaces": "Vitrified Tiles, Marble, Granite, Ceramic",
+      "Shelf Life": "24 Months",
+      "Manufactured By": "ASM Shine Hygiene Labs Pvt Ltd"
+    },
+    "reviews": [
+      {
+        "id": "rev_fa_1",
+        "author": "Kavita Singhal",
+        "location": "Delhi",
+        "rating": 5,
+        "date": "3 days ago",
+        "title": "Fresh green apple fragrance",
+        "comment": "Leaves floor shining and smelling so clean."
+      }
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
+      "publicId": "asm-shine/products/asm_floor_cleaner_apple_1l",
+      "alt": "ASM Shine Green Apple Surface & Floor Cleaner Liquid Disinfectant",
+      "format": "jpg",
+      "bytes": 100660,
+      "width": 1200,
+      "height": 1600
+    }
+  },
+  {
+    "id": "asm_hand_rose",
+    "name": "ASM Shine PureShield Antibacterial Liquid Handwash (Rose Care)",
+    "shortName": "ASM Shine PureShield Rose Handwash 500ml...",
+    "brand": "ASM SHINE",
+    "category": "hand_hygiene",
+    "section": "recommended",
+    "size": "500 ml Pump Bottle",
+    "price": 129,
+    "originalPrice": 185,
+    "discountPercent": 30,
+    "rating": 4.9,
+    "reviewCount": "1,420",
+    "ratingsCount": "3,650",
+    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936193/asm-shine/products/asm_handwash_rose_500ml.jpg",
+    "badge": "ROSE CARE",
+    "inStock": true,
+    "assured": true,
+    "companionId": "asm_hand_1",
+    "comboDiscount": 35,
+    "comboSavingsPercent": 16,
+    "description": "Gentle foaming rose hand wash infused with natural rose extracts and moisturizers. Kills 99.9% germs while keeping hands smooth, soft, and delicately perfumed.",
+    "availableSizes": [
+      {
+        "size": "500 ml Pump Dispenser",
+        "price": 129,
+        "originalPrice": 185,
+        "discount": "30% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936193/asm-shine/products/asm_handwash_rose_500ml.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936193/asm-shine/products/asm_handwash_rose_500ml.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936193/asm-shine/products/asm_handwash_rose_500ml.jpg",
+          "publicId": "asm-shine/products/asm_handwash_rose_500ml",
+          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Rose Care) - 500 ml Pump Dispenser"
+        }
+      },
+      {
+        "size": "2 Liters Refill Jug",
+        "price": 249,
+        "originalPrice": 380,
+        "discount": "34% off",
+        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936195/asm-shine/products/asm_handwash_rose_2l.jpg",
+        "imageData": {
+          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936195/asm-shine/products/asm_handwash_rose_2l.jpg",
+          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936195/asm-shine/products/asm_handwash_rose_2l.jpg",
+          "publicId": "asm-shine/products/asm_handwash_rose_2l",
+          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Rose Care) - 2 Liters Refill Jug"
+        }
+      }
+    ],
+    "highlights": [
+      "Infused with Pure Rose Water & Moisturizing Glycerin",
+      "Kills 99.9% germs in 10 seconds of washing",
+      "pH 5.5 skin-balanced gentle care",
+      "Free from Parabens & harsh chemicals"
+    ],
+    "specifications": {
+      "Form": "Pearlescent Foaming Liquid",
+      "Fragrance": "Natural Fresh Rose Blossom",
+      "Skin Type": "All Skin Types, Soft on Hands",
+      "Shelf Life": "24 Months",
+      "Manufactured By": "ASM Shine Hygiene Labs Pvt Ltd"
+    },
+    "reviews": [
+      {
+        "id": "rev_hr_1",
+        "author": "Preeti Goyal",
+        "location": "Jaipur",
+        "rating": 5,
+        "date": "1 week ago",
+        "title": "Hands feel so smooth",
+        "comment": "The rose scent is very natural and does not dry out hands even after repeated use."
+      }
+    ],
+    "imageData": {
+      "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936193/asm-shine/products/asm_handwash_rose_500ml.jpg",
+      "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936193/asm-shine/products/asm_handwash_rose_500ml.jpg",
+      "publicId": "asm-shine/products/asm_handwash_rose_500ml",
+      "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Rose Care)",
+      "format": "jpg",
+      "bytes": 133336,
+      "width": 1024,
+      "height": 1536
+    }
   }
 ];
 
-// Helper to get cart from localStorage
-const getStoredCart = () => {
+// Storage Keys
+const STORAGE_GUEST_CART_KEY = 'asm_shine_guest_cart_v1';
+const STORAGE_GUEST_WISHLIST_KEY = 'asm_shine_guest_wishlist_v1';
+
+// Helper to get guest cart from localStorage (defaults to clean empty array, NO fake default items)
+const getStoredGuestCart = () => {
   try {
-    const raw = localStorage.getItem(STORAGE_CART_KEY);
-    if (!raw) {
-      return [
-        { productId: 'asm_toilet_1', quantity: 1 },
-        { productId: 'asm_glass_1', quantity: 1 }
-      ];
-    }
-    return JSON.parse(raw);
+    const raw = localStorage.getItem(STORAGE_GUEST_CART_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch (e) {
-    return [
-      { productId: 'asm_toilet_1', quantity: 1 },
-      { productId: 'asm_glass_1', quantity: 1 }
-    ];
+    return [];
   }
 };
 
-const saveStoredCart = (cart) => {
+const saveStoredGuestCart = (cart) => {
   try {
-    localStorage.setItem(STORAGE_CART_KEY, JSON.stringify(cart));
+    localStorage.setItem(STORAGE_GUEST_CART_KEY, JSON.stringify(cart));
+  } catch (e) {}
+};
+
+const clearStoredGuestCart = () => {
+  try {
+    localStorage.removeItem(STORAGE_GUEST_CART_KEY);
+  } catch (e) {}
+};
+
+// Helper to get guest wishlist from localStorage
+const getStoredGuestWishlist = () => {
+  try {
+    const raw = localStorage.getItem(STORAGE_GUEST_WISHLIST_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch (e) {
-    // ignore
+    return [];
   }
 };
 
-// API Service Mock Layer
+const saveStoredGuestWishlist = (list) => {
+  try {
+    localStorage.setItem(STORAGE_GUEST_WISHLIST_KEY, JSON.stringify(list));
+  } catch (e) {}
+};
+
+const clearStoredGuestWishlist = () => {
+  try {
+    localStorage.removeItem(STORAGE_GUEST_WISHLIST_KEY);
+  } catch (e) {}
+};
+
+// Helper to calculate full details for guest items from live catalog
+const calculateGuestCartFullDetails = async (rawItems = []) => {
+  let allProducts = [];
+  try {
+    allProducts = await api.getProducts();
+  } catch (e) {
+    allProducts = STATIC_PRODUCTS;
+  }
+
+  let totalMRP = 0;
+  let totalPrice = 0;
+  let totalCount = 0;
+
+  const items = rawItems
+    .map((item) => {
+      const pid = item.productId;
+      const product = allProducts.find((p) => p.id === pid || p._id === pid);
+      if (!product) return null;
+      const qty = Math.max(1, parseInt(item.quantity, 10) || 1);
+
+      let unitPrice = product.price;
+      let unitMRP = product.originalPrice || product.price;
+      let selectedImage = product.image;
+
+      if (item.size && Array.isArray(product.availableSizes)) {
+        const sizeVariant = product.availableSizes.find(
+          (s) => s.size.toLowerCase() === item.size.toLowerCase()
+        );
+        if (sizeVariant) {
+          if (sizeVariant.price) unitPrice = sizeVariant.price;
+          if (sizeVariant.originalPrice) unitMRP = sizeVariant.originalPrice;
+          if (sizeVariant.image) selectedImage = sizeVariant.image;
+        }
+      }
+
+      const itemMRP = unitMRP * qty;
+      const itemTotal = unitPrice * qty;
+      const itemSavings = itemMRP - itemTotal;
+
+      totalMRP += itemMRP;
+      totalPrice += itemTotal;
+      totalCount += qty;
+
+      return {
+        productId: product.id || pid,
+        size: item.size || '',
+        quantity: qty,
+        product: {
+          ...product,
+          price: unitPrice,
+          originalPrice: unitMRP,
+          image: selectedImage
+        },
+        itemMRP,
+        itemTotal,
+        itemSavings
+      };
+    })
+    .filter(Boolean);
+
+  const totalDiscount = Math.max(0, totalMRP - totalPrice);
+
+  return {
+    items,
+    data: items,
+    totalCount,
+    totalMRP,
+    totalPrice,
+    totalDiscount
+  };
+};
+
+// Base API configuration (Supports Vercel & Render production hosting)
+const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL 
+  ? String(import.meta.env.VITE_API_URL).trim() 
+  : '').replace(/\/$/, '');
+
+const getAuthHeaders = (extraHeaders = {}) => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('cleanora_token') : null;
+  return {
+    ...extraHeaders,
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  };
+};
+
+const apiFetch = (endpoint, options = {}) => {
+  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
+  return fetch(url, {
+    ...options,
+    headers: getAuthHeaders(options.headers || {}),
+    credentials: 'include'
+  });
+};
+
+// API Service Layer (Connected to Express REST API & MongoDB Database)
 export const api = {
-  // Fetch all products with optional category & search filter
-  getProducts: async ({ category, search } = {}) => {
-    let list = [...STATIC_PRODUCTS];
-    if (category && category !== 'all') {
-      list = list.filter((p) => p.category === category);
+  // -------------------------------------------------------------
+  // Authentication Endpoints (Phase 3)
+  // -------------------------------------------------------------
+  register: async ({ name, email, password }) => {
+    const res = await apiFetch('/api/v1/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Registration failed');
     }
-    if (search) {
-      const q = search.toLowerCase();
-      list = list.filter((p) => 
-        p.name.toLowerCase().includes(q) || 
-        p.description.toLowerCase().includes(q) ||
-        (p.highlights && p.highlights.some(h => h.toLowerCase().includes(q)))
-      );
+    if (data.token && typeof window !== 'undefined') {
+      localStorage.setItem('cleanora_token', data.token);
     }
-    return list;
+    return data;
   },
 
-  // Get single product by ID
+  login: async ({ email, password }) => {
+    const res = await apiFetch('/api/v1/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Login failed');
+    }
+    if (data.token && typeof window !== 'undefined') {
+      localStorage.setItem('cleanora_token', data.token);
+    }
+    return data;
+  },
+
+  googleAuth: async (credential) => {
+    const res = await apiFetch('/api/v1/auth/google', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ credential })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Google sign-in failed');
+    }
+    if (data.token && typeof window !== 'undefined') {
+      localStorage.setItem('cleanora_token', data.token);
+    }
+    return data;
+  },
+
+  logout: async () => {
+    try {
+      const res = await apiFetch('/api/v1/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cleanora_token');
+      }
+      return data;
+    } catch (e) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cleanora_token');
+      }
+      return { success: true };
+    }
+  },
+
+  getCurrentUser: async () => {
+    const res = await apiFetch('/api/v1/auth/me', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (res.status === 401) {
+      return null;
+    }
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to fetch current user profile');
+    }
+    return data.user || null;
+  },
+
+  // Email OTP Signup Endpoints
+  sendSignupOtp: async ({ name, email, password }) => {
+    const res = await apiFetch('/api/v1/auth/signup/send-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.message || 'Failed to send verification code');
+      err.cooldownRemaining = data.cooldownRemaining;
+      throw err;
+    }
+    return data;
+  },
+
+  verifySignupOtp: async ({ email, otp }) => {
+    const res = await apiFetch('/api/v1/auth/signup/verify-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email, otp })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Verification failed');
+    }
+    return data;
+  },
+
+  resendSignupOtp: async (email) => {
+    const res = await apiFetch('/api/v1/auth/signup/resend-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.message || 'Failed to resend code');
+      err.cooldownRemaining = data.cooldownRemaining;
+      throw err;
+    }
+    return data;
+  },
+
+  // Account Profile & Address API
+  updateProfile: async ({ name, phone }) => {
+    const res = await apiFetch('/api/v1/auth/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ name, phone })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to update profile');
+    }
+    return data.user;
+  },
+
+  getAddresses: async () => {
+    const res = await apiFetch('/api/v1/auth/addresses', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to fetch addresses');
+    }
+    return data.data || [];
+  },
+
+  addAddress: async (addressData) => {
+    const res = await apiFetch('/api/v1/auth/addresses', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(addressData)
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to save address');
+    }
+    return data.data;
+  },
+
+  deleteAddress: async (addressId) => {
+    const res = await apiFetch(`/api/v1/auth/addresses/${encodeURIComponent(addressId)}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to delete address');
+    }
+    return data.data;
+  },
+
+  getOrders: async () => {
+    const res = await apiFetch('/api/v1/auth/orders', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to fetch orders');
+    }
+    return data.data || [];
+  },
+
+  // Fetch all products with optional category & search filter from real Express/MongoDB API
+  getProducts: async ({ category, search } = {}) => {
+    try {
+      const params = new URLSearchParams();
+      if (category && category !== 'all') {
+        params.append('category', category);
+      }
+      if (search && search.trim()) {
+        params.append('search', search.trim());
+      }
+
+      const queryString = params.toString() ? `?${params.toString()}` : '';
+      const res = await apiFetch(`/api/v1/products${queryString}`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        if (result && Array.isArray(result.data) && result.data.length > 0) {
+          return result.data;
+        }
+      }
+    } catch (e) {
+      // Gracefully fall back to local catalog
+    }
+
+    // High availability fallback matching live schema
+    return STATIC_PRODUCTS.filter((p) => {
+      if (category && category !== 'all' && p.category !== category) return false;
+      if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.description.toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    });
+  },
+
+  // Get single product by ID from real Express/MongoDB API
   getProductById: async (id) => {
+    if (!id) return null;
+    try {
+      const res = await apiFetch(`/api/v1/products/${encodeURIComponent(id)}`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (res.status === 404) {
+        return STATIC_PRODUCTS.find((p) => p.id === id) || null;
+      }
+
+      if (res.ok) {
+        const result = await res.json();
+        if (result && result.data) {
+          return result.data;
+        }
+      }
+    } catch (e) {
+      // Gracefully fall back to static product record
+    }
+
     return STATIC_PRODUCTS.find((p) => p.id === id) || null;
   },
 
   // Get similar products
-  getSimilarProducts: async (productId) => {
-    const current = STATIC_PRODUCTS.find((p) => p.id === productId);
-    if (!current) return STATIC_PRODUCTS.slice(0, 4);
-    const inCategory = STATIC_PRODUCTS.filter((p) => p.id !== productId && p.category === current.category);
-    if (inCategory.length >= 3) return inCategory.slice(0, 4);
-    const others = STATIC_PRODUCTS.filter((p) => p.id !== productId && p.category !== current.category);
-    return [...inCategory, ...others].slice(0, 4);
+  getSimilarProducts: async (productId, category) => {
+    try {
+      const products = await api.getProducts({ category });
+      const others = products.filter((p) => p.id !== productId);
+      if (others.length >= 3) return others.slice(0, 4);
+
+      const all = await api.getProducts();
+      return all.filter((p) => p.id !== productId).slice(0, 4);
+    } catch (e) {
+      return [];
+    }
   },
 
   // Get combo details for Frequently Bought Together
   getComboDetails: async (productId) => {
-    const mainProduct = STATIC_PRODUCTS.find((p) => p.id === productId) || STATIC_PRODUCTS[0];
-    const companionProduct = STATIC_PRODUCTS.find((p) => p.id === mainProduct.companionId) ||
-      STATIC_PRODUCTS.find((p) => p.id !== productId) || STATIC_PRODUCTS[1];
+    try {
+      const mainProduct = await api.getProductById(productId);
+      if (!mainProduct) return null;
 
-    if (!companionProduct) return null;
+      let companionProduct = null;
+      if (mainProduct.companionId) {
+        companionProduct = await api.getProductById(mainProduct.companionId);
+      }
+      if (!companionProduct) {
+        const all = await api.getProducts();
+        companionProduct = all.find((p) => p.id !== productId) || null;
+      }
+      if (!companionProduct) return null;
 
-    const combinedOriginal = (mainProduct.originalPrice || mainProduct.price) + (companionProduct.originalPrice || companionProduct.price);
-    const combinedStandardPrice = mainProduct.price + companionProduct.price;
-    const discount = mainProduct.comboDiscount || 50;
-    const comboPrice = Math.max(combinedStandardPrice - discount, 149);
-    const totalSavings = combinedOriginal - comboPrice;
+      const combinedOriginal = (mainProduct.originalPrice || mainProduct.price) + (companionProduct.originalPrice || companionProduct.price);
+      const combinedStandardPrice = mainProduct.price + companionProduct.price;
+      const discount = mainProduct.comboDiscount || 50;
+      const comboPrice = Math.max(combinedStandardPrice - discount, 149);
+      const totalSavings = combinedOriginal - comboPrice;
 
-    return {
-      mainProduct,
-      companionProduct,
-      combinedOriginal,
-      combinedStandardPrice,
-      comboPrice,
-      totalSavings,
-      discount
-    };
+      return {
+        mainProduct,
+        companionProduct,
+        combinedOriginal,
+        combinedStandardPrice,
+        comboPrice,
+        totalSavings,
+        discount
+      };
+    } catch (e) {
+      return null;
+    }
   },
 
-  // Fetch categories
+  // Fetch categories from real Express/MongoDB API
   getCategories: async () => {
+    try {
+      const res = await apiFetch('/api/v1/categories', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        if (result && Array.isArray(result.data) && result.data.length > 0) {
+          return result.data;
+        }
+      }
+    } catch (e) {
+      // Gracefully fall back to static categories
+    }
+
     return STATIC_CATEGORIES;
   },
 
-  // Fetch banners & offer strip data
+  // Fetch banners & offer strip data from live Express/MongoDB API
   getBanners: async () => {
+    try {
+      const res = await apiFetch('/api/v1/banners', {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        const result = await res.json();
+        if (result && result.data) return result.data;
+      }
+    } catch (e) {
+      console.warn('[API] Backend banners fetch failed, fallback to static:', e.message);
+    }
     return STATIC_BANNERS;
   },
 
-  // Get current Cart
+  // -------------------------------------------------------------
+  // Persistent Cart API (MongoDB Per-User + Guest Scoped Storage)
+  // -------------------------------------------------------------
+
+  // Get current Cart summary
   getCart: async () => {
-    const items = getStoredCart();
-    const count = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    try {
+      const res = await apiFetch('/api/v1/cart', {
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include'
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success) {
+          return {
+            totalCount: data.totalCount || 0,
+            data: data.items || data.data || []
+          };
+        }
+      }
+    } catch (e) {
+      // Unauthenticated or offline: fallback to guest storage
+    }
+
+    const items = getStoredGuestCart();
+    const count = items.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 1), 0);
     return {
       totalCount: count,
       data: items
     };
   },
 
-  // Get fully populated cart with products and totals
+  // Get fully populated cart with live database prices and totals
   getCartFullDetails: async () => {
-    const rawItems = getStoredCart();
-    let totalMRP = 0;
-    let totalPrice = 0;
-    let totalCount = 0;
+    try {
+      const res = await apiFetch('/api/v1/cart', {
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include'
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success && Array.isArray(data.items)) {
+          return data;
+        }
+      }
+    } catch (e) {
+      // Unauthenticated or offline: fallback to guest calculation
+    }
 
-    const items = rawItems
-      .map((item) => {
-        const product = STATIC_PRODUCTS.find((p) => p.id === item.productId);
-        if (!product) return null;
-        const qty = item.quantity || 1;
-        const originalPrice = product.originalPrice || product.price;
-        const currentPrice = product.price;
-        const itemMRP = originalPrice * qty;
-        const itemTotal = currentPrice * qty;
-        const itemSavings = itemMRP - itemTotal;
-
-        totalMRP += itemMRP;
-        totalPrice += itemTotal;
-        totalCount += qty;
-
-        return {
-          productId: item.productId,
-          quantity: qty,
-          product,
-          itemMRP,
-          itemTotal,
-          itemSavings
-        };
-      })
-      .filter(Boolean);
-
-    const totalDiscount = Math.max(totalMRP - totalPrice, 0);
-
-    return {
-      items,
-      totalCount,
-      totalMRP,
-      totalPrice,
-      totalDiscount
-    };
+    const rawGuestItems = getStoredGuestCart();
+    return calculateGuestCartFullDetails(rawGuestItems);
   },
 
   // Add single item to cart
-  addToCart: async (productId, quantity = 1) => {
-    const cart = getStoredCart();
-    const existing = cart.find((item) => item.productId === productId);
+  addToCart: async (productId, quantity = 1, size = '') => {
+    try {
+      const res = await apiFetch('/api/v1/cart/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ productId, quantity, size })
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      // Unauthenticated: fallback to guest storage
+    }
+
+    const cart = getStoredGuestCart();
+    const existing = cart.find(
+      (item) => item.productId === productId && (item.size || '') === (size || '')
+    );
     if (existing) {
       existing.quantity += quantity;
     } else {
-      cart.push({ productId, quantity });
+      cart.push({ productId, quantity, size: size || '' });
     }
-    saveStoredCart(cart);
-    const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    return {
-      success: true,
-      totalCount: count,
-      data: cart
-    };
+    saveStoredGuestCart(cart);
+    return calculateGuestCartFullDetails(cart);
   },
 
   // Update item quantity
-  updateCartQuantity: async (productId, quantity) => {
-    let cart = getStoredCart();
+  updateCartQuantity: async (productId, quantity, size = '') => {
+    try {
+      const res = await apiFetch('/api/v1/cart/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ productId, quantity, size })
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      // Unauthenticated: fallback to guest storage
+    }
+
+    let cart = getStoredGuestCart();
     if (quantity <= 0) {
-      cart = cart.filter((item) => item.productId !== productId);
+      cart = cart.filter(
+        (item) => !(item.productId === productId && (item.size || '') === (size || ''))
+      );
     } else {
-      const existing = cart.find((item) => item.productId === productId);
+      const existing = cart.find(
+        (item) => item.productId === productId && (item.size || '') === (size || '')
+      );
       if (existing) {
         existing.quantity = quantity;
       } else {
-        cart.push({ productId, quantity });
+        cart.push({ productId, quantity, size: size || '' });
       }
     }
-    saveStoredCart(cart);
-    const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    return {
-      success: true,
-      totalCount: count,
-      data: cart
-    };
+    saveStoredGuestCart(cart);
+    return calculateGuestCartFullDetails(cart);
   },
 
   // Remove single item from cart
-  removeFromCart: async (productId) => {
-    const cart = getStoredCart().filter((item) => item.productId !== productId);
-    saveStoredCart(cart);
-    const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    return {
-      success: true,
-      totalCount: count,
-      data: cart
-    };
+  removeFromCart: async (productId, size = '') => {
+    try {
+      const query = size ? `?size=${encodeURIComponent(size)}` : '';
+      const res = await apiFetch(`/api/v1/cart/remove/${encodeURIComponent(productId)}${query}`, {
+        method: 'DELETE',
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include'
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      // Unauthenticated: fallback to guest storage
+    }
+
+    let cart = getStoredGuestCart().filter(
+      (item) => !(item.productId === productId && (!size || (item.size || '') === size))
+    );
+    saveStoredGuestCart(cart);
+    return calculateGuestCartFullDetails(cart);
   },
 
   // Clear entire cart
   clearCart: async () => {
-    saveStoredCart([]);
+    try {
+      await apiFetch('/api/v1/cart/clear', {
+        method: 'DELETE',
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include'
+      });
+    } catch (e) {}
+
+    clearStoredGuestCart();
     return {
       success: true,
       totalCount: 0,
-      data: []
+      items: [],
+      data: [],
+      totalMRP: 0,
+      totalPrice: 0,
+      totalDiscount: 0
     };
   },
 
   // Add multiple items (Combo) to cart
   addComboToCart: async (items = []) => {
-    const cart = getStoredCart();
-    items.forEach(({ productId, quantity = 1 }) => {
-      const existing = cart.find((item) => item.productId === productId);
-      if (existing) {
-        existing.quantity += quantity;
-      } else {
-        cart.push({ productId, quantity });
-      }
+    for (const item of items) {
+      await api.addToCart(item.productId, item.quantity || 1, item.size || '');
+    }
+    return api.getCartFullDetails();
+  },
+
+  // Merge guest cart items into authenticated user's MongoDB cart upon login
+  syncCart: async (guestItems = []) => {
+    if (!Array.isArray(guestItems) || guestItems.length === 0) {
+      return api.getCartFullDetails();
+    }
+    const res = await apiFetch('/api/v1/cart/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ items: guestItems })
     });
-    saveStoredCart(cart);
-    const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to sync cart with server.');
+    }
+    clearStoredGuestCart();
+    return res.json();
+  },
+
+  // -------------------------------------------------------------
+  // Persistent Wishlist API
+  // -------------------------------------------------------------
+
+  getWishlist: async () => {
+    try {
+      const res = await apiFetch('/api/v1/auth/wishlist', {
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include'
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.wishlist || [];
+      }
+    } catch (e) {}
+    return getStoredGuestWishlist();
+  },
+
+  toggleWishlist: async (productId) => {
+    try {
+      const res = await apiFetch('/api/v1/auth/wishlist/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ productId })
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {}
+
+    // Guest fallback
+    let list = getStoredGuestWishlist();
+    const exists = list.includes(productId);
+    if (exists) {
+      list = list.filter((id) => id !== productId);
+    } else {
+      list.push(productId);
+    }
+    saveStoredGuestWishlist(list);
     return {
       success: true,
-      totalCount: count,
-      data: cart
+      inWishlist: !exists,
+      wishlist: list
     };
-  }
+  },
+
+  syncWishlist: async (productIds = []) => {
+    if (!Array.isArray(productIds) || productIds.length === 0) {
+      return api.getWishlist();
+    }
+    const res = await apiFetch('/api/v1/auth/wishlist/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ productIds })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to sync wishlist with server.');
+    }
+    clearStoredGuestWishlist();
+    return res.json();
+  },
+
+  // -------------------------------------------------------------
+  // Genuine Order Management API (MongoDB Backed)
+  // -------------------------------------------------------------
+
+  createOrder: async (orderPayload) => {
+    const res = await apiFetch('/api/v1/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(orderPayload)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || `Failed to create order (HTTP ${res.status})`);
+    }
+    return data;
+  },
+
+  getOrders: async () => {
+    const res = await apiFetch('/api/v1/orders', {
+      headers: { 'Accept': 'application/json' },
+      credentials: 'include'
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to fetch order history');
+    }
+    return data.orders || data.data || [];
+  },
+
+  getOrderById: async (orderId) => {
+    const res = await apiFetch(`/api/v1/orders/${encodeURIComponent(orderId)}`, {
+      headers: { 'Accept': 'application/json' },
+      credentials: 'include'
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to fetch order details');
+    }
+    return data.order || null;
+  },
+
+  // Guest Storage Helpers
+  getGuestCartItems: getStoredGuestCart,
+  getGuestCartFullDetails: () => calculateGuestCartFullDetails(getStoredGuestCart()),
+  clearGuestCart: clearStoredGuestCart,
+  getGuestWishlistItems: getStoredGuestWishlist,
+  clearGuestWishlist: clearStoredGuestWishlist
 };

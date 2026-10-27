@@ -1,0 +1,299 @@
+const mongoose = require('mongoose');
+const Order = require('../models/Order');
+const Product = require('../models/Product');
+const Cart = require('../models/Cart');
+
+/**
+ * POST /api/v1/orders
+ * Creates an authoritative order backed by MongoDB with server-side price validation
+ */
+const createOrder = async (req, res, next) => {
+  try {
+    const {
+      items,
+      shippingAddress,
+      paymentMethod = 'cod',
+      couponCode = ''
+    } = req.body;
+
+    // 1. Validate items presence
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Order must contain at least one item.'
+      });
+    }
+
+    // 2. Validate shipping address fields
+    if (!shippingAddress) {
+      return res.status(400).json({
+        success: false,
+        message: 'Delivery address is required.'
+      });
+    }
+
+    const recipientName = (shippingAddress.fullName || shippingAddress.name || '').trim();
+    const phone = (shippingAddress.phone || '').trim();
+    const pincode = (shippingAddress.pincode || '').trim();
+    const street = (shippingAddress.street || '').trim();
+    const city = (shippingAddress.city || '').trim();
+    const state = (shippingAddress.state || '').trim();
+    const type = (shippingAddress.type || 'HOME').toUpperCase();
+
+    if (!recipientName || !phone || !pincode || !street || !city || !state) {
+      return res.status(400).json({
+        success: false,
+        message: 'All shipping address fields (full name, phone, pincode, street, city, state) are required.'
+      });
+    }
+
+    // 3. Collect product IDs from items
+    const rawIds = items.map((i) => (i.productId || i.product?.id || i.product?._id || '').toString()).filter(Boolean);
+    const objectIds = rawIds.filter((id) => mongoose.isValidObjectId(id));
+
+    const dbProducts = await Product.find({
+      $or: [
+        { id: { $in: rawIds } },
+        { _id: { $in: objectIds } }
+      ]
+    }).lean();
+
+    // 4. Validate each item and calculate prices strictly from DB
+    let totalMRP = 0;
+    let itemsSubtotal = 0;
+    const verifiedItems = [];
+
+    for (const item of items) {
+      const pid = (item.productId || item.product?.id || item.product?._id || '').toString();
+      const product = dbProducts.find(
+        (p) => p.id === pid || p._id.toString() === pid
+      );
+
+      if (!product) {
+        return res.status(400).json({
+          success: false,
+          message: `Product '${pid}' is no longer available in the catalogue.`
+        });
+      }
+
+      if (product.inStock === false) {
+        return res.status(400).json({
+          success: false,
+          message: `Product '${product.name}' is currently out of stock.`
+        });
+      }
+
+      const qty = Math.max(1, parseInt(item.quantity, 10) || 1);
+
+      // Resolve size-specific price if specified
+      let unitPrice = product.price;
+      let unitMRP = product.originalPrice || product.price;
+      let selectedImage = product.image;
+
+      if (item.size && Array.isArray(product.availableSizes)) {
+        const sizeVariant = product.availableSizes.find(
+          (s) => s.size.toLowerCase() === item.size.toLowerCase()
+        );
+        if (sizeVariant) {
+          if (sizeVariant.price) unitPrice = sizeVariant.price;
+          if (sizeVariant.originalPrice) unitMRP = sizeVariant.originalPrice;
+          if (sizeVariant.image) selectedImage = sizeVariant.image;
+        }
+      }
+
+      const itemTotal = unitPrice * qty;
+      const itemMRP = unitMRP * qty;
+
+      itemsSubtotal += itemTotal;
+      totalMRP += itemMRP;
+
+      verifiedItems.push({
+        productId: product.id || pid,
+        name: product.name,
+        image: selectedImage,
+        size: item.size || product.size || '',
+        quantity: qty,
+        unitPrice,
+        unitMRP,
+        totalPrice: itemTotal,
+        totalMRP: itemMRP
+      });
+    }
+
+    const productDiscount = Math.max(0, totalMRP - itemsSubtotal);
+
+    // 5. Calculate coupon discount
+    let couponDiscount = 0;
+    const cleanCoupon = (couponCode || '').trim().toUpperCase();
+    if (cleanCoupon === 'POWER20' || cleanCoupon === 'SHINE25') {
+      const percent = cleanCoupon === 'POWER20' ? 0.20 : 0.25;
+      couponDiscount = Math.round(itemsSubtotal * percent);
+    }
+
+    // 6. Calculate payment method discount (5% instant discount on UPI prepaid)
+    const validPaymentMethods = ['upi', 'card', 'netbanking', 'cod'];
+    const chosenPayment = validPaymentMethods.includes(paymentMethod) ? paymentMethod : 'cod';
+    let prepaidDiscount = 0;
+    if (chosenPayment === 'upi') {
+      prepaidDiscount = Math.round((itemsSubtotal - couponDiscount) * 0.05);
+    }
+
+    const finalAmount = Math.max(0, itemsSubtotal - couponDiscount - prepaidDiscount);
+
+    // 7. Generate genuine ASM- order ID
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const randPart = Math.floor(100000 + Math.random() * 900000);
+    const orderId = `ASM-${dateStr}-${randPart}`;
+
+    // 8. Create and save Order in MongoDB
+    const newOrder = new Order({
+      orderId,
+      user: req.user._id,
+      items: verifiedItems,
+      shippingAddress: {
+        fullName: recipientName,
+        phone,
+        pincode,
+        street,
+        city,
+        state,
+        type: ['HOME', 'WORK', 'OTHER'].includes(type) ? type : 'HOME'
+      },
+      pricing: {
+        totalMRP,
+        itemsSubtotal,
+        productDiscount,
+        couponDiscount,
+        prepaidDiscount,
+        deliveryFee: 0,
+        finalAmount
+      },
+      totalAmount: finalAmount,
+      status: 'CONFIRMED',
+      paymentMethod: chosenPayment,
+      paymentStatus: 'pending', // Transparent honest status: no payment gateway simulated
+      coupon: {
+        code: cleanCoupon,
+        discountAmount: couponDiscount
+      }
+    });
+
+    await newOrder.save();
+
+    // 9. Clear user's active cart in MongoDB after successful order placement
+    try {
+      await Cart.findOneAndUpdate(
+        { user: req.user._id },
+        { items: [] }
+      );
+    } catch (cartErr) {
+      console.warn('[Order] Could not clear cart after order placement:', cartErr.message);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Order placed successfully.',
+      order: {
+        id: newOrder.orderId,
+        orderId: newOrder.orderId,
+        _id: newOrder._id,
+        items: newOrder.items,
+        shippingAddress: newOrder.shippingAddress,
+        pricing: newOrder.pricing,
+        totalAmount: newOrder.totalAmount,
+        status: newOrder.status,
+        paymentMethod: newOrder.paymentMethod,
+        paymentStatus: newOrder.paymentStatus,
+        createdAt: newOrder.createdAt
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/v1/orders
+ * Returns orders placed by the currently authenticated user
+ */
+const getOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find({ user: req.user._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const formattedOrders = orders.map((o) => ({
+      id: o.orderId,
+      orderId: o.orderId,
+      _id: o._id,
+      items: o.items,
+      shippingAddress: o.shippingAddress,
+      pricing: o.pricing,
+      totalAmount: o.totalAmount,
+      status: o.status,
+      paymentMethod: o.paymentMethod,
+      paymentStatus: o.paymentStatus,
+      createdAt: o.createdAt
+    }));
+
+    res.status(200).json({
+      success: true,
+      count: formattedOrders.length,
+      orders: formattedOrders,
+      data: formattedOrders
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/v1/orders/:id
+ * Retrieve details for a specific order owned by authenticated user
+ */
+const getOrderById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const isObjectId = mongoose.isValidObjectId(id);
+
+    const order = await Order.findOne({
+      $or: [
+        { orderId: id },
+        { _id: isObjectId ? id : null }
+      ],
+      user: req.user._id
+    }).lean();
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      order: {
+        id: order.orderId,
+        orderId: order.orderId,
+        _id: order._id,
+        items: order.items,
+        shippingAddress: order.shippingAddress,
+        pricing: order.pricing,
+        totalAmount: order.totalAmount,
+        status: order.status,
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
+        createdAt: order.createdAt
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = {
+  createOrder,
+  getOrders,
+  getOrderById
+};

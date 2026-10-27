@@ -16,11 +16,19 @@ const getProducts = async (req, res, next) => {
 
 const getProductById = async (req, res, next) => {
   try {
-    const product = await productService.getProductById(req.params.id);
+    const { id } = req.params;
+    if (!id || typeof id !== 'string' || !id.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Valid Product ID parameter is required'
+      });
+    }
+
+    const product = await productService.getProductById(id.trim());
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: `Product not found with id ${req.params.id}`
+        message: `Product not found with id '${id}'`
       });
     }
     res.status(200).json({

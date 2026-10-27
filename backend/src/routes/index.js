@@ -4,6 +4,8 @@ const productRoutes = require('./productRoutes');
 const categoryRoutes = require('./categoryRoutes');
 const bannerRoutes = require('./bannerRoutes');
 const cartRoutes = require('./cartRoutes');
+const orderRoutes = require('./orderRoutes');
+const authRoutes = require('./authRoutes');
 const { getDbStatus } = require('../config/db');
 
 // Health Check endpoint
@@ -18,9 +20,11 @@ router.get('/health', (req, res) => {
 });
 
 // Resources
+router.use('/auth', authRoutes);
 router.use('/products', productRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/banners', bannerRoutes);
 router.use('/cart', cartRoutes);
+router.use('/orders', orderRoutes);
 
 module.exports = router;

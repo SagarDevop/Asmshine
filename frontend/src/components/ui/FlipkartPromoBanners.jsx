@@ -13,7 +13,7 @@ export const FlipkartPromoBanners = ({ onSelectProduct, onNavigateCategories }) 
       price: 89,
       mrp: 179,
       discount: '50% off',
-      image: '/images/products/product_bathroom_cleaner.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg'
     },
     {
       id: 'asm_glass_1',
@@ -23,7 +23,7 @@ export const FlipkartPromoBanners = ({ onSelectProduct, onNavigateCategories }) 
       price: 79,
       mrp: 165,
       discount: '52% off',
-      image: '/images/products/product_glass_cleaner.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg'
     }
   ];
 
@@ -39,7 +39,7 @@ export const FlipkartPromoBanners = ({ onSelectProduct, onNavigateCategories }) 
       <div className="fk-combo-poster-block" aria-label="Super Saver Cleaning Combo Poster">
         {/* Background Poster Artwork */}
         <img
-          src="/images/banners/combo_poster_bg.jpg"
+          src="https://res.cloudinary.com/dheyj35ys/image/upload/v1792938231/asm-shine/banners/combo_poster_bg.jpg"
           alt="Spotless Home Combo Specials"
           className="fk-combo-poster-backdrop"
           loading="lazy"
@@ -131,7 +131,7 @@ export const FlipkartPromoBanners = ({ onSelectProduct, onNavigateCategories }) 
         <div className="fk-trust-card">
           <div className="fk-trust-icon-box">
             <img
-              src="/images/trust/trust_germ_kill.jpg"
+              src="https://res.cloudinary.com/dheyj35ys/image/upload/v1792938259/asm-shine/trust/trust_germ_kill.jpg"
               alt="99.9% Germ Kill Protection"
               className="fk-trust-img"
               loading="lazy"
@@ -146,7 +146,7 @@ export const FlipkartPromoBanners = ({ onSelectProduct, onNavigateCategories }) 
         <div className="fk-trust-card">
           <div className="fk-trust-icon-box">
             <img
-              src="/images/trust/trust_express_delivery.jpg"
+              src="https://res.cloudinary.com/dheyj35ys/image/upload/v1792938258/asm-shine/trust/trust_express_delivery.jpg"
               alt="Express Doorstep Delivery"
               className="fk-trust-img"
               loading="lazy"
@@ -161,7 +161,7 @@ export const FlipkartPromoBanners = ({ onSelectProduct, onNavigateCategories }) 
         <div className="fk-trust-card">
           <div className="fk-trust-icon-box">
             <img
-              src="/images/trust/trust_mirror_shine.jpg"
+              src="https://res.cloudinary.com/dheyj35ys/image/upload/v1792938261/asm-shine/trust/trust_mirror_shine.jpg"
               alt="100% Mirror-Shine Guarantee"
               className="fk-trust-img"
               loading="lazy"
@@ -176,7 +176,7 @@ export const FlipkartPromoBanners = ({ onSelectProduct, onNavigateCategories }) 
         <div className="fk-trust-card">
           <div className="fk-trust-icon-box">
             <img
-              src="/images/trust/trust_upi_discount.jpg"
+              src="https://res.cloudinary.com/dheyj35ys/image/upload/v1792938262/asm-shine/trust/trust_upi_discount.jpg"
               alt="Instant 5% Prepaid UPI Off"
               className="fk-trust-img"
               loading="lazy"

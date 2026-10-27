@@ -21,7 +21,10 @@ import {
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
+import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
+import { ProductDetailSkeleton } from '../components/ui/ProductDetailSkeleton';
+import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 
 // Authentic Vector Logos for Marketplaces
 const AmazonLogo = () => (
@@ -88,11 +91,14 @@ export const ProductDetailPage = ({
   const [product, setProduct] = useState(productProp || null);
   const [loading, setLoading] = useState(!productProp);
   const { cartCount, cartData, wishlist, toggleWishlist, addToCart, addComboToCart, showToast } = useCartWishlist();
+  const { selectedAddress } = useAuth();
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [combo, setCombo] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [mainImgLoaded, setMainImgLoaded] = useState(false);
 
   // Sync / fetch product by route parameter :id
   useEffect(() => {
@@ -102,8 +108,12 @@ export const ProductDetailPage = ({
       setLoading(false);
     } else if (id) {
       setLoading(true);
+      setProduct(null);
       api.getProductById(id).then((found) => {
         setProduct(found);
+        setLoading(false);
+      }).catch((e) => {
+        console.warn('Could not load product details:', e);
         setLoading(false);
       });
     }
@@ -156,13 +166,13 @@ export const ProductDetailPage = ({
       }
     } else {
       navigator.clipboard?.writeText?.(window.location.href);
-      showToast('Product link copied to clipboard');
+      showToast('Link copied to clipboard');
     }
   };
 
   const handleCopyCoupon = (code) => {
     navigator.clipboard?.writeText?.(code);
-    showToast(`Coupon code ${code} copied! Extra 20% discount applied`);
+    showToast(`Coupon ${code} applied!`);
   };
 
   const isInCart = Boolean(
@@ -195,16 +205,12 @@ export const ProductDetailPage = ({
         { productId: combo.mainProduct.id, quantity: 1 },
         { productId: combo.companionProduct.id, quantity: 1 }
       ],
-      `Combo Bundle (${combo.mainProduct.shortName || combo.mainProduct.name} + ${combo.companionProduct.shortName || combo.companionProduct.name}) added to cart`
+      'Combo bundle added to cart'
     );
   };
 
   if (loading) {
-    return (
-      <div className="pdp-page" style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#64748B', fontWeight: 600 }}>Loading product details...</p>
-      </div>
-    );
+    return <ProductDetailSkeleton onBack={handleBack} />;
   }
 
   if (!product) {
@@ -282,11 +288,12 @@ export const ProductDetailPage = ({
       <div className="pdp-content-container">
         {/* 2. Hero Product Media Showcase */}
         <div className="pdp-media-card">
-          <div className="pdp-image-viewport">
+          <div className="pdp-image-viewport img-container-placeholder">
             <img
-              src={product.image}
+              src={selectedVariant?.image || product.image}
               alt={product.name}
-              className="pdp-main-image"
+              className={`pdp-main-image img-fade ${mainImgLoaded ? 'loaded' : ''}`}
+              onLoad={() => setMainImgLoaded(true)}
             />
 
             {/* Wishlist Heart Button */}
@@ -491,12 +498,32 @@ export const ProductDetailPage = ({
 
         {/* 6. Delivery & Assurance Section */}
         <section className="pdp-section pdp-delivery-card">
-          <div className="pdp-delivery-location-row">
+          <div
+            className="pdp-delivery-location-row"
+            onClick={() => setIsAddressModalOpen(true)}
+            style={{ cursor: 'pointer' }}
+            title="Click to select or change delivery address"
+          >
             <div className="pdp-delivery-loc-info">
               <MapPin size={16} className="pdp-loc-pin" />
-              <span>Deliver to: <strong>Connaught Place, New Delhi - 110001</strong></span>
+              <span>
+                Deliver to:{' '}
+                <strong>
+                  {selectedAddress
+                    ? `${selectedAddress.fullName || selectedAddress.name ? `${selectedAddress.fullName || selectedAddress.name}, ` : ''}${selectedAddress.city} - ${selectedAddress.pincode}`
+                    : 'Enter PIN Code'}
+                </strong>
+              </span>
             </div>
-            <span className="pdp-change-loc-btn">Change</span>
+            <span
+              className="pdp-change-loc-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsAddressModalOpen(true);
+              }}
+            >
+              Change
+            </span>
           </div>
 
           <div className="pdp-delivery-speed-row">
@@ -794,6 +821,12 @@ export const ProductDetailPage = ({
           <span>BUY NOW</span>
         </button>
       </div>
+
+      {/* Dynamic Address Selection Modal */}
+      <AddressSelectModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
+      />
     </div>
   );
 };

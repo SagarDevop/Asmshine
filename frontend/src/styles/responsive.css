@@ -99,12 +99,16 @@
   }
 
   /* Hide mobile header and bottom navigation on desktop */
-  .app-header.mobile-only {
-    display: none;
+  .mobile-only,
+  .app-header.mobile-only,
+  .fk-header-top-banner,
+  .fk-mobile-sticky-header,
+  .fk-header-sentinel {
+    display: none !important;
   }
 
   .bottom-nav {
-    display: none;
+    display: none !important;
   }
 
   /* Categories Bar */

@@ -11,41 +11,78 @@ const getAllProducts = async (filters = {}) => {
     try {
       const count = await Product.countDocuments();
       if (count === 0) {
-        await Product.insertMany(initialProducts);
-        console.log('[Database] Auto-seeded initial Cleanora products to MongoDB');
+        for (const prod of initialProducts) {
+          await Product.findOneAndUpdate(
+            { id: prod.id },
+            { $set: prod },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+          );
+        }
+        console.log('[Database] Auto-seeded initial ASM Shine products to MongoDB');
       }
-      const query = {};
-      if (filters.section) query.section = filters.section;
-      if (filters.category) query.category = filters.category;
-      if (filters.search) {
-        query.name = { $regex: filters.search, $options: 'i' };
+
+      const query = {
+        // Target active catalog products (ASM Shine collection)
+        id: { $in: initialProducts.map(p => p.id) }
+      };
+
+      if (filters.section) {
+        query.section = filters.section;
       }
-      return await Product.find(query);
+
+      if (filters.category && filters.category !== 'all') {
+        query.category = filters.category;
+      }
+
+      if (filters.search && filters.search.trim()) {
+        const q = filters.search.trim();
+        const regex = { $regex: q, $options: 'i' };
+        query.$or = [
+          { name: regex },
+          { shortName: regex },
+          { description: regex },
+          { highlights: regex },
+          { category: regex }
+        ];
+      }
+
+      const products = await Product.find(query, { _id: 0, __v: 0 }).lean();
+      return products;
     } catch (e) {
-      console.warn('DB query failed, fallback to in-memory:', e.message);
+      console.warn('[ProductService] DB query failed, fallback to in-memory:', e.message);
     }
   }
 
-  // In-memory filtering
+  // In-memory filtering fallback
   return memoryProducts.filter(p => {
     if (filters.section && p.section !== filters.section) return false;
-    if (filters.category && p.category !== filters.category) return false;
-    if (filters.search && !p.name.toLowerCase().includes(filters.search.toLowerCase())) return false;
+    if (filters.category && filters.category !== 'all' && p.category !== filters.category) return false;
+    if (filters.search && filters.search.trim()) {
+      const q = filters.search.trim().toLowerCase();
+      const matchName = p.name?.toLowerCase().includes(q);
+      const matchShort = p.shortName?.toLowerCase().includes(q);
+      const matchDesc = p.description?.toLowerCase().includes(q);
+      const matchCat = p.category?.toLowerCase().includes(q);
+      const matchHighlights = p.highlights?.some(h => h.toLowerCase().includes(q));
+      if (!matchName && !matchShort && !matchDesc && !matchCat && !matchHighlights) return false;
+    }
     return true;
   });
 };
 
 const getProductById = async (id) => {
+  if (!id) return null;
   const { connected } = getDbStatus();
   if (connected) {
     try {
-      const found = await Product.findOne({ id });
+      const found = await Product.findOne({ id }, { _id: 0, __v: 0 }).lean();
       if (found) return found;
     } catch (e) {
-      // fallback
+      console.warn('[ProductService] DB lookup failed, fallback to in-memory:', e.message);
     }
   }
   return memoryProducts.find(p => p.id === id) || null;
 };
 
 module.exports = { getAllProducts, getProductById };
+

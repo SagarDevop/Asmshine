@@ -21,6 +21,7 @@ import { useNavigate, useLocation, useParams, useSearchParams } from 'react-rout
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { api, STATIC_CATEGORIES } from '../services/api';
 import { SearchOverlay } from '../components/search/SearchOverlay';
+import { CatProductCardSkeleton } from '../components/ui/CatProductCardSkeleton';
 
 const categoryIconMap = {
   all: Layers,
@@ -102,15 +103,47 @@ export const CategoriesPage = ({
     setSearchParams({ category: catId }, { replace: true });
   };
 
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
+
   useEffect(() => {
-    api.getProducts().then((data) => {
-      setProducts(data || []);
-    });
+    let isMounted = true;
+    setLoading(true);
+    api.getCategories()
+      .then((cats) => {
+        if (isMounted && cats && cats.length > 0) setCategories(cats);
+      })
+      .catch((err) => {
+        console.warn('[CategoriesPage] Could not load categories from API:', err);
+      });
+
+    api.getProducts()
+      .then((data) => {
+        if (isMounted) {
+          setProducts(data || []);
+          setLoadError(null);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error('[CategoriesPage] Failed to fetch products from API:', err);
+        if (isMounted) {
+          setLoadError(err.message || 'Failed to load products');
+          setLoading(false);
+        }
+      });
+
+    return () => { isMounted = false; };
   }, []);
+
+  const distinctCategories = (categories.length > 0 ? categories : STATIC_CATEGORIES).filter(
+    (c) => c && c.id && c.id !== 'all' && c.name
+  );
 
   const allCategoriesList = [
     { id: 'all', name: 'All Products', desc: 'ASM Shine Home Hygiene & Cleaning Collection' },
-    ...STATIC_CATEGORIES
+    ...distinctCategories
   ];
 
   const currentCategoryObj = allCategoriesList.find((c) => c.id === selectedCat) || allCategoriesList[0];
@@ -222,12 +255,18 @@ export const CategoriesPage = ({
             <div className="cat-banner-tag">AUTHENTIC ASM SHINE HYGIENE</div>
             <h2 className="cat-banner-title">{currentCategoryObj.name}</h2>
             <p className="cat-banner-sub">
-              {filteredProducts.length} varieties available in collection
+              {loading ? 'Loading authentic collection...' : `${filteredProducts.length} varieties available in collection`}
             </p>
           </div>
 
-          {/* Product Items List */}
-          {filteredProducts.length === 0 ? (
+          {/* Product Items List or Skeleton */}
+          {loading ? (
+            <div className="cat-products-grid" aria-busy="true" aria-label="Loading products">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <CatProductCardSkeleton key={`cat-skel-${i}`} />
+              ))}
+            </div>
+          ) : filteredProducts.length === 0 ? (
             <div className="cat-empty-state">
               <Sparkles size={32} color="#0284C7" />
               <p>No cleaning products found matching your search</p>
@@ -250,15 +289,13 @@ export const CategoriesPage = ({
                   className="cat-product-card"
                   onClick={() => handleSelectProduct(product)}
                 >
-                  <div className="cat-prod-img-wrap">
+                  <div className="cat-prod-img-wrap img-container-placeholder">
                     <img
                       src={product.image}
                       alt={product.name}
                       className="cat-prod-img"
+                      loading="lazy"
                     />
-                    {product.badge && (
-                      <span className="cat-prod-badge">{product.badge}</span>
-                    )}
                   </div>
 
                   <div className="cat-prod-details">

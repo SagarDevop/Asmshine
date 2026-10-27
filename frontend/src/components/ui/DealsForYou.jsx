@@ -12,17 +12,17 @@ export const DealsForYou = ({ onSelectProduct, onNavigateAll }) => {
       mrp: 135,
       discount: '49% off',
       badge: 'SPECIAL ₹69',
-      image: '/images/products/product_disinfectant.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg'
     },
     {
       id: 'asm_dish_1',
-      name: 'ASM Shine Turbo Dishwash Gel',
-      size: '500 ml Squeeze',
+      name: 'ASM Shine Smart Wash Dishwash Liquid',
+      size: '500 ml Bottle',
       dealPrice: 89,
       mrp: 125,
       discount: '29% off',
       badge: 'UNDER ₹99',
-      image: '/images/products/product_dishwash_gel.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg'
     },
     {
       id: 'asm_glass_1',
@@ -32,27 +32,27 @@ export const DealsForYou = ({ onSelectProduct, onNavigateAll }) => {
       mrp: 165,
       discount: '28% off',
       badge: 'TOP DEAL',
-      image: '/images/products/product_glass_cleaner.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg'
     },
     {
       id: 'asm_hand_1',
       name: 'ASM PureShield Handwash Refill',
-      size: '250 ml Pump',
+      size: '500 ml Pump',
       dealPrice: 79,
       mrp: 110,
       discount: '28% off',
       badge: 'STEAL DEAL',
-      image: '/images/products/product_dishwash_gel.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg'
     },
     {
       id: 'asm_bath_1',
       name: 'ASM Shine Bathroom Descaler',
-      size: '500 ml Bottle',
+      size: '1 Liter Bottle',
       dealPrice: 129,
       mrp: 179,
       discount: '28% off',
       badge: 'HARD WATER',
-      image: '/images/products/product_bathroom_cleaner.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg'
     },
     {
       id: 'asm_floor_1',
@@ -62,7 +62,7 @@ export const DealsForYou = ({ onSelectProduct, onNavigateAll }) => {
       mrp: 219,
       discount: '32% off',
       badge: 'BEST VALUE',
-      image: '/images/products/product_floor_cleaner.png'
+      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg'
     }
   ];
 

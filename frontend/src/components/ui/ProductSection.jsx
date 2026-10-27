@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { ProductCard } from './ProductCard';
+import { ProductGridSkeleton } from './ProductGridSkeleton';
 
 export const ProductSection = ({
   title,
@@ -12,9 +13,11 @@ export const ProductSection = ({
   showRating = true,
   sizePosition = 'below',
   onActionClick,
-  onSelectProduct
+  onSelectProduct,
+  loading = false,
+  skeletonCount = 4
 }) => {
-  if (!products || products.length === 0) return null;
+  if (!loading && (!products || products.length === 0)) return null;
 
   return (
     <section className="product-section" aria-label={title}>
@@ -39,17 +42,21 @@ export const ProductSection = ({
         )}
       </div>
 
-      <div className="product-grid">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            showRating={showRating}
-            sizePosition={sizePosition}
-            onSelectProduct={onSelectProduct}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <ProductGridSkeleton count={skeletonCount} />
+      ) : (
+        <div className="product-grid">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              showRating={showRating}
+              sizePosition={sizePosition}
+              onSelectProduct={onSelectProduct}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
+import { useAuth } from '../context/AuthContext';
+import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 import { api } from '../services/api';
 
 export const CheckoutPage = () => {
@@ -26,6 +28,7 @@ export const CheckoutPage = () => {
   const [searchParams] = useSearchParams();
   const buyNowId = searchParams.get('buyNow');
   const { cartData, clearCart, showToast, updateCartQuantity } = useCartWishlist();
+  const { user, selectedAddress, selectAddress } = useAuth();
 
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,18 +39,60 @@ export const CheckoutPage = () => {
   const [couponInput, setCouponInput] = useState('');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState('');
+  const [orderSubmitting, setOrderSubmitting] = useState(false);
 
-  // Address State
+  // Address State - dynamically synced with selectedAddress and user account
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isChangingAddress, setIsChangingAddress] = useState(false);
-  const [address, setAddress] = useState({
-    name: 'Aarav Sharma',
-    type: 'HOME',
-    phone: '+91 98765 43210',
-    street: 'House 42, Royal Court, Barakhamba Road',
-    city: 'New Delhi',
-    pincode: '110001',
-    state: 'Delhi'
+  const [address, setAddress] = useState(() => {
+    if (selectedAddress) {
+      return {
+        name: selectedAddress.fullName || selectedAddress.name || '',
+        type: selectedAddress.type || 'HOME',
+        phone: selectedAddress.phone || user?.phone || '',
+        street: selectedAddress.street || '',
+        city: selectedAddress.city || '',
+        pincode: selectedAddress.pincode || '',
+        state: selectedAddress.state || ''
+      };
+    }
+    const defaultAddr = user?.addresses?.find((a) => a.isDefault) || user?.addresses?.[0];
+    if (defaultAddr) {
+      return {
+        name: defaultAddr.fullName || defaultAddr.name || user?.name || '',
+        type: defaultAddr.type || 'HOME',
+        phone: defaultAddr.phone || user?.phone || '',
+        street: defaultAddr.street || '',
+        city: defaultAddr.city || '',
+        pincode: defaultAddr.pincode || '',
+        state: defaultAddr.state || ''
+      };
+    }
+    return {
+      name: user?.name || '',
+      type: 'HOME',
+      phone: user?.phone || '',
+      street: '',
+      city: '',
+      pincode: '',
+      state: ''
+    };
   });
+
+  // Dynamically keep address in sync when user selects a different address
+  useEffect(() => {
+    if (selectedAddress) {
+      setAddress({
+        name: selectedAddress.fullName || selectedAddress.name || user?.name || '',
+        type: selectedAddress.type || 'HOME',
+        phone: selectedAddress.phone || user?.phone || '',
+        street: selectedAddress.street || '',
+        city: selectedAddress.city || '',
+        pincode: selectedAddress.pincode || '',
+        state: selectedAddress.state || ''
+      });
+    }
+  }, [selectedAddress, user]);
 
   // Load items: if buyNow query param is present, load that product directly; otherwise use cartData
   useEffect(() => {
@@ -132,12 +177,58 @@ export const CheckoutPage = () => {
     setCouponInput('');
   };
 
-  const handlePlaceOrder = () => {
-    const generatedId = 'ZV-' + Math.floor(100000 + Math.random() * 900000);
-    setOrderId(generatedId);
-    setOrderPlaced(true);
-    clearCart();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handlePlaceOrder = async () => {
+    if (orderSubmitting) return;
+
+    // Validate delivery address
+    if (!address.name || !address.phone || !address.pincode || !address.street || !address.city || !address.state) {
+      showToast('Please enter your complete delivery address before placing order.');
+      setIsChangingAddress(true);
+      return;
+    }
+
+    if (!checkoutItems || checkoutItems.length === 0) {
+      showToast('No items to checkout.');
+      return;
+    }
+
+    setOrderSubmitting(true);
+    try {
+      const orderPayload = {
+        items: checkoutItems.map((item) => ({
+          productId: item.product.id || item.product._id,
+          quantity: item.quantity || 1,
+          size: item.size || item.product.size || ''
+        })),
+        shippingAddress: {
+          fullName: address.name,
+          name: address.name,
+          phone: address.phone,
+          pincode: address.pincode,
+          street: address.street,
+          city: address.city,
+          state: address.state,
+          type: address.type || 'HOME'
+        },
+        paymentMethod,
+        couponCode: appliedCoupon
+      };
+
+      const response = await api.createOrder(orderPayload);
+      if (response && response.success && response.order) {
+        const placedOrderId = response.order.orderId || response.order.id;
+        setOrderId(placedOrderId);
+        setOrderPlaced(true);
+        await clearCart();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        throw new Error(response.message || 'Order could not be confirmed.');
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to place order. Please try again.');
+    } finally {
+      setOrderSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -191,7 +282,16 @@ export const CheckoutPage = () => {
             </div>
           </div>
 
-          <div className="fk-success-actions">
+          <div className="fk-success-actions" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="fk-btn-continue"
+              onClick={() => navigate('/account')}
+              id="view-orders-btn"
+              style={{ backgroundColor: '#2874F0', color: '#FFFFFF' }}
+            >
+              <span>View in My Orders</span>
+            </button>
             <button
               type="button"
               className="fk-btn-continue"
@@ -260,9 +360,9 @@ export const CheckoutPage = () => {
             <button
               type="button"
               className="fk-change-addr-btn"
-              onClick={() => setIsChangingAddress(!isChangingAddress)}
+              onClick={() => setIsAddressModalOpen(true)}
             >
-              {isChangingAddress ? 'Cancel' : 'Change'}
+              Change
             </button>
           </div>
 
@@ -628,11 +728,20 @@ export const CheckoutPage = () => {
           type="button"
           className="fk-btn-place-order"
           onClick={handlePlaceOrder}
+          disabled={orderSubmitting}
+          style={{ opacity: orderSubmitting ? 0.7 : 1, cursor: orderSubmitting ? 'not-allowed' : 'pointer' }}
+          id="checkout-place-order-btn"
         >
-          <span>PLACE ORDER</span>
+          <span>{orderSubmitting ? 'SECURING ORDER...' : 'PLACE ORDER'}</span>
           <ChevronRight size={16} strokeWidth={2.8} />
         </button>
       </footer>
+
+      {/* Dynamic Delivery Address Selection Modal */}
+      <AddressSelectModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
+      />
     </div>
   );
 };
