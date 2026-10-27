@@ -187,7 +187,11 @@ function AccountRoute() {
   );
 }
 
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'unconfigured-google-client-id.apps.googleusercontent.com';
+const DEFAULT_GOOGLE_CLIENT_ID = '544546980474-8pgk6kkellbbtmec3iun2p0v5kis143e.apps.googleusercontent.com';
+const googleClientId =
+  (import.meta.env.VITE_GOOGLE_CLIENT_ID && import.meta.env.VITE_GOOGLE_CLIENT_ID.trim() !== '' && !import.meta.env.VITE_GOOGLE_CLIENT_ID.includes('your_google_client_id_here'))
+    ? import.meta.env.VITE_GOOGLE_CLIENT_ID.trim()
+    : DEFAULT_GOOGLE_CLIENT_ID;
 
 export function App() {
   return (

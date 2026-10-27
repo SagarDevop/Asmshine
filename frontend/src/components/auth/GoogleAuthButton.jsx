@@ -28,8 +28,13 @@ const GoogleLogoSvg = () => (
  * Renders official Google Identity Services sign-in.
  * If VITE_GOOGLE_CLIENT_ID is not configured, displays an informative prompt without faking authentication.
  */
+const DEFAULT_GOOGLE_CLIENT_ID = '544546980474-8pgk6kkellbbtmec3iun2p0v5kis143e.apps.googleusercontent.com';
+
 export const GoogleAuthButton = ({ onSuccess, onError, disabled = false }) => {
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const envClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const clientId = (envClientId && envClientId.trim() !== '' && !envClientId.includes('your_google_client_id_here'))
+    ? envClientId.trim()
+    : DEFAULT_GOOGLE_CLIENT_ID;
   const [configNotice, setConfigNotice] = useState(false);
 
   const handleMissingConfigClick = () => {

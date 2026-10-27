@@ -1,9 +1,18 @@
 // ASM SHINE - Client API Layer (Connected to Express REST API & MongoDB Database)
 
 // Base API configuration (Supports Vercel & Render production hosting)
-const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL 
-  ? String(import.meta.env.VITE_API_URL).trim() 
-  : '').replace(/\/$/, '');
+const getApiBase = () => {
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '') {
+    return String(import.meta.env.VITE_API_URL).trim().replace(/\/$/, '');
+  }
+  // In production (e.g. Vercel deployment), fallback to live Render backend
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return 'https://asmshine.onrender.com';
+  }
+  return '';
+};
+
+const API_BASE = getApiBase();
 
 const getAuthHeaders = (extraHeaders = {}) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('cleanora_token') : null;
