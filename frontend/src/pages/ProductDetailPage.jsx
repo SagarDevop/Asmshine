@@ -724,41 +724,37 @@ export const ProductDetailPage = ({
         )}
 
         {/* 9. Product Highlights & Specifications */}
-        <section className="pdp-section pdp-specs-card">
-          <h2 className="pdp-section-heading">Product Highlights</h2>
-          <ul className="pdp-highlights-list">
-            {(product.highlights || [
-              '99.9% germ eradication certified laboratory formula',
-              'Formulated with organic botanicals and zero toxic fumes',
-              'Safe around household pets and crawling toddlers',
-              'Non-acidic streak-free active cleaning'
-            ]).map((h, i) => (
-              <li key={i}>
-                <Check size={14} className="pdp-hl-check" />
-                <span>{h}</span>
-              </li>
-            ))}
-          </ul>
+        {((product.highlights && product.highlights.length > 0) || (product.specifications && Object.keys(product.specifications).length > 0)) && (
+          <section className="pdp-section pdp-specs-card">
+            {product.highlights && product.highlights.length > 0 && (
+              <>
+                <h2 className="pdp-section-heading">Product Highlights</h2>
+                <ul className="pdp-highlights-list">
+                  {product.highlights.map((h, i) => (
+                    <li key={i}>
+                      <Check size={14} className="pdp-hl-check" />
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
 
-          <h3 className="pdp-section-heading sub">Specifications</h3>
-          <div className="pdp-specs-table">
-            {Object.entries(
-              product.specifications || {
-                'Formulation': 'Active Micro-Enzyme Liquid Gel',
-                'Germ Protection': '99.9% NABL Lab Certified',
-                'Fragrance': 'Refreshing Essential Oils',
-                'Fumes': 'Zero Choking Acid Fumes',
-                'Shelf Life': '24 Months from Mfd',
-                'Country of Origin': 'India'
-              }
-            ).map(([k, v]) => (
-              <div className="pdp-spec-row" key={k}>
-                <span className="pdp-spec-label">{k}</span>
-                <span className="pdp-spec-value">{v}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+            {product.specifications && Object.keys(product.specifications).length > 0 && (
+              <>
+                <h3 className="pdp-section-heading sub">Specifications</h3>
+                <div className="pdp-specs-table">
+                  {Object.entries(product.specifications).map(([k, v]) => (
+                    <div className="pdp-spec-row" key={k}>
+                      <span className="pdp-spec-label">{k}</span>
+                      <span className="pdp-spec-value">{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </section>
+        )}
 
         {/* 10. Ratings & Customer Reviews Breakdown */}
         <section className="pdp-section pdp-reviews-card">

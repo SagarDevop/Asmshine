@@ -127,6 +127,7 @@ const createProduct = async (req, res, next) => {
       image,
       description = '',
       highlights = [],
+      specifications = {},
       status = 'active',
       badge = '',
       availableSizes = []
@@ -196,6 +197,23 @@ const createProduct = async (req, res, next) => {
       normalizedSizes = [];
     }
 
+    const cleanHighlights = Array.isArray(highlights)
+      ? highlights.map((h) => String(h).trim()).filter(Boolean)
+      : [];
+
+    let cleanSpecifications = {};
+    if (specifications && typeof specifications === 'object') {
+      if (Array.isArray(specifications)) {
+        specifications.forEach((item) => {
+          if (item && item.key && item.value) {
+            cleanSpecifications[String(item.key).trim()] = String(item.value).trim();
+          }
+        });
+      } else {
+        cleanSpecifications = specifications;
+      }
+    }
+
     const newProduct = new Product({
       id: finalId,
       name: name.trim(),
@@ -214,7 +232,8 @@ const createProduct = async (req, res, next) => {
       image: image || '/images/products/all_shine_dishwash_gel_500ml.png',
       description,
       availableSizes: normalizedSizes,
-      highlights: Array.isArray(highlights) ? highlights : [],
+      highlights: cleanHighlights,
+      specifications: cleanSpecifications,
       status,
       badge: badge.trim()
     });
@@ -285,6 +304,7 @@ const updateProduct = async (req, res, next) => {
       image,
       description,
       highlights,
+      specifications,
       status,
       badge,
       sku,
@@ -300,7 +320,28 @@ const updateProduct = async (req, res, next) => {
     if (badge !== undefined) product.badge = badge.trim();
     if (image) product.image = image;
     if (status) product.status = status;
-    if (Array.isArray(highlights)) product.highlights = highlights;
+    if (highlights !== undefined) {
+      product.highlights = Array.isArray(highlights)
+        ? highlights.map((h) => String(h).trim()).filter(Boolean)
+        : [];
+    }
+
+    if (specifications !== undefined) {
+      let cleanSpecifications = {};
+      if (specifications && typeof specifications === 'object') {
+        if (Array.isArray(specifications)) {
+          specifications.forEach((item) => {
+            if (item && item.key && item.value) {
+              cleanSpecifications[String(item.key).trim()] = String(item.value).trim();
+            }
+          });
+        } else {
+          cleanSpecifications = specifications;
+        }
+      }
+      product.specifications = cleanSpecifications;
+      product.markModified('specifications');
+    }
 
     if (price !== undefined) {
       const numP = Number(price);

@@ -11,7 +11,8 @@ import {
   RefreshCw,
   X,
   ExternalLink,
-  Layers
+  Layers,
+  Check
 } from 'lucide-react';
 import { adminApi } from '../services/adminApi';
 
@@ -45,6 +46,8 @@ export const AdminProductsPage = () => {
   const [description, setDescription] = useState('');
   const [badge, setBadge] = useState('');
   const [variants, setVariants] = useState([]);
+  const [highlights, setHighlights] = useState([]);
+  const [specifications, setSpecifications] = useState([]);
 
   const handleAddVariant = () => {
     setVariants((prev) => [
@@ -69,11 +72,41 @@ export const AdminProductsPage = () => {
   };
 
   const handleRemoveVariant = (idx) => {
-    if (variants.length <= 1) {
-      alert('At least one pack size / variant is required.');
-      return;
-    }
     setVariants((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // Highlights Point-by-Point Handlers
+  const handleAddHighlight = () => {
+    setHighlights((prev) => [...prev, '']);
+  };
+
+  const handleUpdateHighlight = (index, value) => {
+    setHighlights((prev) => {
+      const copy = [...prev];
+      copy[index] = value;
+      return copy;
+    });
+  };
+
+  const handleRemoveHighlight = (index) => {
+    setHighlights((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Specifications Key-Value Handlers
+  const handleAddSpecification = () => {
+    setSpecifications((prev) => [...prev, { key: '', value: '' }]);
+  };
+
+  const handleUpdateSpecification = (index, field, value) => {
+    setSpecifications((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  };
+
+  const handleRemoveSpecification = (index) => {
+    setSpecifications((prev) => prev.filter((_, i) => i !== index));
   };
 
   const fetchProducts = async (page = 1) => {
@@ -122,6 +155,17 @@ export const AdminProductsPage = () => {
     setDescription('');
     setBadge('');
     setVariants([]);
+    setHighlights([
+      '99.9% germ eradication certified laboratory formula',
+      'Formulated with organic botanicals and zero toxic fumes',
+      'Safe around household pets and crawling toddlers'
+    ]);
+    setSpecifications([
+      { key: 'Form', value: 'Active Liquid Gel' },
+      { key: 'Fragrance', value: 'Natural Citrus Pine' },
+      { key: 'Shelf Life', value: '24 Months' },
+      { key: 'Country of Origin', value: 'India' }
+    ]);
     setFormError('');
     setModalOpen(true);
   };
@@ -156,6 +200,22 @@ export const AdminProductsPage = () => {
       setVariants([]);
     }
 
+    if (Array.isArray(p.highlights) && p.highlights.length > 0) {
+      setHighlights([...p.highlights]);
+    } else {
+      setHighlights([]);
+    }
+
+    if (p.specifications && typeof p.specifications === 'object') {
+      const specEntries = Object.entries(p.specifications).map(([key, value]) => ({
+        key,
+        value: String(value)
+      }));
+      setSpecifications(specEntries);
+    } else {
+      setSpecifications([]);
+    }
+
     setFormError('');
     setModalOpen(true);
   };
@@ -173,6 +233,15 @@ export const AdminProductsPage = () => {
     try {
       const cleanStock = parseInt(stockQuantity, 10) || 0;
       const cleanSku = sku.trim();
+      const cleanHighlights = highlights.map((h) => h.trim()).filter(Boolean);
+      const specsObject = {};
+      specifications.forEach((s) => {
+        const k = (s.key || '').trim();
+        const v = (s.value || '').trim();
+        if (k && v) {
+          specsObject[k] = v;
+        }
+      });
 
       const payload = {
         name: name.trim(),
@@ -188,7 +257,9 @@ export const AdminProductsPage = () => {
         description: description.trim(),
         badge: badge.trim(),
         inStock: cleanStock > 0,
-        availableSizes: variants.map((v, idx) => {
+        highlights: cleanHighlights,
+        specifications: specsObject,
+        availableSizes: variants.length > 0 ? variants.map((v, idx) => {
           const vPrice = Number(v.price || price);
           const vMRP = Number(v.originalPrice || originalPrice || vPrice);
           const vStock = parseInt(v.stockQuantity, 10) || 0;
@@ -202,7 +273,7 @@ export const AdminProductsPage = () => {
             inStock: vStock > 0,
             image: (v.image || image).trim()
           };
-        })
+        }) : []
       };
 
       if (editingProduct) {
@@ -822,6 +893,115 @@ export const AdminProductsPage = () => {
                     value={badge}
                     onChange={(e) => setBadge(e.target.value)}
                   />
+                </div>
+
+                {/* 1. Product Highlights Point-by-Point Section */}
+                <div className="admin-meta-box">
+                  <div className="admin-meta-header">
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A' }}>
+                        Product Highlights ({highlights.length} Points)
+                      </div>
+                      <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
+                        Key feature bullet points shown with stylish checkmarks on the product page.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddHighlight}
+                      className="admin-btn admin-btn-secondary admin-btn-sm"
+                    >
+                      <Plus size={13} /> Add Point
+                    </button>
+                  </div>
+
+                  {highlights.length === 0 ? (
+                    <div style={{ padding: '12px', background: '#FFFFFF', border: '1px dashed #CBD5E1', borderRadius: '8px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '12px', color: '#64748B' }}>
+                        No highlights added yet. Click "+ Add Point" above to add feature bullet points.
+                      </div>
+                    </div>
+                  ) : (
+                    highlights.map((hl, idx) => (
+                      <div key={idx} className="admin-highlight-row">
+                        <Check size={16} className="admin-highlight-check" />
+                        <input
+                          type="text"
+                          className="admin-form-input"
+                          style={{ height: '36px', fontSize: '12.5px', flex: 1 }}
+                          placeholder={`Highlight point #${idx + 1} (e.g. 99.9% germ eradication certified formula)`}
+                          value={hl}
+                          onChange={(e) => handleUpdateHighlight(idx, e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveHighlight(idx)}
+                          style={{ background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', padding: '4px' }}
+                          title="Remove Point"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* 2. Product Specifications (Technical Key-Value Table) */}
+                <div className="admin-meta-box">
+                  <div className="admin-meta-header">
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A' }}>
+                        Product Specifications ({specifications.length} Attributes)
+                      </div>
+                      <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
+                        Two-column technical specification table (Attribute & Value) shown below highlights.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddSpecification}
+                      className="admin-btn admin-btn-secondary admin-btn-sm"
+                    >
+                      <Plus size={13} /> Add Attribute
+                    </button>
+                  </div>
+
+                  {specifications.length === 0 ? (
+                    <div style={{ padding: '12px', background: '#FFFFFF', border: '1px dashed #CBD5E1', borderRadius: '8px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '12px', color: '#64748B' }}>
+                        No specifications added yet. Click "+ Add Attribute" above to add technical specs table rows.
+                      </div>
+                    </div>
+                  ) : (
+                    specifications.map((spec, idx) => (
+                      <div key={idx} className="admin-spec-row">
+                        <input
+                          type="text"
+                          className="admin-form-input"
+                          style={{ height: '36px', fontSize: '12.5px' }}
+                          placeholder="Attribute (e.g. Form, Fragrance)"
+                          value={spec.key}
+                          onChange={(e) => handleUpdateSpecification(idx, 'key', e.target.value)}
+                        />
+                        <input
+                          type="text"
+                          className="admin-form-input"
+                          style={{ height: '36px', fontSize: '12.5px' }}
+                          placeholder="Detail / Value (e.g. Thick Foaming Action Gel)"
+                          value={spec.value}
+                          onChange={(e) => handleUpdateSpecification(idx, 'value', e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSpecification(idx)}
+                          style={{ background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', padding: '4px' }}
+                          title="Remove Attribute"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 

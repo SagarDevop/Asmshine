@@ -750,6 +750,42 @@
   flex-shrink: 0;
 }
 
+/* Product Highlights & Specifications in Admin Modal */
+.admin-meta-box {
+  background: #F8FAFC;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.admin-meta-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-highlight-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-highlight-check {
+  color: #1C8E8F;
+  flex-shrink: 0;
+}
+
+.admin-spec-row {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
 /* Pagination */
 .admin-pagination {
   padding: 14px 22px;
