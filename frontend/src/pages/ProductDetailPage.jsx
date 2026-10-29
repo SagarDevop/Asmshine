@@ -17,7 +17,9 @@ import {
   Zap,
   Leaf,
   ExternalLink,
-  CreditCard
+  CreditCard,
+  XCircle,
+  AlertCircle
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
@@ -180,18 +182,37 @@ export const ProductDetailPage = ({
     (product && cartData?.items?.some((item) => item.product?.id === product.id))
   );
 
+  const isProductOutOfStock = product?.inStock === false || (product?.stockQuantity !== undefined && product?.stockQuantity <= 0);
+  const isVariantOutOfStock = selectedVariant ? (selectedVariant.inStock === false || (selectedVariant.stockQuantity !== undefined && selectedVariant.stockQuantity <= 0)) : false;
+  const isOutOfStock = isProductOutOfStock || isVariantOutOfStock;
+  const currentStockQuantity = selectedVariant?.stockQuantity !== undefined ? selectedVariant.stockQuantity : (product?.stockQuantity || 0);
+  const isLowStock = !isOutOfStock && currentStockQuantity > 0 && currentStockQuantity <= 5;
+
+  const handleSelectVariant = (v) => {
+    setSelectedVariant(v);
+    setMainImgLoaded(false);
+  };
+
   const handleAddCurrentToCart = async () => {
+    if (isOutOfStock) {
+      showToast('This size / item is currently out of stock');
+      return;
+    }
     if (isInCart) {
       navigate('/cart');
       return;
     }
     setJustAdded(true);
-    await addToCart(product.id, 1);
+    await addToCart(product.id, 1, selectedVariant?.size || '');
   };
 
   const handleBuyNow = async () => {
+    if (isOutOfStock) {
+      showToast('This size / item is currently out of stock');
+      return;
+    }
     try {
-      await addToCart(product.id, 1);
+      await addToCart(product.id, 1, selectedVariant?.size || '');
     } catch (e) {
       // proceed anyway
     }
@@ -353,6 +374,18 @@ export const ProductDetailPage = ({
               )}
             </div>
             <div className="pdp-taxes-note">Inclusive of all taxes • Free Delivery on this order</div>
+
+            {isOutOfStock ? (
+              <div className="pdp-stock-banner out-of-stock">
+                <XCircle size={18} />
+                <span>Out of Stock — Currently Unavailable in Selected Size</span>
+              </div>
+            ) : isLowStock ? (
+              <div className="pdp-stock-banner low-stock">
+                <Zap size={16} fill="currentColor" />
+                <span>Hurry, only {currentStockQuantity} units left in stock!</span>
+              </div>
+            ) : null}
           </div>
         </section>
 
@@ -476,19 +509,25 @@ export const ProductDetailPage = ({
             <div className="pdp-sizes-grid">
               {product.availableSizes.map((v) => {
                 const isSelected = selectedVariant?.size === v.size;
+                const isVarOut = v.inStock === false || (v.stockQuantity !== undefined && v.stockQuantity <= 0);
+
                 return (
                   <button
                     type="button"
                     key={v.size}
-                    className={`pdp-size-chip ${isSelected ? 'active' : ''}`}
-                    onClick={() => setSelectedVariant(v)}
+                    className={`pdp-size-chip ${isSelected ? 'active' : ''} ${isVarOut ? 'out-of-stock' : ''}`}
+                    onClick={() => handleSelectVariant(v)}
                   >
                     <div className="pdp-size-top">
                       <span className="pdp-size-label">{v.size}</span>
-                      {isSelected && <Check size={14} className="pdp-size-check" />}
+                      {isSelected && !isVarOut && <Check size={14} className="pdp-size-check" />}
                     </div>
                     <div className="pdp-size-price">₹{v.price}</div>
-                    <div className="pdp-size-discount">{v.discount}</div>
+                    {isVarOut ? (
+                      <div className="pdp-size-out-tag">Out of Stock</div>
+                    ) : (
+                      <div className="pdp-size-discount">{v.discount}</div>
+                    )}
                   </button>
                 );
               })}
@@ -790,36 +829,74 @@ export const ProductDetailPage = ({
         </section>
       </div>
 
-      {/* 11. Bottom Sticky Action Bar (Flipkart Exact: Added/Go to Cart + Direct Buy Now Checkout) */}
+      {/* 11. Bottom Sticky Action Bar */}
       <div className="pdp-bottom-sticky-bar">
-        <button
-          type="button"
-          className={`pdp-btn-cart ${isInCart ? 'in-cart' : ''}`}
-          onClick={handleAddCurrentToCart}
-          id="pdp-add-to-cart-btn"
-        >
-          {isInCart ? (
-            <>
-              <Check size={18} strokeWidth={2.6} />
-              <span>GO TO CART</span>
-            </>
-          ) : (
-            <>
-              <ShoppingBag size={18} />
-              <span>ADD TO CART</span>
-            </>
-          )}
-        </button>
+        {isOutOfStock ? (
+          <>
+            <button
+              type="button"
+              disabled
+              className="pdp-btn-cart"
+              id="pdp-add-to-cart-btn"
+              style={{
+                background: '#F1F5F9',
+                color: '#94A3B8',
+                cursor: 'not-allowed',
+                border: '1.5px solid #CBD5E1',
+                boxShadow: 'none'
+              }}
+            >
+              <XCircle size={18} color="#EF4444" />
+              <span style={{ color: '#DC2626', fontWeight: 800 }}>OUT OF STOCK</span>
+            </button>
 
-        <button
-          type="button"
-          className="pdp-btn-buy"
-          onClick={handleBuyNow}
-          id="pdp-buy-now-btn"
-        >
-          <Zap size={18} fill="#FFFFFF" />
-          <span>BUY NOW</span>
-        </button>
+            <button
+              type="button"
+              disabled
+              className="pdp-btn-buy"
+              id="pdp-buy-now-btn"
+              style={{
+                background: '#E2E8F0',
+                color: '#64748B',
+                cursor: 'not-allowed',
+                boxShadow: 'none'
+              }}
+            >
+              <span>CURRENTLY UNAVAILABLE</span>
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              className={`pdp-btn-cart ${isInCart ? 'in-cart' : ''}`}
+              onClick={handleAddCurrentToCart}
+              id="pdp-add-to-cart-btn"
+            >
+              {isInCart ? (
+                <>
+                  <Check size={18} strokeWidth={2.6} />
+                  <span>GO TO CART</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag size={18} />
+                  <span>ADD TO CART</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              className="pdp-btn-buy"
+              onClick={handleBuyNow}
+              id="pdp-buy-now-btn"
+            >
+              <Zap size={18} fill="#FFFFFF" />
+              <span>BUY NOW</span>
+            </button>
+          </>
+        )}
       </div>
 
       {/* Dynamic Address Selection Modal */}

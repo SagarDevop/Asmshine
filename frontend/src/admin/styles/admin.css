@@ -699,6 +699,57 @@
   margin-top: 2px;
 }
 
+/* Variants & Pack Sizes Management */
+.admin-variants-box {
+  background: #F8FAFC;
+  border: 1.5px solid var(--admin-border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-variant-row {
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.admin-variant-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-variant-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.admin-variant-image-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-variant-preview-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid #E2E8F0;
+  object-fit: contain;
+  background: #F8FAFC;
+  flex-shrink: 0;
+}
+
 /* Pagination */
 .admin-pagination {
   padding: 14px 22px;

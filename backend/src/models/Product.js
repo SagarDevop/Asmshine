@@ -2,9 +2,12 @@ const mongoose = require('mongoose');
 
 const availableSizeSchema = new mongoose.Schema({
   size: { type: String, required: true },
+  sku: { type: String, trim: true },
   price: { type: Number, required: true },
   originalPrice: { type: Number },
   discount: { type: String },
+  stockQuantity: { type: Number, default: 20, min: 0 },
+  inStock: { type: Boolean, default: true },
   image: { type: String }, // Local path or Cloudinary HTTPS URL
   imageData: {
     url: { type: String },

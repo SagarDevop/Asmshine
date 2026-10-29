@@ -44,6 +44,37 @@ export const AdminProductsPage = () => {
   const [image, setImage] = useState('');
   const [description, setDescription] = useState('');
   const [badge, setBadge] = useState('');
+  const [variants, setVariants] = useState([]);
+
+  const handleAddVariant = () => {
+    setVariants((prev) => [
+      ...prev,
+      {
+        size: '',
+        sku: '',
+        price: price || '99',
+        originalPrice: originalPrice || '135',
+        stockQuantity: '20',
+        image: image || ''
+      }
+    ]);
+  };
+
+  const handleUpdateVariant = (idx, field, value) => {
+    setVariants((prev) => {
+      const copy = [...prev];
+      copy[idx] = { ...copy[idx], [field]: value };
+      return copy;
+    });
+  };
+
+  const handleRemoveVariant = (idx) => {
+    if (variants.length <= 1) {
+      alert('At least one pack size / variant is required.');
+      return;
+    }
+    setVariants((prev) => prev.filter((_, i) => i !== idx));
+  };
 
   const fetchProducts = async (page = 1) => {
     setLoading(true);
@@ -90,6 +121,24 @@ export const AdminProductsPage = () => {
     setImage('/images/products/all_shine_dishwash_gel_500ml.png');
     setDescription('');
     setBadge('');
+    setVariants([
+      {
+        size: '500 ml Bottle',
+        sku: '',
+        price: '',
+        originalPrice: '',
+        stockQuantity: '20',
+        image: '/images/products/all_shine_dishwash_gel_500ml.png'
+      },
+      {
+        size: '1 Liter Power Pack',
+        sku: '',
+        price: '',
+        originalPrice: '',
+        stockQuantity: '20',
+        image: '/images/products/all_shine_dishwash_gel_1l.png'
+      }
+    ]);
     setFormError('');
     setModalOpen(true);
   };
@@ -108,6 +157,31 @@ export const AdminProductsPage = () => {
     setImage(p.image || '');
     setDescription(p.description || '');
     setBadge(p.badge || '');
+
+    if (Array.isArray(p.availableSizes) && p.availableSizes.length > 0) {
+      setVariants(
+        p.availableSizes.map((v, i) => ({
+          size: v.size || '',
+          sku: v.sku || (p.sku ? `${p.sku}-${i + 1}` : ''),
+          price: String(v.price || ''),
+          originalPrice: String(v.originalPrice || ''),
+          stockQuantity: String(v.stockQuantity !== undefined ? v.stockQuantity : p.stockQuantity || '0'),
+          image: v.image || p.image || ''
+        }))
+      );
+    } else {
+      setVariants([
+        {
+          size: p.size || '500ml',
+          sku: p.sku || '',
+          price: String(p.price || ''),
+          originalPrice: String(p.originalPrice || ''),
+          stockQuantity: String(p.stockQuantity || '0'),
+          image: p.image || ''
+        }
+      ]);
+    }
+
     setFormError('');
     setModalOpen(true);
   };
@@ -123,19 +197,38 @@ export const AdminProductsPage = () => {
 
     setFormSubmitting(true);
     try {
+      const cleanStock = parseInt(stockQuantity, 10) || 0;
+      const cleanSku = sku.trim();
+
       const payload = {
         name: name.trim(),
-        sku: sku.trim(),
+        sku: cleanSku,
         category: cat.trim(),
         price: Number(price),
         originalPrice: Number(originalPrice || price),
         costPrice: Number(costPrice) || 0,
-        stockQuantity: parseInt(stockQuantity, 10) || 0,
+        stockQuantity: cleanStock,
         lowStockThreshold: parseInt(lowStockThreshold, 10) || 5,
         size: size.trim(),
         image: image.trim(),
         description: description.trim(),
-        badge: badge.trim()
+        badge: badge.trim(),
+        inStock: cleanStock > 0,
+        availableSizes: variants.map((v, idx) => {
+          const vPrice = Number(v.price || price);
+          const vMRP = Number(v.originalPrice || originalPrice || vPrice);
+          const vStock = parseInt(v.stockQuantity, 10) || 0;
+          return {
+            size: (v.size || `Size ${idx + 1}`).trim(),
+            sku: (v.sku || (cleanSku ? `${cleanSku}-${idx + 1}` : `SKU-${idx + 1}`)).trim(),
+            price: vPrice,
+            originalPrice: vMRP,
+            discount: vMRP > vPrice ? `${Math.round(((vMRP - vPrice) / vMRP) * 100)}% off` : '',
+            stockQuantity: vStock,
+            inStock: vStock > 0,
+            image: (v.image || image).trim()
+          };
+        })
       };
 
       if (editingProduct) {
@@ -298,7 +391,28 @@ export const AdminProductsPage = () => {
                         />
                         <div>
                           <div style={{ fontWeight: 700, color: '#0F172A' }}>{p.name}</div>
-                          <div style={{ fontSize: '11px', color: '#64748B' }}>{p.size || '500ml'}</div>
+                          <div style={{ fontSize: '11px', color: '#64748B', display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '3px' }}>
+                            {p.availableSizes && p.availableSizes.length > 0 ? (
+                              p.availableSizes.map((s, idx) => (
+                                <span
+                                  key={idx}
+                                  style={{
+                                    background: (s.stockQuantity <= 0 || s.inStock === false) ? '#FEF2F2' : '#EFF6FF',
+                                    color: (s.stockQuantity <= 0 || s.inStock === false) ? '#DC2626' : '#1D4ED8',
+                                    padding: '1px 6px',
+                                    borderRadius: '4px',
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    border: `1px solid ${(s.stockQuantity <= 0 || s.inStock === false) ? '#FECACA' : '#BFDBFE'}`
+                                  }}
+                                >
+                                  {s.size}: ₹{s.price} {(s.stockQuantity <= 0 || s.inStock === false) ? '(Out of Stock)' : `(${s.stockQuantity || 0} left)`}
+                                </span>
+                              ))
+                            ) : (
+                              <span>{p.size || '500ml'}</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -322,14 +436,14 @@ export const AdminProductsPage = () => {
                     </td>
                     <td>
                       <div>
-                        <span style={{
-                          fontWeight: 800,
-                          color: (p.stockQuantity || 0) <= 0 ? '#DC2626' : (p.stockQuantity || 0) <= (p.lowStockThreshold || 5) ? '#D97706' : '#059669'
-                        }}>
-                          {p.stockQuantity || 0} units
+                        <span
+                          className={`admin-status-badge ${(p.stockQuantity || 0) <= 0 || p.inStock === false ? 'OUT_OF_STOCK' : (p.stockQuantity || 0) <= (p.lowStockThreshold || 5) ? 'LOW_STOCK' : 'IN_STOCK'}`}
+                          style={{ fontSize: '11px', padding: '2px 8px' }}
+                        >
+                          {(p.stockQuantity || 0) <= 0 || p.inStock === false ? 'OUT OF STOCK' : `${p.stockQuantity} in stock`}
                         </span>
-                        <div style={{ fontSize: '10.5px', color: '#64748B' }}>
-                          Threshold: {p.lowStockThreshold || 5}
+                        <div style={{ fontSize: '10.5px', color: '#64748B', marginTop: '3px' }}>
+                          Alert Threshold: {p.lowStockThreshold || 5}
                         </div>
                       </div>
                     </td>
@@ -557,6 +671,143 @@ export const AdminProductsPage = () => {
                     value={image}
                     onChange={(e) => setImage(e.target.value)}
                   />
+                </div>
+
+                {/* Pack Sizes & Variant Inventory Section */}
+                <div className="admin-variants-box">
+                  <div className="admin-variant-header">
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A' }}>
+                        Pack Sizes & Variants Inventory ({variants.length})
+                      </div>
+                      <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
+                        Each variant has its own pack size, SKU, selling price, separate stock quantity, and unique variant image.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddVariant}
+                      className="admin-btn admin-btn-secondary admin-btn-sm"
+                    >
+                      <Plus size={13} /> Add Variant
+                    </button>
+                  </div>
+
+                  {variants.map((v, idx) => {
+                    const isOut = v.stockQuantity === 0 || v.stockQuantity === '0';
+                    return (
+                      <div key={idx} className="admin-variant-row">
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '12px', fontWeight: 800, color: '#2563EB' }}>
+                              Variant #{idx + 1}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: '10.5px',
+                                fontWeight: 700,
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                background: isOut ? '#FEF2F2' : '#ECFDF5',
+                                color: isOut ? '#DC2626' : '#059669',
+                                border: `1px solid ${isOut ? '#FECACA' : '#A7F3D0'}`
+                              }}
+                            >
+                              {isOut ? 'OUT OF STOCK' : `IN STOCK (${v.stockQuantity || 0} units)`}
+                            </span>
+                          </div>
+                          {variants.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveVariant(idx)}
+                              style={{ background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', padding: '2px' }}
+                              title="Remove Variant"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="admin-variant-grid">
+                          <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                            <label className="admin-form-label" style={{ fontSize: '11px' }}>Pack Size / Volume *</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. 500 ml Bottle, 1 Liter Pack"
+                              value={v.size}
+                              onChange={(e) => handleUpdateVariant(idx, 'size', e.target.value)}
+                              className="admin-form-input"
+                              style={{ height: '36px', fontSize: '12.5px' }}
+                              required
+                            />
+                          </div>
+
+                          <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                            <label className="admin-form-label" style={{ fontSize: '11px' }}>Variant SKU</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. ASM-500"
+                              value={v.sku}
+                              onChange={(e) => handleUpdateVariant(idx, 'sku', e.target.value)}
+                              className="admin-form-input"
+                              style={{ height: '36px', fontSize: '12.5px' }}
+                            />
+                          </div>
+
+                          <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                            <label className="admin-form-label" style={{ fontSize: '11px' }}>Price (₹) *</label>
+                            <input
+                              type="number"
+                              placeholder="189"
+                              value={v.price}
+                              onChange={(e) => handleUpdateVariant(idx, 'price', e.target.value)}
+                              className="admin-form-input"
+                              style={{ height: '36px', fontSize: '12.5px' }}
+                              min="0"
+                              required
+                            />
+                          </div>
+
+                          <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                            <label className="admin-form-label" style={{ fontSize: '11px' }}>Stock Qty *</label>
+                            <input
+                              type="number"
+                              placeholder="20"
+                              value={v.stockQuantity}
+                              onChange={(e) => handleUpdateVariant(idx, 'stockQuantity', e.target.value)}
+                              className="admin-form-input"
+                              style={{ height: '36px', fontSize: '12.5px' }}
+                              min="0"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        {/* Separate Variant Image with Preview Thumbnail */}
+                        <div className="admin-variant-image-row">
+                          <img
+                            src={v.image || '/favicon.svg'}
+                            alt="Variant Preview"
+                            className="admin-variant-preview-thumb"
+                            onError={(e) => { e.target.src = '/favicon.svg'; }}
+                          />
+                          <div style={{ flex: 1 }}>
+                            <label className="admin-form-label" style={{ fontSize: '11px' }}>
+                              Separate Variant Image URL (Displayed when customer selects this size)
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="https://... or /images/products/..."
+                              value={v.image}
+                              onChange={(e) => handleUpdateVariant(idx, 'image', e.target.value)}
+                              className="admin-form-input"
+                              style={{ height: '36px', fontSize: '12px' }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="admin-form-group">

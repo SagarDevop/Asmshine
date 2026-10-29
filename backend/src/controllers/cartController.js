@@ -160,11 +160,24 @@ const addToCart = async (req, res, next) => {
       });
     }
 
-    if (product.inStock === false) {
+    if (product.inStock === false || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) {
       return res.status(400).json({
         success: false,
         message: 'This product is currently out of stock.'
       });
+    }
+
+    // If size/variant is specified, check variant-specific stock
+    if (size && Array.isArray(product.availableSizes)) {
+      const variant = product.availableSizes.find(
+        (v) => v.size && v.size.toLowerCase() === size.trim().toLowerCase()
+      );
+      if (variant && (variant.inStock === false || (variant.stockQuantity !== undefined && variant.stockQuantity <= 0))) {
+        return res.status(400).json({
+          success: false,
+          message: `The '${size}' size for this product is currently out of stock.`
+        });
+      }
     }
 
     let cart = await Cart.findOne({ user: req.user._id });

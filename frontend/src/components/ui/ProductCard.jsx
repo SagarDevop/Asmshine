@@ -14,9 +14,11 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
     }
   };
 
+  const isOutOfStock = product.inStock === false || (product.stockQuantity !== undefined && product.stockQuantity <= 0);
+
   return (
     <article
-      className="product-card clickable"
+      className={`product-card clickable ${isOutOfStock ? 'out-of-stock' : ''}`}
       id={`product-${product.id}`}
       onClick={handleCardClick}
       role="button"
@@ -29,7 +31,12 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
       }}
     >
       {/* Product Image Area with overlays */}
-      <div className="product-media-container img-container-placeholder">
+      <div className="product-media-container img-container-placeholder" style={{ position: 'relative' }}>
+        {isOutOfStock && (
+          <span className="product-stock-overlay-badge">
+            Out of Stock
+          </span>
+        )}
         <img
           src={product.image}
           alt={product.name}

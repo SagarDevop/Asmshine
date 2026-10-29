@@ -6495,3 +6495,66 @@ a {
   }
 }
 
+/* Product Out of Stock Badges & Banners */
+.product-stock-overlay-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(220, 38, 38, 0.92);
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.product-card.out-of-stock .product-img,
+.cat-product-card.out-of-stock .cat-prod-img {
+  opacity: 0.6;
+  filter: grayscale(40%);
+}
+
+.pdp-stock-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.pdp-stock-banner.out-of-stock {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.pdp-stock-banner.low-stock {
+  background: #FFFBEB;
+  color: #D97706;
+  border: 1px solid #FDE68A;
+}
+
+.pdp-size-chip.out-of-stock {
+  opacity: 0.65;
+  border-style: dashed;
+}
+
+.pdp-size-chip.out-of-stock .pdp-size-label {
+  text-decoration: line-through;
+  color: #94A3B8;
+}
+
+.pdp-size-out-tag {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #DC2626;
+  margin-top: 2px;
+}
+

@@ -128,7 +128,8 @@ const createProduct = async (req, res, next) => {
       description = '',
       highlights = [],
       status = 'active',
-      badge = ''
+      badge = '',
+      availableSizes = []
     } = req.body;
 
     if (!name || !category || price === undefined) {
@@ -173,6 +174,38 @@ const createProduct = async (req, res, next) => {
 
     const discountPercent = numMRP > numPrice ? Math.round(((numMRP - numPrice) / numMRP) * 100) : 0;
 
+    let normalizedSizes = [];
+    if (Array.isArray(availableSizes) && availableSizes.length > 0) {
+      normalizedSizes = availableSizes.map((s, idx) => {
+        const sPrice = Number(s.price || numPrice);
+        const sMRP = Number(s.originalPrice || sPrice);
+        const sStock = s.stockQuantity !== undefined ? Math.max(0, parseInt(s.stockQuantity, 10) || 0) : numStock;
+        const sDisc = sMRP > sPrice ? `${Math.round(((sMRP - sPrice) / sMRP) * 100)}% off` : (s.discount || '');
+        return {
+          size: (s.size || `Variant ${idx + 1}`).trim(),
+          sku: (s.sku || `${finalSku}-${idx + 1}`).trim(),
+          price: sPrice,
+          originalPrice: sMRP,
+          discount: sDisc,
+          stockQuantity: sStock,
+          inStock: sStock > 0,
+          image: (s.image || image || '').trim()
+        };
+      });
+    } else {
+      // Default initial variant
+      normalizedSizes = [{
+        size: size || 'Standard Pack',
+        sku: finalSku,
+        price: numPrice,
+        originalPrice: numMRP,
+        discount: discountPercent > 0 ? `${discountPercent}% off` : '',
+        stockQuantity: numStock,
+        inStock: numStock > 0,
+        image: image || '/images/products/all_shine_dishwash_gel_500ml.png'
+      }];
+    }
+
     const newProduct = new Product({
       id: finalId,
       name: name.trim(),
@@ -190,6 +223,7 @@ const createProduct = async (req, res, next) => {
       inStock: numStock > 0,
       image: image || '/images/products/all_shine_dishwash_gel_500ml.png',
       description,
+      availableSizes: normalizedSizes,
       highlights: Array.isArray(highlights) ? highlights : [],
       status,
       badge: badge.trim()
@@ -263,7 +297,9 @@ const updateProduct = async (req, res, next) => {
       highlights,
       status,
       badge,
-      sku
+      sku,
+      inStock,
+      availableSizes
     } = req.body;
 
     if (name) product.name = name.trim();
@@ -335,6 +371,34 @@ const updateProduct = async (req, res, next) => {
 
       product.stockQuantity = targetStock;
       product.inStock = targetStock > 0;
+    }
+
+    if (inStock !== undefined) {
+      product.inStock = Boolean(inStock);
+    }
+
+    if (availableSizes !== undefined && Array.isArray(availableSizes)) {
+      product.availableSizes = availableSizes.map((s, idx) => {
+        const sPrice = Number(s.price || product.price);
+        const sMRP = Number(s.originalPrice || sPrice);
+        const sStock = s.stockQuantity !== undefined ? Math.max(0, parseInt(s.stockQuantity, 10) || 0) : (product.stockQuantity || 0);
+        const sDisc = sMRP > sPrice ? `${Math.round(((sMRP - sPrice) / sMRP) * 100)}% off` : (s.discount || '');
+        return {
+          size: (s.size || `Variant ${idx + 1}`).trim(),
+          sku: (s.sku || `${product.sku || 'SKU'}-${idx + 1}`).trim(),
+          price: sPrice,
+          originalPrice: sMRP,
+          discount: sDisc,
+          stockQuantity: sStock,
+          inStock: sStock > 0,
+          image: (s.image || product.image || '').trim()
+        };
+      });
+    }
+
+    // Auto-sync inStock with stockQuantity if stock is 0
+    if (product.stockQuantity <= 0) {
+      product.inStock = false;
     }
 
     await product.save();

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { Shield, Lock, Mail, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import '../styles/admin.css';
@@ -18,8 +18,7 @@ export const AdminLoginPage = () => {
   const from = location.state?.from?.pathname || '/admin';
 
   if (isAuthenticated) {
-    navigate('/admin', { replace: true });
-    return null;
+    return <Navigate to="/admin" replace />;
   }
 
   const handleSubmit = async (e) => {

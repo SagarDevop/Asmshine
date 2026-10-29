@@ -283,23 +283,31 @@ export const CategoriesPage = ({
             </div>
           ) : (
             <div className="cat-products-grid">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="cat-product-card"
-                  onClick={() => handleSelectProduct(product)}
-                >
-                  <div className="cat-prod-img-wrap img-container-placeholder">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="cat-prod-img"
-                      loading="lazy"
-                    />
-                  </div>
+              {filteredProducts.map((product) => {
+                const isOutOfStock = product.inStock === false || (product.stockQuantity !== undefined && product.stockQuantity <= 0);
 
-                  <div className="cat-prod-details">
-                    <h3 className="cat-prod-name">{product.name}</h3>
+                return (
+                  <div
+                    key={product.id}
+                    className={`cat-product-card ${isOutOfStock ? 'out-of-stock' : ''}`}
+                    onClick={() => handleSelectProduct(product)}
+                  >
+                    <div className="cat-prod-img-wrap img-container-placeholder" style={{ position: 'relative' }}>
+                      {isOutOfStock && (
+                        <span className="product-stock-overlay-badge">
+                          Out of Stock
+                        </span>
+                      )}
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="cat-prod-img"
+                        loading="lazy"
+                      />
+                    </div>
+
+                    <div className="cat-prod-details">
+                      <h3 className="cat-prod-name">{product.name}</h3>
 
                     {/* Rating Pill */}
                     <div className="cat-prod-rating-pill">
@@ -322,7 +330,8 @@ export const CategoriesPage = ({
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
           )}
         </main>
