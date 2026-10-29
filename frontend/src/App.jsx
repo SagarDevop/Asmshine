@@ -19,6 +19,16 @@ import './styles/global.css';
 import './styles/responsive.css';
 import './styles/skeleton.css';
 import './styles/auth.css';
+import { AdminAuthProvider } from './admin/context/AdminAuthContext';
+import { AdminLayout } from './admin/components/AdminLayout';
+import { AdminLoginPage } from './admin/pages/AdminLoginPage';
+import { AdminDashboardPage } from './admin/pages/AdminDashboardPage';
+import { AdminOrdersPage } from './admin/pages/AdminOrdersPage';
+import { AdminProductsPage } from './admin/pages/AdminProductsPage';
+import { AdminInventoryPage } from './admin/pages/AdminInventoryPage';
+import { AdminCustomersPage } from './admin/pages/AdminCustomersPage';
+import { AdminCouponsPage } from './admin/pages/AdminCouponsPage';
+import { AdminSettingsPage } from './admin/pages/AdminSettingsPage';
 
 /**
  * HashRedirectHandler:
@@ -187,6 +197,7 @@ function AccountRoute() {
   );
 }
 
+
 const DEFAULT_GOOGLE_CLIENT_ID = '544546980474-8pgk6kkellbbtmec3iun2p0v5kis143e.apps.googleusercontent.com';
 const googleClientId =
   (import.meta.env.VITE_GOOGLE_CLIENT_ID && import.meta.env.VITE_GOOGLE_CLIENT_ID.trim() !== '' && !import.meta.env.VITE_GOOGLE_CLIENT_ID.includes('your_google_client_id_here'))
@@ -197,29 +208,44 @@ export function App() {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AuthProvider>
-          <CartWishlistProvider>
-            <HashRedirectHandler />
-            <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/categories" element={<CategoriesRoute />} />
-              <Route path="/categories/:categoryId" element={<CategoriesRoute />} />
-              <Route path="/about" element={<AboutRoute />} />
-              <Route path="/cart" element={<CartRoute />} />
-              <Route path="/product/:id" element={<ProductDetailRoute />} />
-              <Route path="/checkout" element={<CheckoutRoute />} />
-              {/* Authentication & Profile Routes */}
-              <Route path="/login" element={<LoginRoute />} />
-              <Route path="/signup" element={<SignupRoute />} />
-              <Route path="/account" element={<AccountRoute />} />
-              <Route path="/profile" element={<Navigate to="/account" replace />} />
-              {/* Wildcard redirect to home */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-            <GlobalToast />
-          </CartWishlistProvider>
-        </AuthProvider>
+        <AdminAuthProvider>
+          <AuthProvider>
+            <CartWishlistProvider>
+              <HashRedirectHandler />
+              <ScrollToTop />
+              <Routes>
+                {/* Dedicated Secure Admin Subsystem */}
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboardPage />} />
+                  <Route path="orders" element={<AdminOrdersPage />} />
+                  <Route path="products" element={<AdminProductsPage />} />
+                  <Route path="inventory" element={<AdminInventoryPage />} />
+                  <Route path="customers" element={<AdminCustomersPage />} />
+                  <Route path="coupons" element={<AdminCouponsPage />} />
+                  <Route path="settings" element={<AdminSettingsPage />} />
+                </Route>
+
+                {/* Customer Storefront Routes */}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/categories" element={<CategoriesRoute />} />
+                <Route path="/categories/:categoryId" element={<CategoriesRoute />} />
+                <Route path="/about" element={<AboutRoute />} />
+                <Route path="/cart" element={<CartRoute />} />
+                <Route path="/product/:id" element={<ProductDetailRoute />} />
+                <Route path="/checkout" element={<CheckoutRoute />} />
+                {/* Authentication & Profile Routes */}
+                <Route path="/login" element={<LoginRoute />} />
+                <Route path="/signup" element={<SignupRoute />} />
+                <Route path="/account" element={<AccountRoute />} />
+                <Route path="/profile" element={<Navigate to="/account" replace />} />
+                {/* Wildcard redirect to home */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+              <GlobalToast />
+            </CartWishlistProvider>
+          </AuthProvider>
+        </AdminAuthProvider>
       </BrowserRouter>
     </GoogleOAuthProvider>
   );

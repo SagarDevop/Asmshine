@@ -56,7 +56,17 @@ const userSchema = new mongoose.Schema(
         isDefault: { type: Boolean, default: false }
       }
     ],
-    wishlist: [{ type: String, trim: true }]
+    wishlist: [{ type: String, trim: true }],
+    role: {
+      type: String,
+      enum: ['superadmin', 'admin', 'order_manager', 'inventory_manager', 'customer'],
+      default: 'customer',
+      index: true
+    },
+    isActive: {
+      type: Boolean,
+      default: true
+    }
   },
   {
     timestamps: true
@@ -98,6 +108,8 @@ userSchema.methods.toSafeObject = function () {
     phone: this.phone || '',
     avatar: this.avatar || '',
     provider: this.provider,
+    role: this.role || 'customer',
+    isActive: this.isActive !== false,
     addresses: this.addresses || [],
     wishlist: this.wishlist || [],
     createdAt: this.createdAt

@@ -156,8 +156,9 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'],
-      default: 'CONFIRMED'
+      enum: ['PENDING_CONFIRMATION', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'RETURNED'],
+      default: 'CONFIRMED',
+      index: true
     },
     paymentMethod: {
       type: String,
@@ -166,13 +167,39 @@ const orderSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
-      enum: ['pending', 'completed', 'failed'],
+      enum: ['pending', 'completed', 'failed', 'refunded'],
       default: 'pending'
     },
     coupon: {
       code: { type: String, default: '' },
       discountAmount: { type: Number, default: 0 }
-    }
+    },
+    shippingDetails: {
+      carrier: { type: String, default: '' },
+      trackingNumber: { type: String, default: '' },
+      trackingUrl: { type: String, default: '' },
+      shippedAt: { type: Date },
+      deliveredAt: { type: Date }
+    },
+    cancellation: {
+      cancelledAt: { type: Date },
+      reason: { type: String, default: '' },
+      cancelledBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      stockRestored: { type: Boolean, default: false }
+    },
+    internalNotes: {
+      type: String,
+      default: ''
+    },
+    timeline: [
+      {
+        status: { type: String, required: true },
+        title: { type: String, required: true },
+        note: { type: String, default: '' },
+        timestamp: { type: Date, default: Date.now },
+        updatedBy: { type: String, default: 'System' }
+      }
+    ]
   },
   {
     timestamps: true

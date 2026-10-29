@@ -8,6 +8,10 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "seed": "node src/scripts/seed.js",
+    "admin:create": "node src/scripts/createAdmin.js",
+    "test:inventory": "node src/tests/inventoryOrderTest.js",
+    "test:auth": "node src/tests/authRoleTest.js",
+    "test": "node src/tests/inventoryOrderTest.js && node src/tests/authRoleTest.js",
     "migrate:images": "node src/scripts/migrateImagesToCloudinary.js"
   },
   "dependencies": {

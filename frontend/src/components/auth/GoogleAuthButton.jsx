@@ -93,7 +93,7 @@ export const GoogleAuthButton = ({ onSuccess, onError, disabled = false }) => {
         shape="rectangular"
         theme="outline"
         size="large"
-        width="380"
+        width="320"
         text="continue_with"
       />
     </div>

@@ -53,6 +53,12 @@ const productSchema = new mongoose.Schema({
   imageData: imageMetaSchema,               // Full Cloudinary metadata
   gallery: [imageMetaSchema],               // Optional gallery images
   badge: { type: String }, // 'BEST SELLER', 'TRENDING', 'HOT', etc.
+  sku: { type: String, unique: true, sparse: true, trim: true },
+  stockQuantity: { type: Number, default: 20, min: 0 },
+  reservedQuantity: { type: Number, default: 0, min: 0 },
+  lowStockThreshold: { type: Number, default: 5, min: 0 },
+  costPrice: { type: Number, default: 0 },
+  status: { type: String, enum: ['active', 'inactive', 'archived'], default: 'active', index: true },
   inStock: { type: Boolean, default: true },
   assured: { type: Boolean, default: true },
   companionId: { type: String },
@@ -65,7 +71,14 @@ const productSchema = new mongoose.Schema({
   reviews: [reviewSchema]
 }, {
   timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
   strict: false
+});
+
+// Virtual for available stock (onHand - reserved)
+productSchema.virtual('availableStock').get(function () {
+  return Math.max(0, (this.stockQuantity || 0) - (this.reservedQuantity || 0));
 });
 
 module.exports = mongoose.model('Product', productSchema);

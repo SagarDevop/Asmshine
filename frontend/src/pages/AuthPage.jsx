@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, AlertCircle, ArrowLeft, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, ArrowLeft, ShieldCheck, Sparkles, CheckCircle2, Mail, Lock, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GoogleAuthButton } from '../components/auth/GoogleAuthButton';
@@ -218,131 +218,103 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   };
 
   return (
-    <div className="auth-page-wrapper">
-      <div className="fk-auth-card">
-        {/* 1. Flipkart-Style Left Brand Banner */}
-        <div className="fk-auth-left-banner">
-          <div>
-            <div className="fk-auth-banner-brand">
-              <img src="/favicon.svg" alt="ASM SHINE Logo" className="fk-auth-banner-logo" />
-              <div>
-                <span style={{ fontSize: '18px', fontWeight: 900, letterSpacing: '0.5px' }}>
-                  ASM SHINE
-                </span>
-                <span style={{ display: 'block', fontSize: '10px', color: '#BAE6FD', fontWeight: 700 }}>
-                  HYGIENE &amp; CLEANING
-                </span>
-              </div>
-            </div>
+    <div className="minimal-auth-page">
+      <div className="minimal-auth-glow-top" />
 
-            <h2 className="fk-auth-banner-title">
-              {activeTab === 'login' ? 'Login' : "Looks like you're new here!"}
-            </h2>
-            <p className="fk-auth-banner-desc">
-              {activeTab === 'login'
-                ? 'Get access to your Orders, Wishlist and Clean Home Hygiene Rituals.'
-                : 'Sign up with your email to start shopping for authentic home hygiene essentials.'}
-            </p>
-          </div>
-
-          <div className="fk-auth-banner-art">
-            <div className="fk-auth-trust-pill">
-              <ShieldCheck size={14} color="#67E8F9" />
-              <span>100% Authentic Formulations</span>
-            </div>
-            <div className="fk-auth-trust-pill">
-              <Sparkles size={14} color="#FDE047" />
-              <span>Clean Home Rewards Circle</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 2. Right Form Container */}
-        <div className="fk-auth-right-panel">
-          {/* Back Link */}
+      <div className="minimal-auth-container">
+        {/* Top Navigation */}
+        <div className="minimal-auth-top-nav">
           <button
             type="button"
             onClick={() => navigate('/')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#64748B',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '12px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              marginBottom: '16px',
-              padding: 0
-            }}
+            className="minimal-auth-back-btn"
             aria-label="Back to store"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={15} />
             <span>Back to Store</span>
           </button>
+          <div className="minimal-auth-brand-pill">
+            <Sparkles size={13} />
+            <span>Pure Home Hygiene</span>
+          </div>
+        </div>
 
-          {/* Mode Switch Tabs */}
-          <div className="fk-auth-tabs">
-            <button
-              type="button"
-              className={`fk-auth-tab-btn ${activeTab === 'login' ? 'active' : ''}`}
-              onClick={() => handleTabChange('login')}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              className={`fk-auth-tab-btn ${activeTab === 'signup' ? 'active' : ''}`}
-              onClick={() => handleTabChange('signup')}
-            >
-              Create Account
-            </button>
+        {/* Floating Card */}
+        <div className="minimal-auth-card">
+          {/* Header */}
+          <div className="minimal-auth-header">
+            <div className="minimal-auth-logo-badge">
+              <img src="/favicon.svg" alt="ASM Shine" className="minimal-auth-logo-img" />
+            </div>
+            <h1 className="minimal-auth-title">
+              {activeTab === 'login'
+                ? 'Welcome back'
+                : signupStep === 'OTP'
+                ? 'Verify your email'
+                : 'Create an account'}
+            </h1>
+            <p className="minimal-auth-subtitle">
+              {activeTab === 'login'
+                ? 'Sign in to access your orders, wishlist, and rewards.'
+                : signupStep === 'OTP'
+                ? `Enter the 6-digit verification code sent to ${email}`
+                : 'Enter your details to get started with ASM Shine.'}
+            </p>
           </div>
 
-          {/* Server Error Alert */}
+          {/* Mode Switch Tabs (Hidden on OTP screen) */}
+          {signupStep !== 'OTP' && (
+            <div className="minimal-auth-tabs">
+              <button
+                type="button"
+                className={`minimal-auth-tab ${activeTab === 'login' ? 'active' : ''}`}
+                onClick={() => handleTabChange('login')}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                className={`minimal-auth-tab ${activeTab === 'signup' ? 'active' : ''}`}
+                onClick={() => handleTabChange('signup')}
+              >
+                Create Account
+              </button>
+            </div>
+          )}
+
+          {/* Error Message */}
           {errorMessage && (
-            <div className="auth-alert-error" role="alert">
-              <AlertCircle size={18} style={{ flexShrink: 0 }} />
+            <div className="minimal-auth-alert error" role="alert">
+              <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {/* Success Notice */}
           {successNotice && (
-            <div
-              className="auth-alert-notice"
-              style={{
-                backgroundColor: '#ECFDF5',
-                borderColor: '#A7F3D0',
-                color: '#065F46',
-                marginBottom: '14px'
-              }}
-              role="status"
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CheckCircle2 size={16} color="#059669" />
-                <span>{successNotice}</span>
-              </div>
+            <div className="minimal-auth-alert success" role="status">
+              <CheckCircle2 size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+              <span>{successNotice}</span>
             </div>
           )}
 
-          {/* ========================================================= */}
-          {/* VIEW A: LOGIN                                             */}
-          {/* ========================================================= */}
+          {/* VIEW A: LOGIN */}
           {activeTab === 'login' && (
             <div>
-              <form onSubmit={handleLoginSubmit} className="auth-form" noValidate>
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="auth-login-email">
+              <form onSubmit={handleLoginSubmit} className="minimal-form" noValidate>
+                <div className="minimal-field">
+                  <label className="minimal-label" htmlFor="auth-login-email">
                     Email Address
                   </label>
-                  <div className="auth-input-wrapper">
+                  <div className="minimal-input-wrap">
+                    <span className="minimal-input-icon">
+                      <Mail size={16} />
+                    </span>
                     <input
                       id="auth-login-email"
                       type="email"
-                      className="auth-input"
-                      placeholder="Enter Email Address"
+                      className="minimal-input"
+                      placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       autoComplete="email"
@@ -352,16 +324,19 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                   </div>
                 </div>
 
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="auth-login-password">
+                <div className="minimal-field">
+                  <label className="minimal-label" htmlFor="auth-login-password">
                     Password
                   </label>
-                  <div className="auth-input-wrapper">
+                  <div className="minimal-input-wrap">
+                    <span className="minimal-input-icon">
+                      <Lock size={16} />
+                    </span>
                     <input
                       id="auth-login-password"
                       type={showPassword ? 'text' : 'password'}
-                      className="auth-input has-toggle"
-                      placeholder="Enter Password"
+                      className="minimal-input has-toggle"
+                      placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       autoComplete="current-password"
@@ -370,19 +345,19 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                     />
                     <button
                       type="button"
-                      className="auth-password-toggle"
+                      className="minimal-toggle-btn"
                       onClick={() => setShowPassword((prev) => !prev)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                       tabIndex={-1}
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="auth-submit-btn"
+                  className="minimal-submit-btn"
                   disabled={submitting}
                   id="login-submit-button"
                 >
@@ -390,7 +365,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                 </button>
               </form>
 
-              <div className="auth-divider">
+              <div className="minimal-divider">
                 <span>or continue with</span>
               </div>
 
@@ -399,32 +374,25 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                 onError={handleGoogleError}
                 disabled={submitting}
               />
-
-              <p style={{ fontSize: '11.5px', color: '#64748B', textAlign: 'center', marginTop: '18px' }}>
-                By continuing, you agree to ASM Shine's{' '}
-                <span style={{ color: '#2874F0', cursor: 'pointer' }} onClick={() => navigate('/about')}>
-                  Terms of Use
-                </span>{' '}
-                and Privacy Policy.
-              </p>
             </div>
           )}
 
-          {/* ========================================================= */}
-          {/* VIEW B: SIGNUP (Two-Step Email & OTP Verification Flow)  */}
-          {/* ========================================================= */}
+          {/* VIEW B: SIGNUP (Form Step 1) */}
           {activeTab === 'signup' && signupStep === 'FORM' && (
             <div>
-              <form onSubmit={handleSendOtpSubmit} className="auth-form" noValidate>
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="auth-signup-name">
+              <form onSubmit={handleSendOtpSubmit} className="minimal-form" noValidate>
+                <div className="minimal-field">
+                  <label className="minimal-label" htmlFor="auth-signup-name">
                     Full Name
                   </label>
-                  <div className="auth-input-wrapper">
+                  <div className="minimal-input-wrap">
+                    <span className="minimal-input-icon">
+                      <User size={16} />
+                    </span>
                     <input
                       id="auth-signup-name"
                       type="text"
-                      className="auth-input"
+                      className="minimal-input"
                       placeholder="e.g. Priya Sharma"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -435,15 +403,18 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                   </div>
                 </div>
 
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="auth-signup-email">
+                <div className="minimal-field">
+                  <label className="minimal-label" htmlFor="auth-signup-email">
                     Email Address
                   </label>
-                  <div className="auth-input-wrapper">
+                  <div className="minimal-input-wrap">
+                    <span className="minimal-input-icon">
+                      <Mail size={16} />
+                    </span>
                     <input
                       id="auth-signup-email"
                       type="email"
-                      className="auth-input"
+                      className="minimal-input"
                       placeholder="name@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -454,15 +425,18 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                   </div>
                 </div>
 
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="auth-signup-password">
+                <div className="minimal-field">
+                  <label className="minimal-label" htmlFor="auth-signup-password">
                     Set Password
                   </label>
-                  <div className="auth-input-wrapper">
+                  <div className="minimal-input-wrap">
+                    <span className="minimal-input-icon">
+                      <Lock size={16} />
+                    </span>
                     <input
                       id="auth-signup-password"
                       type={showPassword ? 'text' : 'password'}
-                      className="auth-input has-toggle"
+                      className="minimal-input has-toggle"
                       placeholder="At least 6 characters"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -472,26 +446,29 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                     />
                     <button
                       type="button"
-                      className="auth-password-toggle"
+                      className="minimal-toggle-btn"
                       onClick={() => setShowPassword((prev) => !prev)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                       tabIndex={-1}
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
                 </div>
 
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="auth-signup-confirm">
+                <div className="minimal-field">
+                  <label className="minimal-label" htmlFor="auth-signup-confirm">
                     Confirm Password
                   </label>
-                  <div className="auth-input-wrapper">
+                  <div className="minimal-input-wrap">
+                    <span className="minimal-input-icon">
+                      <Lock size={16} />
+                    </span>
                     <input
                       id="auth-signup-confirm"
                       type={showPassword ? 'text' : 'password'}
-                      className="auth-input has-toggle"
-                      placeholder="Re-enter password"
+                      className="minimal-input has-toggle"
+                      placeholder="Re-enter your password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       autoComplete="new-password"
@@ -503,99 +480,78 @@ export const AuthPage = ({ initialTab = 'login' }) => {
 
                 <button
                   type="submit"
-                  className="auth-submit-btn"
+                  className="minimal-submit-btn"
                   disabled={submitting}
                   id="signup-send-otp-button"
                 >
                   {submitting ? 'Sending Verification Code...' : 'Send Verification Code'}
                 </button>
-
-                <div className="auth-divider">
-                  <span>or register with</span>
-                </div>
-
-                <GoogleAuthButton
-                  onSuccess={handleGoogleSuccess}
-                  onError={handleGoogleError}
-                  disabled={submitting}
-                />
-
-                <p style={{ fontSize: '11.5px', color: '#64748B', textAlign: 'center', marginTop: '18px' }}>
-                  By creating an account, you agree to ASM Shine's{' '}
-                  <span style={{ color: '#2874F0', cursor: 'pointer' }} onClick={() => navigate('/about')}>
-                    Terms of Use
-                  </span>{' '}
-                  and Privacy Policy.
-                </p>
               </form>
+
+              <div className="minimal-divider">
+                <span>or register with</span>
+              </div>
+
+              <GoogleAuthButton
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                disabled={submitting}
+              />
             </div>
           )}
 
-          {/* ========================================================= */}
-          {/* VIEW C: SIGNUP STEP 2 (OTP Input & Verification)          */}
-          {/* ========================================================= */}
+          {/* VIEW C: SIGNUP (OTP Step 2) */}
           {activeTab === 'signup' && signupStep === 'OTP' && (
-            <div className="otp-verification-panel">
-              <div style={{ marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '17px', fontWeight: 800, color: '#0F172A', marginBottom: '4px' }}>
-                  Enter Verification Code
-                </h3>
-                <p style={{ fontSize: '13px', color: '#64748B', lineHeight: '1.4' }}>
-                  We sent a 6-digit verification code to <strong style={{ color: '#0F172A' }}>{email}</strong>
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSignupStep('FORM');
-                    setOtp('');
-                    setErrorMessage('');
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#2874F0',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    padding: '4px 0',
-                    textDecoration: 'underline'
-                  }}
-                >
-                  Change Email Address
-                </button>
+            <div className="minimal-otp-panel">
+              <div className="minimal-otp-card-header">
+                <div className="minimal-otp-badge">
+                  <Mail size={22} />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
+                  <span style={{ fontSize: '13px', color: '#0F172A', fontWeight: 600 }}>{email}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSignupStep('FORM');
+                      setOtp('');
+                      setErrorMessage('');
+                    }}
+                    className="minimal-otp-edit-email"
+                  >
+                    Change
+                  </button>
+                </div>
               </div>
 
-              <form onSubmit={handleVerifyOtpSubmit} className="auth-form" noValidate>
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="auth-otp-input">
-                    6-Digit Verification Code
+              <form onSubmit={handleVerifyOtpSubmit} className="minimal-form" noValidate>
+                <div className="minimal-field">
+                  <label className="minimal-label" htmlFor="auth-otp-input" style={{ textAlign: 'center' }}>
+                    Enter 6-Digit Code
                   </label>
-                  <div className="auth-input-wrapper">
-                    <input
-                      id="auth-otp-input"
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      maxLength={6}
-                      className="auth-input otp-input-field"
-                      placeholder="••••••"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      autoFocus
-                      required
-                      disabled={submitting}
-                    />
-                  </div>
+                  <input
+                    id="auth-otp-input"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    className="minimal-otp-input"
+                    placeholder="••••••"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    autoFocus
+                    required
+                    disabled={submitting}
+                  />
                 </div>
 
-                <div className="otp-resend-row" style={{ marginTop: '8px', marginBottom: '18px' }}>
+                <div className="minimal-otp-row">
                   <span>Didn't receive code?</span>
                   {cooldown > 0 ? (
                     <span style={{ color: '#94A3B8', fontWeight: 600 }}>Resend in {cooldown}s</span>
                   ) : (
                     <button
                       type="button"
-                      className="otp-resend-btn"
+                      className="minimal-otp-resend"
                       onClick={handleResendOtp}
                       disabled={submitting}
                     >
@@ -606,7 +562,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
 
                 <button
                   type="submit"
-                  className="auth-submit-btn"
+                  className="minimal-submit-btn"
                   disabled={submitting || otp.trim().length !== 6}
                   id="signup-verify-otp-button"
                 >
@@ -615,6 +571,24 @@ export const AuthPage = ({ initialTab = 'login' }) => {
               </form>
             </div>
           )}
+
+          {/* Footer & Trust Badges */}
+          <div className="minimal-auth-footer">
+            <div className="minimal-auth-trust">
+              <ShieldCheck size={14} color="#059669" />
+              <span>256-Bit SSL Secured • 100% Authentic Home Hygiene</span>
+            </div>
+            <p className="minimal-auth-terms">
+              By continuing, you agree to ASM Shine's{' '}
+              <button type="button" onClick={() => navigate('/about')} className="minimal-link">
+                Terms of Use
+              </button>{' '}
+              &amp;{' '}
+              <button type="button" onClick={() => navigate('/about')} className="minimal-link">
+                Privacy Policy
+              </button>.
+            </p>
+          </div>
         </div>
       </div>
     </div>

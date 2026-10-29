@@ -55,14 +55,53 @@ const seedDatabase = async () => {
       console.log('[Seed] Default user already exists: user@asmshine.com');
     }
 
-    // 4. Verification Query
+    // 4. Seed Default Coupons
+    const Coupon = require('../models/Coupon');
+    const initialCoupons = [
+      {
+        code: 'POWER20',
+        description: '20% off on all home hygiene essentials',
+        discountType: 'percentage',
+        discountValue: 20,
+        minOrderValue: 299,
+        maxDiscountAmount: 300,
+        isActive: true
+      },
+      {
+        code: 'SHINE25',
+        description: '25% mega festive discount',
+        discountType: 'percentage',
+        discountValue: 25,
+        minOrderValue: 499,
+        maxDiscountAmount: 500,
+        isActive: true
+      }
+    ];
+
+    for (const c of initialCoupons) {
+      await Coupon.findOneAndUpdate(
+        { code: c.code },
+        { $set: c },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+    }
+    console.log('[Seed] Default coupons seeded: POWER20, SHINE25');
+
+    // 5. Seed Store Settings
+    const StoreSettings = require('../models/StoreSettings');
+    await StoreSettings.getSettings();
+    console.log('[Seed] Store settings verified.');
+
+    // 6. Verification Query
     const totalCategories = await Category.countDocuments();
     const totalProducts = await Product.countDocuments();
     const totalUsers = await User.countDocuments();
+    const totalCoupons = await Coupon.countDocuments();
     console.log(`[Seed Verification] MongoDB Collections:`);
     console.log(`  - Total Categories in DB: ${totalCategories}`);
     console.log(`  - Total Products in DB:   ${totalProducts}`);
     console.log(`  - Total Users in DB:      ${totalUsers}`);
+    console.log(`  - Total Coupons in DB:    ${totalCoupons}`);
 
     await mongoose.disconnect();
     console.log('[Seed] Database migration completed. Disconnected cleanly.');

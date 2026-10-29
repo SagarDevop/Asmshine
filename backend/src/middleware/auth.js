@@ -108,8 +108,50 @@ const optionalAuth = async (req, res, next) => {
   }
 };
 
+/**
+ * Role-Based Authorization Middleware:
+ * Restricts access to users having one of the specified roles.
+ * Superadmin always bypasses role restrictions.
+ */
+const authorize = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required.'
+      });
+    }
+
+    if (req.user.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been deactivated. Please contact an administrator.'
+      });
+    }
+
+    const userRole = req.user.role || 'customer';
+
+    // Superadmin has universal permissions
+    if (userRole === 'superadmin') {
+      return next();
+    }
+
+    if (!allowedRoles.includes(userRole)) {
+      return res.status(403).json({
+        success: false,
+        message: `Access denied. Requires one of [${allowedRoles.join(', ')}] role.`
+      });
+    }
+
+    next();
+  };
+};
+
 authenticate.authenticate = authenticate;
 authenticate.optionalAuth = optionalAuth;
+authenticate.authorize = authorize;
 
 module.exports = authenticate;
 module.exports.optionalAuth = optionalAuth;
+module.exports.authorize = authorize;
+

@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Cart = require('../models/Cart');
+const Coupon = require('../models/Coupon');
+const inventoryService = require('../services/inventoryService');
 
 /**
  * POST /api/v1/orders
@@ -125,9 +127,22 @@ const createOrder = async (req, res, next) => {
     // 5. Calculate coupon discount
     let couponDiscount = 0;
     const cleanCoupon = (couponCode || '').trim().toUpperCase();
-    if (cleanCoupon === 'POWER20' || cleanCoupon === 'SHINE25') {
-      const percent = cleanCoupon === 'POWER20' ? 0.20 : 0.25;
-      couponDiscount = Math.round(itemsSubtotal * percent);
+    if (cleanCoupon) {
+      try {
+        const dbCoupon = await Coupon.findOne({ code: cleanCoupon, isActive: true });
+        if (dbCoupon) {
+          const check = dbCoupon.isValidForOrder(itemsSubtotal);
+          if (check.valid) {
+            couponDiscount = dbCoupon.calculateDiscount(itemsSubtotal);
+            await Coupon.findByIdAndUpdate(dbCoupon._id, { $inc: { usedCount: 1 } });
+          }
+        } else if (cleanCoupon === 'POWER20' || cleanCoupon === 'SHINE25') {
+          const percent = cleanCoupon === 'POWER20' ? 0.20 : 0.25;
+          couponDiscount = Math.round(itemsSubtotal * percent);
+        }
+      } catch (couponErr) {
+        console.warn('[Order] Coupon validation error:', couponErr.message);
+      }
     }
 
     // 6. Calculate payment method discount (5% instant discount on UPI prepaid)
@@ -145,7 +160,10 @@ const createOrder = async (req, res, next) => {
     const randPart = Math.floor(100000 + Math.random() * 900000);
     const orderId = `ASM-${dateStr}-${randPart}`;
 
-    // 8. Create and save Order in MongoDB
+    // 8. Atomically deduct inventory before committing order (concurrency protected)
+    await inventoryService.deductOrderStock(verifiedItems, orderId, req.user);
+
+    // 9. Create and save Order in MongoDB
     const newOrder = new Order({
       orderId,
       user: req.user._id,
@@ -175,7 +193,16 @@ const createOrder = async (req, res, next) => {
       coupon: {
         code: cleanCoupon,
         discountAmount: couponDiscount
-      }
+      },
+      timeline: [
+        {
+          status: 'CONFIRMED',
+          title: 'Order Placed',
+          note: `Order placed via ${chosenPayment.toUpperCase()}`,
+          timestamp: new Date(),
+          updatedBy: req.user.name || 'Customer'
+        }
+      ]
     });
 
     await newOrder.save();
@@ -284,8 +311,67 @@ const getOrderById = async (req, res, next) => {
         status: order.status,
         paymentMethod: order.paymentMethod,
         paymentStatus: order.paymentStatus,
-        createdAt: order.createdAt
+        createdAt: order.createdAt,
+        timeline: order.timeline || []
       }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * POST /api/v1/orders/:id/cancel
+ * Allows authenticated customers to cancel eligible orders (CONFIRMED/PENDING_CONFIRMATION)
+ * and safely restores inventory.
+ */
+const cancelCustomerOrder = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { reason = 'Cancelled by customer' } = req.body;
+
+    const isObjectId = mongoose.isValidObjectId(id);
+    const order = await Order.findOne({
+      $or: [{ orderId: id }, { _id: isObjectId ? id : null }],
+      user: req.user._id
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    if (!['PENDING_CONFIRMATION', 'CONFIRMED'].includes(order.status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Order cannot be cancelled in '${order.status}' status. Please contact support.`
+      });
+    }
+
+    order.status = 'CANCELLED';
+    order.cancellation = {
+      cancelledAt: new Date(),
+      reason: reason.trim(),
+      cancelledBy: req.user._id,
+      stockRestored: true
+    };
+    if (!order.timeline) order.timeline = [];
+    order.timeline.push({
+      status: 'CANCELLED',
+      title: 'Order Cancelled',
+      note: reason.trim(),
+      timestamp: new Date(),
+      updatedBy: req.user.name || 'Customer'
+    });
+
+    await order.save();
+
+    // Safely restore stock (idempotent)
+    await inventoryService.restoreOrderStock(order, reason.trim(), req.user);
+
+    res.status(200).json({
+      success: true,
+      message: 'Order cancelled successfully and inventory restored.',
+      order
     });
   } catch (err) {
     next(err);
@@ -295,5 +381,7 @@ const getOrderById = async (req, res, next) => {
 module.exports = {
   createOrder,
   getOrders,
-  getOrderById
+  getOrderById,
+  cancelCustomerOrder
 };
+

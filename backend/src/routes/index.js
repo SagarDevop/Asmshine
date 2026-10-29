@@ -6,6 +6,7 @@ const bannerRoutes = require('./bannerRoutes');
 const cartRoutes = require('./cartRoutes');
 const orderRoutes = require('./orderRoutes');
 const authRoutes = require('./authRoutes');
+const adminRoutes = require('./adminRoutes');
 const { getDbStatus } = require('../config/db');
 
 // Health Check endpoint
@@ -21,6 +22,7 @@ router.get('/health', (req, res) => {
 
 // Resources
 router.use('/auth', authRoutes);
+router.use('/admin', adminRoutes);
 router.use('/products', productRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/banners', bannerRoutes);
