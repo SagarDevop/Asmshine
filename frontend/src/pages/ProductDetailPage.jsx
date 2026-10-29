@@ -124,7 +124,11 @@ export const ProductDetailPage = ({
   // Load combo details and similar products whenever product changes
   useEffect(() => {
     if (!product) return;
-    setSelectedVariant(product.availableSizes?.[1] || product.availableSizes?.[0] || null);
+    setSelectedVariant(
+      Array.isArray(product.availableSizes) && product.availableSizes.length > 0
+        ? product.availableSizes[0]
+        : null
+    );
 
     const loadExtra = async () => {
       const [comboData, similarData] = await Promise.all([
@@ -378,7 +382,7 @@ export const ProductDetailPage = ({
             {isOutOfStock ? (
               <div className="pdp-stock-banner out-of-stock">
                 <XCircle size={18} />
-                <span>Out of Stock — Currently Unavailable in Selected Size</span>
+                <span>Out of Stock — Currently Unavailable{selectedVariant ? ' in Selected Size' : ''}</span>
               </div>
             ) : isLowStock ? (
               <div className="pdp-stock-banner low-stock">

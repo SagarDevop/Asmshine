@@ -23,60 +23,7 @@ const initialProducts = [
     "comboDiscount": 59,
     "comboSavingsPercent": 20,
     "description": "Specialized high-viscosity blue clinging formula engineered for deep ceramic sanitization. Eradicates 99.9% of disease-causing germs, effortlessly dissolves stubborn yellow urine stains & limescale, leaving a long-lasting marine breeze fragrance.",
-    "availableSizes": [
-      {
-        "size": "500 ml Bottle",
-        "price": 99,
-        "originalPrice": 135,
-        "discount": "26% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
-          "publicId": "asm-shine/products/asm_tile_cleaner_500ml",
-          "alt": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel) - 500 ml Bottle"
-        }
-      },
-      {
-        "size": "1 Liter Power Pack",
-        "price": 189,
-        "originalPrice": 260,
-        "discount": "27% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-          "publicId": "asm-shine/products/asm_tile_cleaner_1l",
-          "alt": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel) - 1 Liter Power Pack"
-        }
-      },
-      {
-        "size": "Twin Pack (1L x 2)",
-        "price": 349,
-        "originalPrice": 520,
-        "discount": "33% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-          "publicId": "asm-shine/products/asm_tile_cleaner_1l",
-          "alt": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel) - Twin Pack (1L x 2)"
-        }
-      },
-      {
-        "size": "5 Liter Economy Can",
-        "price": 699,
-        "originalPrice": 1050,
-        "discount": "33% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
-          "publicId": "asm-shine/products/asm_tile_cleaner_5l",
-          "alt": "ASM Shine Ultra Power Disinfectant Toilet & Tile Cleaner (Angled Nozzle Gel) - 5 Liter Economy Can"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "10X Power Stain Cutter: Dissolves stubborn hard water limescale and yellow stains",
       "Kills 99.9% disease-causing germs and bacteria certified by NABL labs",
@@ -145,60 +92,7 @@ const initialProducts = [
     "comboDiscount": 45,
     "comboSavingsPercent": 18,
     "description": "Advanced streak-free glass and multi-surface cleaner powered by Shine-Boosters. Effortlessly dissolves fingerprint grease, dust, water marks, and atmospheric haze on mirrors, windows, TV screens, dining tables, and car windshields.",
-    "availableSizes": [
-      {
-        "size": "500 ml Trigger Spray",
-        "price": 119,
-        "originalPrice": 165,
-        "discount": "28% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-          "publicId": "asm-shine/products/asm_glass_cleaner_500ml",
-          "alt": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free) - 500 ml Trigger Spray"
-        }
-      },
-      {
-        "size": "1 Liter Refill Pouch",
-        "price": 179,
-        "originalPrice": 250,
-        "discount": "28% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-          "publicId": "asm-shine/products/asm_glass_cleaner_500ml",
-          "alt": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free) - 1 Liter Refill Pouch"
-        }
-      },
-      {
-        "size": "Twin Pack (500ml Spray + 1L Refill)",
-        "price": 279,
-        "originalPrice": 415,
-        "discount": "33% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-          "publicId": "asm-shine/products/asm_glass_cleaner_500ml",
-          "alt": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free) - Twin Pack (500ml Spray + 1L Refill)"
-        }
-      },
-      {
-        "size": "5 Liter Bulk Can",
-        "price": 599,
-        "originalPrice": 899,
-        "discount": "33% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg",
-          "publicId": "asm-shine/products/asm_glass_cleaner_500ml",
-          "alt": "ASM Shine Crystal Clear Glass & Multi-Surface Cleaner Spray (Streak-Free) - 5 Liter Bulk Can"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "100% Streak-Free Crystal Clarity with Anti-Dust Shield Technology",
       "Cuts through oily smudges, fingerprint grease, and haze in one quick swipe",
@@ -258,60 +152,7 @@ const initialProducts = [
     "comboDiscount": 50,
     "comboSavingsPercent": 20,
     "description": "Engineered specifically for Indian hard water conditions. Dissolves stubborn calcium deposits, white limescale, rust marks, and slippery soap scum from bathroom floor tiles, wall ceramics, washbasins, and chrome fixtures without harsh fumes.",
-    "availableSizes": [
-      {
-        "size": "500 ml Spray Bottle",
-        "price": 129,
-        "originalPrice": 179,
-        "discount": "28% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg",
-          "publicId": "asm-shine/products/asm_tile_cleaner_500ml",
-          "alt": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner - 500 ml Spray Bottle"
-        }
-      },
-      {
-        "size": "1 Liter Deep Clean Pack",
-        "price": 179,
-        "originalPrice": 249,
-        "discount": "28% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-          "publicId": "asm-shine/products/asm_tile_cleaner_1l",
-          "alt": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner - 1 Liter Deep Clean Pack"
-        }
-      },
-      {
-        "size": "Pack of 2 (1L x 2)",
-        "price": 329,
-        "originalPrice": 498,
-        "discount": "34% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936166/asm-shine/products/asm_tile_cleaner_1l.jpg",
-          "publicId": "asm-shine/products/asm_tile_cleaner_1l",
-          "alt": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner - Pack of 2 (1L x 2)"
-        }
-      },
-      {
-        "size": "5 Liter Master Can",
-        "price": 679,
-        "originalPrice": 999,
-        "discount": "32% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936168/asm-shine/products/asm_tile_cleaner_5l.jpg",
-          "publicId": "asm-shine/products/asm_tile_cleaner_5l",
-          "alt": "ASM Shine Heavy-Duty Bathroom & Ceramic Tiles Descaler Cleaner - 5 Liter Master Can"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "Hard Water Specialist: Removes stubborn white salt buildup & water marks instantly",
       "Restores original glossy shine to dull ceramic tiles and washbasins",
@@ -371,60 +212,7 @@ const initialProducts = [
     "comboDiscount": 60,
     "comboSavingsPercent": 22,
     "description": "All-in-one floor sanitizing formula that delivers spotless shine with hospital-grade disinfection. Dissolves sticky food spills, muddy paw marks, and greasy footwear grime across marble, granite, mosaic, and vitrified tiles.",
-    "availableSizes": [
-      {
-        "size": "500 ml Bottle",
-        "price": 99,
-        "originalPrice": 145,
-        "discount": "32% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936173/asm-shine/products/asm_floor_cleaner_lemon_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936173/asm-shine/products/asm_floor_cleaner_lemon_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936173/asm-shine/products/asm_floor_cleaner_lemon_500ml.jpg",
-          "publicId": "asm-shine/products/asm_floor_cleaner_lemon_500ml",
-          "alt": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant - 500 ml Bottle"
-        }
-      },
-      {
-        "size": "1 Liter Bottle",
-        "price": 149,
-        "originalPrice": 219,
-        "discount": "32% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
-          "publicId": "asm-shine/products/asm_floor_cleaner_lemon_1l",
-          "alt": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant - 1 Liter Bottle"
-        }
-      },
-      {
-        "size": "2 Liters Family Pack",
-        "price": 269,
-        "originalPrice": 399,
-        "discount": "33% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
-          "publicId": "asm-shine/products/asm_floor_cleaner_lemon_1l",
-          "alt": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant - 2 Liters Family Pack"
-        }
-      },
-      {
-        "size": "5 Liters Jumbo Can",
-        "price": 579,
-        "originalPrice": 899,
-        "discount": "36% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936170/asm-shine/products/asm_floor_cleaner_lemon_1l.jpg",
-          "publicId": "asm-shine/products/asm_floor_cleaner_lemon_1l",
-          "alt": "ASM Shine Lemon Fresh Surface & Floor Cleaner Liquid Disinfectant - 5 Liters Jumbo Can"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "Hospital-grade bactericidal & antiviral disinfection certified",
       "Leaves zero sticky residue with a brilliant mirror-gloss reflection",
@@ -484,60 +272,7 @@ const initialProducts = [
     "comboDiscount": 45,
     "comboSavingsPercent": 19,
     "description": "Powered by 100 concentrated lemons. Cuts through burnt ghee, stubborn oil, and masala curry pots in seconds without white residue. Enriched with aloe extract to keep hands ultra-soft during daily washing.",
-    "availableSizes": [
-      {
-        "size": "500 ml Squeeze Bottle",
-        "price": 89,
-        "originalPrice": 125,
-        "discount": "29% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
-          "publicId": "asm-shine/products/asm_dishwash_liquid_500ml",
-          "alt": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting) - 500 ml Squeeze Bottle"
-        }
-      },
-      {
-        "size": "1 Liter Dispenser Pack",
-        "price": 149,
-        "originalPrice": 210,
-        "discount": "29% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
-          "publicId": "asm-shine/products/asm_dishwash_liquid_500ml",
-          "alt": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting) - 1 Liter Dispenser Pack"
-        }
-      },
-      {
-        "size": "2 Liters Value Refill",
-        "price": 269,
-        "originalPrice": 390,
-        "discount": "31% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936177/asm-shine/products/asm_dishwash_liquid_500ml.jpg",
-          "publicId": "asm-shine/products/asm_dishwash_liquid_500ml",
-          "alt": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting) - 2 Liters Value Refill"
-        }
-      },
-      {
-        "size": "5 Liters Commercial Can",
-        "price": 549,
-        "originalPrice": 850,
-        "discount": "35% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936179/asm-shine/products/asm_dishwash_liquid_5l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936179/asm-shine/products/asm_dishwash_liquid_5l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936179/asm-shine/products/asm_dishwash_liquid_5l.jpg",
-          "publicId": "asm-shine/products/asm_dishwash_liquid_5l",
-          "alt": "ASM Shine Smart Wash Dishwash Liquid (Lemon Fresh Grease Cutting) - 5 Liters Commercial Can"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "Cuts through stubborn burnt grease, oily kadhai residue, and egg smell",
       "Just 1 teaspoon cleans an entire sink full of everyday utensils",
@@ -597,47 +332,7 @@ const initialProducts = [
     "comboDiscount": 50,
     "comboSavingsPercent": 20,
     "description": "Industrial strength oil and carbon dissolver for household and commercial kitchens. Cuts through hardened chimney mesh oil, gas stove burnt grease, microwave splatters, and exhaust fan grime without abrasive scrubbing.",
-    "availableSizes": [
-      {
-        "size": "500 ml Foaming Spray",
-        "price": 199,
-        "originalPrice": 299,
-        "discount": "33% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
-          "publicId": "asm-shine/products/asm_multipurpose_cleaner_500ml",
-          "alt": "ASM Shine Multipurpose Kitchen & Surface Cleaner Spray (Lemon Power) - 500 ml Foaming Spray"
-        }
-      },
-      {
-        "size": "1 Liter Refill Pouch",
-        "price": 329,
-        "originalPrice": 499,
-        "discount": "34% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
-          "publicId": "asm-shine/products/asm_multipurpose_cleaner_500ml",
-          "alt": "ASM Shine Multipurpose Kitchen & Surface Cleaner Spray (Lemon Power) - 1 Liter Refill Pouch"
-        }
-      },
-      {
-        "size": "Twin Set (Spray + 1L Refill)",
-        "price": 479,
-        "originalPrice": 749,
-        "discount": "36% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936180/asm-shine/products/asm_multipurpose_cleaner_500ml.jpg",
-          "publicId": "asm-shine/products/asm_multipurpose_cleaner_500ml",
-          "alt": "ASM Shine Multipurpose Kitchen & Surface Cleaner Spray (Lemon Power) - Twin Set (Spray + 1L Refill)"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "Penetrates hardened cooking oil and carbon deposits in 3 minutes",
       "Self-acting clinging foam lifts grease from chimney baffle filters effortlessly",
@@ -697,47 +392,7 @@ const initialProducts = [
     "comboDiscount": 70,
     "comboSavingsPercent": 22,
     "description": "Advanced micro-enzyme detergent liquid engineered for both Front Load and Top Load automatic washing machines. Eliminates stubborn cuff and collar grime, tea spills, and food stains while locking in fabric brightness.",
-    "availableSizes": [
-      {
-        "size": "1 Liter Bottle",
-        "price": 199,
-        "originalPrice": 280,
-        "discount": "29% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
-          "publicId": "asm-shine/products/asm_laundry_detergent_5l",
-          "alt": "ASM Shine Matic Ultra Laundry Detergent Liquid (Stain Defender) - 1 Liter Bottle"
-        }
-      },
-      {
-        "size": "2 Liters Easy-Pour Jug",
-        "price": 349,
-        "originalPrice": 499,
-        "discount": "30% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
-          "publicId": "asm-shine/products/asm_laundry_detergent_5l",
-          "alt": "ASM Shine Matic Ultra Laundry Detergent Liquid (Stain Defender) - 2 Liters Easy-Pour Jug"
-        }
-      },
-      {
-        "size": "5 Liters Mega Value Tub",
-        "price": 799,
-        "originalPrice": 1199,
-        "discount": "33% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936181/asm-shine/products/asm_laundry_detergent_5l.jpg",
-          "publicId": "asm-shine/products/asm_laundry_detergent_5l",
-          "alt": "ASM Shine Matic Ultra Laundry Detergent Liquid (Stain Defender) - 5 Liters Mega Value Tub"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "Triple Enzyme Stain Lifter: Removes tea, coffee, grease & collar stains in 1 wash",
       "Dissolves 100% instantly in water with zero powdery white residue on dark fabrics",
@@ -797,60 +452,7 @@ const initialProducts = [
     "comboDiscount": 40,
     "comboSavingsPercent": 18,
     "description": "Dermatologist recommended antibacterial hand wash that kills 99.9% of harmful germs while providing 10x moisture. Infused with pure Aloe Vera gel, Tea Tree extract, and Vitamin E to prevent dryness from frequent washing.",
-    "availableSizes": [
-      {
-        "size": "250 ml Pump Dispenser",
-        "price": 79,
-        "originalPrice": 110,
-        "discount": "28% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
-          "publicId": "asm-shine/products/asm_handwash_lavender_500ml",
-          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care) - 250 ml Pump Dispenser"
-        }
-      },
-      {
-        "size": "500 ml Pump Dispenser",
-        "price": 129,
-        "originalPrice": 185,
-        "discount": "30% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936184/asm-shine/products/asm_handwash_lavender_500ml.jpg",
-          "publicId": "asm-shine/products/asm_handwash_lavender_500ml",
-          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care) - 500 ml Pump Dispenser"
-        }
-      },
-      {
-        "size": "1.5 Liters Value Refill Pouch",
-        "price": 179,
-        "originalPrice": 260,
-        "discount": "31% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
-          "publicId": "asm-shine/products/asm_handwash_lavender_2kg",
-          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care) - 1.5 Liters Value Refill Pouch"
-        }
-      },
-      {
-        "size": "2 kg Value Refill Jug",
-        "price": 249,
-        "originalPrice": 380,
-        "discount": "34% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936186/asm-shine/products/asm_handwash_lavender_2kg.jpg",
-          "publicId": "asm-shine/products/asm_handwash_lavender_2kg",
-          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care) - 2 kg Value Refill Jug"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "99.9% Germ Protection in 10 seconds of lathering",
       "Enriched with organic Aloe Vera, Vitamin E, and Glycerin moisturizing complex",
@@ -910,34 +512,7 @@ const initialProducts = [
     "comboDiscount": 70,
     "comboSavingsPercent": 24,
     "description": "Traditional high-power white phenyle infused with natural Pine Oil, Citronella, and Eucalyptus. Cleans, sanitizes, and naturally repels flies, mosquitoes, and insects from floors, corridors, and verandas.",
-    "availableSizes": [
-      {
-        "size": "1 Liter Bottle",
-        "price": 99,
-        "originalPrice": 145,
-        "discount": "32% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
-          "publicId": "asm-shine/products/asm_white_floor_cleaner_1l",
-          "alt": "ASM Shine White Floor Cleaner (Clean Floors, Brighter Homes) - 1 Liter Bottle"
-        }
-      },
-      {
-        "size": "5 Liters Master Can",
-        "price": 399,
-        "originalPrice": 599,
-        "discount": "33% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936187/asm-shine/products/asm_white_floor_cleaner_1l.jpg",
-          "publicId": "asm-shine/products/asm_white_floor_cleaner_1l",
-          "alt": "ASM Shine White Floor Cleaner (Clean Floors, Brighter Homes) - 5 Liters Master Can"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "Pure Pine Oil concentrate creates thick snowy-white milky emulsion in water",
       "Natural mosquito, housefly, and insect repellent action with Citronella",
@@ -995,20 +570,7 @@ const initialProducts = [
     "comboDiscount": 40,
     "comboSavingsPercent": 18,
     "description": "Thick heavy-density sink gel that sinks through standing water straight to the blockage. Dissolves trapped hair, soap scum, grease, and food sludge in kitchen sinks, washbasins, and shower drains in just 15 minutes.",
-    "availableSizes": [
-      {
-        "size": "500 ml Bottle",
-        "price": 149,
-        "originalPrice": 220,
-        "discount": "32% off"
-      },
-      {
-        "size": "Pack of 2 (500ml x 2)",
-        "price": 269,
-        "originalPrice": 440,
-        "discount": "39% off"
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "Heavy density gel cuts through standing water directly to the clog",
       "Dissolves hair clumps, cooking grease, and soap scum in 15 minutes",
@@ -1066,47 +628,7 @@ const initialProducts = [
     "comboDiscount": 45,
     "comboSavingsPercent": 18,
     "description": "Enriched with natural green apple extracts. Delivers high-gloss shine, hospital-grade germ defense, and long-lasting freshness on marble, tiles, granite, and mosaic.",
-    "availableSizes": [
-      {
-        "size": "500 ml Bottle",
-        "price": 99,
-        "originalPrice": 145,
-        "discount": "32% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936192/asm-shine/products/asm_floor_cleaner_apple_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936192/asm-shine/products/asm_floor_cleaner_apple_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936192/asm-shine/products/asm_floor_cleaner_apple_500ml.jpg",
-          "publicId": "asm-shine/products/asm_floor_cleaner_apple_500ml",
-          "alt": "ASM Shine Green Apple Surface & Floor Cleaner Liquid Disinfectant - 500 ml Bottle"
-        }
-      },
-      {
-        "size": "1 Liter Bottle",
-        "price": 149,
-        "originalPrice": 219,
-        "discount": "32% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
-          "publicId": "asm-shine/products/asm_floor_cleaner_apple_1l",
-          "alt": "ASM Shine Green Apple Surface & Floor Cleaner Liquid Disinfectant - 1 Liter Bottle"
-        }
-      },
-      {
-        "size": "5 Liters Jumbo Can",
-        "price": 579,
-        "originalPrice": 899,
-        "discount": "36% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936189/asm-shine/products/asm_floor_cleaner_apple_1l.jpg",
-          "publicId": "asm-shine/products/asm_floor_cleaner_apple_1l",
-          "alt": "ASM Shine Green Apple Surface & Floor Cleaner Liquid Disinfectant - 5 Liters Jumbo Can"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "Natural Green Apple Extract formulation",
       "99.9% Germ Defense certified laboratory tested",
@@ -1164,34 +686,7 @@ const initialProducts = [
     "comboDiscount": 35,
     "comboSavingsPercent": 16,
     "description": "Gentle foaming rose hand wash infused with natural rose extracts and moisturizers. Kills 99.9% germs while keeping hands smooth, soft, and delicately perfumed.",
-    "availableSizes": [
-      {
-        "size": "500 ml Pump Dispenser",
-        "price": 129,
-        "originalPrice": 185,
-        "discount": "30% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936193/asm-shine/products/asm_handwash_rose_500ml.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936193/asm-shine/products/asm_handwash_rose_500ml.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936193/asm-shine/products/asm_handwash_rose_500ml.jpg",
-          "publicId": "asm-shine/products/asm_handwash_rose_500ml",
-          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Rose Care) - 500 ml Pump Dispenser"
-        }
-      },
-      {
-        "size": "2 Liters Refill Jug",
-        "price": 249,
-        "originalPrice": 380,
-        "discount": "34% off",
-        "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936195/asm-shine/products/asm_handwash_rose_2l.jpg",
-        "imageData": {
-          "url": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936195/asm-shine/products/asm_handwash_rose_2l.jpg",
-          "secureUrl": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792936195/asm-shine/products/asm_handwash_rose_2l.jpg",
-          "publicId": "asm-shine/products/asm_handwash_rose_2l",
-          "alt": "ASM Shine PureShield Antibacterial Liquid Handwash (Rose Care) - 2 Liters Refill Jug"
-        }
-      }
-    ],
+    "availableSizes": [],
     "highlights": [
       "Infused with Pure Rose Water & Moisturizing Glycerin",
       "Kills 99.9% germs in 10 seconds of washing",

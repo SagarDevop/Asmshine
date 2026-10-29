@@ -121,24 +121,7 @@ export const AdminProductsPage = () => {
     setImage('/images/products/all_shine_dishwash_gel_500ml.png');
     setDescription('');
     setBadge('');
-    setVariants([
-      {
-        size: '500 ml Bottle',
-        sku: '',
-        price: '',
-        originalPrice: '',
-        stockQuantity: '20',
-        image: '/images/products/all_shine_dishwash_gel_500ml.png'
-      },
-      {
-        size: '1 Liter Power Pack',
-        sku: '',
-        price: '',
-        originalPrice: '',
-        stockQuantity: '20',
-        image: '/images/products/all_shine_dishwash_gel_1l.png'
-      }
-    ]);
+    setVariants([]);
     setFormError('');
     setModalOpen(true);
   };
@@ -170,16 +153,7 @@ export const AdminProductsPage = () => {
         }))
       );
     } else {
-      setVariants([
-        {
-          size: p.size || '500ml',
-          sku: p.sku || '',
-          price: String(p.price || ''),
-          originalPrice: String(p.originalPrice || ''),
-          stockQuantity: String(p.stockQuantity || '0'),
-          image: p.image || ''
-        }
-      ]);
+      setVariants([]);
     }
 
     setFormError('');
@@ -410,7 +384,9 @@ export const AdminProductsPage = () => {
                                 </span>
                               ))
                             ) : (
-                              <span>{p.size || '500ml'}</span>
+                              <span style={{ background: '#F1F5F9', color: '#475569', padding: '1px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>
+                                Single Product {p.size ? `• ${p.size}` : ''}
+                              </span>
                             )}
                           </div>
                         </div>
@@ -693,30 +669,47 @@ export const AdminProductsPage = () => {
                     </button>
                   </div>
 
-                  {variants.map((v, idx) => {
-                    const isOut = v.stockQuantity === 0 || v.stockQuantity === '0';
-                    return (
-                      <div key={idx} className="admin-variant-row">
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '12px', fontWeight: 800, color: '#2563EB' }}>
-                              Variant #{idx + 1}
-                            </span>
-                            <span
-                              style={{
-                                fontSize: '10.5px',
-                                fontWeight: 700,
-                                padding: '2px 6px',
-                                borderRadius: '4px',
-                                background: isOut ? '#FEF2F2' : '#ECFDF5',
-                                color: isOut ? '#DC2626' : '#059669',
-                                border: `1px solid ${isOut ? '#FECACA' : '#A7F3D0'}`
-                              }}
-                            >
-                              {isOut ? 'OUT OF STOCK' : `IN STOCK (${v.stockQuantity || 0} units)`}
-                            </span>
-                          </div>
-                          {variants.length > 1 && (
+                  {variants.length === 0 ? (
+                    <div style={{ padding: '16px', background: '#F8FAFC', border: '1px dashed #CBD5E1', borderRadius: '8px', textAlign: 'center', margin: '6px 0' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '3px' }}>
+                        Single Unique Product (No Variants)
+                      </div>
+                      <div style={{ fontSize: '11.5px', color: '#64748B', marginBottom: '10px' }}>
+                        This product is sold as a standalone item using the main price, MRP, image, and stock above. Click below if you want to add size/pack variants in the future.
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleAddVariant}
+                        className="admin-btn admin-btn-secondary admin-btn-sm"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', margin: '0 auto' }}
+                      >
+                        <Plus size={13} /> Add Variant
+                      </button>
+                    </div>
+                  ) : (
+                    variants.map((v, idx) => {
+                      const isOut = v.stockQuantity === 0 || v.stockQuantity === '0';
+                      return (
+                        <div key={idx} className="admin-variant-row">
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontSize: '12px', fontWeight: 800, color: '#2563EB' }}>
+                                Variant #{idx + 1}
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: '10.5px',
+                                  fontWeight: 700,
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  background: isOut ? '#FEF2F2' : '#ECFDF5',
+                                  color: isOut ? '#DC2626' : '#059669',
+                                  border: `1px solid ${isOut ? '#FECACA' : '#A7F3D0'}`
+                                }}
+                              >
+                                {isOut ? 'OUT OF STOCK' : `IN STOCK (${v.stockQuantity || 0} units)`}
+                              </span>
+                            </div>
                             <button
                               type="button"
                               onClick={() => handleRemoveVariant(idx)}
@@ -725,89 +718,89 @@ export const AdminProductsPage = () => {
                             >
                               <Trash2 size={14} />
                             </button>
-                          )}
+                          </div>
+
+                          <div className="admin-variant-grid">
+                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                              <label className="admin-form-label" style={{ fontSize: '11px' }}>Pack Size / Volume *</label>
+                              <input
+                                type="text"
+                                placeholder="e.g. 500 ml Bottle, 1 Liter Pack"
+                                value={v.size}
+                                onChange={(e) => handleUpdateVariant(idx, 'size', e.target.value)}
+                                className="admin-form-input"
+                                style={{ height: '36px', fontSize: '12.5px' }}
+                                required
+                              />
+                            </div>
+
+                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                              <label className="admin-form-label" style={{ fontSize: '11px' }}>Variant SKU</label>
+                              <input
+                                type="text"
+                                placeholder="e.g. ASM-500"
+                                value={v.sku}
+                                onChange={(e) => handleUpdateVariant(idx, 'sku', e.target.value)}
+                                className="admin-form-input"
+                                style={{ height: '36px', fontSize: '12.5px' }}
+                              />
+                            </div>
+
+                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                              <label className="admin-form-label" style={{ fontSize: '11px' }}>Price (₹) *</label>
+                              <input
+                                type="number"
+                                placeholder="189"
+                                value={v.price}
+                                onChange={(e) => handleUpdateVariant(idx, 'price', e.target.value)}
+                                className="admin-form-input"
+                                style={{ height: '36px', fontSize: '12.5px' }}
+                                min="0"
+                                required
+                              />
+                            </div>
+
+                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                              <label className="admin-form-label" style={{ fontSize: '11px' }}>Stock Qty *</label>
+                              <input
+                                type="number"
+                                placeholder="20"
+                                value={v.stockQuantity}
+                                onChange={(e) => handleUpdateVariant(idx, 'stockQuantity', e.target.value)}
+                                className="admin-form-input"
+                                style={{ height: '36px', fontSize: '12.5px' }}
+                                min="0"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          {/* Separate Variant Image with Preview Thumbnail */}
+                          <div className="admin-variant-image-row">
+                            <img
+                              src={v.image || '/favicon.svg'}
+                              alt="Variant Preview"
+                              className="admin-variant-preview-thumb"
+                              onError={(e) => { e.target.src = '/favicon.svg'; }}
+                            />
+                            <div style={{ flex: 1 }}>
+                              <label className="admin-form-label" style={{ fontSize: '11px' }}>
+                                Separate Variant Image URL (Displayed when customer selects this size)
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="https://... or /images/products/..."
+                                value={v.image}
+                                onChange={(e) => handleUpdateVariant(idx, 'image', e.target.value)}
+                                className="admin-form-input"
+                                style={{ height: '36px', fontSize: '12px' }}
+                              />
+                            </div>
+                          </div>
                         </div>
-
-                        <div className="admin-variant-grid">
-                          <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                            <label className="admin-form-label" style={{ fontSize: '11px' }}>Pack Size / Volume *</label>
-                            <input
-                              type="text"
-                              placeholder="e.g. 500 ml Bottle, 1 Liter Pack"
-                              value={v.size}
-                              onChange={(e) => handleUpdateVariant(idx, 'size', e.target.value)}
-                              className="admin-form-input"
-                              style={{ height: '36px', fontSize: '12.5px' }}
-                              required
-                            />
-                          </div>
-
-                          <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                            <label className="admin-form-label" style={{ fontSize: '11px' }}>Variant SKU</label>
-                            <input
-                              type="text"
-                              placeholder="e.g. ASM-500"
-                              value={v.sku}
-                              onChange={(e) => handleUpdateVariant(idx, 'sku', e.target.value)}
-                              className="admin-form-input"
-                              style={{ height: '36px', fontSize: '12.5px' }}
-                            />
-                          </div>
-
-                          <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                            <label className="admin-form-label" style={{ fontSize: '11px' }}>Price (₹) *</label>
-                            <input
-                              type="number"
-                              placeholder="189"
-                              value={v.price}
-                              onChange={(e) => handleUpdateVariant(idx, 'price', e.target.value)}
-                              className="admin-form-input"
-                              style={{ height: '36px', fontSize: '12.5px' }}
-                              min="0"
-                              required
-                            />
-                          </div>
-
-                          <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                            <label className="admin-form-label" style={{ fontSize: '11px' }}>Stock Qty *</label>
-                            <input
-                              type="number"
-                              placeholder="20"
-                              value={v.stockQuantity}
-                              onChange={(e) => handleUpdateVariant(idx, 'stockQuantity', e.target.value)}
-                              className="admin-form-input"
-                              style={{ height: '36px', fontSize: '12.5px' }}
-                              min="0"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        {/* Separate Variant Image with Preview Thumbnail */}
-                        <div className="admin-variant-image-row">
-                          <img
-                            src={v.image || '/favicon.svg'}
-                            alt="Variant Preview"
-                            className="admin-variant-preview-thumb"
-                            onError={(e) => { e.target.src = '/favicon.svg'; }}
-                          />
-                          <div style={{ flex: 1 }}>
-                            <label className="admin-form-label" style={{ fontSize: '11px' }}>
-                              Separate Variant Image URL (Displayed when customer selects this size)
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="https://... or /images/products/..."
-                              value={v.image}
-                              onChange={(e) => handleUpdateVariant(idx, 'image', e.target.value)}
-                              className="admin-form-input"
-                              style={{ height: '36px', fontSize: '12px' }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  )}
                 </div>
 
                 <div className="admin-form-group">

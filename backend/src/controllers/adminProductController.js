@@ -193,17 +193,7 @@ const createProduct = async (req, res, next) => {
         };
       });
     } else {
-      // Default initial variant
-      normalizedSizes = [{
-        size: size || 'Standard Pack',
-        sku: finalSku,
-        price: numPrice,
-        originalPrice: numMRP,
-        discount: discountPercent > 0 ? `${discountPercent}% off` : '',
-        stockQuantity: numStock,
-        inStock: numStock > 0,
-        image: image || '/images/products/all_shine_dishwash_gel_500ml.png'
-      }];
+      normalizedSizes = [];
     }
 
     const newProduct = new Product({
