@@ -5,6 +5,7 @@ const Cart = require('../models/Cart');
 const Coupon = require('../models/Coupon');
 const StoreSettings = require('../models/StoreSettings');
 const inventoryService = require('../services/inventoryService');
+const realtimeHub = require('../services/realtimeHub');
 
 /**
  * POST /api/v1/orders
@@ -211,6 +212,13 @@ const createOrder = async (req, res, next) => {
     });
 
     await newOrder.save();
+
+    // 11. Broadcast new order live to all active Admin dashboards & orders screens
+    try {
+      realtimeHub.notifyNewOrder(newOrder);
+    } catch (rtErr) {
+      console.warn('[Order] Realtime broadcast error:', rtErr.message);
+    }
 
     // 9. Clear user's active cart in MongoDB after successful order placement
     try {

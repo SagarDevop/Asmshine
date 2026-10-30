@@ -10,10 +10,18 @@ const orderController = require('../controllers/adminOrderController');
 const customerController = require('../controllers/adminCustomerController');
 const couponController = require('../controllers/adminCouponController');
 const settingsController = require('../controllers/adminSettingsController');
+const realtimeHub = require('../services/realtimeHub');
 
 // All admin endpoints strictly require authentication and staff/admin role
 router.use(authenticate);
 router.use(authorize('admin', 'superadmin', 'order_manager', 'inventory_manager'));
+
+// -------------------------------------------------------------
+// Live Real-Time Stream (Orders & Statuses Push)
+// -------------------------------------------------------------
+router.get('/live-stream', (req, res) => {
+  realtimeHub.handleAdminStream(req, res);
+});
 
 // -------------------------------------------------------------
 // 1. Dashboard Metrics

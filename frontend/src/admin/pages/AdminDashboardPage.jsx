@@ -14,16 +14,18 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { adminApi } from '../services/adminApi';
+import { useAdminLiveOrder } from '../context/AdminLiveOrderContext';
 
 export const AdminDashboardPage = () => {
+  const { subscribeOrderEvent } = useAdminLiveOrder();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState('30d');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const fetchMetrics = async () => {
-    setLoading(true);
+  const fetchMetrics = async (isSilent = false) => {
+    if (!isSilent) setLoading(true);
     setError('');
     try {
       const res = await adminApi.getDashboard(range);
@@ -31,15 +33,35 @@ export const AdminDashboardPage = () => {
         setData(res.data);
       }
     } catch (err) {
-      setError(err.message || 'Failed to fetch dashboard metrics.');
+      if (!isSilent) setError(err.message || 'Failed to fetch dashboard metrics.');
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchMetrics();
   }, [range]);
+
+  // Live Real-Time Dashboard Sync
+  useEffect(() => {
+    const unsubscribe = subscribeOrderEvent((eventType) => {
+      if (eventType === 'NEW_ORDER' || eventType === 'ORDER_STATUS_CHANGED') {
+        fetchMetrics(true); // silent re-fetch so charts, revenue, counters update live
+      }
+    });
+
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchMetrics(true);
+      }
+    }, 20000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
+  }, [subscribeOrderEvent, range]);
 
   if (loading && !data) {
     return (

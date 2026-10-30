@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const { restoreOrderStock } = require('../services/inventoryService');
 const { logAdminAction } = require('../services/auditService');
+const realtimeHub = require('../services/realtimeHub');
 
 /**
  * Valid order status transitions map
@@ -210,6 +211,12 @@ const updateOrderStatus = async (req, res, next) => {
 
     await order.save();
 
+    try {
+      realtimeHub.notifyOrderStatusChanged(order.orderId, status);
+    } catch (rtErr) {
+      console.warn('[Realtime] Status update broadcast error:', rtErr.message);
+    }
+
     await logAdminAction({
       req,
       action: 'ORDER_STATUS_UPDATE',
@@ -284,6 +291,12 @@ const cancelOrder = async (req, res, next) => {
     });
 
     await order.save();
+
+    try {
+      realtimeHub.notifyOrderStatusChanged(order.orderId, 'CANCELLED', { reason: reason.trim() });
+    } catch (rtErr) {
+      console.warn('[Realtime] Cancel broadcast error:', rtErr.message);
+    }
 
     // Safely restore stock (idempotent)
     const restoreResult = await restoreOrderStock(order, reason.trim(), req.user);

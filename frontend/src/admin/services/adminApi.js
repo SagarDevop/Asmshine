@@ -1,5 +1,5 @@
 // ASM SHINE — Dedicated Admin API Client
-const getApiBase = () => {
+export const getApiBase = () => {
   if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '') {
     return String(import.meta.env.VITE_API_URL).trim().replace(/\/$/, '');
   }

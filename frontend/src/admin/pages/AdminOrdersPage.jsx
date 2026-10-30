@@ -24,9 +24,11 @@ import {
 } from 'lucide-react';
 import { adminApi } from '../services/adminApi';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { useAdminLiveOrder } from '../context/AdminLiveOrderContext';
 
 export const AdminOrdersPage = () => {
   const { isAuthorized } = useAdminAuth();
+  const { subscribeOrderEvent } = useAdminLiveOrder();
   const canManageOrders = isAuthorized('order_manager');
 
   const [orders, setOrders] = useState([]);
@@ -64,9 +66,9 @@ export const AdminOrdersPage = () => {
     setTimeout(() => setNotice(null), 4000);
   };
 
-  const fetchOrders = useCallback(async () => {
+  const fetchOrders = useCallback(async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) setLoading(true);
       setError(null);
       const res = await adminApi.getOrders({
         page: pagination.page,
@@ -84,15 +86,49 @@ export const AdminOrdersPage = () => {
         }));
       }
     } catch (err) {
-      setError(err.message || 'Failed to fetch orders');
+      if (!isSilent) setError(err.message || 'Failed to fetch orders');
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   }, [pagination.page, pagination.limit, search, statusFilter, paymentMethod]);
 
+  // Initial fetch when filters change
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
+
+  // Real-Time Live Order Stream Subscription (Instant table update without F5)
+  useEffect(() => {
+    const unsubscribe = subscribeOrderEvent((eventType, data) => {
+      if (eventType === 'NEW_ORDER') {
+        // Prepend new order dynamically to top of table
+        setOrders((prev) => {
+          if (prev.some((o) => o.orderId === data.orderId)) return prev;
+          return [{ ...data, isLiveIncoming: true }, ...prev];
+        });
+        setPagination((prev) => ({ ...prev, total: (prev.total || 0) + 1 }));
+        showNotice(`🔔 New Order #${data.orderId} received from ${data.customerName}! (₹${data.totalAmount})`, 'success');
+      } else if (eventType === 'ORDER_STATUS_CHANGED') {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.orderId === data.orderId ? { ...o, status: data.status } : o
+          )
+        );
+      }
+    });
+
+    // Background resilient fallback poll every 18 seconds (silent)
+    const pollInterval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchOrders(true);
+      }
+    }, 18000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(pollInterval);
+    };
+  }, [subscribeOrderEvent, fetchOrders]);
 
   const openOrderDetail = async (orderId) => {
     try {
@@ -366,7 +402,7 @@ export const AdminOrdersPage = () => {
                 </tr>
               ) : (
                 orders.map((o) => (
-                  <tr key={o.orderId || o._id}>
+                  <tr key={o.orderId || o._id} className={o.isLiveIncoming ? 'admin-order-row-new' : ''}>
                     <td>
                       <button
                         onClick={() => openOrderDetail(o.orderId)}
