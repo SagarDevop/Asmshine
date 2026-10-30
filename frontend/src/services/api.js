@@ -724,5 +724,40 @@ export const api = {
       throw new Error(data.message || 'Invalid or unserviceable PIN code.');
     }
     return data;
+  },
+
+  lookupPincode: async (pincode) => {
+    const cleanPin = String(pincode || '').replace(/\D/g, '').slice(0, 6);
+    if (cleanPin.length !== 6) return null;
+
+    try {
+      const res = await apiFetch(`/api/v1/delivery/pincode/${encodeURIComponent(cleanPin)}`);
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        return data;
+      }
+    } catch (e) {
+      // Fallback to direct client-side fetch if backend is unreachable
+    }
+
+    try {
+      const postRes = await fetch(`https://api.postalpincode.in/pincode/${encodeURIComponent(cleanPin)}`);
+      if (postRes.ok) {
+        const list = await postRes.json();
+        if (Array.isArray(list) && list[0]?.Status === 'Success' && list[0]?.PostOffice?.length > 0) {
+          const po = list[0].PostOffice[0];
+          return {
+            success: true,
+            pincode: cleanPin,
+            city: po.District || po.Name || 'India',
+            district: po.District || '',
+            state: po.State || 'India',
+            area: po.Name || ''
+          };
+        }
+      }
+    } catch {}
+
+    return null;
   }
 };

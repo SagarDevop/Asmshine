@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { MapPin, X, Check, Plus, AlertCircle, Home, Briefcase, ChevronRight } from 'lucide-react';
+import { MapPin, X, Check, Plus, AlertCircle, Home, Briefcase, ChevronRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCartWishlist } from '../../context/CartWishlistContext';
+import { api } from '../../services/api';
 
 export const AddressSelectModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
   const [pincodeInput, setPincodeInput] = useState('');
+  const [checkingPin, setCheckingPin] = useState(false);
+  const [detectingFormPin, setDetectingFormPin] = useState(false);
 
   const [newAddr, setNewAddr] = useState({
     fullName: '',
@@ -90,7 +93,7 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handlePincodeCheck = (e) => {
+  const handlePincodeCheck = async (e) => {
     e.preventDefault();
     const cleanPin = pincodeInput.replace(/\D/g, '').slice(0, 6);
     if (cleanPin.length !== 6) {
@@ -98,31 +101,56 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
       return;
     }
 
-    const cityMap = {
-      '110001': { city: 'New Delhi', state: 'Delhi' },
-      '201301': { city: 'Noida', state: 'Uttar Pradesh' },
-      '122002': { city: 'Gurugram', state: 'Haryana' },
-      '400001': { city: 'Mumbai', state: 'Maharashtra' },
-      '560001': { city: 'Bengaluru', state: 'Karnataka' },
-      '700001': { city: 'Kolkata', state: 'West Bengal' },
-      '226001': { city: 'Lucknow', state: 'Uttar Pradesh' }
-    };
+    setCheckingPin(true);
+    try {
+      const info = await api.lookupPincode(cleanPin);
+      const city = info?.city || 'India';
+      const state = info?.state || 'India';
+      const area = info?.area || city;
 
-    const detected = cityMap[cleanPin] || { city: `Area (${cleanPin})`, state: 'India' };
-    selectAddress({
-      fullName: user?.name || 'Guest Shopper',
-      name: user?.name || 'Guest Shopper',
-      phone: user?.phone || '',
-      pincode: cleanPin,
-      street: `Delivery Hub, ${detected.city}`,
-      city: detected.city,
-      state: detected.state,
-      type: 'HOME',
-      isDefault: true
-    });
+      selectAddress({
+        fullName: user?.name || 'Guest Shopper',
+        name: user?.name || 'Guest Shopper',
+        phone: user?.phone || '',
+        pincode: cleanPin,
+        street: `Delivery Hub, ${area}`,
+        city: city,
+        state: state,
+        type: 'HOME',
+        isDefault: true
+      });
 
-    showToast(`Delivering to ${detected.city} - ${cleanPin}`);
-    if (onClose) onClose();
+      showToast(`Delivering to ${city}, ${state} - ${cleanPin}`);
+      if (onClose) onClose();
+    } catch (err) {
+      showToast('Could not verify PIN code location');
+    } finally {
+      setCheckingPin(false);
+    }
+  };
+
+  const handleFormPincodeChange = async (val) => {
+    const clean = val.replace(/\D/g, '').slice(0, 6);
+    setNewAddr((prev) => ({ ...prev, pincode: clean }));
+
+    if (clean.length === 6) {
+      setDetectingFormPin(true);
+      try {
+        const info = await api.lookupPincode(clean);
+        if (info && info.city) {
+          setNewAddr((prev) => ({
+            ...prev,
+            city: info.city,
+            state: info.state
+          }));
+          showToast(`Location detected: ${info.city}, ${info.state}`);
+        }
+      } catch (err) {
+        // silent fallback
+      } finally {
+        setDetectingFormPin(false);
+      }
+    }
   };
 
   const popularCities = [
@@ -249,14 +277,21 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                  <input
-                    type="text"
-                    className="auth-input"
-                    placeholder="6-Digit PIN Code *"
-                    value={newAddr.pincode}
-                    onChange={(e) => setNewAddr({ ...newAddr, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) })}
-                    required
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="text"
+                      className="auth-input"
+                      placeholder="6-Digit PIN Code *"
+                      value={newAddr.pincode}
+                      onChange={(e) => handleFormPincodeChange(e.target.value)}
+                      required
+                    />
+                    {detectingFormPin && (
+                      <span style={{ position: 'absolute', right: '10px', top: '12px', fontSize: '11px', color: '#2874F0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Loader2 size={12} className="animate-spin" /> Detecting...
+                      </span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     className="auth-input"
@@ -327,9 +362,17 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
                 <button
                   type="submit"
                   className="fk-action-primary-btn"
-                  style={{ marginTop: 0, padding: '0 16px', height: '44px' }}
+                  disabled={checkingPin}
+                  style={{ marginTop: 0, padding: '0 16px', height: '44px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                 >
-                  Apply
+                  {checkingPin ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Checking...</span>
+                    </>
+                  ) : (
+                    'Apply'
+                  )}
                 </button>
               </form>
 

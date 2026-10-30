@@ -19,6 +19,13 @@ export const AuthProvider = ({ children }) => {
           localStorage.removeItem('asm_selected_address');
           return null;
         }
+        if (parsed && parsed.city && parsed.city.startsWith('Area (') && parsed.pincode) {
+          if (parsed.pincode === '210001') {
+            parsed.city = 'Banda';
+            parsed.state = 'Uttar Pradesh';
+            parsed.street = parsed.street ? parsed.street.replace(/Area \(\d+\)/g, 'Banda') : 'Delivery Hub, Banda';
+          }
+        }
         return parsed;
       }
     } catch (e) {}
@@ -44,6 +51,22 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('asm_selected_address', JSON.stringify(formatted));
     } catch (e) {}
   };
+
+  // Automatically heal legacy or incomplete addresses using live pincode resolver
+  useEffect(() => {
+    if (selectedAddress?.pincode && (!selectedAddress.city || selectedAddress.city.startsWith('Area ('))) {
+      api.lookupPincode(selectedAddress.pincode).then((info) => {
+        if (info && info.city) {
+          selectAddress({
+            ...selectedAddress,
+            city: info.city,
+            state: info.state || selectedAddress.state || 'India',
+            street: (selectedAddress.street || '').replace(/Area \(\d+\)/g, info.city) || `Delivery Hub, ${info.city}`
+          });
+        }
+      }).catch(() => {});
+    }
+  }, [selectedAddress?.pincode]);
 
   // Sync selectedAddress whenever user's saved addresses load or change
   useEffect(() => {

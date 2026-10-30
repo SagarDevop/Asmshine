@@ -144,7 +144,7 @@ export const ProductDetailPage = ({
       const res = await api.estimateDelivery(pin, product?.price || 0);
       if (res && res.success) {
         setDeliveryInfo(res);
-        showToast(`Delivery available to ${res.city}`);
+        showToast(`Delivery available to ${res.city}${res.state && res.state !== 'India' ? `, ${res.state}` : ''}`);
       }
     } catch (err) {
       setPincodeError(err.message || 'Delivery not available to this PIN');
@@ -685,7 +685,7 @@ export const ProductDetailPage = ({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px 12px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '12px', color: '#334155', fontWeight: 600 }}>
-                  Deliver to <strong>{deliveryInfo.city} ({deliveryInfo.pincode})</strong>
+                  Deliver to <strong>{deliveryInfo.city}{deliveryInfo.state && deliveryInfo.state !== 'India' ? `, ${deliveryInfo.state}` : ''} ({deliveryInfo.pincode})</strong>
                 </span>
                 <span style={{ fontSize: '11px', color: '#059669', fontWeight: 700, background: '#DCFCE7', padding: '2px 8px', borderRadius: '12px' }}>
                   ✓ SERVICEABLE
