@@ -353,10 +353,10 @@ const cancelCustomerOrder = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Order not found.' });
     }
 
-    if (!['PENDING_CONFIRMATION', 'CONFIRMED'].includes(order.status)) {
+    if (!['PENDING_CONFIRMATION', 'CONFIRMED', 'PROCESSING'].includes(order.status)) {
       return res.status(400).json({
         success: false,
-        message: `Order cannot be cancelled in '${order.status}' status. Please contact support.`
+        message: `Order cannot be cancelled once it has been shipped or completed. Current status is '${order.status}'. Please contact support.`
       });
     }
 

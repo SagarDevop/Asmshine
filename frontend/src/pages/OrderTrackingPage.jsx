@@ -15,7 +15,9 @@ import {
   Phone,
   Search,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ChevronRight,
+  Headphones
 } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -98,6 +100,12 @@ function OrderTrackingSkeleton({ onBack, orderId }) {
             <div className="fk-sk-line skeleton-shimmer" style={{ width: '60px', height: '14px' }} />
           </div>
         </div>
+
+        {/* Actions Row Skeleton: Exactly 2 Equal Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '12px' }}>
+          <div className="fk-sk-box skeleton-shimmer" style={{ height: '42px', borderRadius: '8px' }} />
+          <div className="fk-sk-box skeleton-shimmer" style={{ height: '42px', borderRadius: '8px' }} />
+        </div>
       </div>
     </div>
   );
@@ -121,11 +129,11 @@ export const OrderTrackingPage = () => {
   const [copiedAwb, setCopiedAwb] = useState(false);
 
   // Modal States
-  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [supportTopic, setSupportTopic] = useState('menu'); // 'menu' | 'cancel' | 'delivery' | 'address' | 'product'
   const [cancelReason, setCancelReason] = useState('Found a better price / changed my mind');
   const [cancelCustomNote, setCancelCustomNote] = useState('');
   const [cancelling, setCancelling] = useState(false);
-  const [showSupportModal, setShowSupportModal] = useState(false);
 
   useEffect(() => {
     if (activeOrderId) {
@@ -191,7 +199,8 @@ export const OrderTrackingPage = () => {
       const res = await api.cancelOrder(order.orderId || order.id, finalReason);
       if (res && res.success) {
         showToast('Order cancelled successfully.');
-        setShowCancelModal(false);
+        setShowSupportModal(false);
+        setSupportTopic('menu');
         await loadOrder(order.orderId || order.id);
       } else {
         throw new Error(res.message || 'Cancellation could not be completed.');
@@ -367,7 +376,10 @@ export const OrderTrackingPage = () => {
           <button
             type="button"
             className="fk-order-header-action-btn"
-            onClick={() => setShowSupportModal(true)}
+            onClick={() => {
+              setSupportTopic('menu');
+              setShowSupportModal(true);
+            }}
           >
             <HelpCircle size={14} />
             <span>Help</span>
@@ -397,9 +409,24 @@ export const OrderTrackingPage = () => {
                 <span>{copiedId ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
-            <span className={`fk-status-pill ${currentStatus}`}>
-              ● {currentStatus.replace('_', ' ')}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span className={`fk-status-pill ${currentStatus}`}>
+                ● {currentStatus.replace('_', ' ')}
+              </span>
+              {isCancellable && (
+                <button
+                  type="button"
+                  className="fk-subtle-cancel-link"
+                  onClick={() => {
+                    setSupportTopic('cancel');
+                    setShowSupportModal(true);
+                  }}
+                  title="Cancel order before dispatch"
+                >
+                  Cancel Order
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -643,208 +670,491 @@ export const OrderTrackingPage = () => {
           </div>
         </div>
 
-        {/* Actions Row */}
+        {/* Actions Row: EXACTLY 2 BUTTONS (NEED HELP & EXPLORE PRODUCTS) */}
         <div className="fk-track-actions">
           <button
             type="button"
-            className="fk-action-btn-outline"
-            onClick={() => window.print()}
+            className="fk-action-btn-outline fk-action-btn-help"
+            onClick={() => {
+              setSupportTopic('menu');
+              setShowSupportModal(true);
+            }}
+            id="order-help-trigger"
           >
-            <Printer size={15} />
-            <span>Download Invoice</span>
+            <HelpCircle size={16} />
+            <span>Need Help?</span>
           </button>
-
-          {isCancellable && (
-            <button
-              type="button"
-              className="fk-action-btn-outline fk-action-btn-danger"
-              onClick={() => setShowCancelModal(true)}
-              id="order-cancel-trigger"
-            >
-              <XCircle size={15} />
-              <span>Cancel Order</span>
-            </button>
-          )}
 
           <button
             type="button"
-            className="fk-action-btn-outline"
+            className="fk-action-btn-outline fk-action-btn-explore"
             onClick={() => navigate('/categories')}
+            id="order-explore-trigger"
           >
-            <ShoppingBag size={15} />
+            <ShoppingBag size={16} />
             <span>Explore Products</span>
           </button>
         </div>
       </div>
 
-      {/* Cancellation Modal */}
-      {showCancelModal && (
-        <div className="asm-modal-backdrop" onClick={() => setShowCancelModal(false)}>
-          <div className="asm-modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="asm-modal-header">
-              <h3 className="asm-modal-title">
-                <AlertCircle size={18} color="#DC2626" />
-                <span>Cancel Order #{order.orderId || order.id}</span>
-              </h3>
-              <button type="button" className="asm-modal-close-btn" onClick={() => setShowCancelModal(false)}>
-                ✕
-              </button>
-            </div>
-
-            <p style={{ fontSize: '13px', color: '#565656', margin: '0 0 14px' }}>
-              Are you sure you want to cancel this order? The product stock will be immediately restored.
-            </p>
-
-            <div style={{ marginBottom: '14px' }}>
-              <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#212121', marginBottom: '6px' }}>
-                Reason for Cancellation:
-              </label>
-              <select
-                value={cancelReason}
-                onChange={(e) => setCancelReason(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '9px 12px',
-                  borderRadius: '6px',
-                  border: '1px solid #D1D5DB',
-                  fontSize: '13px',
-                  color: '#212121',
-                  outline: 'none',
-                  background: '#FFFFFF'
-                }}
-              >
-                <option value="Found a better price / changed my mind">Found a better price / changed my mind</option>
-                <option value="Ordered by mistake / duplicate order">Ordered by mistake / duplicate order</option>
-                <option value="Need to change shipping address">Need to change shipping address</option>
-                <option value="Delivery is taking too long">Delivery is taking too long</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            {cancelReason === 'Other' && (
-              <div style={{ marginBottom: '14px' }}>
-                <textarea
-                  rows={2}
-                  placeholder="Specify reason..."
-                  value={cancelCustomNote}
-                  onChange={(e) => setCancelCustomNote(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    border: '1px solid #D1D5DB',
-                    fontSize: '12.5px',
-                    outline: 'none',
-                    resize: 'none'
-                  }}
-                />
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-              <button
-                type="button"
-                className="fk-action-btn-outline"
-                style={{ flex: 1 }}
-                onClick={() => setShowCancelModal(false)}
-                disabled={cancelling}
-              >
-                Don't Cancel
-              </button>
-              <button
-                type="button"
-                className="fk-action-btn-outline fk-action-btn-danger"
-                style={{ flex: 1, background: '#DC2626', color: '#FFFFFF', borderColor: '#DC2626' }}
-                onClick={handleConfirmCancelOrder}
-                disabled={cancelling}
-              >
-                {cancelling ? 'Cancelling...' : 'Confirm Cancellation'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Support Help Modal */}
+      {/* Flipkart-Tier 24x7 Help Center Modal */}
       {showSupportModal && (
-        <div className="asm-modal-backdrop" onClick={() => setShowSupportModal(false)}>
-          <div className="asm-modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="asm-modal-header">
-              <h3 className="asm-modal-title">
-                <HelpCircle size={18} color="#2874F0" />
-                <span>ASM Shine Customer Support</span>
-              </h3>
-              <button type="button" className="asm-modal-close-btn" onClick={() => setShowSupportModal(false)}>
+        <div
+          className="asm-modal-backdrop"
+          onClick={() => {
+            setShowSupportModal(false);
+            setSupportTopic('menu');
+          }}
+        >
+          <div className="fk-help-modal-card" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="fk-help-modal-header">
+              <div className="fk-help-modal-header-left">
+                {supportTopic !== 'menu' && (
+                  <button
+                    type="button"
+                    className="fk-help-modal-back-btn"
+                    onClick={() => setSupportTopic('menu')}
+                    aria-label="Back to topics"
+                  >
+                    <ArrowLeft size={16} />
+                  </button>
+                )}
+                <div>
+                  <h3 className="fk-help-modal-title">
+                    {supportTopic === 'cancel'
+                      ? 'Cancel Order'
+                      : supportTopic === 'delivery'
+                      ? 'Delivery Details'
+                      : supportTopic === 'address'
+                      ? 'Change Address'
+                      : supportTopic === 'product'
+                      ? 'Quality & Issue'
+                      : '24x7 Help Center'}
+                  </h3>
+                  <span className="fk-help-modal-sub">OD • {order.orderId || order.id}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="fk-help-modal-close"
+                onClick={() => {
+                  setShowSupportModal(false);
+                  setSupportTopic('menu');
+                }}
+                aria-label="Close"
+              >
                 ✕
               </button>
             </div>
 
-            <p style={{ fontSize: '13px', color: '#565656', margin: '0 0 16px' }}>
-              Need assistance with Order #{order.orderId || order.id}? Reach out directly to our support team:
-            </p>
+            {/* Modal Body */}
+            <div className="fk-help-modal-body">
+              {/* Order Item Snapshot */}
+              <div className="fk-help-order-snippet">
+                <img
+                  src={firstItem.image || '/favicon.svg'}
+                  alt={firstItem.name}
+                  className="fk-help-order-thumb"
+                  onError={(e) => { e.currentTarget.src = '/favicon.svg'; }}
+                />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="fk-help-order-name">{firstItem.name}</div>
+                  <div className="fk-help-order-meta">
+                    <span>Status:</span>
+                    <span className={`fk-help-status-tag ${currentStatus}`}>
+                      {currentStatus.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <a
-                href={`https://wa.me/91958423614?text=Hi%2C%20I%20need%20help%20with%20my%20order%20%23${order.orderId || order.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px 14px',
-                  borderRadius: '8px',
-                  background: '#ECFDF5',
-                  border: '1px solid #A7F3D0',
-                  color: '#065F46',
-                  textDecoration: 'none',
-                  fontWeight: 700,
-                  fontSize: '13.5px'
-                }}
-              >
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#10B981', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  💬
-                </div>
-                <div>
-                  <div>WhatsApp Priority Help</div>
-                  <small style={{ fontWeight: 400, color: '#047857' }}>Instant support response</small>
-                </div>
-              </a>
+              {/* View 1: Topics Menu */}
+              {supportTopic === 'menu' && (
+                <>
+                  <div className="fk-help-topics-list">
+                    {/* Topic 1: Cancel Order */}
+                    <button
+                      type="button"
+                      className="fk-help-topic-item"
+                      onClick={() => setSupportTopic('cancel')}
+                    >
+                      <div className="fk-help-topic-icon-wrap cancel">
+                        <XCircle size={18} />
+                      </div>
+                      <div className="fk-help-topic-text">
+                        <div className="fk-help-topic-title">
+                          <span>I want to cancel this order</span>
+                          {isCancellable ? (
+                            <span className="fk-help-badge success">Eligible</span>
+                          ) : isCancelled ? (
+                            <span className="fk-help-badge danger">Cancelled</span>
+                          ) : (
+                            <span className="fk-help-badge neutral">Locked</span>
+                          )}
+                        </div>
+                        <div className="fk-help-topic-desc">
+                          {isCancellable
+                            ? 'Cancel before courier dispatch to restore stock'
+                            : isCancelled
+                            ? 'This order has already been cancelled'
+                            : 'Package is dispatched with courier (locked)'}
+                        </div>
+                      </div>
+                      <ChevronRight size={16} color="#94A3B8" />
+                    </button>
 
-              <a
-                href="tel:+91958423614"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px 14px',
-                  borderRadius: '8px',
-                  background: '#EFF6FF',
-                  border: '1px solid #BFDBFE',
-                  color: '#1E40AF',
-                  textDecoration: 'none',
-                  fontWeight: 700,
-                  fontSize: '13.5px'
-                }}
-              >
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#2874F0', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Phone size={14} />
+                    {/* Topic 2: Track Delivery */}
+                    <button
+                      type="button"
+                      className="fk-help-topic-item"
+                      onClick={() => setSupportTopic('delivery')}
+                    >
+                      <div className="fk-help-topic-icon-wrap truck">
+                        <Truck size={18} />
+                      </div>
+                      <div className="fk-help-topic-text">
+                        <div className="fk-help-topic-title">
+                          <span>Where is my order / Delivery status</span>
+                        </div>
+                        <div className="fk-help-topic-desc">
+                          Courier partner, live AWB number &amp; expected delivery date
+                        </div>
+                      </div>
+                      <ChevronRight size={16} color="#94A3B8" />
+                    </button>
+
+                    {/* Topic 3: Address Change */}
+                    <button
+                      type="button"
+                      className="fk-help-topic-item"
+                      onClick={() => setSupportTopic('address')}
+                    >
+                      <div className="fk-help-topic-icon-wrap address">
+                        <MapPin size={18} />
+                      </div>
+                      <div className="fk-help-topic-text">
+                        <div className="fk-help-topic-title">
+                          <span>Change delivery address or phone</span>
+                        </div>
+                        <div className="fk-help-topic-desc">
+                          {isCancellable
+                            ? 'Contact dispatch desk before parcel leaves warehouse'
+                            : 'Address cannot be edited after dispatch'}
+                        </div>
+                      </div>
+                      <ChevronRight size={16} color="#94A3B8" />
+                    </button>
+
+                    {/* Topic 4: Quality Issue */}
+                    <button
+                      type="button"
+                      className="fk-help-topic-item"
+                      onClick={() => setSupportTopic('product')}
+                    >
+                      <div className="fk-help-topic-icon-wrap quality">
+                        <AlertCircle size={18} />
+                      </div>
+                      <div className="fk-help-topic-text">
+                        <div className="fk-help-topic-title">
+                          <span>Report item damage or leak</span>
+                        </div>
+                        <div className="fk-help-topic-desc">
+                          Hassle-free replacement for defective or wrong formulation
+                        </div>
+                      </div>
+                      <ChevronRight size={16} color="#94A3B8" />
+                    </button>
+                  </div>
+
+                  {/* Direct Contact Channels */}
+                  <div className="fk-help-contact-section">
+                    <span className="fk-help-contact-title">Contact Support Executive</span>
+                    <div className="fk-help-contact-grid">
+                      <a
+                        href={`https://wa.me/91958423614?text=Hi%20ASM%20Shine%20Support%2C%20I%20need%20assistance%20with%20Order%20%23${order.orderId || order.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="fk-help-contact-card whatsapp"
+                      >
+                        <span style={{ fontSize: '18px' }}>💬</span>
+                        <div>
+                          <div>WhatsApp</div>
+                          <small style={{ fontWeight: 400, opacity: 0.85 }}>Instant Chat</small>
+                        </div>
+                      </a>
+
+                      <a
+                        href="tel:+91958423614"
+                        className="fk-help-contact-card phone"
+                      >
+                        <Phone size={16} />
+                        <div>
+                          <div>Call Us</div>
+                          <small style={{ fontWeight: 400, opacity: 0.85 }}>9 AM - 8 PM</small>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* View 2: Cancel Topic */}
+              {supportTopic === 'cancel' && (
+                <div className="fk-help-subview">
+                  {isCancelled ? (
+                    <div className="fk-help-lock-banner">
+                      <div className="fk-help-lock-icon" style={{ background: '#FEF2F2' }}>
+                        <XCircle size={28} color="#DC2626" />
+                      </div>
+                      <h4 className="fk-help-lock-title">Order Already Cancelled</h4>
+                      <p className="fk-help-lock-desc">
+                        This order was cancelled on {order.cancellation?.cancelledAt ? formatDate(order.cancellation.cancelledAt) : 'recently'}.
+                      </p>
+                      <div className="fk-help-lock-policy-box">
+                        <div>Reason: <strong>{order.cancellation?.reason || 'Cancelled by customer'}</strong></div>
+                        <div style={{ color: '#16A34A', fontWeight: 600 }}>✓ Stock restored to inventory</div>
+                      </div>
+                      <div style={{ marginTop: '14px' }}>
+                        <button
+                          type="button"
+                          className="fk-action-btn-outline"
+                          onClick={() => setSupportTopic('menu')}
+                        >
+                          Back to Help Center
+                        </button>
+                      </div>
+                    </div>
+                  ) : isCancellable ? (
+                    <>
+                      <div className="fk-help-cancellation-notice">
+                        <AlertCircle size={20} color="#D97706" style={{ flexShrink: 0, marginTop: '2px' }} />
+                        <div>
+                          <strong>Eligible for Instant Cancellation</strong>
+                          <p>
+                            Your package is still in <strong>{currentStatus.replace('_', ' ')}</strong> state and has not been handed over to the courier. You can cancel it directly.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="fk-help-form-group">
+                        <label className="fk-help-label">Select reason for cancellation:</label>
+                        <select
+                          className="fk-help-select"
+                          value={cancelReason}
+                          onChange={(e) => setCancelReason(e.target.value)}
+                        >
+                          <option value="Found a better price / changed my mind">Found a better price / changed my mind</option>
+                          <option value="Ordered by mistake / duplicate order">Ordered by mistake / duplicate order</option>
+                          <option value="Need to change shipping address">Need to change shipping address</option>
+                          <option value="Delivery is taking too long">Delivery is taking too long</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+
+                      {cancelReason === 'Other' && (
+                        <div className="fk-help-form-group">
+                          <textarea
+                            className="fk-help-textarea"
+                            rows={2}
+                            placeholder="Please tell us why you want to cancel..."
+                            value={cancelCustomNote}
+                            onChange={(e) => setCancelCustomNote(e.target.value)}
+                          />
+                        </div>
+                      )}
+
+                      <div className="fk-help-btn-row">
+                        <button
+                          type="button"
+                          className="fk-action-btn-outline"
+                          onClick={() => setSupportTopic('menu')}
+                          disabled={cancelling}
+                        >
+                          Don't Cancel
+                        </button>
+                        <button
+                          type="button"
+                          className="fk-btn-confirm-cancel"
+                          onClick={handleConfirmCancelOrder}
+                          disabled={cancelling}
+                        >
+                          {cancelling ? 'Cancelling...' : 'Confirm Cancellation'}
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Strictly blocked once SHIPPED */}
+                      <div className="fk-help-lock-banner">
+                        <div className="fk-help-lock-icon">
+                          <XCircle size={28} color="#DC2626" />
+                        </div>
+                        <h4 className="fk-help-lock-title">Cancellation Locked</h4>
+                        <p className="fk-help-lock-desc">
+                          This order has already been dispatched with <strong>{carrier}</strong>
+                          {trackingNumber ? ` (AWB: ${trackingNumber})` : ''} and is in transit.
+                        </p>
+                        <div className="fk-help-lock-policy-box">
+                          <div className="fk-policy-point">
+                            <span className="fk-point-dot">●</span>
+                            <span>
+                              <strong>Logistics Guideline:</strong> Packages handed over to courier cannot be stopped or cancelled mid-transit.
+                            </span>
+                          </div>
+                          <div className="fk-policy-point">
+                            <span className="fk-point-dot">●</span>
+                            <span>
+                              <strong>Doorstep Refusal:</strong> If you no longer want this order, simply refuse to accept delivery when the agent arrives at your address. The parcel will return to our hub automatically.
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="fk-help-btn-row" style={{ marginTop: '14px' }}>
+                        <button
+                          type="button"
+                          className="fk-action-btn-outline"
+                          onClick={() => setSupportTopic('menu')}
+                        >
+                          Back to Help Topics
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
-                <div>
-                  <div>Call Helpline</div>
-                  <small style={{ fontWeight: 400, color: '#1D4ED8' }}>+91 958423614 (9am - 8pm)</small>
+              )}
+
+              {/* View 3: Delivery Details Topic */}
+              {supportTopic === 'delivery' && (
+                <div className="fk-help-subview">
+                  <div style={{ background: '#F8FAFC', padding: '14px', borderRadius: '10px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '12.5px', color: '#64748B' }}>Fulfillment Status:</span>
+                      <strong className={`fk-help-status-tag ${currentStatus}`}>{currentStatus.replace('_', ' ')}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '12.5px', color: '#64748B' }}>Estimated Delivery:</span>
+                      <strong style={{ fontSize: '13px', color: '#0F172A' }}>{getEstimatedDate(order.createdAt)}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '12.5px', color: '#64748B' }}>Logistics Partner:</span>
+                      <strong style={{ fontSize: '13px', color: '#0F172A' }}>{carrier}</strong>
+                    </div>
+                    {trackingNumber && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '8px', borderTop: '1px solid #E2E8F0' }}>
+                        <span style={{ fontSize: '12.5px', color: '#64748B' }}>AWB / Tracking ID:</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <strong style={{ fontSize: '12.5px', color: '#2563EB', fontFamily: 'monospace' }}>{trackingNumber}</strong>
+                          <button
+                            type="button"
+                            className="fk-copy-chip"
+                            onClick={() => handleCopyAwb(trackingNumber)}
+                          >
+                            {copiedAwb ? <Check size={10} /> : <Copy size={10} />}
+                            <span>{copiedAwb ? 'Copied' : 'Copy'}</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {trackingUrl && (
+                    <a
+                      href={trackingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="fk-action-btn-outline"
+                      style={{ textDecoration: 'none', background: '#2874F0', color: '#FFFFFF', borderColor: '#2874F0' }}
+                    >
+                      <span>Track Live on Courier Portal</span>
+                      <ExternalLink size={14} />
+                    </a>
+                  )}
+
+                  <button
+                    type="button"
+                    className="fk-action-btn-outline"
+                    onClick={() => setSupportTopic('menu')}
+                  >
+                    Back to Help Options
+                  </button>
                 </div>
-              </a>
+              )}
+
+              {/* View 4: Address Update Topic */}
+              {supportTopic === 'address' && (
+                <div className="fk-help-subview">
+                  <div style={{ padding: '14px', background: isCancellable ? '#EFF6FF' : '#FFFBEB', borderRadius: '10px', border: `1px solid ${isCancellable ? '#BFDBFE' : '#FDE68A'}`, fontSize: '13px', lineHeight: '1.5', color: isCancellable ? '#1E40AF' : '#92400E' }}>
+                    {isCancellable ? (
+                      <div>
+                        <strong>Order not yet dispatched:</strong>
+                        <p style={{ margin: '6px 0 0' }}>
+                          Your order is still being packaged at our warehouse. You can directly WhatsApp our dispatch team right now with your new address or phone number before the package is handed to the courier.
+                        </p>
+                      </div>
+                    ) : (
+                      <div>
+                        <strong>Address Locked for Dispatch:</strong>
+                        <p style={{ margin: '6px 0 0' }}>
+                          This shipment is already with <strong>{carrier}</strong>. Once dispatched, the delivery address cannot be modified online. When the courier delivery agent calls you for delivery, you can provide landmarks or nearby instructions directly to them.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {isCancellable && (
+                    <a
+                      href={`https://wa.me/91958423614?text=Hi%20ASM%20Shine%2C%20I%20need%20to%20update%20my%20shipping%20address%20for%20Order%20%23${order.orderId || order.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="fk-action-btn-outline"
+                      style={{ background: '#10B981', color: '#FFFFFF', borderColor: '#10B981', textDecoration: 'none' }}
+                    >
+                      <span>Message Dispatch Team on WhatsApp</span>
+                    </a>
+                  )}
+
+                  <button
+                    type="button"
+                    className="fk-action-btn-outline"
+                    onClick={() => setSupportTopic('menu')}
+                  >
+                    Back to Help Options
+                  </button>
+                </div>
+              )}
+
+              {/* View 5: Product / Quality Topic */}
+              {supportTopic === 'product' && (
+                <div className="fk-help-subview">
+                  <div style={{ padding: '14px', background: '#F8FAFC', borderRadius: '10px', border: '1px solid #E2E8F0', fontSize: '13px', lineHeight: '1.5', color: '#334155' }}>
+                    <strong>100% Quality &amp; Leakage Guarantee</strong>
+                    <p style={{ margin: '8px 0 0' }}>
+                      All ASM Shine products are sealed before dispatch. In the rare case you receive a damaged package, leak, or incorrect cleaner, share a quick photo with us on WhatsApp within 48 hours for an instant free replacement.
+                    </p>
+                  </div>
+
+                  <a
+                    href={`https://wa.me/91958423614?text=Hi%20ASM%20Shine%2C%20I%20have%20an%20issue%20with%20items%20in%20Order%20%23${order.orderId || order.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="fk-action-btn-outline"
+                    style={{ background: '#10B981', color: '#FFFFFF', borderColor: '#10B981', textDecoration: 'none' }}
+                  >
+                    <span>Report Issue on WhatsApp</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    className="fk-action-btn-outline"
+                    onClick={() => setSupportTopic('menu')}
+                  >
+                    Back to Help Options
+                  </button>
+                </div>
+              )}
             </div>
-
-            <button
-              type="button"
-              className="fk-action-btn-outline"
-              style={{ width: '100%', marginTop: '16px' }}
-              onClick={() => setShowSupportModal(false)}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}
