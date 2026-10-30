@@ -20,7 +20,7 @@ import {
   Printer,
   ExternalLink
 } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
@@ -35,12 +35,17 @@ export const CheckoutPage = () => {
   const { cartData, clearCart, showToast, updateCartQuantity } = useCartWishlist();
   const { user, selectedAddress, selectAddress } = useAuth();
 
+  const location = useLocation();
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState('upi'); // 'upi' | 'card' | 'netbanking' | 'cod'
   const [selectedUpiApp, setSelectedUpiApp] = useState('gpay');
   const [upiIdInput, setUpiIdInput] = useState('');
-  const [appliedCoupon, setAppliedCoupon] = useState('POWER20');
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    return location.state?.appliedCoupon || null;
+  });
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [couponApplying, setCouponApplying] = useState(false);
   const [couponInput, setCouponInput] = useState('');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState('');
@@ -164,8 +169,36 @@ export const CheckoutPage = () => {
   );
   const productDiscount = totalMRP - itemsSubtotal;
 
-  // Coupon discount (20% with POWER20)
-  const couponDiscount = appliedCoupon === 'POWER20' ? Math.round(itemsSubtotal * 0.2) : 0;
+  // Fetch active coupons from backend on mount
+  useEffect(() => {
+    let isMounted = true;
+    api.getAvailableCoupons().then((list) => {
+      if (isMounted) setAvailableCoupons(list || []);
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
+
+  // Recalculate coupon discount if items change
+  useEffect(() => {
+    if (appliedCoupon?.code && itemsSubtotal > 0) {
+      api.validateCoupon(appliedCoupon.code, itemsSubtotal).then((res) => {
+        if (res && res.valid) {
+          setAppliedCoupon((prev) => ({
+            ...prev,
+            discount: res.discountAmount
+          }));
+        } else {
+          setAppliedCoupon(null);
+          showToast('Coupon removed: Subtotal no longer qualifies');
+        }
+      }).catch(() => {
+        setAppliedCoupon(null);
+      });
+    }
+  }, [itemsSubtotal]);
+
+  // Coupon discount dynamically calculated from backend coupon response
+  const couponDiscount = appliedCoupon ? (appliedCoupon.discount || 0) : 0;
 
   // Extra 5% instant UPI prepaid discount
   const prepaidDiscount = paymentMethod === 'upi' ? Math.round((itemsSubtotal - couponDiscount) * 0.05) : 0;
@@ -173,15 +206,28 @@ export const CheckoutPage = () => {
   const finalPayable = Math.max(0, itemsSubtotal - couponDiscount - prepaidDiscount);
   const totalSavings = productDiscount + couponDiscount + prepaidDiscount;
 
-  const handleApplyCoupon = (e) => {
-    e.preventDefault();
-    if (couponInput.trim().toUpperCase() === 'POWER20') {
-      setAppliedCoupon('POWER20');
-      showToast('Coupon POWER20 applied! 20% discount added');
-    } else {
-      showToast('Invalid coupon. Try POWER20');
+  const handleApplyCoupon = async (codeToApply) => {
+    const code = (typeof codeToApply === 'string' ? codeToApply : couponInput).trim().toUpperCase();
+    if (!code) return;
+
+    setCouponApplying(true);
+    try {
+      const res = await api.validateCoupon(code, itemsSubtotal);
+      if (res && res.valid) {
+        setAppliedCoupon({
+          code: res.coupon.code,
+          discount: res.discountAmount,
+          description: res.coupon.description,
+          percent: res.coupon.discountValue
+        });
+        showToast(res.message || `Coupon ${res.coupon.code} applied!`);
+        setCouponInput('');
+      }
+    } catch (err) {
+      showToast(err.message || 'Invalid coupon code');
+    } finally {
+      setCouponApplying(false);
     }
-    setCouponInput('');
   };
 
   const handlePlaceOrder = async () => {
@@ -218,7 +264,7 @@ export const CheckoutPage = () => {
           type: address.type || 'HOME'
         },
         paymentMethod,
-        couponCode: appliedCoupon
+        couponCode: appliedCoupon?.code || appliedCoupon || null
       };
 
       const response = await api.createOrder(orderPayload);
@@ -688,7 +734,7 @@ export const CheckoutPage = () => {
           </div>
         </section>
 
-        {/* 4. Flipkart Coupon Strip */}
+        {/* 4. Dynamic Coupon & Offers Strip */}
         <section className="fk-checkout-card fk-coupon-card">
           <div className="fk-coupon-header">
             <Tag size={16} color="#1C8E8F" />
@@ -696,7 +742,7 @@ export const CheckoutPage = () => {
               <strong>Coupons &amp; Offers</strong>
               {appliedCoupon ? (
                 <span className="fk-applied-coupon-text">
-                  Code <strong>{appliedCoupon}</strong> Applied: Flat 20% Off Launch Deal!
+                  Code <strong>{appliedCoupon.code || appliedCoupon}</strong> Applied: {appliedCoupon.description || `Saved ₹${couponDiscount}!`}
                 </span>
               ) : (
                 <span>Apply coupon code for instant savings</span>
@@ -717,18 +763,55 @@ export const CheckoutPage = () => {
           </div>
 
           {!appliedCoupon && (
-            <form className="fk-coupon-form" onSubmit={handleApplyCoupon}>
-              <input
-                type="text"
-                className="fk-coupon-input"
-                value={couponInput}
-                onChange={(e) => setCouponInput(e.target.value)}
-                placeholder="Enter coupon code (try POWER20)"
-              />
-              <button type="submit" className="fk-coupon-apply-btn">
-                Apply
-              </button>
-            </form>
+            <>
+              <form
+                className="fk-coupon-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleApplyCoupon();
+                }}
+              >
+                <input
+                  type="text"
+                  className="fk-coupon-input"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                  placeholder="Enter coupon code"
+                  disabled={couponApplying}
+                />
+                <button type="submit" className="fk-coupon-apply-btn" disabled={couponApplying}>
+                  {couponApplying ? '...' : 'Apply'}
+                </button>
+              </form>
+
+              {availableCoupons.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
+                  {availableCoupons.map((c) => (
+                    <div
+                      key={c._id || c.code}
+                      onClick={() => handleApplyCoupon(c.code)}
+                      style={{
+                        padding: '10px 12px',
+                        background: '#F0FDF4',
+                        border: '1px dashed #059669',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer'
+                      }}
+                      title="Tap to apply"
+                    >
+                      <div>
+                        <strong style={{ color: '#065F46', fontSize: '13px', letterSpacing: '0.5px' }}>{c.code}</strong>
+                        <p style={{ margin: '2px 0 0 0', fontSize: '11px', color: '#047857' }}>{c.description}</p>
+                      </div>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#059669' }}>APPLY</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </section>
 
@@ -862,7 +945,7 @@ export const CheckoutPage = () => {
 
             {couponDiscount > 0 && (
               <div className="fk-price-line">
-                <span>Coupon Discount (POWER20)</span>
+                <span>Coupon Discount ({appliedCoupon?.code || appliedCoupon})</span>
                 <span className="fk-green-text">-₹{couponDiscount}</span>
               </div>
             )}

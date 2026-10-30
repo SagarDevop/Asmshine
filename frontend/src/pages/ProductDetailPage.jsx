@@ -101,6 +101,16 @@ export const ProductDetailPage = ({
   const [similarProducts, setSimilarProducts] = useState([]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [mainImgLoaded, setMainImgLoaded] = useState(false);
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+
+  // Fetch active coupons from backend for product offers section
+  useEffect(() => {
+    let isMounted = true;
+    api.getAvailableCoupons().then((list) => {
+      if (isMounted) setAvailableCoupons(list || []);
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
 
   // Sync / fetch product by route parameter :id
   useEffect(() => {
@@ -178,7 +188,7 @@ export const ProductDetailPage = ({
 
   const handleCopyCoupon = (code) => {
     navigator.clipboard?.writeText?.(code);
-    showToast(`Coupon ${code} applied!`);
+    showToast(`Coupon code ${code} copied!`);
   };
 
   const isInCart = Boolean(
@@ -467,23 +477,26 @@ export const ProductDetailPage = ({
             <span>Available Offers & Coupons</span>
           </div>
 
-          <div className="pdp-offer-item highlight">
-            <div className="pdp-offer-bullet">
-              <Tag size={15} color="#1C8E8F" />
+          {availableCoupons.map((c) => (
+            <div key={c._id || c.code} className="pdp-offer-item highlight">
+              <div className="pdp-offer-bullet">
+                <Tag size={15} color="#1C8E8F" />
+              </div>
+              <div className="pdp-offer-text">
+                <strong>Special Offer:</strong> {c.description || (c.discountType === 'percentage' ? `Flat ${c.discountValue}% OFF` : `Flat ₹${c.discountValue} OFF`)} using code{' '}
+                <span className="pdp-coupon-code-pill">{c.code}</span>
+              </div>
+              <button
+                type="button"
+                className="pdp-copy-coupon-btn"
+                onClick={() => handleCopyCoupon(c.code)}
+                title="Copy coupon code"
+              >
+                <Copy size={13} />
+                <span>Copy</span>
+              </button>
             </div>
-            <div className="pdp-offer-text">
-              <strong>Launch Offer:</strong> Flat <strong>20% OFF</strong> using code{' '}
-              <span className="pdp-coupon-code-pill">POWER20</span>
-            </div>
-            <button
-              type="button"
-              className="pdp-copy-coupon-btn"
-              onClick={() => handleCopyCoupon('POWER20')}
-            >
-              <Copy size={13} />
-              <span>Copy</span>
-            </button>
-          </div>
+          ))}
 
           <div className="pdp-offer-item">
             <div className="pdp-offer-bullet">

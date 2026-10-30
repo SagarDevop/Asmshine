@@ -49,6 +49,22 @@ export const AccountPage = () => {
   const [activeTab, setActiveTab] = useState('menu'); // 'menu' | 'profile' | 'addresses' | 'orders' | 'wishlist'
   const [modalView, setModalView] = useState(null); // 'coupons' | 'help' | 'cards' | 'language' | 'devices' | 'notifications' | 'privacy' | 'reviews' | 'qa' | 'partner' | 'faq' | null
   const [copiedCoupon, setCopiedCoupon] = useState('');
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [loadingCoupons, setLoadingCoupons] = useState(false);
+
+  // Fetch coupons dynamically when modalView === 'coupons'
+  useEffect(() => {
+    if (modalView === 'coupons') {
+      setLoadingCoupons(true);
+      api.getAvailableCoupons().then((list) => {
+        setAvailableCoupons(list || []);
+      }).catch(() => {
+        setAvailableCoupons([]);
+      }).finally(() => {
+        setLoadingCoupons(false);
+      });
+    }
+  }, [modalView]);
 
   // Profile Edit State
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -1328,51 +1344,48 @@ export const AccountPage = () => {
             </div>
 
             <div className="addr-modal-body" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {/* 1. COUPONS MODAL */}
+              {/* 1. Dynamic Coupons Modal (Backed by MongoDB & Controlled via Admin Panel) */}
               {modalView === 'coupons' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ border: '1px dashed #2874F0', borderRadius: '8px', padding: '14px', backgroundColor: '#F0F7FF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <strong style={{ fontSize: '15px', color: '#1E3A8A', letterSpacing: '0.5px' }}>POWER20</strong>
-                      <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#475569' }}>Flat 20% OFF on all hygiene products (Orders ₹499+)</p>
+                  {loadingCoupons ? (
+                    <div style={{ padding: '24px', textAlign: 'center', color: '#64748B', fontSize: '13px' }}>
+                      Loading available coupons...
                     </div>
-                    <button
-                      type="button"
-                      className="fk-hub-email-btn"
-                      onClick={() => handleCopyCoupon('POWER20')}
-                    >
-                      {copiedCoupon === 'POWER20' ? 'COPIED!' : 'COPY'}
-                    </button>
-                  </div>
-
-                  <div style={{ border: '1px dashed #2874F0', borderRadius: '8px', padding: '14px', backgroundColor: '#F0F7FF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <strong style={{ fontSize: '15px', color: '#1E3A8A', letterSpacing: '0.5px' }}>SHINE15</strong>
-                      <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#475569' }}>Extra 15% OFF on Combo Cleaning Kits</p>
+                  ) : availableCoupons.length > 0 ? (
+                    availableCoupons.map((c) => (
+                      <div
+                        key={c._id || c.code}
+                        style={{
+                          border: '1px dashed #2874F0',
+                          borderRadius: '8px',
+                          padding: '14px',
+                          backgroundColor: '#F0F7FF',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <div>
+                          <strong style={{ fontSize: '15px', color: '#1E3A8A', letterSpacing: '0.5px' }}>{c.code}</strong>
+                          <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#475569' }}>
+                            {c.description || (c.discountType === 'percentage' ? `Flat ${c.discountValue}% OFF` : `Flat ₹${c.discountValue} OFF`)}
+                            {c.minOrderValue > 0 ? ` (Min Order ₹${c.minOrderValue})` : ''}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="fk-hub-email-btn"
+                          onClick={() => handleCopyCoupon(c.code)}
+                        >
+                          {copiedCoupon === c.code ? 'COPIED!' : 'COPY'}
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ padding: '24px', textAlign: 'center', color: '#64748B', fontSize: '13px' }}>
+                      No active coupons available right now. Check back soon!
                     </div>
-                    <button
-                      type="button"
-                      className="fk-hub-email-btn"
-                      onClick={() => handleCopyCoupon('SHINE15')}
-                    >
-                      {copiedCoupon === 'SHINE15' ? 'COPIED!' : 'COPY'}
-                    </button>
-                  </div>
-
-                  <div style={{ border: '1px dashed #059669', borderRadius: '8px', padding: '14px', backgroundColor: '#ECFDF5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <strong style={{ fontSize: '15px', color: '#065F46', letterSpacing: '0.5px' }}>FREESHIP</strong>
-                      <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#047857' }}>Free Express Shipping across Pan-India</p>
-                    </div>
-                    <button
-                      type="button"
-                      className="fk-hub-email-btn"
-                      style={{ backgroundColor: '#059669' }}
-                      onClick={() => handleCopyCoupon('FREESHIP')}
-                    >
-                      {copiedCoupon === 'FREESHIP' ? 'COPIED!' : 'COPY'}
-                    </button>
-                  </div>
+                  )}
                 </div>
               )}
 

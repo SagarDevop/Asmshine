@@ -124,7 +124,7 @@ const createOrder = async (req, res, next) => {
 
     const productDiscount = Math.max(0, totalMRP - itemsSubtotal);
 
-    // 5. Calculate coupon discount
+    // 5. Calculate coupon discount dynamically from MongoDB
     let couponDiscount = 0;
     const cleanCoupon = (couponCode || '').trim().toUpperCase();
     if (cleanCoupon) {
@@ -136,9 +136,6 @@ const createOrder = async (req, res, next) => {
             couponDiscount = dbCoupon.calculateDiscount(itemsSubtotal);
             await Coupon.findByIdAndUpdate(dbCoupon._id, { $inc: { usedCount: 1 } });
           }
-        } else if (cleanCoupon === 'POWER20' || cleanCoupon === 'SHINE25') {
-          const percent = cleanCoupon === 'POWER20' ? 0.20 : 0.25;
-          couponDiscount = Math.round(itemsSubtotal * percent);
         }
       } catch (couponErr) {
         console.warn('[Order] Coupon validation error:', couponErr.message);

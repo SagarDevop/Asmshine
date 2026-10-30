@@ -785,9 +785,9 @@ const initialCategories = [
 
 const initialBanners = {
   "announcement": {
-    "text": "✨ ASM Shine Mega Home Hygiene Fest: Flat 25% OFF with code SHINE25 | Free Doorstep Express Delivery",
-    "code": "SHINE25",
-    "discount": "25% OFF"
+    "text": "✨ ASM Shine New Launch Special: Flat 10% OFF with code LAUNCH10 | Free Doorstep Express Delivery",
+    "code": "LAUNCH10",
+    "discount": "10% OFF"
   },
   "heroSlides": [
     {

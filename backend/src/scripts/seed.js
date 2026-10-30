@@ -55,25 +55,19 @@ const seedDatabase = async () => {
       console.log('[Seed] Default user already exists: user@asmshine.com');
     }
 
-    // 4. Seed Default Coupons
+    // 4. Seed Default Coupons (Single New Launch 10% OFF Coupon)
     const Coupon = require('../models/Coupon');
+    // Remove legacy static coupons
+    await Coupon.deleteMany({ code: { $in: ['POWER20', 'SHINE25', 'SHINE15', 'CLEAN30'] } });
+
     const initialCoupons = [
       {
-        code: 'POWER20',
-        description: '20% off on all home hygiene essentials',
+        code: 'LAUNCH10',
+        description: 'New Launch Offer: Flat 10% OFF on all cleaning essentials',
         discountType: 'percentage',
-        discountValue: 20,
-        minOrderValue: 299,
-        maxDiscountAmount: 300,
-        isActive: true
-      },
-      {
-        code: 'SHINE25',
-        description: '25% mega festive discount',
-        discountType: 'percentage',
-        discountValue: 25,
-        minOrderValue: 499,
-        maxDiscountAmount: 500,
+        discountValue: 10,
+        minOrderValue: 0,
+        maxDiscountAmount: 0,
         isActive: true
       }
     ];
@@ -85,7 +79,7 @@ const seedDatabase = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
     }
-    console.log('[Seed] Default coupons seeded: POWER20, SHINE25');
+    console.log('[Seed] Default coupon seeded: LAUNCH10 (10% OFF)');
 
     // 5. Seed Store Settings
     const StoreSettings = require('../models/StoreSettings');

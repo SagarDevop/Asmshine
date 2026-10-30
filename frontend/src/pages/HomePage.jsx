@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { DesktopNav } from '../components/navigation/DesktopNav';
 import { BottomNav } from '../components/navigation/BottomNav';
-import { OfferStrip } from '../components/ui/OfferStrip';
 import { HeroBanner } from '../components/ui/HeroBanner';
 import { DealsForYou } from '../components/ui/DealsForYou';
 import { DiwaliSaleSection } from '../components/ui/DiwaliSaleSection';

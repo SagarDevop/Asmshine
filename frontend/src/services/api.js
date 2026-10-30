@@ -668,5 +668,38 @@ export const api = {
       throw new Error(data.message || 'Failed to cancel order');
     }
     return data;
+  },
+
+  // -------------------------------------------------------------
+  // Dynamic Coupons (Controlled via Admin Panel & Backend)
+  // -------------------------------------------------------------
+  getAvailableCoupons: async () => {
+    try {
+      const res = await apiFetch('/api/v1/coupons/available', {
+        headers: { 'Accept': 'application/json' }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) return [];
+      return Array.isArray(data.data) ? data.data : [];
+    } catch (e) {
+      console.warn('[API] Failed to fetch coupons:', e);
+      return [];
+    }
+  },
+
+  validateCoupon: async (code, orderSubtotal = 0) => {
+    const res = await apiFetch('/api/v1/coupons/validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ code, orderSubtotal })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.valid) {
+      throw new Error(data.message || 'Invalid or expired coupon code.');
+    }
+    return data;
   }
 };

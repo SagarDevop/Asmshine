@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
+import { api } from '../services/api';
 import '../styles/skeleton.css';
 
 /**
@@ -138,6 +139,8 @@ export const CartPage = ({
 
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponInput, setCouponInput] = useState('');
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [couponApplying, setCouponApplying] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState('');
 
@@ -148,21 +151,38 @@ export const CartPage = ({
   const totalPrice = cartData?.totalPrice || 0;
   const totalDiscount = cartData?.totalDiscount || 0;
 
-  const handleApplyCoupon = (codeToApply) => {
+  // Fetch all active, backend-managed coupons on mount
+  useEffect(() => {
+    let isMounted = true;
+    api.getAvailableCoupons().then((list) => {
+      if (isMounted) setAvailableCoupons(list || []);
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
+
+  const handleApplyCoupon = async (codeToApply) => {
     const code = (codeToApply || couponInput).trim().toUpperCase();
     if (!code) return;
 
-    if (code === 'POWER20') {
-      setAppliedCoupon({
-        code: 'POWER20',
-        percent: 20,
-        discount: Math.round(totalPrice * 0.2)
-      });
-      showToast('Coupon POWER20 applied! 20% discount activated');
-    } else {
-      showToast('Invalid coupon code. Try POWER20');
+    setCouponApplying(true);
+    try {
+      const res = await api.validateCoupon(code, totalPrice);
+      if (res && res.valid) {
+        setAppliedCoupon({
+          code: res.coupon.code,
+          percent: res.coupon.discountValue,
+          discount: res.discountAmount,
+          description: res.coupon.description,
+          discountType: res.coupon.discountType
+        });
+        showToast(res.message || `Coupon ${res.coupon.code} applied!`);
+        setCouponInput('');
+      }
+    } catch (err) {
+      showToast(err.message || 'Invalid coupon code');
+    } finally {
+      setCouponApplying(false);
     }
-    setCouponInput('');
   };
 
   const handleRemoveCoupon = () => {
@@ -170,13 +190,32 @@ export const CartPage = ({
     showToast('Coupon removed');
   };
 
+  // Recalculate applied coupon discount if cart total changes
+  useEffect(() => {
+    if (appliedCoupon?.code && totalPrice > 0) {
+      api.validateCoupon(appliedCoupon.code, totalPrice).then((res) => {
+        if (res && res.valid) {
+          setAppliedCoupon((prev) => ({
+            ...prev,
+            discount: res.discountAmount
+          }));
+        } else {
+          setAppliedCoupon(null);
+          showToast('Coupon removed: Order subtotal no longer qualifies.');
+        }
+      }).catch(() => {
+        setAppliedCoupon(null);
+      });
+    }
+  }, [totalPrice]);
+
   const couponDiscount = appliedCoupon?.discount || 0;
   const finalPrice = Math.max(totalPrice - couponDiscount, 0);
   const totalSavings = totalDiscount + couponDiscount;
 
   const handlePlaceOrder = () => {
     if (cartItems.length === 0) return;
-    navigate('/checkout');
+    navigate('/checkout', { state: { appliedCoupon } });
   };
 
   useEffect(() => {
@@ -432,27 +471,41 @@ export const CartPage = ({
                 <div className="cart-coupon-input-box">
                   <input
                     type="text"
-                    placeholder="Enter Coupon Code (e.g. CLEAN30)"
+                    placeholder="Enter Coupon Code"
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                     className="coupon-text-input"
+                    disabled={couponApplying}
                   />
                   <button
                     type="button"
                     className="coupon-apply-btn"
                     onClick={() => handleApplyCoupon()}
+                    disabled={couponApplying}
                   >
-                    APPLY
+                    {couponApplying ? '...' : 'APPLY'}
                   </button>
                 </div>
 
-                <div className="featured-coupon-chip" onClick={() => handleApplyCoupon('CLEAN30')}>
-                  <div className="feat-coupon-left">
-                    <span className="feat-code">CLEAN30</span>
-                    <span className="feat-desc">Get flat 30% OFF on all essentials</span>
+                {availableCoupons.length > 0 && (
+                  <div className="available-coupons-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
+                    {availableCoupons.map((c) => (
+                      <div
+                        key={c._id || c.code}
+                        className="featured-coupon-chip"
+                        onClick={() => handleApplyCoupon(c.code)}
+                        style={{ cursor: 'pointer' }}
+                        title="Click to apply"
+                      >
+                        <div className="feat-coupon-left">
+                          <span className="feat-code">{c.code}</span>
+                          <span className="feat-desc">{c.description}</span>
+                        </div>
+                        <span className="feat-tap-apply">TAP TO APPLY</span>
+                      </div>
+                    ))}
                   </div>
-                  <span className="feat-tap-apply">TAP TO APPLY</span>
-                </div>
+                )}
               </>
             )}
           </div>

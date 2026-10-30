@@ -381,7 +381,7 @@ export const AdminCouponsPage = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. POWER20, SHINE25"
+                    placeholder="e.g. LAUNCH10, FESTIVE20"
                     value={form.code}
                     onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase().replace(/\s+/g, '') })}
                     className="admin-form-input"
