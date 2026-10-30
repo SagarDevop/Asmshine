@@ -625,17 +625,48 @@ export const api = {
   },
 
   getOrderById: async (orderId) => {
-    if (!hasAuthToken()) {
-      return null;
+    try {
+      if (hasAuthToken()) {
+        const res = await apiFetch(`/api/v1/orders/${encodeURIComponent(orderId)}`, {
+          headers: { 'Accept': 'application/json' },
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          if (data && data.order) return data.order;
+        }
+      }
+    } catch (e) {
+      // Fall through to public track endpoint
     }
-    const res = await apiFetch(`/api/v1/orders/${encodeURIComponent(orderId)}`, {
-      headers: { 'Accept': 'application/json' },
-      credentials: 'include'
+
+    const publicRes = await apiFetch(`/api/v1/orders/track/${encodeURIComponent(orderId)}`, {
+      headers: { 'Accept': 'application/json' }
+    });
+    const publicData = await publicRes.json().catch(() => ({}));
+    if (!publicRes.ok) {
+      throw new Error(publicData.message || 'Failed to fetch order details');
+    }
+    return publicData.order || null;
+  },
+
+  cancelOrder: async (orderId, reason = 'Cancelled by customer') => {
+    if (!hasAuthToken()) {
+      throw new Error('Please login to manage orders');
+    }
+    const res = await apiFetch(`/api/v1/orders/${encodeURIComponent(orderId)}/cancel`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ reason })
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new Error(data.message || 'Failed to fetch order details');
+      throw new Error(data.message || 'Failed to cancel order');
     }
-    return data.order || null;
+    return data;
   }
 };

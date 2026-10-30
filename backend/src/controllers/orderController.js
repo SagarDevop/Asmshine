@@ -253,14 +253,21 @@ const getOrders = async (req, res, next) => {
       id: o.orderId,
       orderId: o.orderId,
       _id: o._id,
-      items: o.items,
+      items: (o.items || []).map((it) => ({
+        ...it,
+        price: it.unitPrice || it.price || 0
+      })),
       shippingAddress: o.shippingAddress,
       pricing: o.pricing,
       totalAmount: o.totalAmount,
       status: o.status,
       paymentMethod: o.paymentMethod,
       paymentStatus: o.paymentStatus,
-      createdAt: o.createdAt
+      createdAt: o.createdAt,
+      updatedAt: o.updatedAt,
+      shippingDetails: o.shippingDetails || {},
+      cancellation: o.cancellation || null,
+      timeline: o.timeline || []
     }));
 
     res.status(200).json({
@@ -304,7 +311,10 @@ const getOrderById = async (req, res, next) => {
         id: order.orderId,
         orderId: order.orderId,
         _id: order._id,
-        items: order.items,
+        items: (order.items || []).map((it) => ({
+          ...it,
+          price: it.unitPrice || it.price || 0
+        })),
         shippingAddress: order.shippingAddress,
         pricing: order.pricing,
         totalAmount: order.totalAmount,
@@ -312,6 +322,9 @@ const getOrderById = async (req, res, next) => {
         paymentMethod: order.paymentMethod,
         paymentStatus: order.paymentStatus,
         createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+        shippingDetails: order.shippingDetails || {},
+        cancellation: order.cancellation || null,
         timeline: order.timeline || []
       }
     });
@@ -378,10 +391,77 @@ const cancelCustomerOrder = async (req, res, next) => {
   }
 };
 
+/**
+ * GET /api/v1/orders/track/:id
+ * Public or authenticated live order tracking
+ */
+const publicTrackOrder = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id || !id.trim()) {
+      return res.status(400).json({ success: false, message: 'Order ID is required.' });
+    }
+
+    const isObjectId = mongoose.isValidObjectId(id.trim());
+    const order = await Order.findOne({
+      $or: [{ orderId: id.trim() }, { _id: isObjectId ? id.trim() : null }]
+    }).lean();
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: `No order found with reference ID #${id}`
+      });
+    }
+
+    const isAuthenticated = req.user && req.user._id && order.user && order.user.toString() === req.user._id.toString();
+
+    res.status(200).json({
+      success: true,
+      order: {
+        id: order.orderId,
+        orderId: order.orderId,
+        _id: order._id,
+        items: (order.items || []).map((it) => ({
+          name: it.name,
+          image: it.image,
+          size: it.size,
+          quantity: it.quantity,
+          unitPrice: it.unitPrice || it.price || 0,
+          price: it.unitPrice || it.price || 0,
+          totalPrice: it.totalPrice || ((it.unitPrice || it.price || 0) * (it.quantity || 1)),
+          totalMRP: it.totalMRP
+        })),
+        shippingAddress: {
+          fullName: isAuthenticated ? order.shippingAddress.fullName : (order.shippingAddress.fullName ? order.shippingAddress.fullName.split(' ')[0] + ' ***' : 'Customer'),
+          city: order.shippingAddress.city,
+          state: order.shippingAddress.state,
+          pincode: order.shippingAddress.pincode,
+          street: isAuthenticated ? order.shippingAddress.street : (order.shippingAddress.city + ', ' + order.shippingAddress.state),
+          phone: isAuthenticated ? order.shippingAddress.phone : (order.shippingAddress.phone ? '******' + order.shippingAddress.phone.slice(-4) : '')
+        },
+        pricing: order.pricing,
+        totalAmount: order.totalAmount,
+        status: order.status,
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+        shippingDetails: order.shippingDetails || {},
+        cancellation: order.cancellation || null,
+        timeline: order.timeline || []
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   createOrder,
   getOrders,
   getOrderById,
-  cancelCustomerOrder
+  cancelCustomerOrder,
+  publicTrackOrder
 };
 

@@ -67,6 +67,11 @@ router.patch(
   authorize('admin', 'superadmin', 'order_manager'),
   orderController.updateOrderStatus
 );
+router.put(
+  '/orders/:id/status',
+  authorize('admin', 'superadmin', 'order_manager'),
+  orderController.updateOrderStatus
+);
 router.post(
   '/orders/:id/cancel',
   authorize('admin', 'superadmin', 'order_manager'),

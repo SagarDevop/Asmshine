@@ -682,10 +682,10 @@ export const AdminOrdersPage = () => {
                               </div>
                             </div>
                           </td>
-                          <td style={{ fontWeight: 600 }}>{formatCurrency(item.price)}</td>
+                          <td style={{ fontWeight: 600 }}>{formatCurrency(item.unitPrice || item.price || (item.totalPrice / (item.quantity || 1)) || 0)}</td>
                           <td style={{ fontWeight: 700 }}>× {item.quantity}</td>
                           <td style={{ textAlign: 'right', fontWeight: 800, color: '#0F172A' }}>
-                            {formatCurrency(item.price * item.quantity)}
+                            {formatCurrency(item.totalPrice || ((item.unitPrice || item.price || 0) * (item.quantity || 1)))}
                           </td>
                         </tr>
                       ))}
@@ -699,12 +699,18 @@ export const AdminOrdersPage = () => {
                 <div style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748B' }}>
                     <span>Items Subtotal:</span>
-                    <span>{formatCurrency(selectedOrder.itemsTotal || selectedOrder.items?.reduce((s, i) => s + i.price * i.quantity, 0))}</span>
+                    <span>{formatCurrency(selectedOrder.pricing?.itemsSubtotal || selectedOrder.itemsTotal || selectedOrder.items?.reduce((s, i) => s + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || 1)), 0))}</span>
                   </div>
-                  {selectedOrder.couponCode && (
+                  {(selectedOrder.pricing?.couponDiscount > 0 || selectedOrder.coupon?.discountAmount > 0 || selectedOrder.discountAmount > 0) && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', color: '#059669', fontWeight: 600 }}>
-                      <span>Coupon Discount ({selectedOrder.couponCode}):</span>
-                      <span>-{formatCurrency(selectedOrder.discountAmount || 0)}</span>
+                      <span>Coupon Discount ({selectedOrder.coupon?.code || selectedOrder.couponCode || 'APPLIED'}):</span>
+                      <span>-{formatCurrency(selectedOrder.pricing?.couponDiscount || selectedOrder.coupon?.discountAmount || selectedOrder.discountAmount || 0)}</span>
+                    </div>
+                  )}
+                  {selectedOrder.pricing?.prepaidDiscount > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#0284C7', fontWeight: 600 }}>
+                      <span>Prepaid Discount:</span>
+                      <span>-{formatCurrency(selectedOrder.pricing.prepaidDiscount)}</span>
                     </div>
                   )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748B' }}>

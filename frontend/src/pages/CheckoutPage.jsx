@@ -15,13 +15,17 @@ import {
   Sparkles,
   ShoppingBag,
   Zap,
-  Phone
+  Phone,
+  Copy,
+  Printer,
+  ExternalLink
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 import { api } from '../services/api';
+import '../styles/orderTracking.css';
 
 export const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -39,6 +43,8 @@ export const CheckoutPage = () => {
   const [couponInput, setCouponInput] = useState('');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState('');
+  const [placedOrderData, setPlacedOrderData] = useState(null);
+  const [copiedOrderId, setCopiedOrderId] = useState(false);
   const [orderSubmitting, setOrderSubmitting] = useState(false);
 
   // Address State - dynamically synced with selectedAddress and user account
@@ -218,6 +224,7 @@ export const CheckoutPage = () => {
       if (response && response.success && response.order) {
         const placedOrderId = response.order.orderId || response.order.id;
         setOrderId(placedOrderId);
+        setPlacedOrderData(response.order);
         setOrderPlaced(true);
         await clearCart();
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -231,6 +238,14 @@ export const CheckoutPage = () => {
     }
   };
 
+  const handleCopyOrderId = () => {
+    if (!orderId) return;
+    navigator.clipboard?.writeText(orderId);
+    setCopiedOrderId(true);
+    showToast('Order ID copied to clipboard');
+    setTimeout(() => setCopiedOrderId(false), 2000);
+  };
+
   if (loading) {
     return (
       <div className="fk-checkout-loading">
@@ -239,67 +254,189 @@ export const CheckoutPage = () => {
     );
   }
 
-  // --- ORDER SUCCESS SCREEN ---
+  // --- PREMIUM ORDER CONFIRMATION VIEW ---
   if (orderPlaced) {
     return (
-      <div className="fk-order-success-view">
-        <div className="fk-success-card">
-          <div className="fk-success-icon-wrap">
-            <Check size={36} strokeWidth={3} color="#FFFFFF" />
+      <div className="asm-order-success-container">
+        <div className="asm-order-success-card">
+          {/* Celebratory Banner */}
+          <div className="asm-success-header-banner">
+            <div className="asm-success-badge-icon">
+              <Check size={40} strokeWidth={3.5} color="#FFFFFF" />
+            </div>
+
+            <h2 className="asm-success-title">Order Confirmed!</h2>
+            <p className="asm-success-subtitle">
+              Thank you for choosing SM Shine. Your home hygiene formulation order is verified and ready for packaging.
+            </p>
+
+            <div className="asm-order-pill-row">
+              <span>Order Reference: <strong>{orderId}</strong></span>
+              <button
+                type="button"
+                className="asm-order-pill-copy"
+                onClick={handleCopyOrderId}
+                title="Copy Reference ID"
+              >
+                {copiedOrderId ? <Check size={13} /> : <Copy size={13} />}
+                <span>{copiedOrderId ? 'Copied' : 'Copy'}</span>
+              </button>
+            </div>
           </div>
 
-          <h2 className="fk-success-title">Order Placed Successfully!</h2>
-          <p className="fk-success-id">
-            Order Reference: <strong>{orderId}</strong>
-          </p>
-          <span className="fk-success-badge">
-            <ShieldCheck size={13} /> 100% Authentic ASM Shine Hygiene Formulation
-          </span>
+          <div className="asm-success-body">
+            {/* Express Delivery Estimate Card */}
+            <div className="asm-delivery-estimate-card">
+              <div className="asm-estimate-left">
+                <div className="asm-estimate-icon">
+                  <Truck size={24} />
+                </div>
+                <div className="asm-estimate-text">
+                  <h4>Estimated Delivery: Arriving in 2-3 Business Days</h4>
+                  <p>Pan-India Express Surface &amp; Air Logistics • Free Fast Shipping</p>
+                </div>
+              </div>
 
-          <div className="fk-success-delivery-box">
-            <div className="fk-delivery-date-row">
-              <Truck size={18} color="#1C8E8F" />
-              <div>
-                <strong>Estimated Delivery: Tomorrow by 8:00 PM</strong>
-                <span>Pan-India Express Air Shipping</span>
+              <div className="asm-track-pulse-badge">
+                <span className="asm-pulse-dot" />
+                <span>Confirmed &amp; Active</span>
               </div>
             </div>
 
-            <div className="fk-success-address">
-              <span>Delivering to: <strong>{address.name}</strong></span>
-              <p>{address.street}, {address.city} - {address.pincode}</p>
-            </div>
-          </div>
+            {/* Two-Column Grid: Delivery Destination & Payment Breakdown */}
+            <div className="asm-two-col-grid">
+              {/* Delivery Address */}
+              <div className="asm-info-block">
+                <h4 className="asm-info-title">
+                  <MapPin size={15} color="#2563EB" />
+                  <span>Delivery Destination</span>
+                </h4>
+                <div className="asm-info-name">{address.name}</div>
+                <p className="asm-info-text">
+                  {address.street}
+                  <br />
+                  {address.city}, {address.state} - <strong>{address.pincode}</strong>
+                </p>
+                <div style={{ marginTop: '8px', fontSize: '12.5px', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Phone size={13} color="#64748B" />
+                  <span>Mobile: {address.phone}</span>
+                </div>
+              </div>
 
-          <div className="fk-success-summary-box">
-            <div className="fk-success-row">
-              <span>Total Paid ({checkoutItems.length} items):</span>
-              <strong className="fk-success-amount">₹{finalPayable}</strong>
-            </div>
-            <div className="fk-success-row savings">
-              <span>Total Saved on this Order:</span>
-              <span className="fk-saved-text">₹{totalSavings} ({(totalSavings / totalMRP * 100).toFixed(0)}% OFF)</span>
-            </div>
-          </div>
+              {/* Payment Summary */}
+              <div className="asm-info-block">
+                <h4 className="asm-info-title">
+                  <CreditCard size={15} color="#2563EB" />
+                  <span>Payment Summary</span>
+                </h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Method:</span>
+                  <span style={{ fontSize: '12px', fontWeight: 800, background: '#F1F5F9', padding: '3px 8px', borderRadius: '6px' }}>
+                    {paymentMethod === 'upi' ? 'UPI Instant Prepaid' : paymentMethod.toUpperCase()}
+                  </span>
+                </div>
 
-          <div className="fk-success-actions" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              className="fk-btn-continue"
-              onClick={() => navigate('/account')}
-              id="view-orders-btn"
-              style={{ backgroundColor: '#2874F0', color: '#FFFFFF' }}
-            >
-              <span>View in My Orders</span>
-            </button>
-            <button
-              type="button"
-              className="fk-btn-continue"
-              onClick={() => navigate('/')}
-            >
-              <ShoppingBag size={15} />
-              <span>Continue Shopping</span>
-            </button>
+                <div className="asm-price-breakdown">
+                  <div className="asm-price-row">
+                    <span>Items Total:</span>
+                    <span>₹{itemsSubtotal}</span>
+                  </div>
+                  {totalSavings > 0 && (
+                    <div className="asm-price-row discount">
+                      <span>Total Savings:</span>
+                      <span>-₹{totalSavings}</span>
+                    </div>
+                  )}
+                  <div className="asm-price-row">
+                    <span>Delivery Charges:</span>
+                    <span style={{ color: '#059669', fontWeight: 700 }}>FREE</span>
+                  </div>
+                  <div className="asm-price-row total">
+                    <span>Total Amount:</span>
+                    <span style={{ color: '#2563EB' }}>₹{finalPayable}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Ordered Items Preview */}
+            <div className="asm-section-box">
+              <div className="asm-section-header">
+                <h3 className="asm-section-title">
+                  <ShoppingBag size={16} color="#2563EB" />
+                  <span>Items Ordered ({checkoutItems.length})</span>
+                </h3>
+                <span style={{ fontSize: '12px', color: '#64748B' }}>
+                  Authentic SM Shine
+                </span>
+              </div>
+
+              <div className="asm-ordered-items-list">
+                {checkoutItems.map((item, idx) => (
+                  <div key={idx} className="asm-order-item-card">
+                    <img
+                      src={item.product?.image || '/favicon.svg'}
+                      alt={item.product?.name}
+                      className="asm-item-thumb"
+                      onError={(e) => { e.currentTarget.src = '/favicon.svg'; }}
+                    />
+                    <div className="asm-item-meta">
+                      <h4 className="asm-item-name">{item.product?.name}</h4>
+                      <div className="asm-item-sub">
+                        {item.size && <span className="asm-item-tag">{item.size}</span>}
+                        <span>Qty: <strong>{item.quantity}</strong></span>
+                        <span>•</span>
+                        <span>₹{item.product?.price} each</span>
+                      </div>
+                    </div>
+                    <div className="asm-item-price-col">
+                      <div className="asm-item-price-current">
+                        ₹{item.product?.price * item.quantity}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="asm-actions-bar">
+              <button
+                type="button"
+                className="asm-btn-primary"
+                onClick={() => navigate(`/order/${orderId}`)}
+                id="track-order-live-btn"
+              >
+                <Truck size={17} />
+                <span>Track Live Order Status</span>
+              </button>
+
+              <button
+                type="button"
+                className="asm-btn-secondary"
+                onClick={() => window.print()}
+              >
+                <Printer size={16} />
+                <span>Print Receipt</span>
+              </button>
+
+              <button
+                type="button"
+                className="asm-btn-secondary"
+                onClick={() => navigate('/account')}
+              >
+                <ShoppingBag size={16} />
+                <span>View My Orders</span>
+              </button>
+
+              <button
+                type="button"
+                className="asm-btn-secondary"
+                onClick={() => navigate('/')}
+              >
+                <span>Continue Shopping</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

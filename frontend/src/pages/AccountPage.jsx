@@ -1045,15 +1045,37 @@ export const AccountPage = () => {
                       </div>
                       <span
                         style={{
-                          backgroundColor: '#EFF6FF',
-                          color: '#2874F0',
-                          padding: '3px 8px',
-                          borderRadius: '4px',
+                          backgroundColor:
+                            order.status === 'DELIVERED'
+                              ? '#ECFDF5'
+                              : order.status === 'SHIPPED'
+                              ? '#EDE9FE'
+                              : order.status === 'CANCELLED'
+                              ? '#FEF2F2'
+                              : order.status === 'PROCESSING'
+                              ? '#FEF3C7'
+                              : '#EFF6FF',
+                          color:
+                            order.status === 'DELIVERED'
+                              ? '#047857'
+                              : order.status === 'SHIPPED'
+                              ? '#6D28D9'
+                              : order.status === 'CANCELLED'
+                              ? '#B91C1C'
+                              : order.status === 'PROCESSING'
+                              ? '#B45309'
+                              : '#1D4ED8',
+                          padding: '4px 10px',
+                          borderRadius: '20px',
                           fontSize: '11px',
-                          fontWeight: 700
+                          fontWeight: 700,
+                          letterSpacing: '0.3px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
                         }}
                       >
-                        {order.status || 'CONFIRMED'}
+                        ● {(order.status || 'CONFIRMED').replace('_', ' ')}
                       </span>
                     </div>
 
@@ -1067,6 +1089,7 @@ export const AccountPage = () => {
                                 src={item.image}
                                 alt={item.name}
                                 style={{ width: '44px', height: '44px', objectFit: 'contain', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}
+                                onError={(e) => { e.currentTarget.src = '/favicon.svg'; }}
                               />
                             )}
                             <div style={{ flex: 1, minWidth: 0 }}>
@@ -1074,7 +1097,7 @@ export const AccountPage = () => {
                                 {item.name}
                               </div>
                               <div style={{ fontSize: '12px', color: '#64748B' }}>
-                                Qty: {item.quantity} {item.size ? `(${item.size})` : ''} • ₹{item.unitPrice} each
+                                Qty: {item.quantity} {item.size ? `(${item.size})` : ''} • ₹{item.unitPrice || item.price || 0} each
                               </div>
                             </div>
                           </div>
@@ -1089,21 +1112,46 @@ export const AccountPage = () => {
                         alignItems: 'center',
                         marginTop: '10px',
                         paddingTop: '10px',
-                        borderTop: '1px solid #F1F5F9'
+                        borderTop: '1px solid #F1F5F9',
+                        flexWrap: 'wrap',
+                        gap: '10px'
                       }}
                     >
                       <div style={{ fontSize: '12px', color: '#64748B' }}>
-                        {order.createdAt
-                          ? new Date(order.createdAt).toLocaleDateString('en-IN', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric'
-                            })
-                          : 'Recently Placed'}
-                        {order.paymentMethod ? ` • ${order.paymentMethod.toUpperCase()}` : ''}
+                        <div>
+                          {order.createdAt
+                            ? new Date(order.createdAt).toLocaleDateString('en-IN', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric'
+                              })
+                            : 'Recently Placed'}
+                          {order.paymentMethod ? ` • ${order.paymentMethod.toUpperCase()}` : ''}
+                        </div>
+                        <div style={{ fontSize: '14.5px', fontWeight: 800, color: '#0F172A', marginTop: '2px' }}>
+                          Total: ₹{order.totalAmount}
+                        </div>
                       </div>
-                      <div style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A' }}>
-                        Total Amount: ₹{order.totalAmount}
+
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          type="button"
+                          className="fk-action-primary-btn"
+                          style={{
+                            padding: '7px 14px',
+                            fontSize: '12.5px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            backgroundColor: '#2563EB',
+                            color: '#FFFFFF',
+                            borderRadius: '8px'
+                          }}
+                          onClick={() => navigate(`/order/${order.orderId || order.id || order._id}`)}
+                        >
+                          <Package size={14} />
+                          <span>Track Order</span>
+                        </button>
                       </div>
                     </div>
                   </div>

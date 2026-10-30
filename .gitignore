@@ -29,3 +29,8 @@ Thumbs.db
 # Reference assets
 stitch_reference/
 stich_reference/
+
+# Local MongoDB data directory
+data_db/
+backend/data_db/
+*.lock

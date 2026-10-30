@@ -126,10 +126,17 @@ export const adminApi = {
   },
 
   updateOrderStatus: async (id, data) => {
-    return adminFetch(`/api/v1/admin/orders/${id}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    });
+    try {
+      return await adminFetch(`/api/v1/admin/orders/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify(data)
+      });
+    } catch (err) {
+      return await adminFetch(`/api/v1/admin/orders/${id}/status`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      });
+    }
   },
 
   cancelOrder: async (id, data) => {

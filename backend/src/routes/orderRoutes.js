@@ -5,10 +5,14 @@ const {
   createOrder,
   getOrders,
   getOrderById,
-  cancelCustomerOrder
+  cancelCustomerOrder,
+  publicTrackOrder
 } = require('../controllers/orderController');
 
-// All order endpoints strictly require authentication
+// Public Live Order Tracking (Accessible with Order ID)
+router.get('/track/:id', publicTrackOrder);
+
+// Authenticated customer order operations
 router.use(authenticate);
 
 router.post('/', createOrder);

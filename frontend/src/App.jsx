@@ -12,6 +12,7 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { AuthPage } from './pages/AuthPage';
 import { AccountPage } from './pages/AccountPage';
+import { OrderTrackingPage } from './pages/OrderTrackingPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { DesktopNav } from './components/navigation/DesktopNav';
 import { BottomNav } from './components/navigation/BottomNav';
@@ -55,6 +56,11 @@ function HashRedirectHandler() {
         navigate('/about', { replace: true });
       } else if (hash === '#cart') {
         navigate('/cart', { replace: true });
+      } else if (hash.startsWith('#order/')) {
+        const oid = hash.replace('#order/', '');
+        navigate(`/order/${oid}`, { replace: true });
+      } else if (hash.startsWith('#track-order')) {
+        navigate('/track-order', { replace: true });
       } else if (hash === '#checkout') {
         navigate('/checkout', { replace: true });
       } else if (hash === '#account') {
@@ -197,6 +203,18 @@ function AccountRoute() {
   );
 }
 
+function OrderTrackingRoute() {
+  return (
+    <div className="app-shell">
+      <DesktopNav />
+      <div className="screen-container">
+        <OrderTrackingPage />
+      </div>
+      <BottomNav activeTab="account" />
+    </div>
+  );
+}
+
 
 const DEFAULT_GOOGLE_CLIENT_ID = '544546980474-8pgk6kkellbbtmec3iun2p0v5kis143e.apps.googleusercontent.com';
 const googleClientId =
@@ -234,6 +252,10 @@ export function App() {
                 <Route path="/cart" element={<CartRoute />} />
                 <Route path="/product/:id" element={<ProductDetailRoute />} />
                 <Route path="/checkout" element={<CheckoutRoute />} />
+                {/* Order Tracking Routes */}
+                <Route path="/order/:orderId" element={<OrderTrackingRoute />} />
+                <Route path="/track-order" element={<OrderTrackingRoute />} />
+                <Route path="/track-order/:orderId" element={<OrderTrackingRoute />} />
                 {/* Authentication & Profile Routes */}
                 <Route path="/login" element={<LoginRoute />} />
                 <Route path="/signup" element={<SignupRoute />} />
