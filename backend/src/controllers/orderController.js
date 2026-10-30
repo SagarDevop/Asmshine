@@ -3,6 +3,7 @@ const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Cart = require('../models/Cart');
 const Coupon = require('../models/Coupon');
+const StoreSettings = require('../models/StoreSettings');
 const inventoryService = require('../services/inventoryService');
 
 /**
@@ -150,17 +151,24 @@ const createOrder = async (req, res, next) => {
       prepaidDiscount = Math.round((itemsSubtotal - couponDiscount) * 0.05);
     }
 
-    const finalAmount = Math.max(0, itemsSubtotal - couponDiscount - prepaidDiscount);
+    // 7. Calculate dynamic delivery fee from StoreSettings
+    const storeSettings = await StoreSettings.getSettings();
+    const threshold = Number(storeSettings?.freeShippingThreshold) || 499;
+    const standardFee = Number(storeSettings?.standardDeliveryFee) || 49;
+    const netOrderValue = Math.max(0, itemsSubtotal - couponDiscount);
+    const deliveryFee = netOrderValue >= threshold ? 0 : standardFee;
 
-    // 7. Generate genuine ASM- order ID
+    const finalAmount = Math.max(0, itemsSubtotal - couponDiscount - prepaidDiscount + deliveryFee);
+
+    // 8. Generate genuine ASM- order ID
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     const randPart = Math.floor(100000 + Math.random() * 900000);
     const orderId = `ASM-${dateStr}-${randPart}`;
 
-    // 8. Atomically deduct inventory before committing order (concurrency protected)
+    // 9. Atomically deduct inventory before committing order (concurrency protected)
     await inventoryService.deductOrderStock(verifiedItems, orderId, req.user);
 
-    // 9. Create and save Order in MongoDB
+    // 10. Create and save Order in MongoDB
     const newOrder = new Order({
       orderId,
       user: req.user._id,
@@ -180,7 +188,7 @@ const createOrder = async (req, res, next) => {
         productDiscount,
         couponDiscount,
         prepaidDiscount,
-        deliveryFee: 0,
+        deliveryFee,
         finalAmount
       },
       totalAmount: finalAmount,

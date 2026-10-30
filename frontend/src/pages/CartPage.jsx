@@ -151,12 +151,22 @@ export const CartPage = ({
   const totalPrice = cartData?.totalPrice || 0;
   const totalDiscount = cartData?.totalDiscount || 0;
 
-  // Fetch all active, backend-managed coupons on mount
+  const [deliverySettings, setDeliverySettings] = useState({
+    freeShippingThreshold: 499,
+    standardDeliveryFee: 49
+  });
+
+  // Fetch active coupons & delivery rules from backend on mount
   useEffect(() => {
     let isMounted = true;
     api.getAvailableCoupons().then((list) => {
       if (isMounted) setAvailableCoupons(list || []);
     }).catch(() => {});
+
+    api.getDeliverySettings().then((s) => {
+      if (isMounted && s) setDeliverySettings(s);
+    }).catch(() => {});
+
     return () => { isMounted = false; };
   }, []);
 
@@ -210,12 +220,20 @@ export const CartPage = ({
   }, [totalPrice]);
 
   const couponDiscount = appliedCoupon?.discount || 0;
-  const finalPrice = Math.max(totalPrice - couponDiscount, 0);
-  const totalSavings = totalDiscount + couponDiscount;
+  const netSubtotal = Math.max(0, totalPrice - couponDiscount);
+  const threshold = Number(deliverySettings?.freeShippingThreshold) || 499;
+  const standardDeliveryFee = Number(deliverySettings?.standardDeliveryFee) || 49;
+  const isFreeDelivery = cartItems.length === 0 || netSubtotal >= threshold;
+  const deliveryFee = isFreeDelivery ? 0 : standardDeliveryFee;
+  const amountNeededForFree = Math.max(0, threshold - netSubtotal);
+  const freeDeliveryProgress = Math.min(100, Math.round((netSubtotal / threshold) * 100));
+
+  const finalPrice = Math.max(netSubtotal + deliveryFee, 0);
+  const totalSavings = totalDiscount + couponDiscount + (isFreeDelivery && cartItems.length > 0 ? standardDeliveryFee : 0);
 
   const handlePlaceOrder = () => {
     if (cartItems.length === 0) return;
-    navigate('/checkout', { state: { appliedCoupon } });
+    navigate('/checkout', { state: { appliedCoupon, deliveryFee, isFreeDelivery } });
   };
 
   useEffect(() => {
@@ -362,6 +380,60 @@ export const CartPage = ({
         </div>
       ) : (
         <div className="cart-content-container">
+          {/* Dynamic Free Delivery Goal Tracker (Flipkart Exact) */}
+          {cartItems.length > 0 && (
+            isFreeDelivery ? (
+              <div
+                style={{
+                  background: '#ECFDF5',
+                  border: '1px solid #A7F3D0',
+                  borderRadius: '8px',
+                  padding: '10px 14px',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <Truck size={17} color="#059669" />
+                <span style={{ color: '#065F46', fontSize: '13px', fontWeight: 600 }}>
+                  🎉 Congratulations! You have unlocked <strong>FREE Express Delivery</strong> on this order.
+                </span>
+              </div>
+            ) : (
+              <div
+                style={{
+                  background: '#EFF6FF',
+                  border: '1px solid #BFDBFE',
+                  borderRadius: '8px',
+                  padding: '12px 14px',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '6px'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+                  <span style={{ color: '#1E40AF', fontWeight: 600 }}>
+                    Add <strong>₹{amountNeededForFree}</strong> more to unlock <strong style={{ color: '#059669' }}>FREE Delivery!</strong>
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#2563EB' }}>{freeDeliveryProgress}%</span>
+                </div>
+                <div style={{ height: '6px', background: '#DBEAFE', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      width: `${freeDeliveryProgress}%`,
+                      height: '100%',
+                      background: '#2563EB',
+                      borderRadius: '4px',
+                      transition: 'width 0.3s ease'
+                    }}
+                  />
+                </div>
+              </div>
+            )
+          )}
+
           {/* Cart Item Cards List */}
           <div className="cart-items-list">
             {cartItems.map(({ productId, product, quantity, itemTotal, itemMRP, itemSavings }) => (
@@ -535,9 +607,13 @@ export const CartPage = ({
 
             <div className="cart-breakdown-row">
               <span>Delivery Charges</span>
-              <span className="green-text">
-                <del style={{ color: '#94A3B8', marginRight: '4px' }}>₹40</del> FREE
-              </span>
+              {isFreeDelivery ? (
+                <span className="green-text">
+                  <del style={{ color: '#94A3B8', marginRight: '4px' }}>₹{standardDeliveryFee}</del> FREE
+                </span>
+              ) : (
+                <span style={{ fontWeight: 600, color: '#0F172A' }}>₹{standardDeliveryFee}</span>
+              )}
             </div>
 
             <div className="cart-total-amount-row">

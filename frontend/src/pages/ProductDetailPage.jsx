@@ -103,6 +103,12 @@ export const ProductDetailPage = ({
   const [mainImgLoaded, setMainImgLoaded] = useState(false);
   const [availableCoupons, setAvailableCoupons] = useState([]);
 
+  // Dynamic Delivery & Pincode Checker State
+  const [pincodeInput, setPincodeInput] = useState(selectedAddress?.pincode || '');
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
+  const [checkingPincode, setCheckingPincode] = useState(false);
+  const [pincodeError, setPincodeError] = useState('');
+
   // Fetch active coupons from backend for product offers section
   useEffect(() => {
     let isMounted = true;
@@ -111,6 +117,41 @@ export const ProductDetailPage = ({
     }).catch(() => {});
     return () => { isMounted = false; };
   }, []);
+
+  // Fetch dynamic delivery estimate whenever address or product changes
+  useEffect(() => {
+    const pin = selectedAddress?.pincode || '110001';
+    if (!pincodeInput && selectedAddress?.pincode) {
+      setPincodeInput(selectedAddress.pincode);
+    }
+    api.estimateDelivery(pin, product?.price || 0)
+      .then((res) => {
+        if (res?.success) setDeliveryInfo(res);
+      })
+      .catch(() => {});
+  }, [selectedAddress, product?.price]);
+
+  const handleCheckPincode = async (e) => {
+    if (e) e.preventDefault();
+    const pin = pincodeInput.trim();
+    if (!/^[1-9][0-9]{5}$/.test(pin)) {
+      setPincodeError('Please enter a valid 6-digit PIN code');
+      return;
+    }
+    setPincodeError('');
+    setCheckingPincode(true);
+    try {
+      const res = await api.estimateDelivery(pin, product?.price || 0);
+      if (res && res.success) {
+        setDeliveryInfo(res);
+        showToast(`Delivery available to ${res.city}`);
+      }
+    } catch (err) {
+      setPincodeError(err.message || 'Delivery not available to this PIN');
+    } finally {
+      setCheckingPincode(false);
+    }
+  };
 
   // Sync / fetch product by route parameter :id
   useEffect(() => {
@@ -552,42 +593,96 @@ export const ProductDetailPage = ({
           </section>
         )}
 
-        {/* 6. Delivery & Assurance Section */}
+        {/* 6. Dynamic Delivery & Assurance Section */}
         <section className="pdp-section pdp-delivery-card">
-          <div
-            className="pdp-delivery-location-row"
-            onClick={() => setIsAddressModalOpen(true)}
-            style={{ cursor: 'pointer' }}
-            title="Click to select or change delivery address"
-          >
-            <div className="pdp-delivery-loc-info">
-              <MapPin size={16} className="pdp-loc-pin" />
-              <span>
-                Deliver to:{' '}
-                <strong>
-                  {selectedAddress
-                    ? `${selectedAddress.fullName || selectedAddress.name ? `${selectedAddress.fullName || selectedAddress.name}, ` : ''}${selectedAddress.city} - ${selectedAddress.pincode}`
-                    : 'Enter PIN Code'}
-                </strong>
-              </span>
-            </div>
-            <span
-              className="pdp-change-loc-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsAddressModalOpen(true);
-              }}
-            >
-              Change
-            </span>
+          <div className="pdp-section-subheading">
+            <Truck size={17} color="#059669" />
+            <span>Delivery &amp; Serviceability</span>
           </div>
 
-          <div className="pdp-delivery-speed-row">
-            <Truck size={17} color="#1C8E8F" />
-            <span>
-              <strong>FREE Express Delivery</strong> by <strong>Tomorrow, 5:00 PM</strong>
-            </span>
-          </div>
+          {/* Interactive Pincode Checker Bar */}
+          <form className="pdp-pincode-form" onSubmit={handleCheckPincode} style={{ display: 'flex', gap: '8px', margin: '8px 0 12px 0' }}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <MapPin size={16} color="#64748B" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+              <input
+                type="text"
+                placeholder="Enter 6-digit PIN code"
+                maxLength={6}
+                value={pincodeInput}
+                onChange={(e) => {
+                  setPincodeInput(e.target.value.replace(/\D/g, ''));
+                  setPincodeError('');
+                }}
+                style={{
+                  width: '100%',
+                  padding: '9px 12px 9px 36px',
+                  borderRadius: '8px',
+                  border: pincodeError ? '1px solid #DC2626' : '1px solid #CBD5E1',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: '#0F172A',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={checkingPincode}
+              style={{
+                background: '#1C8E8F',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '0 18px',
+                fontSize: '12px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                letterSpacing: '0.5px'
+              }}
+            >
+              {checkingPincode ? '...' : 'CHECK'}
+            </button>
+          </form>
+
+          {pincodeError && (
+            <div style={{ color: '#DC2626', fontSize: '11px', marginTop: '-6px', marginBottom: '8px', fontWeight: 600 }}>
+              {pincodeError}
+            </div>
+          )}
+
+          {/* Dynamic Estimate Details */}
+          {deliveryInfo ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px 12px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '12px', color: '#334155', fontWeight: 600 }}>
+                  Deliver to <strong>{deliveryInfo.city} ({deliveryInfo.pincode})</strong>
+                </span>
+                <span style={{ fontSize: '11px', color: '#059669', fontWeight: 700, background: '#DCFCE7', padding: '2px 8px', borderRadius: '12px' }}>
+                  ✓ SERVICEABLE
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                <Truck size={16} color="#1C8E8F" />
+                <span style={{ color: '#0F172A' }}>
+                  <strong>{deliveryInfo.deliveryBadge}</strong> ({deliveryInfo.deliveryDate})
+                </span>
+              </div>
+
+              <div style={{ fontSize: '12px', color: '#64748B' }}>
+                {deliveryInfo.isFreeDelivery ? (
+                  <span style={{ color: '#059669', fontWeight: 700 }}>
+                    🎉 FREE Delivery Applied (Order above ₹{deliveryInfo.freeShippingThreshold})
+                  </span>
+                ) : (
+                  <span>
+                    Standard Delivery: <strong>₹{deliveryInfo.deliveryFee}</strong> (Free on orders above ₹{deliveryInfo.freeShippingThreshold})
+                  </span>
+                )}
+              </div>
+            </div>
+          ) : null}
 
           <div className="pdp-assurances-grid">
             <div className="pdp-assurance-pill">
@@ -596,11 +691,11 @@ export const ProductDetailPage = ({
             </div>
             <div className="pdp-assurance-pill">
               <ShieldCheck size={16} color="#1C8E8F" />
-              <span>Cash on Delivery</span>
+              <span>Cash on Delivery Available</span>
             </div>
             <div className="pdp-assurance-pill">
               <Leaf size={16} color="#1C8E8F" />
-              <span>100% Himalayan Pure</span>
+              <span>100% Genuine Lab Formulation</span>
             </div>
           </div>
         </section>

@@ -701,5 +701,28 @@ export const api = {
       throw new Error(data.message || 'Invalid or expired coupon code.');
     }
     return data;
+  },
+
+  // -------------------------------------------------------------
+  // Dynamic Delivery & Shipping Services
+  // -------------------------------------------------------------
+  getDeliverySettings: async () => {
+    try {
+      const res = await apiFetch('/api/v1/delivery/settings');
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.data) return data.data;
+      return { freeShippingThreshold: 499, standardDeliveryFee: 49 };
+    } catch (e) {
+      return { freeShippingThreshold: 499, standardDeliveryFee: 49 };
+    }
+  },
+
+  estimateDelivery: async (pincode, subtotal = 0) => {
+    const res = await apiFetch(`/api/v1/delivery/estimate?pincode=${encodeURIComponent(pincode)}&subtotal=${encodeURIComponent(subtotal)}`);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Invalid or unserviceable PIN code.');
+    }
+    return data;
   }
 };

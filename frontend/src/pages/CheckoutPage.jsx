@@ -47,6 +47,10 @@ export const CheckoutPage = () => {
   const [availableCoupons, setAvailableCoupons] = useState([]);
   const [couponApplying, setCouponApplying] = useState(false);
   const [couponInput, setCouponInput] = useState('');
+  const [deliverySettings, setDeliverySettings] = useState({
+    freeShippingThreshold: 499,
+    standardDeliveryFee: 49
+  });
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [placedOrderData, setPlacedOrderData] = useState(null);
@@ -169,12 +173,17 @@ export const CheckoutPage = () => {
   );
   const productDiscount = totalMRP - itemsSubtotal;
 
-  // Fetch active coupons from backend on mount
+  // Fetch active coupons & store delivery settings from backend on mount
   useEffect(() => {
     let isMounted = true;
     api.getAvailableCoupons().then((list) => {
       if (isMounted) setAvailableCoupons(list || []);
     }).catch(() => {});
+
+    api.getDeliverySettings().then((s) => {
+      if (isMounted && s) setDeliverySettings(s);
+    }).catch(() => {});
+
     return () => { isMounted = false; };
   }, []);
 
@@ -199,12 +208,17 @@ export const CheckoutPage = () => {
 
   // Coupon discount dynamically calculated from backend coupon response
   const couponDiscount = appliedCoupon ? (appliedCoupon.discount || 0) : 0;
+  const netSubtotal = Math.max(0, itemsSubtotal - couponDiscount);
+  const threshold = Number(deliverySettings?.freeShippingThreshold) || 499;
+  const standardDeliveryFee = Number(deliverySettings?.standardDeliveryFee) || 49;
+  const isFreeDelivery = netSubtotal >= threshold;
+  const deliveryFee = isFreeDelivery ? 0 : standardDeliveryFee;
 
   // Extra 5% instant UPI prepaid discount
-  const prepaidDiscount = paymentMethod === 'upi' ? Math.round((itemsSubtotal - couponDiscount) * 0.05) : 0;
+  const prepaidDiscount = paymentMethod === 'upi' ? Math.round(netSubtotal * 0.05) : 0;
 
-  const finalPayable = Math.max(0, itemsSubtotal - couponDiscount - prepaidDiscount);
-  const totalSavings = productDiscount + couponDiscount + prepaidDiscount;
+  const finalPayable = Math.max(0, netSubtotal - prepaidDiscount + deliveryFee);
+  const totalSavings = productDiscount + couponDiscount + prepaidDiscount + (isFreeDelivery ? standardDeliveryFee : 0);
 
   const handleApplyCoupon = async (codeToApply) => {
     const code = (typeof codeToApply === 'string' ? codeToApply : couponInput).trim().toUpperCase();
@@ -959,9 +973,13 @@ export const CheckoutPage = () => {
 
             <div className="fk-price-line">
               <span>Delivery Charges</span>
-              <span className="fk-green-text">
-                <span className="fk-striked">₹70</span> FREE
-              </span>
+              {isFreeDelivery ? (
+                <span className="fk-green-text">
+                  <span className="fk-striked">₹{standardDeliveryFee}</span> FREE
+                </span>
+              ) : (
+                <span style={{ fontWeight: 700, color: '#0F172A' }}>₹{standardDeliveryFee}</span>
+              )}
             </div>
 
             <div className="fk-price-line">
