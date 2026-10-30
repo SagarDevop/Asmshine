@@ -3,6 +3,8 @@ const Product = require('../models/Product');
 const Order = require('../models/Order');
 const StockMovement = require('../models/StockMovement');
 const { logAdminAction } = require('../services/auditService');
+const { removeMemoryProduct } = require('../services/productService');
+const realtimeHub = require('../services/realtimeHub');
 
 /**
  * GET /api/v1/admin/products
@@ -130,6 +132,8 @@ const createProduct = async (req, res, next) => {
       specifications = {},
       status = 'active',
       badge = '',
+      isFestiveDeal = false,
+      festiveBadge = '',
       availableSizes = []
     } = req.body;
 
@@ -235,7 +239,9 @@ const createProduct = async (req, res, next) => {
       highlights: cleanHighlights,
       specifications: cleanSpecifications,
       status,
-      badge: badge.trim()
+      badge: badge.trim(),
+      isFestiveDeal: Boolean(isFestiveDeal),
+      festiveBadge: (festiveBadge || '').trim()
     });
 
     await newProduct.save();
@@ -307,6 +313,8 @@ const updateProduct = async (req, res, next) => {
       specifications,
       status,
       badge,
+      isFestiveDeal,
+      festiveBadge,
       sku,
       inStock,
       availableSizes
@@ -318,6 +326,8 @@ const updateProduct = async (req, res, next) => {
     if (size) product.size = size;
     if (description !== undefined) product.description = description;
     if (badge !== undefined) product.badge = badge.trim();
+    if (isFestiveDeal !== undefined) product.isFestiveDeal = Boolean(isFestiveDeal);
+    if (festiveBadge !== undefined) product.festiveBadge = String(festiveBadge).trim();
     if (image) product.image = image;
     if (status) product.status = status;
     if (highlights !== undefined) {
@@ -492,7 +502,8 @@ const toggleProductStatus = async (req, res, next) => {
 
 /**
  * DELETE /api/v1/admin/products/:id
- * Safeguard: If product has ever been purchased, archive it rather than destroying historical orders!
+ * Permanently deletes the product from the catalog, memory store, and storefront.
+ * Historical orders preserve their own snapshot of items and remain completely safe.
  */
 const deleteProduct = async (req, res, next) => {
   try {
@@ -507,45 +518,46 @@ const deleteProduct = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Product not found.' });
     }
 
-    // Check if referenced in historical orders
-    const orderCount = await Order.countDocuments({
-      'items.productId': product.id
-    });
+    const deletedId = product.id;
+    const deletedName = product.name;
 
-    if (orderCount > 0) {
-      // Archive product safely to protect order history integrity
-      product.status = 'archived';
-      product.inStock = false;
-      await product.save();
+    // Permanently remove product so it disappears from ALL customer views (Home, Deals, Posters, Categories)
+    await Product.findByIdAndDelete(product._id);
+    removeMemoryProduct(deletedId);
 
-      await logAdminAction({
-        req,
-        action: 'PRODUCT_ARCHIVE',
-        resourceType: 'Product',
-        resourceId: product.id,
-        details: { reason: `Referenced by ${orderCount} existing orders` }
-      });
-
-      return res.status(200).json({
-        success: true,
-        message: `Product has been archived rather than permanently deleted because it is referenced in ${orderCount} historical orders.`
-      });
+    // Also purge deleted product from all customer carts & wishlists immediately
+    try {
+      const Cart = require('../models/Cart');
+      const User = require('../models/User');
+      await Promise.all([
+        Cart.updateMany(
+          {},
+          { $pull: { items: { productId: { $in: [deletedId, product._id.toString()] } } } }
+        ),
+        User.updateMany(
+          {},
+          { $pull: { wishlist: { $in: [deletedId, product._id.toString()] } } }
+        )
+      ]);
+    } catch (cleanErr) {
+      console.warn('Could not prune carts/wishlists for deleted product:', cleanErr.message);
     }
 
-    // Fresh product with zero orders can be safely deleted
-    await Product.findByIdAndDelete(product._id);
+    try {
+      realtimeHub.broadcastToAdmins('product_deleted', { productId: deletedId, name: deletedName });
+    } catch (e) {}
 
     await logAdminAction({
       req,
       action: 'PRODUCT_DELETE',
       resourceType: 'Product',
-      resourceId: product.id,
-      details: { name: product.name }
+      resourceId: deletedId,
+      details: { name: deletedName }
     });
 
     res.status(200).json({
       success: true,
-      message: 'Product permanently deleted successfully.'
+      message: `Product '${deletedName}' has been permanently deleted from the store.`
     });
   } catch (error) {
     next(error);

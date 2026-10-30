@@ -170,6 +170,26 @@ export const ProductDetailPage = ({
         setLoading(false);
       });
     }
+
+    // Live sync: if admin updates or deletes this product in another tab, update immediately
+    const handleSync = (e) => {
+      if (e.data?.type === 'PRODUCTS_UPDATED' && (id || productProp?.id)) {
+        const targetId = id || productProp?.id;
+        api.getProductById(targetId)
+          .then((found) => setProduct(found || null))
+          .catch(() => setProduct(null));
+      }
+    };
+
+    let channel = null;
+    try {
+      channel = new BroadcastChannel('asm_admin_sync');
+      channel.addEventListener('message', handleSync);
+    } catch {}
+
+    return () => {
+      if (channel) channel.close();
+    };
   }, [id, productProp]);
 
   // Load combo details and similar products whenever product changes
@@ -237,7 +257,11 @@ export const ProductDetailPage = ({
     (product && cartData?.items?.some((item) => item.product?.id === product.id))
   );
 
-  const isProductOutOfStock = product?.inStock === false || (product?.stockQuantity !== undefined && product?.stockQuantity <= 0);
+  const isProductOutOfStock =
+    product?.inStock === false ||
+    (product?.stockQuantity !== undefined && product?.stockQuantity <= 0) ||
+    product?.status === 'archived' ||
+    product?.status === 'inactive';
   const isVariantOutOfStock = selectedVariant ? (selectedVariant.inStock === false || (selectedVariant.stockQuantity !== undefined && selectedVariant.stockQuantity <= 0)) : false;
   const isOutOfStock = isProductOutOfStock || isVariantOutOfStock;
   const currentStockQuantity = selectedVariant?.stockQuantity !== undefined ? selectedVariant.stockQuantity : (product?.stockQuantity || 0);
@@ -257,8 +281,13 @@ export const ProductDetailPage = ({
       navigate('/cart');
       return;
     }
-    setJustAdded(true);
-    await addToCart(product.id, 1, selectedVariant?.size || '', product);
+    try {
+      await addToCart(product.id, 1, selectedVariant?.size || '', product);
+      setJustAdded(true);
+    } catch (err) {
+      setJustAdded(false);
+      showToast(err.message || 'Could not add item to cart');
+    }
   };
 
   const handleBuyNow = async () => {
@@ -268,10 +297,10 @@ export const ProductDetailPage = ({
     }
     try {
       await addToCart(product.id, 1, selectedVariant?.size || '', product);
+      navigate(`/checkout?buyNow=${product.id}`);
     } catch (e) {
-      // proceed anyway
+      showToast(e.message || 'Item could not be processed for checkout');
     }
-    navigate(`/checkout?buyNow=${product.id}`);
   };
 
   const handleAddComboToCart = () => {

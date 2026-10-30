@@ -1,31 +1,41 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 
-export const DiwaliSaleSection = ({ onSelectProduct, onNavigateAll }) => {
-  // Exactly 2 curated festive cards (Toilet Cleaner & 5L Floor Cleaner)
-  const festiveProducts = [
-    {
-      id: 'asm_toilet_1',
-      badge: 'FESTIVE ₹69',
-      title: 'ASM Smart Clean Toilet Cleaner',
-      size: '500 ml Bottle',
-      price: 69,
-      mrp: 135,
-      discount: '49% off',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg'
-    },
-    {
-      id: 'asm_floor_1',
-      badge: '5L VALUE PACK',
-      title: 'ASM Shine 5L Floor Cleaner',
-      size: '5 Litre Jumbo Pack',
-      price: 249,
-      mrp: 399,
-      discount: '38% off',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938229/asm-shine/banners/banner_floor_cleaner_5l.jpg',
-      isBannerThumb: true
+export const DiwaliSaleSection = ({ banners, products = [], onSelectProduct, onNavigateAll }) => {
+  // 1. Prioritize dynamic festive products provided by backend banners API
+  let festiveCards = [];
+
+  if (Array.isArray(banners?.festiveProducts) && banners.festiveProducts.length > 0) {
+    festiveCards = banners.festiveProducts;
+  } else if (Array.isArray(products) && products.length > 0) {
+    // 2. Or dynamically derive from live active catalog in MongoDB
+    const activeProducts = products.filter(
+      (p) => p.status !== 'archived' && p.status !== 'inactive'
+    );
+
+    // Look for products tagged by admin as festive deal
+    let curated = activeProducts.filter((p) => p.isFestiveDeal === true);
+    if (curated.length === 0) {
+      curated = activeProducts.slice(0, 2);
+    } else if (curated.length === 1 && activeProducts.length > 1) {
+      const remaining = activeProducts.find((p) => p.id !== curated[0].id);
+      if (remaining) curated.push(remaining);
     }
-  ];
+
+    festiveCards = curated.slice(0, 2).map((p, idx) => ({
+      id: p.id || p._id,
+      badge: p.festiveBadge || (idx === 0 ? 'FESTIVE SPECIAL' : 'VALUE PACK'),
+      title: p.shortName || p.name,
+      size: p.size || 'Standard Pack',
+      price: p.price,
+      mrp: p.originalPrice || Math.round(p.price * 1.3),
+      discount: p.discountPercent ? `${p.discountPercent}% off` : 'Special Offer',
+      image: p.image
+    }));
+  }
+
+  // If no active products are available, safely hide section
+  if (festiveCards.length === 0) return null;
 
   const handleCardClick = (id) => {
     if (onSelectProduct) {
@@ -66,9 +76,9 @@ export const DiwaliSaleSection = ({ onSelectProduct, onNavigateAll }) => {
           <p className="fk-diwali-poster-sub">A Cleaner Home, Brighter Celebrations</p>
         </div>
 
-        {/* 2 Embedded Product Cards Inside the Poster */}
+        {/* 2 Embedded Product Cards Inside the Poster (100% Dynamic & Admin Controlled) */}
         <div className="fk-diwali-poster-cards-row">
-          {festiveProducts.map((product) => (
+          {festiveCards.map((product) => (
             <article
               key={product.id}
               className="fk-poster-product-card"
@@ -90,8 +100,9 @@ export const DiwaliSaleSection = ({ onSelectProduct, onNavigateAll }) => {
                 <img
                   src={product.image}
                   alt={product.title}
-                  className={`fk-poster-card-img ${product.isBannerThumb ? 'banner-fit' : ''}`}
+                  className="fk-poster-card-img"
                   loading="lazy"
+                  onError={(e) => { e.currentTarget.src = '/favicon.svg'; }}
                 />
               </div>
 
@@ -118,7 +129,7 @@ export const DiwaliSaleSection = ({ onSelectProduct, onNavigateAll }) => {
         {/* Bottom Festive Dispatch Strip */}
         <div className="fk-diwali-poster-footer">
           <span>Pre-Diwali Express Dispatch Active</span>
-          <span className="fk-diwali-poster-dot">•</span>
+          <span className="fk-diwali-bullet">•</span>
           <span>100% Spotless Home Guarantee</span>
         </div>
       </div>

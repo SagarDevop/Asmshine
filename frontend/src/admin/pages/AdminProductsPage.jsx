@@ -45,6 +45,8 @@ export const AdminProductsPage = () => {
   const [image, setImage] = useState('');
   const [description, setDescription] = useState('');
   const [badge, setBadge] = useState('');
+  const [isFestiveDeal, setIsFestiveDeal] = useState(false);
+  const [festiveBadge, setFestiveBadge] = useState('');
   const [variants, setVariants] = useState([]);
   const [highlights, setHighlights] = useState([]);
   const [specifications, setSpecifications] = useState([]);
@@ -154,6 +156,8 @@ export const AdminProductsPage = () => {
     setImage('/images/products/all_shine_dishwash_gel_500ml.png');
     setDescription('');
     setBadge('');
+    setIsFestiveDeal(false);
+    setFestiveBadge('');
     setVariants([]);
     setHighlights([
       '99.9% germ eradication certified laboratory formula',
@@ -184,6 +188,8 @@ export const AdminProductsPage = () => {
     setImage(p.image || '');
     setDescription(p.description || '');
     setBadge(p.badge || '');
+    setIsFestiveDeal(Boolean(p.isFestiveDeal));
+    setFestiveBadge(p.festiveBadge || '');
 
     if (Array.isArray(p.availableSizes) && p.availableSizes.length > 0) {
       setVariants(
@@ -256,6 +262,8 @@ export const AdminProductsPage = () => {
         image: image.trim(),
         description: description.trim(),
         badge: badge.trim(),
+        isFestiveDeal: Boolean(isFestiveDeal),
+        festiveBadge: festiveBadge.trim(),
         inStock: cleanStock > 0,
         highlights: cleanHighlights,
         specifications: specsObject,
@@ -284,6 +292,13 @@ export const AdminProductsPage = () => {
         setNotification({ type: 'success', message: `Product '${payload.name}' created successfully.` });
       }
 
+      // Broadcast instant cross-tab sync to all storefronts
+      try {
+        const bc = new BroadcastChannel('asm_admin_sync');
+        bc.postMessage({ type: 'PRODUCTS_UPDATED' });
+        bc.close();
+      } catch {}
+
       setModalOpen(false);
       fetchProducts(pagination.page);
     } catch (err) {
@@ -297,6 +312,11 @@ export const AdminProductsPage = () => {
     try {
       const res = await adminApi.toggleProductStatus(p.id);
       setNotification({ type: 'success', message: res.message });
+      try {
+        const bc = new BroadcastChannel('asm_admin_sync');
+        bc.postMessage({ type: 'PRODUCTS_UPDATED' });
+        bc.close();
+      } catch {}
       fetchProducts(pagination.page);
     } catch (err) {
       setNotification({ type: 'error', message: err.message || 'Status update failed.' });
@@ -304,13 +324,18 @@ export const AdminProductsPage = () => {
   };
 
   const handleDelete = async (p) => {
-    if (!window.confirm(`Are you sure you want to delete or archive product '${p.name}'?`)) {
+    if (!window.confirm(`Are you sure you want to permanently delete product '${p.name}' from the store? It will be removed from all customer categories, banners and deals immediately.`)) {
       return;
     }
 
     try {
       const res = await adminApi.deleteProduct(p.id);
       setNotification({ type: 'success', message: res.message });
+      try {
+        const bc = new BroadcastChannel('asm_admin_sync');
+        bc.postMessage({ type: 'PRODUCTS_UPDATED' });
+        bc.close();
+      } catch {}
       fetchProducts(pagination.page);
     } catch (err) {
       setNotification({ type: 'error', message: err.message || 'Delete operation failed.' });
@@ -435,7 +460,22 @@ export const AdminProductsPage = () => {
                           onError={(e) => { e.target.src = '/favicon.svg'; }}
                         />
                         <div>
-                          <div style={{ fontWeight: 700, color: '#0F172A' }}>{p.name}</div>
+                          <div style={{ fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>{p.name}</span>
+                            {p.isFestiveDeal && (
+                              <span style={{
+                                background: '#FEF3C7',
+                                color: '#92400E',
+                                fontSize: '9.5px',
+                                fontWeight: 800,
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                border: '1px solid #FCD34D'
+                              }}>
+                                🪔 DIWALI BANNER
+                              </span>
+                            )}
+                          </div>
                           <div style={{ fontSize: '11px', color: '#64748B', display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '3px' }}>
                             {p.availableSizes && p.availableSizes.length > 0 ? (
                               p.availableSizes.map((s, idx) => (
@@ -893,6 +933,43 @@ export const AdminProductsPage = () => {
                     value={badge}
                     onChange={(e) => setBadge(e.target.value)}
                   />
+                </div>
+
+                {/* Diwali / Festive Sale Banner Placement */}
+                <div style={{
+                  padding: '14px',
+                  borderRadius: '8px',
+                  background: isFestiveDeal ? '#FFFBEB' : '#F8FAFC',
+                  border: `1.5px solid ${isFestiveDeal ? '#F59E0B' : '#E2E8F0'}`,
+                  marginBottom: '16px'
+                }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#1E293B' }}>
+                    <input
+                      type="checkbox"
+                      checked={isFestiveDeal}
+                      onChange={(e) => setIsFestiveDeal(e.target.checked)}
+                      style={{ width: '17px', height: '17px', accentColor: '#D97706', cursor: 'pointer' }}
+                    />
+                    <span>🪔 Feature in Diwali Sale / Festive Banner Cards</span>
+                  </label>
+                  <p style={{ fontSize: '11.5px', color: '#64748B', margin: '4px 0 8px 25px' }}>
+                    When checked, this product will appear inside the Diwali Deep Cleaning Mega Sale poster cards on the storefront.
+                  </p>
+                  {isFestiveDeal && (
+                    <div style={{ marginLeft: '25px', marginTop: '6px' }}>
+                      <label className="admin-form-label" style={{ fontSize: '11px', marginBottom: '4px' }}>
+                        Festive Offer Tag (e.g. &ldquo;FESTIVE ₹69&rdquo;, &ldquo;5L VALUE PACK&rdquo;, &ldquo;DIWALI SPECIAL&rdquo;)
+                      </label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        placeholder="e.g. FESTIVE ₹69"
+                        value={festiveBadge}
+                        onChange={(e) => setFestiveBadge(e.target.value)}
+                        style={{ height: '36px', fontSize: '12px' }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* 1. Product Highlights Point-by-Point Section */}

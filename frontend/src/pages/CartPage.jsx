@@ -167,7 +167,29 @@ export const CartPage = ({
       if (isMounted && s) setDeliverySettings(s);
     }).catch(() => {});
 
-    return () => { isMounted = false; };
+    // Live sync when products are updated or deleted in admin
+    const handleSync = (e) => {
+      if (e.data?.type === 'PRODUCTS_UPDATED') {
+        refreshCart();
+      }
+    };
+
+    let channel = null;
+    try {
+      channel = new BroadcastChannel('asm_admin_sync');
+      channel.addEventListener('message', handleSync);
+    } catch {}
+
+    const handleFocus = () => {
+      refreshCart();
+    };
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      isMounted = false;
+      if (channel) channel.close();
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   const handleApplyCoupon = async (codeToApply) => {

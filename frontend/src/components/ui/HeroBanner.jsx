@@ -1,21 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
-export const HeroBanner = ({ banners, onExplore, onSelectProduct }) => {
-  const slides = banners?.heroSlides || [
-    {
-      id: 'slide_diwali_toilet',
-      title: 'ASM Smart Clean Toilet Cleaner 500ml @ ₹69',
-      productId: 'asm_toilet_1',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938228/asm-shine/banners/banner_diwali_toilet.png'
-    },
-    {
-      id: 'slide_floor_cleaner_5l',
-      title: 'ASM Shine Floor Cleaner 5 Litre @ ₹249',
-      productId: 'asm_floor_1',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938229/asm-shine/banners/banner_floor_cleaner_5l.jpg'
-    }
-  ];
+export const HeroBanner = ({ banners, products = [], onExplore, onSelectProduct }) => {
+  const initialSlides = banners?.heroSlides && banners.heroSlides.length > 0
+    ? banners.heroSlides
+    : [
+        {
+          id: 'slide_diwali_toilet',
+          title: 'ASM Smart Clean Toilet Cleaner 500ml @ ₹69',
+          productId: 'asm_toilet_1',
+          image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938228/asm-shine/banners/banner_diwali_toilet.png'
+        },
+        {
+          id: 'slide_floor_cleaner_5l',
+          title: 'ASM Shine Floor Cleaner 5 Litre @ ₹249',
+          productId: 'asm_floor_1',
+          image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938229/asm-shine/banners/banner_floor_cleaner_5l.jpg'
+        }
+      ];
+
+  // Only show slides whose products actually exist and are active
+  const slides = Array.isArray(products) && products.length > 0
+    ? initialSlides.filter((s) => !s.productId || products.some((p) => (p.id === s.productId || p._id === s.productId) && p.status !== 'archived' && p.status !== 'inactive'))
+    : initialSlides;
+
+  const activeSlides = slides.length > 0 ? slides : initialSlides;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -24,21 +33,21 @@ export const HeroBanner = ({ banners, onExplore, onSelectProduct }) => {
 
   // Auto-advance slides every 4.5 seconds
   useEffect(() => {
-    if (isPaused || slides.length <= 1) return;
+    if (isPaused || activeSlides.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slides.length);
+      setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, [isPaused, slides.length]);
+  }, [isPaused, activeSlides.length]);
 
   const handleNext = (e) => {
     e?.stopPropagation();
-    setCurrentIndex((prev) => (prev + 1) % slides.length);
+    setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
   };
 
   const handlePrev = (e) => {
     e?.stopPropagation();
-    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+    setCurrentIndex((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
   };
 
   const handleTouchStart = (e) => {
@@ -52,10 +61,19 @@ export const HeroBanner = ({ banners, onExplore, onSelectProduct }) => {
     else if (diff < -45) handlePrev();
   };
 
-  const currentSlide = slides[currentIndex];
+  const currentSlide = activeSlides[currentIndex] || activeSlides[0];
 
   const handleCtaClick = () => {
-    if (currentSlide.productId && onSelectProduct) {
+    if (currentSlide?.productId && onSelectProduct) {
+      if (Array.isArray(products) && products.length > 0) {
+        const found = products.find(
+          (p) => p.id === currentSlide.productId || p._id === currentSlide.productId
+        );
+        if (found) {
+          onSelectProduct(found);
+          return;
+        }
+      }
       onSelectProduct({ id: currentSlide.productId });
     } else if (onExplore) {
       onExplore();
@@ -105,7 +123,7 @@ export const HeroBanner = ({ banners, onExplore, onSelectProduct }) => {
 
       {/* Sleek Flipkart Bottom Dots */}
       <div className="fk-carousel-dots-row">
-        {slides.map((s, idx) => (
+        {activeSlides.map((s, idx) => (
           <button
             key={s.id || idx}
             type="button"

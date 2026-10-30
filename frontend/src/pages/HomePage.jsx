@@ -44,6 +44,29 @@ export const HomePage = () => {
 
   useEffect(() => {
     fetchData();
+
+    // Cross-tab and focus sync so when admin deletes or updates product, home view updates immediately
+    const handleSync = (e) => {
+      if (e.data?.type === 'PRODUCTS_UPDATED') {
+        fetchData();
+      }
+    };
+
+    let channel = null;
+    try {
+      channel = new BroadcastChannel('asm_admin_sync');
+      channel.addEventListener('message', handleSync);
+    } catch {}
+
+    const handleFocus = () => {
+      fetchData();
+    };
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      if (channel) channel.close();
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   const handleSwitchTab = (tab) => {
@@ -122,18 +145,22 @@ export const HomePage = () => {
           <HeroBanner
             banners={banners}
             banner={banners?.hero}
+            products={allProducts}
             onExplore={handleExploreHero}
             onSelectProduct={handleSelectProduct}
           />
 
           {/* 2. Deals for You (Live Timer & Fast Horizontal Rail) */}
           <DealsForYou
+            products={allProducts}
             onSelectProduct={handleSelectProduct}
             onNavigateAll={() => handleSwitchTab('categories')}
           />
 
           {/* 3. Diwali Mega Sale (Festive Deep Cleaning Specials) */}
           <DiwaliSaleSection
+            banners={banners}
+            products={allProducts}
             onSelectProduct={handleSelectProduct}
             onNavigateAll={() => handleSwitchTab('categories')}
           />

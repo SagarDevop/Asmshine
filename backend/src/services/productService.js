@@ -1,9 +1,14 @@
+const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const { initialProducts } = require('../data/seedData');
 const { getDbStatus } = require('../config/db');
 
 // In-memory cache & fallback store
 let memoryProducts = [...initialProducts];
+
+const removeMemoryProduct = (id) => {
+  memoryProducts = memoryProducts.filter((p) => p.id !== id && p._id?.toString() !== id);
+};
 
 const getAllProducts = async (filters = {}) => {
   const { connected } = getDbStatus();
@@ -21,9 +26,9 @@ const getAllProducts = async (filters = {}) => {
         console.log('[Database] Auto-seeded initial ASM Shine products to MongoDB');
       }
 
+      // Strictly return ACTIVE products only. Exclude any archived or deleted items.
       const query = {
-        // Target active catalog products (ASM Shine collection)
-        id: { $in: initialProducts.map(p => p.id) }
+        status: 'active'
       };
 
       if (filters.section) {
@@ -46,15 +51,16 @@ const getAllProducts = async (filters = {}) => {
         ];
       }
 
-      const products = await Product.find(query, { _id: 0, __v: 0 }).lean();
+      const products = await Product.find(query, { _id: 0, __v: 0 }).sort({ createdAt: -1 }).lean();
       return products;
     } catch (e) {
       console.warn('[ProductService] DB query failed, fallback to in-memory:', e.message);
     }
   }
 
-  // In-memory filtering fallback
-  return memoryProducts.filter(p => {
+  // In-memory filtering fallback (only active items)
+  return memoryProducts.filter((p) => {
+    if (p.status && p.status !== 'active') return false;
     if (filters.section && p.section !== filters.section) return false;
     if (filters.category && filters.category !== 'all' && p.category !== filters.category) return false;
     if (filters.search && filters.search.trim()) {
@@ -63,7 +69,7 @@ const getAllProducts = async (filters = {}) => {
       const matchShort = p.shortName?.toLowerCase().includes(q);
       const matchDesc = p.description?.toLowerCase().includes(q);
       const matchCat = p.category?.toLowerCase().includes(q);
-      const matchHighlights = p.highlights?.some(h => h.toLowerCase().includes(q));
+      const matchHighlights = p.highlights?.some((h) => h.toLowerCase().includes(q));
       if (!matchName && !matchShort && !matchDesc && !matchCat && !matchHighlights) return false;
     }
     return true;
@@ -75,14 +81,24 @@ const getProductById = async (id) => {
   const { connected } = getDbStatus();
   if (connected) {
     try {
-      const found = await Product.findOne({ id }, { _id: 0, __v: 0 }).lean();
+      const isObjectId = mongoose.isValidObjectId(id);
+      const found = await Product.findOne(
+        {
+          $or: [{ id }, { _id: isObjectId ? id : null }],
+          status: 'active'
+        },
+        { _id: 0, __v: 0 }
+      ).lean();
+
       if (found) return found;
+      // If product is deleted or archived, return null immediately
+      return null;
     } catch (e) {
-      console.warn('[ProductService] DB lookup failed, fallback to in-memory:', e.message);
+      console.warn('[ProductService] DB lookup failed:', e.message);
     }
   }
-  return memoryProducts.find(p => p.id === id) || null;
+  const mem = memoryProducts.find((p) => (p.id === id || p._id?.toString() === id) && p.status !== 'archived');
+  return mem || null;
 };
 
-module.exports = { getAllProducts, getProductById };
-
+module.exports = { getAllProducts, getProductById, removeMemoryProduct };

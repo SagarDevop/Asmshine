@@ -56,6 +56,8 @@ const productSchema = new mongoose.Schema({
   imageData: imageMetaSchema,               // Full Cloudinary metadata
   gallery: [imageMetaSchema],               // Optional gallery images
   badge: { type: String }, // 'BEST SELLER', 'TRENDING', 'HOT', etc.
+  isFestiveDeal: { type: Boolean, default: false, index: true },
+  festiveBadge: { type: String, default: '' },
   sku: { type: String, unique: true, sparse: true, trim: true },
   stockQuantity: { type: Number, default: 20, min: 0 },
   reservedQuantity: { type: Number, default: 0, min: 0 },

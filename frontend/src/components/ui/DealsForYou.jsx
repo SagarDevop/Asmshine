@@ -2,13 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Clock, ChevronRight } from 'lucide-react';
 import { api } from '../../services/api';
 
-export const DealsForYou = ({ onSelectProduct, onNavigateAll }) => {
+export const DealsForYou = ({ products: productsProp, onSelectProduct, onNavigateAll }) => {
   const [deals, setDeals] = useState([]);
 
   useEffect(() => {
-    api.getProducts().then((products) => {
+    const processProducts = (products) => {
       if (Array.isArray(products) && products.length > 0) {
-        const formatted = products.slice(0, 6).map((p) => ({
+        // Strictly filter out deleted, archived, and out-of-stock products
+        const activeDeals = products.filter(
+          (p) =>
+            p.status !== 'archived' &&
+            p.status !== 'inactive' &&
+            p.inStock !== false &&
+            (p.stockQuantity === undefined || p.stockQuantity > 0)
+        );
+
+        const formatted = activeDeals.slice(0, 6).map((p) => ({
           id: p.id || p._id,
           name: p.shortName || p.name,
           size: p.size || 'Standard Pack',
@@ -19,9 +28,17 @@ export const DealsForYou = ({ onSelectProduct, onNavigateAll }) => {
           image: p.image
         }));
         setDeals(formatted);
+      } else {
+        setDeals([]);
       }
-    }).catch(() => {});
-  }, []);
+    };
+
+    if (productsProp && productsProp.length > 0) {
+      processProducts(productsProp);
+    } else {
+      api.getProducts().then(processProducts).catch(() => setDeals([]));
+    }
+  }, [productsProp]);
 
   // Subtle live countdown timer: 05h : 24m : 18s
   const [timeLeft, setTimeLeft] = useState({ hours: 5, minutes: 24, seconds: 18 });

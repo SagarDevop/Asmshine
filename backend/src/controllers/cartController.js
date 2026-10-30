@@ -21,6 +21,7 @@ const buildCartResponse = async (cart) => {
   const objectIds = productIds.filter((id) => mongoose.isValidObjectId(id));
 
   const products = await Product.find({
+    status: 'active',
     $or: [
       { id: { $in: productIds } },
       { _id: { $in: objectIds } }
@@ -118,6 +119,14 @@ const getCart = async (req, res, next) => {
 
     const cartData = await buildCartResponse(cart);
 
+    // If any items were dropped because they were deleted from DB, persist cleaned cart
+    if (cart.items.length !== cartData.items.length) {
+      cart.items = cart.items.filter((item) =>
+        cartData.items.some((pi) => pi.productId === item.productId || (pi.product?._id && pi.product._id.toString() === item.productId))
+      );
+      await cart.save().catch(() => {});
+    }
+
     res.status(200).json({
       success: true,
       ...cartData
@@ -144,9 +153,10 @@ const addToCart = async (req, res, next) => {
 
     const numQty = Math.max(1, parseInt(quantity, 10) || 1);
 
-    // Validate product exists in MongoDB
+    // Validate product exists and is active in MongoDB
     const isObjectId = mongoose.isValidObjectId(productId);
     const product = await Product.findOne({
+      status: 'active',
       $or: [
         { id: productId },
         { _id: isObjectId ? productId : null }
@@ -156,7 +166,7 @@ const addToCart = async (req, res, next) => {
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: `Product '${productId}' not found.`
+        message: 'This product is no longer available or has been discontinued.'
       });
     }
 

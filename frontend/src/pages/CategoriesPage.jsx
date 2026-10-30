@@ -107,6 +107,20 @@ export const CategoriesPage = ({
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
 
+  const fetchCategoryProducts = () => {
+    api.getProducts()
+      .then((data) => {
+        setProducts(data || []);
+        setLoadError(null);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('[CategoriesPage] Failed to fetch products from API:', err);
+        setLoadError(err.message || 'Failed to load products');
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -118,23 +132,31 @@ export const CategoriesPage = ({
         console.warn('[CategoriesPage] Could not load categories from API:', err);
       });
 
-    api.getProducts()
-      .then((data) => {
-        if (isMounted) {
-          setProducts(data || []);
-          setLoadError(null);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error('[CategoriesPage] Failed to fetch products from API:', err);
-        if (isMounted) {
-          setLoadError(err.message || 'Failed to load products');
-          setLoading(false);
-        }
-      });
+    fetchCategoryProducts();
 
-    return () => { isMounted = false; };
+    // Cross-tab live sync when admin deletes or updates product
+    const handleSync = (e) => {
+      if (e.data?.type === 'PRODUCTS_UPDATED') {
+        fetchCategoryProducts();
+      }
+    };
+
+    let channel = null;
+    try {
+      channel = new BroadcastChannel('asm_admin_sync');
+      channel.addEventListener('message', handleSync);
+    } catch {}
+
+    const handleFocus = () => {
+      fetchCategoryProducts();
+    };
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      isMounted = false;
+      if (channel) channel.close();
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   const distinctCategories = categories.filter(
@@ -149,6 +171,7 @@ export const CategoriesPage = ({
   const currentCategoryObj = allCategoriesList.find((c) => c.id === selectedCat) || allCategoriesList[0];
 
   const filteredProducts = products.filter((p) => {
+    if (p.status === 'archived' || p.status === 'inactive') return false;
     if (selectedCat !== 'all' && p.category !== selectedCat) {
       return false;
     }

@@ -14,7 +14,11 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
     }
   };
 
-  const isOutOfStock = product.inStock === false || (product.stockQuantity !== undefined && product.stockQuantity <= 0);
+  const isOutOfStock =
+    product.inStock === false ||
+    (product.stockQuantity !== undefined && product.stockQuantity <= 0) ||
+    product.status === 'archived' ||
+    product.status === 'inactive';
 
   return (
     <article
