@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft,
   Trash2,
@@ -18,6 +18,90 @@ import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
+import '../styles/skeleton.css';
+
+/**
+ * Flipkart-Tier Skeleton Loader for Cart Page
+ * Displays full structural shimmer cards while cart data hydrates
+ */
+function CartSkeletonLoader({ onBack }) {
+  return (
+    <div className="cart-page-view cart-skeleton-page" aria-busy="true" aria-label="Loading your cart">
+      {/* 1. Flipkart-style Top Bar */}
+      <header className="page-top-header">
+        <button type="button" className="page-back-btn" onClick={onBack} aria-label="Back">
+          <ArrowLeft size={22} />
+        </button>
+        <div className="page-header-title-box">
+          <span className="page-header-title">My Cart</span>
+          <span className="page-header-subtitle">Updating cart...</span>
+        </div>
+      </header>
+
+      {/* 2. Address Banner Skeleton */}
+      <div className="cart-skeleton-addr-bar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
+          <div className="skeleton-circle skeleton-shimmer" style={{ width: '22px', height: '22px' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '55%', height: '13px' }} />
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '35%', height: '11px' }} />
+          </div>
+        </div>
+        <div className="skeleton-box skeleton-shimmer" style={{ width: '60px', height: '26px', borderRadius: '4px' }} />
+      </div>
+
+      {/* 3. Main Cart Grid Skeleton */}
+      <div className="cart-skeleton-container">
+        {/* Items Column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {[1, 2].map((n) => (
+            <div key={n} className="cart-skeleton-card">
+              <div className="cart-skeleton-item-top">
+                <div className="cart-skeleton-thumb skeleton-shimmer" />
+                <div className="cart-skeleton-item-details">
+                  <div className="skeleton-box skeleton-shimmer" style={{ width: '70px', height: '14px', borderRadius: '3px' }} />
+                  <div className="skeleton-text skeleton-shimmer" style={{ width: '85%', height: '14px' }} />
+                  <div className="skeleton-text skeleton-shimmer" style={{ width: '50%', height: '12px' }} />
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
+                    <div className="skeleton-box skeleton-shimmer" style={{ width: '65px', height: '18px', borderRadius: '4px' }} />
+                    <div className="skeleton-box skeleton-shimmer" style={{ width: '45px', height: '14px', borderRadius: '4px' }} />
+                    <div className="skeleton-box skeleton-shimmer" style={{ width: '55px', height: '14px', borderRadius: '4px' }} />
+                  </div>
+                </div>
+              </div>
+              <div className="cart-skeleton-actions-row">
+                <div className="skeleton-box skeleton-shimmer" style={{ width: '90px', height: '32px', borderRadius: '6px' }} />
+                <div className="skeleton-box skeleton-shimmer" style={{ width: '75px', height: '16px', borderRadius: '4px' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Price Summary Column */}
+        <div className="cart-skeleton-price-card">
+          <div className="skeleton-text skeleton-shimmer" style={{ width: '120px', height: '14px', marginBottom: '6px' }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '90px', height: '12px' }} />
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '50px', height: '12px' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '100px', height: '12px' }} />
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '60px', height: '12px' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '80px', height: '12px' }} />
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '40px', height: '12px' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '10px', borderTop: '1px dashed #E2E8F0' }}>
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '110px', height: '16px' }} />
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '70px', height: '16px' }} />
+          </div>
+          <div className="skeleton-box skeleton-shimmer" style={{ height: '44px', borderRadius: '6px', marginTop: '10px' }} />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export const CartPage = ({
   onBack,
@@ -27,10 +111,12 @@ export const CartPage = ({
   const navigate = useNavigate();
   const {
     cartData,
+    isCartLoading,
     updateCartQuantity,
     removeFromCart,
     clearCart,
-    showToast
+    showToast,
+    refreshCart
   } = useCartWishlist();
   const { user, selectedAddress } = useAuth();
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
@@ -92,6 +178,18 @@ export const CartPage = ({
     if (cartItems.length === 0) return;
     navigate('/checkout');
   };
+
+  useEffect(() => {
+    // Silent background refresh on mount to ensure freshness
+    if (user && refreshCart) {
+      refreshCart(false);
+    }
+  }, [user]);
+
+  // If user is logged in and cart is actively hydrating with zero items in memory, show skeleton loader
+  if (user && isCartLoading && cartItems.length === 0) {
+    return <CartSkeletonLoader onBack={handleBack} />;
+  }
 
   return (
     <div className="cart-page-view">

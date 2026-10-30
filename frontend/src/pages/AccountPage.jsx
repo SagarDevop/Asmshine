@@ -249,7 +249,7 @@ export const AccountPage = () => {
   // Wishlist Handlers
   // -------------------------------------------------------------
   const handleMoveToCart = async (product) => {
-    await addToCart(product.id || product._id, 1);
+    await addToCart(product.id || product._id, 1, '', product);
     toggleWishlist(product.id || product._id);
     setWishlistProducts((prev) => prev.filter((p) => (p.id || p._id) !== (product.id || product._id)));
     showToast('Item moved to Cart');

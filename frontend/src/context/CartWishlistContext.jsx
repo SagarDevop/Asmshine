@@ -5,17 +5,53 @@ import { useAuth } from './AuthContext';
 
 const CartWishlistContext = createContext();
 
-export const CartWishlistProvider = ({ children }) => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
+const CART_CACHE_KEY = 'asm_cart_cache';
 
-  const [cartCount, setCartCount] = useState(0);
-  const [cartData, setCartData] = useState({
+const getInitialCartData = () => {
+  try {
+    const raw = localStorage.getItem(CART_CACHE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.items)) {
+        return parsed;
+      }
+    }
+  } catch (e) {}
+  return {
     items: [],
     totalCount: 0,
     totalMRP: 0,
     totalPrice: 0,
     totalDiscount: 0
+  };
+};
+
+const saveCartToCache = (data) => {
+  try {
+    if (data && Array.isArray(data.items)) {
+      localStorage.setItem(CART_CACHE_KEY, JSON.stringify(data));
+    }
+  } catch (e) {}
+};
+
+const clearCartCache = () => {
+  try {
+    localStorage.removeItem(CART_CACHE_KEY);
+  } catch (e) {}
+};
+
+export const CartWishlistProvider = ({ children }) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [cartData, setCartData] = useState(getInitialCartData);
+  const [cartCount, setCartCount] = useState(() => {
+    const initial = getInitialCartData();
+    return initial.totalCount || initial.items?.length || 0;
+  });
+  const [isCartLoading, setIsCartLoading] = useState(() => {
+    const initial = getInitialCartData();
+    return initial.items.length === 0;
   });
   const [wishlist, setWishlist] = useState(new Set());
   const [toastMessage, setToastMessage] = useState(null);
@@ -31,27 +67,37 @@ export const CartWishlistProvider = ({ children }) => {
     }, 2500);
   };
 
-  const refreshCart = async () => {
+  const refreshCart = async (showLoadingIfEmpty = false) => {
     if (!user) {
-      setCartData({
+      const empty = {
         items: [],
         totalCount: 0,
         totalMRP: 0,
         totalPrice: 0,
         totalDiscount: 0
-      });
+      };
+      setCartData(empty);
       setCartCount(0);
+      clearCartCache();
+      setIsCartLoading(false);
       return;
+    }
+
+    if (showLoadingIfEmpty && cartData.items.length === 0) {
+      setIsCartLoading(true);
     }
 
     try {
       const data = await api.getCartFullDetails();
       if (data && Array.isArray(data.items)) {
         setCartData(data);
-        setCartCount(data.totalCount || 0);
+        setCartCount(data.totalCount || data.items.length || 0);
+        saveCartToCache(data);
       }
     } catch (e) {
       console.warn('[CartContext] Failed to load cart full details:', e.message);
+    } finally {
+      setIsCartLoading(false);
     }
   };
 
@@ -74,18 +120,21 @@ export const CartWishlistProvider = ({ children }) => {
     let isMounted = true;
 
     if (user) {
-      refreshCart();
+      refreshCart(cartData.items.length === 0);
       refreshWishlist();
     } else {
-      setCartData({
+      const empty = {
         items: [],
         totalCount: 0,
         totalMRP: 0,
         totalPrice: 0,
         totalDiscount: 0
-      });
+      };
+      setCartData(empty);
       setCartCount(0);
+      clearCartCache();
       setWishlist(new Set());
+      setIsCartLoading(false);
     }
 
     return () => {
@@ -120,19 +169,88 @@ export const CartWishlistProvider = ({ children }) => {
     }
   };
 
-  const addToCart = async (productId, quantity = 1, size = '') => {
+  const addToCart = async (productId, quantity = 1, size = '', productSnapshot = null) => {
     if (!user) {
       showToast('Please login to add items to cart');
       navigate('/login', { state: { from: window.location.pathname } });
       return;
     }
 
+    // Instant optimistic update if productSnapshot is provided
+    if (productSnapshot) {
+      setCartData((prev) => {
+        const items = [...(prev.items || [])];
+        const existingIdx = items.findIndex(
+          (it) =>
+            (it.productId === productId || it.product?.id === productId) &&
+            (it.size || '') === (size || '')
+        );
+        const unitPrice = productSnapshot.price || 0;
+        const unitMRP = productSnapshot.originalPrice || productSnapshot.price || 0;
+        const addQty = quantity || 1;
+
+        if (existingIdx > -1) {
+          const cur = items[existingIdx];
+          const newQty = (cur.quantity || 1) + addQty;
+          items[existingIdx] = {
+            ...cur,
+            quantity: newQty,
+            itemTotal: unitPrice * newQty,
+            itemMRP: unitMRP * newQty,
+            itemSavings: (unitMRP - unitPrice) * newQty
+          };
+        } else {
+          items.push({
+            productId,
+            size: size || '',
+            quantity: addQty,
+            product: {
+              id: productSnapshot.id || productId,
+              name: productSnapshot.name,
+              shortName: productSnapshot.shortName,
+              price: unitPrice,
+              originalPrice: unitMRP,
+              image: productSnapshot.image,
+              category: productSnapshot.category,
+              inStock: true
+            },
+            itemTotal: unitPrice * addQty,
+            itemMRP: unitMRP * addQty,
+            itemSavings: (unitMRP - unitPrice) * addQty
+          });
+        }
+
+        const newCount = items.reduce((sum, it) => sum + (it.quantity || 1), 0);
+        const newTotal = items.reduce((sum, it) => sum + (it.itemTotal || 0), 0);
+        const newMRP = items.reduce((sum, it) => sum + (it.itemMRP || 0), 0);
+        const optimistic = {
+          items,
+          totalCount: newCount,
+          totalPrice: newTotal,
+          totalMRP: newMRP,
+          totalDiscount: Math.max(0, newMRP - newTotal)
+        };
+        saveCartToCache(optimistic);
+        setCartCount(newCount);
+        return optimistic;
+      });
+      setIsCartLoading(false);
+    }
+
     try {
-      await api.addToCart(productId, quantity, size);
-      await refreshCart();
+      // Direct call to backend addToCart which returns full updated cartData!
+      const res = await api.addToCart(productId, quantity, size);
+      if (res && res.success && Array.isArray(res.items)) {
+        setCartData(res);
+        setCartCount(res.totalCount || res.items.length || 0);
+        saveCartToCache(res);
+      } else {
+        await refreshCart();
+      }
       showToast('Added to cart');
     } catch (e) {
       showToast(e.message || 'Could not add item to cart');
+      await refreshCart();
     }
   };
 
@@ -143,14 +261,57 @@ export const CartWishlistProvider = ({ children }) => {
       return;
     }
 
+    // Instant optimistic update
+    setCartData((prev) => {
+      let items = [...(prev.items || [])];
+      if (quantity <= 0) {
+        items = items.filter(
+          (it) => !(it.productId === productId && (it.size || '') === (size || ''))
+        );
+      } else {
+        items = items.map((it) => {
+          if (it.productId === productId && (it.size || '') === (size || '')) {
+            const unitPrice = it.product?.price || (it.itemTotal / it.quantity) || 0;
+            const unitMRP = it.product?.originalPrice || (it.itemMRP / it.quantity) || unitPrice;
+            return {
+              ...it,
+              quantity,
+              itemTotal: unitPrice * quantity,
+              itemMRP: unitMRP * quantity,
+              itemSavings: (unitMRP - unitPrice) * quantity
+            };
+          }
+          return it;
+        });
+      }
+      const newCount = items.reduce((sum, it) => sum + (it.quantity || 1), 0);
+      const newTotal = items.reduce((sum, it) => sum + (it.itemTotal || 0), 0);
+      const newMRP = items.reduce((sum, it) => sum + (it.itemMRP || 0), 0);
+      const updated = {
+        items,
+        totalCount: newCount,
+        totalPrice: newTotal,
+        totalMRP: newMRP,
+        totalDiscount: Math.max(0, newMRP - newTotal)
+      };
+      setCartCount(newCount);
+      saveCartToCache(updated);
+      return updated;
+    });
+
     try {
-      await api.updateCartQuantity(productId, quantity, size);
-      await refreshCart();
+      const res = await api.updateCartQuantity(productId, quantity, size);
+      if (res && res.success && Array.isArray(res.items)) {
+        setCartData(res);
+        setCartCount(res.totalCount || res.items.length || 0);
+        saveCartToCache(res);
+      }
       if (quantity <= 0) {
         showToast('Item removed from cart');
       }
     } catch (e) {
       showToast(e.message || 'Update quantity failed');
+      await refreshCart();
     }
   };
 
@@ -161,12 +322,37 @@ export const CartWishlistProvider = ({ children }) => {
       return;
     }
 
+    // Instant optimistic removal
+    setCartData((prev) => {
+      const items = (prev.items || []).filter(
+        (it) => !(it.productId === productId && (it.size || '') === (size || ''))
+      );
+      const newCount = items.reduce((sum, it) => sum + (it.quantity || 1), 0);
+      const newTotal = items.reduce((sum, it) => sum + (it.itemTotal || 0), 0);
+      const newMRP = items.reduce((sum, it) => sum + (it.itemMRP || 0), 0);
+      const updated = {
+        items,
+        totalCount: newCount,
+        totalPrice: newTotal,
+        totalMRP: newMRP,
+        totalDiscount: Math.max(0, newMRP - newTotal)
+      };
+      setCartCount(newCount);
+      saveCartToCache(updated);
+      return updated;
+    });
+
     try {
-      await api.removeFromCart(productId, size);
-      await refreshCart();
+      const res = await api.removeFromCart(productId, size);
+      if (res && res.success && Array.isArray(res.items)) {
+        setCartData(res);
+        setCartCount(res.totalCount || res.items.length || 0);
+        saveCartToCache(res);
+      }
       showToast('Item removed from cart');
     } catch (e) {
       showToast(e.message || 'Remove item failed');
+      await refreshCart();
     }
   };
 
@@ -177,12 +363,23 @@ export const CartWishlistProvider = ({ children }) => {
       return;
     }
 
+    const empty = {
+      items: [],
+      totalCount: 0,
+      totalMRP: 0,
+      totalPrice: 0,
+      totalDiscount: 0
+    };
+    setCartData(empty);
+    setCartCount(0);
+    clearCartCache();
+
     try {
       await api.clearCart();
-      await refreshCart();
       showToast('Cart cleared');
     } catch (e) {
       showToast(e.message || 'Clear cart failed');
+      await refreshCart();
     }
   };
 
@@ -194,11 +391,18 @@ export const CartWishlistProvider = ({ children }) => {
     }
 
     try {
-      await api.addComboToCart(items);
-      await refreshCart();
+      const res = await api.addComboToCart(items);
+      if (res && res.success && Array.isArray(res.items)) {
+        setCartData(res);
+        setCartCount(res.totalCount || res.items.length || 0);
+        saveCartToCache(res);
+      } else {
+        await refreshCart();
+      }
       showToast(customToast);
     } catch (e) {
       showToast(e.message || 'Add combo failed');
+      await refreshCart();
     }
   };
 
@@ -207,6 +411,7 @@ export const CartWishlistProvider = ({ children }) => {
       value={{
         cartCount,
         cartData,
+        isCartLoading,
         wishlist,
         toggleWishlist,
         addToCart,

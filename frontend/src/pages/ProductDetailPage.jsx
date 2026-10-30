@@ -207,7 +207,7 @@ export const ProductDetailPage = ({
       return;
     }
     setJustAdded(true);
-    await addToCart(product.id, 1, selectedVariant?.size || '');
+    await addToCart(product.id, 1, selectedVariant?.size || '', product);
   };
 
   const handleBuyNow = async () => {
@@ -216,7 +216,7 @@ export const ProductDetailPage = ({
       return;
     }
     try {
-      await addToCart(product.id, 1, selectedVariant?.size || '');
+      await addToCart(product.id, 1, selectedVariant?.size || '', product);
     } catch (e) {
       // proceed anyway
     }
