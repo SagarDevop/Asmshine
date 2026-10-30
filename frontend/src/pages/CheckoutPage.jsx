@@ -25,6 +25,7 @@ import { useCartWishlist } from '../context/CartWishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 import { api } from '../services/api';
+import '../styles/skeleton.css';
 import '../styles/orderTracking.css';
 
 export const CheckoutPage = () => {
@@ -248,8 +249,62 @@ export const CheckoutPage = () => {
 
   if (loading) {
     return (
-      <div className="fk-checkout-loading">
-        <p>Loading secure Flipkart checkout...</p>
+      <div className="fk-checkout-page" aria-busy="true" aria-label="Loading checkout">
+        <header className="fk-checkout-header">
+          <div className="fk-checkout-header-bar">
+            <button type="button" className="fk-checkout-back-btn" onClick={handleBack} aria-label="Back">
+              <ArrowLeft size={20} />
+            </button>
+            <div className="fk-checkout-title-wrap">
+              <h1 className="fk-checkout-title">Order Summary</h1>
+              <span className="fk-checkout-subtitle">Securing checkout session...</span>
+            </div>
+            <div className="fk-checkout-secure-pill">
+              <Lock size={12} />
+              <span>100% SECURE</span>
+            </div>
+          </div>
+        </header>
+
+        <div className="fk-checkout-body" style={{ padding: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxWidth: '800px', margin: '0 auto' }}>
+            {/* Delivery address skeleton */}
+            <div className="fk-order-card-skeleton" style={{ padding: '16px', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+              <div className="fk-sk-line skeleton-shimmer" style={{ width: '130px', height: '14px', marginBottom: '10px' }} />
+              <div className="fk-sk-line skeleton-shimmer" style={{ width: '60%', height: '13px', marginBottom: '6px' }} />
+              <div className="fk-sk-line skeleton-shimmer" style={{ width: '40%', height: '12px' }} />
+            </div>
+
+            {/* Item preview skeleton */}
+            <div className="fk-order-card-skeleton" style={{ padding: '16px', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+              <div style={{ display: 'flex', gap: '14px' }}>
+                <div className="fk-sk-box skeleton-shimmer" style={{ width: '70px', height: '70px', borderRadius: '8px', flexShrink: 0 }} />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div className="fk-sk-line skeleton-shimmer" style={{ width: '70%', height: '14px' }} />
+                  <div className="fk-sk-line skeleton-shimmer" style={{ width: '30%', height: '13px' }} />
+                  <div className="fk-sk-line skeleton-shimmer" style={{ width: '45%', height: '11px' }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Price breakdown skeleton */}
+            <div className="fk-order-card-skeleton" style={{ padding: '16px', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+              <div className="fk-sk-line skeleton-shimmer" style={{ width: '110px', height: '13px', marginBottom: '12px' }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <div className="fk-sk-line skeleton-shimmer" style={{ width: '90px', height: '12px' }} />
+                <div className="fk-sk-line skeleton-shimmer" style={{ width: '50px', height: '12px' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <div className="fk-sk-line skeleton-shimmer" style={{ width: '80px', height: '12px' }} />
+                <div className="fk-sk-line skeleton-shimmer" style={{ width: '40px', height: '12px' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #F1F5F9' }}>
+                <div className="fk-sk-line skeleton-shimmer" style={{ width: '100px', height: '14px' }} />
+                <div className="fk-sk-line skeleton-shimmer" style={{ width: '60px', height: '14px' }} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

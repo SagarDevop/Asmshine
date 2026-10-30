@@ -1,30 +1,107 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
-  Package,
-  Truck,
-  CheckCircle2,
-  Clock,
+  ArrowLeft,
+  ShoppingBag,
+  Check,
+  Copy,
+  ExternalLink,
   MapPin,
   CreditCard,
   Printer,
   XCircle,
-  Copy,
-  Check,
-  ChevronLeft,
-  ExternalLink,
-  ShieldCheck,
   HelpCircle,
-  AlertCircle,
+  Truck,
   Phone,
   Search,
-  ShoppingBag,
-  RotateCcw
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useCartWishlist } from '../context/CartWishlistContext';
+import '../styles/skeleton.css';
 import '../styles/orderTracking.css';
+
+/**
+ * Flipkart-Tier Skeleton Loader for Order Tracking Page
+ * Displays full structural skeleton with shimmer effect during loading
+ */
+function OrderTrackingSkeleton({ onBack, orderId }) {
+  return (
+    <div className="fk-tracking-canvas" aria-busy="true" aria-label="Loading order details">
+      {/* Sticky Header */}
+      <header className="fk-order-nav-header">
+        <div className="fk-order-nav-left">
+          <button type="button" className="fk-order-back-btn" onClick={onBack} aria-label="Back">
+            <ArrowLeft size={20} />
+          </button>
+          <div className="fk-order-nav-title-group">
+            <span className="fk-order-nav-title">Order Details</span>
+            <span className="fk-order-nav-sub">{orderId ? `OD • ${orderId}` : 'Fetching tracking...'}</span>
+          </div>
+        </div>
+        <div className="fk-order-nav-right">
+          <div className="fk-sk-box skeleton-shimmer" style={{ width: '70px', height: '26px', borderRadius: '4px' }} />
+        </div>
+      </header>
+
+      <div className="fk-tracking-inner" style={{ marginTop: '12px' }}>
+        {/* Item & Delivery Shimmer Card */}
+        <div className="fk-track-card fk-item-hero-card">
+          <div className="fk-item-hero-img-wrap fk-sk-box skeleton-shimmer" style={{ width: '72px', height: '72px' }} />
+          <div className="fk-item-hero-meta" style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '45%', height: '15px' }} />
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '85%', height: '13px' }} />
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '30%', height: '12px' }} />
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '25%', height: '15px' }} />
+          </div>
+        </div>
+
+        {/* Vertical Stepper Shimmer Card */}
+        <div className="fk-track-card">
+          <div className="fk-sk-line skeleton-shimmer" style={{ width: '130px', height: '13px', marginBottom: '16px' }} />
+          <div className="fk-sk-stepper-wrap">
+            {[1, 2, 3, 4].map((step) => (
+              <div key={step} className="fk-sk-step-row">
+                <div className="fk-sk-circle skeleton-shimmer" style={{ width: '20px', height: '20px' }} />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div className="fk-sk-line skeleton-shimmer" style={{ width: '35%', height: '13px' }} />
+                  <div className="fk-sk-line skeleton-shimmer" style={{ width: '55%', height: '11px' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Shipping Details Shimmer Card */}
+        <div className="fk-track-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div className="fk-sk-line skeleton-shimmer" style={{ width: '140px', height: '13px', marginBottom: '4px' }} />
+          <div className="fk-sk-line skeleton-shimmer" style={{ width: '30%', height: '14px' }} />
+          <div className="fk-sk-line skeleton-shimmer" style={{ width: '80%', height: '12px' }} />
+          <div className="fk-sk-line skeleton-shimmer" style={{ width: '40%', height: '12px' }} />
+        </div>
+
+        {/* Price Details Shimmer Card */}
+        <div className="fk-track-card" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div className="fk-sk-line skeleton-shimmer" style={{ width: '120px', height: '13px', marginBottom: '4px' }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '90px', height: '12px' }} />
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '50px', height: '12px' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '80px', height: '12px' }} />
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '40px', height: '12px' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '6px' }}>
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '100px', height: '14px' }} />
+            <div className="fk-sk-line skeleton-shimmer" style={{ width: '60px', height: '14px' }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export const OrderTrackingPage = () => {
   const { orderId: paramOrderId } = useParams();
@@ -34,7 +111,7 @@ export const OrderTrackingPage = () => {
 
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { showToast } = useCartWishlist();
+  const { cartCount, showToast } = useCartWishlist();
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,13 +120,11 @@ export const OrderTrackingPage = () => {
   const [copiedId, setCopiedId] = useState(false);
   const [copiedAwb, setCopiedAwb] = useState(false);
 
-  // Cancellation Modal State
+  // Modal States
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('Found a better price / changed my mind');
   const [cancelCustomNote, setCancelCustomNote] = useState('');
   const [cancelling, setCancelling] = useState(false);
-
-  // Support Modal State
   const [showSupportModal, setShowSupportModal] = useState(false);
 
   useEffect(() => {
@@ -77,6 +152,14 @@ export const OrderTrackingPage = () => {
     }
   };
 
+  const handleBack = () => {
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      navigate('/account');
+    }
+  };
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (!searchIdInput.trim()) return;
@@ -84,11 +167,11 @@ export const OrderTrackingPage = () => {
   };
 
   const handleCopyOrderId = () => {
-    if (!order?.orderId && !order?.id) return;
-    const text = order.orderId || order.id;
+    const text = order?.orderId || order?.id || activeOrderId;
+    if (!text) return;
     navigator.clipboard?.writeText(text);
     setCopiedId(true);
-    showToast('Order ID copied to clipboard');
+    showToast('Order ID copied');
     setTimeout(() => setCopiedId(false), 2000);
   };
 
@@ -96,12 +179,8 @@ export const OrderTrackingPage = () => {
     if (!awb) return;
     navigator.clipboard?.writeText(awb);
     setCopiedAwb(true);
-    showToast('AWB / Tracking number copied');
+    showToast('Tracking number copied');
     setTimeout(() => setCopiedAwb(false), 2000);
-  };
-
-  const handlePrintReceipt = () => {
-    window.print();
   };
 
   const handleConfirmCancelOrder = async () => {
@@ -111,9 +190,8 @@ export const OrderTrackingPage = () => {
       const finalReason = cancelReason === 'Other' ? (cancelCustomNote || 'Other') : cancelReason;
       const res = await api.cancelOrder(order.orderId || order.id, finalReason);
       if (res && res.success) {
-        showToast('Order cancelled successfully. Stock restored.');
+        showToast('Order cancelled successfully.');
         setShowCancelModal(false);
-        // Refresh order view
         await loadOrder(order.orderId || order.id);
       } else {
         throw new Error(res.message || 'Cancellation could not be completed.');
@@ -125,32 +203,13 @@ export const OrderTrackingPage = () => {
     }
   };
 
-  // Determine Stepper States
-  const getStepperStatus = (status) => {
-    const s = (status || '').toUpperCase();
-    if (s === 'CANCELLED') return 'cancelled';
-
-    const orderStages = ['PENDING_CONFIRMATION', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
-    const currentIdx = orderStages.indexOf(s);
-
-    return {
-      confirmed: currentIdx >= 1 ? 'completed' : currentIdx === 0 ? 'active' : '',
-      processing: currentIdx >= 2 ? 'completed' : currentIdx === 1 ? 'active' : '',
-      shipped: currentIdx >= 3 ? 'completed' : currentIdx === 2 ? 'active' : '',
-      delivered: currentIdx >= 4 ? 'completed' : currentIdx === 3 ? 'active' : ''
-    };
-  };
-
-  const isCancellable = order && ['PENDING_CONFIRMATION', 'CONFIRMED', 'PROCESSING'].includes((order.status || '').toUpperCase());
-
-  // Format currency
   const formatINR = (amt) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amt || 0);
 
-  // Format date helper
   const formatDate = (d) => {
     if (!d) return '—';
-    return new Date(d).toLocaleDateString('en-IN', {
+    const dateObj = new Date(d);
+    return dateObj.toLocaleDateString('en-IN', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
@@ -159,63 +218,60 @@ export const OrderTrackingPage = () => {
     });
   };
 
-  // Estimate arrival date (approx 2 business days from order createdAt)
   const getEstimatedDate = (createdDate) => {
     const base = createdDate ? new Date(createdDate) : new Date();
     base.setDate(base.getDate() + 2);
     return base.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
   };
 
-  // 1. Loading State
+  // 1. Loading State -> Clean Flipkart Skeleton
   if (loading) {
-    return (
-      <div className="asm-tracking-page">
-        <div className="asm-tracking-container" style={{ textAlign: 'center', padding: '60px 16px' }}>
-          <div className="asm-track-pulse-badge" style={{ margin: '0 auto 16px', background: '#2563EB' }}>
-            <span className="asm-pulse-dot" style={{ background: '#93C5FD' }} />
-            <span>Fetching Live Tracking Details...</span>
-          </div>
-          <p style={{ color: '#64748B', fontSize: '14px' }}>Connecting to ASM Shine logistics hub...</p>
-        </div>
-      </div>
-    );
+    return <OrderTrackingSkeleton onBack={handleBack} orderId={activeOrderId} />;
   }
 
-  // 2. Lookup / Search Form (If no active orderId or Error)
-  if (!activeOrderId || error) {
+  // 2. Search / Not Found View
+  if (!activeOrderId || error || !order) {
     return (
-      <div className="asm-tracking-page">
-        <div className="asm-tracking-container">
-          <div className="asm-tracking-header">
-            <button type="button" className="asm-tracking-nav-btn" onClick={() => navigate(-1)}>
-              <ChevronLeft size={16} /> Back
+      <div className="fk-tracking-canvas">
+        <header className="fk-order-nav-header">
+          <div className="fk-order-nav-left">
+            <button type="button" className="fk-order-back-btn" onClick={handleBack} aria-label="Back">
+              <ArrowLeft size={20} />
             </button>
-            <Link to="/account" className="asm-tracking-nav-btn">
-              <ShoppingBag size={15} /> My Orders
+            <div className="fk-order-nav-title-group">
+              <span className="fk-order-nav-title">Track Order</span>
+              <span className="fk-order-nav-sub">ASM Shine Logistics</span>
+            </div>
+          </div>
+          <div className="fk-order-nav-right">
+            <Link to="/account" className="fk-order-header-action-btn">
+              My Orders
             </Link>
           </div>
+        </header>
 
-          <div className="asm-tracking-hero" style={{ textAlign: 'center', padding: '40px 24px' }}>
+        <div className="fk-tracking-inner" style={{ marginTop: '20px' }}>
+          <div className="fk-track-card" style={{ textAlign: 'center', padding: '36px 20px' }}>
             <div
               style={{
-                width: '64px',
-                height: '64px',
+                width: '54px',
+                height: '54px',
                 borderRadius: '50%',
                 background: error ? '#FEF2F2' : '#EFF6FF',
-                color: error ? '#DC2626' : '#2563EB',
+                color: error ? '#DC2626' : '#2874F0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                margin: '0 auto 16px'
+                margin: '0 auto 14px'
               }}
             >
-              {error ? <AlertCircle size={32} /> : <Search size={32} />}
+              {error ? <AlertCircle size={28} /> : <Search size={28} />}
             </div>
 
-            <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#0F172A', margin: '0 0 8px 0' }}>
-              {error ? 'Order Not Found' : 'Track Your ASM Shine Order'}
-            </h2>
-            <p style={{ color: '#64748B', fontSize: '14px', maxWidth: '440px', margin: '0 auto 24px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#212121', margin: '0 0 6px 0' }}>
+              {error ? 'Order Not Found' : 'Track Your Shipment'}
+            </h3>
+            <p style={{ color: '#878787', fontSize: '13px', maxWidth: '420px', margin: '0 auto 20px' }}>
               {error
                 ? error
                 : 'Enter your genuine Order Reference ID (e.g. ASM-20261030-105912) to see real-time packaging, dispatch and courier tracking updates.'}
@@ -223,13 +279,7 @@ export const OrderTrackingPage = () => {
 
             <form
               onSubmit={handleSearchSubmit}
-              style={{
-                display: 'flex',
-                maxWidth: '460px',
-                margin: '0 auto',
-                gap: '8px',
-                flexWrap: 'wrap'
-              }}
+              style={{ display: 'flex', maxWidth: '440px', margin: '0 auto', gap: '8px', flexWrap: 'wrap' }}
             >
               <input
                 type="text"
@@ -238,442 +288,290 @@ export const OrderTrackingPage = () => {
                 onChange={(e) => setSearchIdInput(e.target.value)}
                 style={{
                   flex: 1,
-                  minWidth: '240px',
-                  padding: '12px 16px',
-                  borderRadius: '10px',
+                  minWidth: '220px',
+                  padding: '10px 14px',
+                  borderRadius: '6px',
                   border: '1.5px solid #CBD5E1',
-                  fontSize: '14px',
+                  fontSize: '13.5px',
                   outline: 'none'
                 }}
                 required
               />
-              <button type="submit" className="asm-btn-primary" style={{ padding: '12px 22px' }}>
-                <Search size={16} /> Track Order
+              <button
+                type="submit"
+                style={{
+                  background: '#2874F0',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  padding: '10px 18px',
+                  borderRadius: '6px',
+                  fontSize: '13.5px',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Track
               </button>
             </form>
 
-            {user && (
-              <div style={{ marginTop: '28px', borderTop: '1px solid #F1F5F9', paddingTop: '20px' }}>
-                <span style={{ fontSize: '13px', color: '#64748B' }}>
-                  Looking for your past purchases?{' '}
-                </span>
-                <Link
-                  to="/account"
-                  style={{ fontSize: '13px', color: '#2563EB', fontWeight: 700, textDecoration: 'none' }}
-                >
-                  View All Orders in Account →
-                </Link>
-              </div>
-            )}
+            <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #F1F3F6' }}>
+              <Link to="/account" style={{ fontSize: '13px', color: '#2874F0', fontWeight: 600, textDecoration: 'none' }}>
+                ← View All Orders in My Account
+              </Link>
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
-  // 3. Main Order Tracking Display
+  // 3. Active Order Tracking View
   const currentStatus = (order.status || 'CONFIRMED').toUpperCase();
-  const stepperStates = getStepperStatus(currentStatus);
   const isCancelled = currentStatus === 'CANCELLED';
+  const isDelivered = currentStatus === 'DELIVERED';
+  const isShipped = currentStatus === 'SHIPPED';
+  const isProcessing = currentStatus === 'PROCESSING';
 
-  // Calculate percentage for progress bar line
-  let fillPercent = '0%';
-  if (!isCancelled) {
-    if (currentStatus === 'CONFIRMED') fillPercent = '15%';
-    else if (currentStatus === 'PROCESSING') fillPercent = '45%';
-    else if (currentStatus === 'SHIPPED') fillPercent = '75%';
-    else if (currentStatus === 'DELIVERED') fillPercent = '100%';
-  }
+  const orderStages = ['PENDING_CONFIRMATION', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
+  const currentIdx = orderStages.indexOf(currentStatus);
+
+  const isConfirmedDone = currentIdx >= 1;
+  const isProcessingDone = currentIdx >= 2;
+  const isShippedDone = currentIdx >= 3;
+  const isDeliveredDone = currentIdx >= 4;
+
+  const isCancellable = ['PENDING_CONFIRMATION', 'CONFIRMED', 'PROCESSING'].includes(currentStatus);
 
   const shippingDetails = order.shippingDetails || {};
-  const carrier = shippingDetails.carrier || 'ASM Express Logistics';
+  const carrier = shippingDetails.carrier || 'Delhivery Express Air';
   const trackingNumber = shippingDetails.trackingNumber || '';
   const trackingUrl = shippingDetails.trackingUrl || '';
 
+  const firstItem = order.items?.[0] || {};
+
   return (
-    <div className="asm-tracking-page">
-      <div className="asm-tracking-container asm-print-area">
-        {/* Navigation Bar */}
-        <div className="asm-tracking-header no-print">
-          <button type="button" className="asm-tracking-nav-btn" onClick={() => navigate('/account')}>
-            <ChevronLeft size={16} /> Back to My Orders
+    <div className="fk-tracking-canvas">
+      {/* 1. Flipkart Top Navigation Bar */}
+      <header className="fk-order-nav-header">
+        <div className="fk-order-nav-left">
+          <button type="button" className="fk-order-back-btn" onClick={handleBack} aria-label="Go Back">
+            <ArrowLeft size={20} />
           </button>
-
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button type="button" className="asm-tracking-nav-btn" onClick={handlePrintReceipt}>
-              <Printer size={15} /> Print Invoice
-            </button>
-            <button
-              type="button"
-              className="asm-tracking-nav-btn"
-              onClick={() => setShowSupportModal(true)}
-            >
-              <HelpCircle size={15} /> Need Help?
-            </button>
+          <div className="fk-order-nav-title-group">
+            <span className="fk-order-nav-title">Order Details</span>
+            <span className="fk-order-nav-sub">OD • {order.orderId || order.id}</span>
           </div>
         </div>
 
-        {/* Hero Card: Order Overview & Real-Time Stepper */}
-        <div className="asm-tracking-hero">
-          <div className="asm-hero-top">
-            <div className="asm-hero-id-col">
-              <h2>
-                <span>Order #{order.orderId || order.id}</span>
-                <button
-                  type="button"
-                  className="asm-order-pill-copy"
-                  style={{ color: '#2563EB', background: '#EFF6FF' }}
-                  onClick={handleCopyOrderId}
-                  title="Copy Order ID"
-                >
-                  {copiedId ? <Check size={14} color="#059669" /> : <Copy size={14} />}
-                  <span>{copiedId ? 'Copied' : 'Copy'}</span>
-                </button>
-              </h2>
-              <p>
-                Placed on {formatDate(order.createdAt)} • {order.items?.length || 0} item
-                {(order.items?.length || 0) > 1 ? 's' : ''}
-              </p>
-            </div>
-
-            <div style={{ textAlign: 'right' }}>
-              <span className={`asm-status-badge ${currentStatus}`}>
-                {isCancelled ? <XCircle size={15} /> : <CheckCircle2 size={15} />}
-                <span>{currentStatus.replace('_', ' ')}</span>
-              </span>
-            </div>
-          </div>
-
-          {/* Cancelled Banner if applicable */}
-          {isCancelled ? (
-            <div
-              style={{
-                background: '#FEF2F2',
-                border: '1.5px solid #FCA5A5',
-                borderRadius: '12px',
-                padding: '16px 20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                margin: '16px 0'
-              }}
-            >
-              <XCircle size={28} color="#DC2626" style={{ flexShrink: 0 }} />
-              <div>
-                <strong style={{ color: '#991B1B', fontSize: '15px' }}>This Order was Cancelled</strong>
-                <p style={{ margin: '3px 0 0', color: '#B91C1C', fontSize: '13px' }}>
-                  Reason: {order.cancellation?.reason || 'Cancelled by customer'}
-                  {order.cancellation?.cancelledAt && (
-                    <span> • {formatDate(order.cancellation.cancelledAt)}</span>
-                  )}
-                </p>
-                <small style={{ color: '#7F1D1D', fontSize: '12px' }}>
-                  Restocked to inventory. Any prepaid amount will be refunded to your original payment method.
-                </small>
-              </div>
-            </div>
-          ) : (
-            /* Estimated Delivery Banner */
-            <div className="asm-delivery-estimate-card">
-              <div className="asm-estimate-left">
-                <div className="asm-estimate-icon">
-                  <Truck size={22} />
-                </div>
-                <div className="asm-estimate-text">
-                  <h4>
-                    {currentStatus === 'DELIVERED'
-                      ? 'Package Delivered Successfully!'
-                      : `Estimated Delivery by ${getEstimatedDate(order.createdAt)}`}
-                  </h4>
-                  <p>
-                    {currentStatus === 'DELIVERED'
-                      ? 'Handed over directly to customer at doorstep.'
-                      : 'Standard Express Surface & Air Freight Shipping'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="asm-track-pulse-badge">
-                <span className="asm-pulse-dot" />
-                <span>
-                  {currentStatus === 'SHIPPED'
-                    ? 'In Transit'
-                    : currentStatus === 'DELIVERED'
-                    ? 'Delivered'
-                    : 'Active Dispatch'}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Stepper Timeline (Amazon/Flipkart Style) */}
-          {!isCancelled && (
-            <div className="asm-stepper-wrap">
-              <div className="asm-stepper">
-                <div className="asm-stepper-line">
-                  <div className="asm-stepper-line-fill" style={{ width: fillPercent }} />
-                </div>
-
-                {/* Step 1: Confirmed */}
-                <div className={`asm-stepper-step ${stepperStates.confirmed}`}>
-                  <div className="asm-step-circle">
-                    <Check size={18} strokeWidth={3} />
-                  </div>
-                  <div className="asm-step-title">Order Confirmed</div>
-                  <div className="asm-step-subtitle">
-                    {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Verified'}
-                  </div>
-                </div>
-
-                {/* Step 2: Processing */}
-                <div className={`asm-stepper-step ${stepperStates.processing}`}>
-                  <div className="asm-step-circle">
-                    <Package size={18} />
-                  </div>
-                  <div className="asm-step-title">Packed & Ready</div>
-                  <div className="asm-step-subtitle">Warehouse Dispatch</div>
-                </div>
-
-                {/* Step 3: Shipped */}
-                <div className={`asm-stepper-step ${stepperStates.shipped}`}>
-                  <div className="asm-step-circle">
-                    <Truck size={18} />
-                  </div>
-                  <div className="asm-step-title">Shipped / In Transit</div>
-                  <div className="asm-step-subtitle">
-                    {trackingNumber ? `AWB: ${trackingNumber.slice(0, 8)}...` : carrier}
-                  </div>
-                </div>
-
-                {/* Step 4: Delivered */}
-                <div className={`asm-stepper-step ${stepperStates.delivered}`}>
-                  <div className="asm-step-circle">
-                    <CheckCircle2 size={18} />
-                  </div>
-                  <div className="asm-step-title">Delivered</div>
-                  <div className="asm-step-subtitle">Doorstep Handover</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Courier Details Card if dispatched */}
-          {trackingNumber && !isCancelled && (
-            <div className="asm-courier-card">
-              <div className="asm-courier-meta">
-                <div className="asm-courier-icon">
-                  <Truck size={20} />
-                </div>
-                <div>
-                  <div className="asm-courier-name">
-                    Carrier Partner: <strong>{carrier}</strong>
-                  </div>
-                  <div className="asm-courier-awb">
-                    <span>Tracking Number / AWB: </span>
-                    <strong style={{ color: '#0F172A' }}>{trackingNumber}</strong>
-                    <button
-                      type="button"
-                      className="asm-awb-copy-btn"
-                      onClick={() => handleCopyAwb(trackingNumber)}
-                    >
-                      {copiedAwb ? <Check size={12} /> : <Copy size={12} />}
-                      <span>{copiedAwb ? 'Copied' : 'Copy'}</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {trackingUrl && (
-                <a
-                  href={trackingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="asm-courier-link"
-                >
-                  <span>Track on Courier Site</span>
-                  <ExternalLink size={14} />
-                </a>
-              )}
-            </div>
-          )}
+        <div className="fk-order-nav-right">
+          <button
+            type="button"
+            className="fk-order-header-action-btn"
+            onClick={() => setShowSupportModal(true)}
+          >
+            <HelpCircle size={14} />
+            <span>Help</span>
+          </button>
+          <button
+            type="button"
+            className="fk-order-header-action-btn"
+            onClick={() => navigate('/cart')}
+            title="Cart"
+          >
+            <ShoppingBag size={14} />
+            {cartCount > 0 && <span>({cartCount})</span>}
+          </button>
         </div>
+      </header>
 
-        {/* Two-Column Grid: Delivery Address & Payment Summary */}
-        <div className="asm-two-col-grid">
-          {/* 1. Delivery Destination */}
-          <div className="asm-info-block">
-            <h4 className="asm-info-title">
-              <MapPin size={15} color="#2563EB" />
-              <span>Delivery Destination</span>
-            </h4>
-            <div className="asm-info-name">
-              {order.shippingAddress?.fullName || order.shippingAddress?.name || user?.name || 'Customer'}
+      {/* Main Flipkart Content Container */}
+      <div className="fk-tracking-inner">
+        {/* Order ID & Status Strip */}
+        <div className="fk-track-card" style={{ padding: '10px 14px' }}>
+          <div className="fk-order-id-strip" style={{ margin: 0, padding: 0, border: 'none' }}>
+            <div>
+              <span className="fk-order-id-label">Order ID:</span>
+              <span className="fk-order-id-val">{order.orderId || order.id}</span>
+              <button type="button" className="fk-copy-chip" onClick={handleCopyOrderId}>
+                {copiedId ? <Check size={11} /> : <Copy size={11} />}
+                <span>{copiedId ? 'Copied' : 'Copy'}</span>
+              </button>
             </div>
-            <p className="asm-info-text">
-              {order.shippingAddress?.street}
-              <br />
-              {order.shippingAddress?.city}, {order.shippingAddress?.state} -{' '}
-              <strong>{order.shippingAddress?.pincode}</strong>
-            </p>
-            <div style={{ marginTop: '8px', fontSize: '13px', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Phone size={13} color="#64748B" />
-              <span>Contact: {order.shippingAddress?.phone || user?.phone || '—'}</span>
-            </div>
-          </div>
-
-          {/* 2. Payment & Billing Details */}
-          <div className="asm-info-block">
-            <h4 className="asm-info-title">
-              <CreditCard size={15} color="#2563EB" />
-              <span>Payment &amp; Billing</span>
-            </h4>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#0F172A' }}>
-                Payment Method:
-              </span>
-              <span
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  background: '#F1F5F9',
-                  padding: '3px 8px',
-                  borderRadius: '6px',
-                  color: '#334155'
-                }}
-              >
-                {order.paymentMethod ? order.paymentMethod.toUpperCase() : 'COD'}
-              </span>
-            </div>
-
-            <div className="asm-price-breakdown">
-              <div className="asm-price-row">
-                <span>Items Subtotal:</span>
-                <span>{formatINR(order.pricing?.itemsSubtotal || order.totalAmount)}</span>
-              </div>
-              {order.pricing?.productDiscount > 0 && (
-                <div className="asm-price-row discount">
-                  <span>Product Discount:</span>
-                  <span>-{formatINR(order.pricing.productDiscount)}</span>
-                </div>
-              )}
-              {order.pricing?.couponDiscount > 0 && (
-                <div className="asm-price-row discount">
-                  <span>Coupon Discount:</span>
-                  <span>-{formatINR(order.pricing.couponDiscount)}</span>
-                </div>
-              )}
-              {order.pricing?.prepaidDiscount > 0 && (
-                <div className="asm-price-row discount">
-                  <span>Prepaid 5% Discount:</span>
-                  <span>-{formatINR(order.pricing.prepaidDiscount)}</span>
-                </div>
-              )}
-              <div className="asm-price-row">
-                <span>Delivery Charges:</span>
-                <span style={{ color: '#059669', fontWeight: 700 }}>FREE</span>
-              </div>
-              <div className="asm-price-row total">
-                <span>Total Paid:</span>
-                <span style={{ color: '#2563EB' }}>
-                  {formatINR(order.pricing?.finalAmount || order.totalAmount)}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Ordered Items List Card */}
-        <div className="asm-section-box">
-          <div className="asm-section-header">
-            <h3 className="asm-section-title">
-              <Package size={17} color="#2563EB" />
-              <span>Items in this Shipment ({order.items?.length || 0})</span>
-            </h3>
-            <span style={{ fontSize: '12px', color: '#64748B' }}>
-              100% Genuine ASM Shine Hygiene Products
+            <span className={`fk-status-pill ${currentStatus}`}>
+              ● {currentStatus.replace('_', ' ')}
             </span>
           </div>
+        </div>
 
-          <div className="asm-ordered-items-list">
-            {(order.items || []).map((item, idx) => (
-              <div key={idx} className="asm-order-item-card">
-                <img
-                  src={item.image || '/favicon.svg'}
-                  alt={item.name}
-                  className="asm-item-thumb"
-                  onError={(e) => {
-                    e.currentTarget.src = '/favicon.svg';
-                  }}
-                />
+        {/* Hero Item & Expected Delivery Card */}
+        <div className="fk-track-card fk-item-hero-card">
+          <div className="fk-item-hero-img-wrap">
+            <img
+              src={firstItem.image || '/favicon.svg'}
+              alt={firstItem.name || 'Product'}
+              className="fk-item-hero-img"
+              onError={(e) => {
+                e.currentTarget.src = '/favicon.svg';
+              }}
+            />
+          </div>
 
-                <div className="asm-item-meta">
-                  <h4 className="asm-item-name">{item.name}</h4>
-                  <div className="asm-item-sub">
-                    {item.size && <span className="asm-item-tag">{item.size}</span>}
-                    <span>Qty: <strong>{item.quantity}</strong></span>
-                    <span>•</span>
-                    <span>₹{item.unitPrice || item.price || 0} / unit</span>
-                  </div>
-                </div>
+          <div className="fk-item-hero-meta">
+            <div className={`fk-delivery-headline ${isCancelled ? 'cancelled' : isDelivered ? 'delivered' : ''}`}>
+              <Truck size={16} />
+              <span>
+                {isCancelled
+                  ? 'Order Cancelled'
+                  : isDelivered
+                  ? 'Delivered at Doorstep'
+                  : `Delivery by ${getEstimatedDate(order.createdAt)}`}
+              </span>
+            </div>
 
-                <div className="asm-item-price-col">
-                  <div className="asm-item-price-current">
-                    {formatINR(item.totalPrice || ((item.unitPrice || item.price || 0) * (item.quantity || 1)))}
-                  </div>
-                  {item.totalMRP > (item.totalPrice || item.unitPrice * item.quantity) && (
-                    <div className="asm-item-price-original">
-                      {formatINR(item.totalMRP)}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+            <h4 className="fk-item-title">{firstItem.name}</h4>
+            <div className="fk-item-subline">
+              {firstItem.size && <span>Size: {firstItem.size}</span>}
+              <span>Qty: {firstItem.quantity || 1}</span>
+            </div>
+            <div className="fk-item-price-val">
+              {formatINR(firstItem.totalPrice || firstItem.unitPrice || order.totalAmount)}
+            </div>
           </div>
         </div>
 
-        {/* Detailed Timeline Events (Audit Trail) */}
-        {order.timeline && order.timeline.length > 0 && (
-          <div className="asm-section-box">
-            <div className="asm-section-header">
-              <h3 className="asm-section-title">
-                <Clock size={17} color="#2563EB" />
-                <span>Tracking History &amp; Activity Log</span>
-              </h3>
+        {/* Flipkart Authentic Vertical Stepper */}
+        <div className="fk-track-card fk-timeline-section">
+          <h4 className="fk-timeline-title">Fulfillment Progress</h4>
+
+          <div className="fk-v-stepper">
+            {/* Stage 1: Order Confirmed */}
+            <div className={`fk-v-step-row ${isConfirmedDone ? 'completed' : 'active'}`}>
+              <div className="fk-v-line" />
+              <div className="fk-v-indicator">
+                {isConfirmedDone ? <Check size={12} strokeWidth={3} /> : <div className="fk-v-indicator-inner-dot" />}
+              </div>
+              <div className="fk-v-step-content">
+                <div className="fk-v-step-name">Order Confirmed</div>
+                <div className="fk-v-step-date">{formatDate(order.createdAt)}</div>
+                <div className="fk-v-step-note">Your order has been verified and placed.</div>
+              </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', position: 'relative' }}>
-              {order.timeline.map((event, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '12px',
-                    fontSize: '13px'
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
-                      background: idx === order.timeline.length - 1 ? '#2563EB' : '#10B981',
-                      marginTop: '4px',
-                      flexShrink: 0
-                    }}
-                  />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 700, color: '#0F172A' }}>
-                      {event.title || event.status}
+            {/* Stage 2: Packed & Ready */}
+            <div className={`fk-v-step-row ${isProcessingDone ? 'completed' : isProcessing ? 'active' : 'pending'}`}>
+              <div className="fk-v-line" />
+              <div className="fk-v-indicator">
+                {isProcessingDone ? <Check size={12} strokeWidth={3} /> : isProcessing ? <div className="fk-v-indicator-inner-dot" /> : null}
+              </div>
+              <div className="fk-v-step-content">
+                <div className="fk-v-step-name">Packed &amp; Ready</div>
+                <div className="fk-v-step-date">
+                  {isProcessingDone || isProcessing ? 'Warehouse fulfillment line' : 'Pending packaging'}
+                </div>
+                {(isProcessingDone || isProcessing) && (
+                  <div className="fk-v-step-note">Item has been inspected, packed and prepped for courier pickup.</div>
+                )}
+              </div>
+            </div>
+
+            {/* Stage 3: Shipped / In Transit */}
+            <div className={`fk-v-step-row ${isShippedDone ? 'completed' : isShipped ? 'active' : 'pending'}`}>
+              <div className="fk-v-line" />
+              <div className="fk-v-indicator">
+                {isShippedDone ? <Check size={12} strokeWidth={3} /> : isShipped ? <div className="fk-v-indicator-inner-dot" /> : null}
+              </div>
+              <div className="fk-v-step-content">
+                <div className="fk-v-step-name">Shipped / In Transit</div>
+                <div className="fk-v-step-date">
+                  {trackingNumber ? `Dispatched via ${carrier}` : 'Awaiting courier handover'}
+                </div>
+                {trackingNumber && (
+                  <div className="fk-courier-strip">
+                    <div className="fk-courier-left">
+                      <span>AWB: </span>
+                      <strong>{trackingNumber}</strong>
+                      <button
+                        type="button"
+                        className="fk-copy-chip"
+                        onClick={() => handleCopyAwb(trackingNumber)}
+                      >
+                        {copiedAwb ? <Check size={10} /> : <Copy size={10} />}
+                        <span>{copiedAwb ? 'Copied' : 'Copy'}</span>
+                      </button>
                     </div>
-                    {event.note && (
-                      <div style={{ color: '#475569', fontSize: '12.5px', marginTop: '2px' }}>
-                        {event.note}
-                      </div>
+                    {trackingUrl && (
+                      <a
+                        href={trackingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="fk-courier-track-link"
+                      >
+                        <span>Track with {carrier.split(' ')[0]}</span>
+                        <ExternalLink size={12} />
+                      </a>
                     )}
-                    <div style={{ color: '#94A3B8', fontSize: '11.5px', marginTop: '2px' }}>
-                      {formatDate(event.timestamp)}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Stage 4: Delivered (or Cancelled) */}
+            {isCancelled ? (
+              <div className="fk-v-step-row cancelled">
+                <div className="fk-v-indicator">
+                  <XCircle size={14} />
+                </div>
+                <div className="fk-v-step-content">
+                  <div className="fk-v-step-name" style={{ color: '#DC2626' }}>Order Cancelled</div>
+                  <div className="fk-v-step-date">
+                    {order.cancellation?.cancelledAt ? formatDate(order.cancellation.cancelledAt) : 'Cancelled'}
+                  </div>
+                  <div className="fk-v-step-note" style={{ background: '#FEF2F2', color: '#991B1B' }}>
+                    Reason: {order.cancellation?.reason || 'Cancelled by customer'}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="fk-v-step-row delivered-step">
+                <div className="fk-v-indicator">
+                  {isDeliveredDone ? <Check size={12} strokeWidth={3} /> : null}
+                </div>
+                <div className="fk-v-step-content">
+                  <div className="fk-v-step-name">Delivered</div>
+                  <div className="fk-v-step-date">
+                    {isDeliveredDone ? 'Handed over at doorstep' : `Expected by ${getEstimatedDate(order.createdAt)}`}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Multiple Items List if more than 1 item */}
+        {order.items && order.items.length > 1 && (
+          <div className="fk-track-card">
+            <h4 className="fk-details-header">
+              <span>All Items in this Order ({order.items.length})</span>
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {order.items.map((it, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '8px', borderBottom: idx < order.items.length - 1 ? '1px solid #F1F3F6' : 'none' }}>
+                  <img
+                    src={it.image || '/favicon.svg'}
+                    alt={it.name}
+                    style={{ width: '48px', height: '48px', objectFit: 'contain', border: '1px solid #E5E7EB', borderRadius: '4px' }}
+                    onError={(e) => { e.currentTarget.src = '/favicon.svg'; }}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#212121', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {it.name}
                     </div>
+                    <div style={{ fontSize: '12px', color: '#878787' }}>
+                      Qty: {it.quantity} {it.size ? `(${it.size})` : ''} • ₹{it.unitPrice || it.price}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#212121' }}>
+                    {formatINR(it.totalPrice || ((it.unitPrice || it.price || 0) * (it.quantity || 1)))}
                   </div>
                 </div>
               ))}
@@ -681,100 +579,161 @@ export const OrderTrackingPage = () => {
           </div>
         )}
 
-        {/* Bottom Actions Bar */}
-        <div className="asm-actions-bar no-print">
+        {/* Shipping Details Card */}
+        <div className="fk-track-card">
+          <h4 className="fk-details-header">
+            <MapPin size={15} color="#2874F0" />
+            <span>Shipping Details</span>
+          </h4>
+          <div className="fk-person-name">
+            {order.shippingAddress?.fullName || order.shippingAddress?.name || user?.name || 'Customer'}
+          </div>
+          <div className="fk-address-lines">
+            {order.shippingAddress?.street}
+            <br />
+            {order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.pincode}
+          </div>
+          {order.shippingAddress?.phone && (
+            <div className="fk-phone-line">
+              Phone number: {order.shippingAddress.phone}
+            </div>
+          )}
+        </div>
+
+        {/* Price Details Card */}
+        <div className="fk-track-card">
+          <h4 className="fk-details-header">
+            <CreditCard size={15} color="#2874F0" />
+            <span>Price Details</span>
+          </h4>
+          <div className="fk-price-table">
+            <div className="fk-price-row">
+              <span>List Price</span>
+              <span>{formatINR(order.pricing?.totalMRP || order.totalAmount)}</span>
+            </div>
+            <div className="fk-price-row">
+              <span>Selling Price</span>
+              <span>{formatINR(order.pricing?.itemsSubtotal || order.totalAmount)}</span>
+            </div>
+            {order.pricing?.productDiscount > 0 && (
+              <div className="fk-price-row discount">
+                <span>Special Discount</span>
+                <span>-{formatINR(order.pricing.productDiscount)}</span>
+              </div>
+            )}
+            {order.pricing?.couponDiscount > 0 && (
+              <div className="fk-price-row discount">
+                <span>Coupon Savings</span>
+                <span>-{formatINR(order.pricing.couponDiscount)}</span>
+              </div>
+            )}
+            <div className="fk-price-row">
+              <span>Delivery Charges</span>
+              <span style={{ color: '#26A541', fontWeight: 700 }}>FREE</span>
+            </div>
+            <div className="fk-price-row total">
+              <span>Total Amount</span>
+              <span style={{ color: '#2874F0' }}>
+                {formatINR(order.pricing?.finalAmount || order.totalAmount)}
+              </span>
+            </div>
+          </div>
+          <div className="fk-payment-mode-tag">
+            Payment Mode: <strong>{(order.paymentMethod || 'COD').toUpperCase()}</strong>
+          </div>
+        </div>
+
+        {/* Actions Row */}
+        <div className="fk-track-actions">
           <button
             type="button"
-            className="asm-btn-secondary"
-            onClick={() => navigate('/categories')}
+            className="fk-action-btn-outline"
+            onClick={() => window.print()}
           >
-            <ShoppingBag size={16} /> Continue Shopping
+            <Printer size={15} />
+            <span>Download Invoice</span>
           </button>
 
           {isCancellable && (
             <button
               type="button"
-              className="asm-btn-danger-outline"
+              className="fk-action-btn-outline fk-action-btn-danger"
               onClick={() => setShowCancelModal(true)}
-              id="cancel-order-trigger-btn"
+              id="order-cancel-trigger"
             >
-              <XCircle size={16} /> Cancel Order
+              <XCircle size={15} />
+              <span>Cancel Order</span>
             </button>
           )}
 
           <button
             type="button"
-            className="asm-btn-primary"
-            onClick={handlePrintReceipt}
+            className="fk-action-btn-outline"
+            onClick={() => navigate('/categories')}
           >
-            <Printer size={16} /> Print Tax Receipt
+            <ShoppingBag size={15} />
+            <span>Explore Products</span>
           </button>
         </div>
       </div>
 
-      {/* ------------------------------------------------------------- */}
-      {/* CANCELLATION MODAL                                            */}
-      {/* ------------------------------------------------------------- */}
+      {/* Cancellation Modal */}
       {showCancelModal && (
         <div className="asm-modal-backdrop" onClick={() => setShowCancelModal(false)}>
           <div className="asm-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="asm-modal-header">
               <h3 className="asm-modal-title">
-                <AlertCircle size={20} color="#DC2626" />
+                <AlertCircle size={18} color="#DC2626" />
                 <span>Cancel Order #{order.orderId || order.id}</span>
               </h3>
-              <button
-                type="button"
-                className="asm-modal-close-btn"
-                onClick={() => setShowCancelModal(false)}
-              >
+              <button type="button" className="asm-modal-close-btn" onClick={() => setShowCancelModal(false)}>
                 ✕
               </button>
             </div>
 
-            <p style={{ fontSize: '13.5px', color: '#475569', margin: '0 0 16px' }}>
-              Are you sure you want to cancel this order? Once cancelled, the products will be released and returned to inventory.
+            <p style={{ fontSize: '13px', color: '#565656', margin: '0 0 14px' }}>
+              Are you sure you want to cancel this order? The product stock will be immediately restored.
             </p>
 
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Please select a cancellation reason:
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#212121', marginBottom: '6px' }}>
+                Reason for Cancellation:
               </label>
               <select
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
-                  borderRadius: '8px',
-                  border: '1.5px solid #CBD5E1',
-                  fontSize: '13.5px',
-                  color: '#0F172A',
+                  padding: '9px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid #D1D5DB',
+                  fontSize: '13px',
+                  color: '#212121',
                   outline: 'none',
-                  backgroundColor: '#FFFFFF'
+                  background: '#FFFFFF'
                 }}
               >
                 <option value="Found a better price / changed my mind">Found a better price / changed my mind</option>
                 <option value="Ordered by mistake / duplicate order">Ordered by mistake / duplicate order</option>
                 <option value="Need to change shipping address">Need to change shipping address</option>
                 <option value="Delivery is taking too long">Delivery is taking too long</option>
-                <option value="Other">Other (specify below)</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
             {cancelReason === 'Other' && (
-              <div style={{ marginBottom: '16px' }}>
+              <div style={{ marginBottom: '14px' }}>
                 <textarea
-                  rows={3}
-                  placeholder="Tell us why you are cancelling..."
+                  rows={2}
+                  placeholder="Specify reason..."
                   value={cancelCustomNote}
                   onChange={(e) => setCancelCustomNote(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: '1.5px solid #CBD5E1',
-                    fontSize: '13px',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid #D1D5DB',
+                    fontSize: '12.5px',
                     outline: 'none',
                     resize: 'none'
                   }}
@@ -782,23 +741,22 @@ export const OrderTrackingPage = () => {
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
               <button
                 type="button"
-                className="asm-btn-secondary"
+                className="fk-action-btn-outline"
                 style={{ flex: 1 }}
                 onClick={() => setShowCancelModal(false)}
                 disabled={cancelling}
               >
-                Keep Order
+                Don't Cancel
               </button>
               <button
                 type="button"
-                className="asm-btn-danger-outline"
-                style={{ flex: 1, backgroundColor: '#DC2626', color: '#FFFFFF', borderColor: '#DC2626' }}
+                className="fk-action-btn-outline fk-action-btn-danger"
+                style={{ flex: 1, background: '#DC2626', color: '#FFFFFF', borderColor: '#DC2626' }}
                 onClick={handleConfirmCancelOrder}
                 disabled={cancelling}
-                id="confirm-cancel-order-btn"
               >
                 {cancelling ? 'Cancelling...' : 'Confirm Cancellation'}
               </button>
@@ -807,31 +765,25 @@ export const OrderTrackingPage = () => {
         </div>
       )}
 
-      {/* ------------------------------------------------------------- */}
-      {/* SUPPORT HELP MODAL                                            */}
-      {/* ------------------------------------------------------------- */}
+      {/* Support Help Modal */}
       {showSupportModal && (
         <div className="asm-modal-backdrop" onClick={() => setShowSupportModal(false)}>
           <div className="asm-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="asm-modal-header">
               <h3 className="asm-modal-title">
-                <HelpCircle size={20} color="#2563EB" />
-                <span>ASM Shine 24x7 Customer Care</span>
+                <HelpCircle size={18} color="#2874F0" />
+                <span>ASM Shine Customer Support</span>
               </h3>
-              <button
-                type="button"
-                className="asm-modal-close-btn"
-                onClick={() => setShowSupportModal(false)}
-              >
+              <button type="button" className="asm-modal-close-btn" onClick={() => setShowSupportModal(false)}>
                 ✕
               </button>
             </div>
 
-            <p style={{ fontSize: '13.5px', color: '#475569', margin: '0 0 16px' }}>
-              We are here to assist with any questions regarding order #{order.orderId || order.id}, delivery schedules, or invoice requests.
+            <p style={{ fontSize: '13px', color: '#565656', margin: '0 0 16px' }}>
+              Need assistance with Order #{order.orderId || order.id}? Reach out directly to our support team:
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <a
                 href={`https://wa.me/91958423614?text=Hi%2C%20I%20need%20help%20with%20my%20order%20%23${order.orderId || order.id}`}
                 target="_blank"
@@ -840,21 +792,21 @@ export const OrderTrackingPage = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
-                  padding: '12px 16px',
-                  borderRadius: '10px',
+                  padding: '12px 14px',
+                  borderRadius: '8px',
                   background: '#ECFDF5',
                   border: '1px solid #A7F3D0',
                   color: '#065F46',
                   textDecoration: 'none',
                   fontWeight: 700,
-                  fontSize: '14px'
+                  fontSize: '13.5px'
                 }}
               >
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#10B981', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#10B981', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   💬
                 </div>
                 <div>
-                  <div>Chat on WhatsApp</div>
+                  <div>WhatsApp Priority Help</div>
                   <small style={{ fontWeight: 400, color: '#047857' }}>Instant support response</small>
                 </div>
               </a>
@@ -865,21 +817,21 @@ export const OrderTrackingPage = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
-                  padding: '12px 16px',
-                  borderRadius: '10px',
+                  padding: '12px 14px',
+                  borderRadius: '8px',
                   background: '#EFF6FF',
                   border: '1px solid #BFDBFE',
                   color: '#1E40AF',
                   textDecoration: 'none',
                   fontWeight: 700,
-                  fontSize: '14px'
+                  fontSize: '13.5px'
                 }}
               >
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#2563EB', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Phone size={16} />
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#2874F0', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Phone size={14} />
                 </div>
                 <div>
-                  <div>Call Priority Support</div>
+                  <div>Call Helpline</div>
                   <small style={{ fontWeight: 400, color: '#1D4ED8' }}>+91 958423614 (9am - 8pm)</small>
                 </div>
               </a>
@@ -887,8 +839,8 @@ export const OrderTrackingPage = () => {
 
             <button
               type="button"
-              className="asm-btn-secondary"
-              style={{ width: '100%', marginTop: '20px' }}
+              className="fk-action-btn-outline"
+              style={{ width: '100%', marginTop: '16px' }}
               onClick={() => setShowSupportModal(false)}
             >
               Close

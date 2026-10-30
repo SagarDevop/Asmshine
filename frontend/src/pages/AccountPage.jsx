@@ -902,8 +902,18 @@ export const AccountPage = () => {
 
             {/* Address List */}
             {loadingAddresses ? (
-              <div style={{ textAlign: 'center', padding: '30px', color: '#64748B' }}>
-                Loading saved delivery addresses...
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {[1, 2].map((n) => (
+                  <div key={n} className="fk-order-card-skeleton" aria-hidden="true">
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div className="fk-sk-box skeleton-shimmer" style={{ width: '60px', height: '20px', borderRadius: '4px' }} />
+                      <div className="fk-sk-circle skeleton-shimmer" style={{ width: '18px', height: '18px' }} />
+                    </div>
+                    <div className="fk-sk-line skeleton-shimmer" style={{ width: '120px', height: '14px' }} />
+                    <div className="fk-sk-line skeleton-shimmer" style={{ width: '80%', height: '12px' }} />
+                    <div className="fk-sk-line skeleton-shimmer" style={{ width: '45%', height: '12px' }} />
+                  </div>
+                ))}
               </div>
             ) : addresses.length === 0 ? (
               <div className="fk-empty-card-state">
@@ -996,8 +1006,26 @@ export const AccountPage = () => {
             </div>
 
             {loadingOrders ? (
-              <div style={{ textAlign: 'center', padding: '30px', color: '#64748B' }}>
-                Fetching your order history...
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="fk-order-card-skeleton" aria-hidden="true">
+                    <div className="fk-order-card-sk-top">
+                      <div className="fk-sk-line skeleton-shimmer" style={{ width: '130px', height: '14px' }} />
+                      <div className="fk-sk-box skeleton-shimmer" style={{ width: '80px', height: '22px', borderRadius: '12px' }} />
+                    </div>
+                    <div className="fk-order-card-sk-item">
+                      <div className="fk-sk-box skeleton-shimmer" style={{ width: '48px', height: '48px', borderRadius: '6px' }} />
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div className="fk-sk-line skeleton-shimmer" style={{ width: '65%', height: '13px' }} />
+                        <div className="fk-sk-line skeleton-shimmer" style={{ width: '35%', height: '11px' }} />
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid #F1F5F9' }}>
+                      <div className="fk-sk-line skeleton-shimmer" style={{ width: '140px', height: '12px' }} />
+                      <div className="fk-sk-box skeleton-shimmer" style={{ width: '96px', height: '30px', borderRadius: '6px' }} />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : orders.length === 0 ? (
               <div className="fk-empty-card-state">
@@ -1173,8 +1201,19 @@ export const AccountPage = () => {
             </div>
 
             {loadingWishlist ? (
-              <div style={{ textAlign: 'center', padding: '30px', color: '#64748B' }}>
-                Loading saved items...
+              <div className="fk-wishlist-grid" aria-hidden="true">
+                {[1, 2, 3, 4].map((n) => (
+                  <div key={n} className="fk-wishlist-card fk-order-card-skeleton" style={{ padding: '14px', border: '1px solid #E2E8F0', borderRadius: '10px' }}>
+                    <div className="fk-wishlist-info-wrap" style={{ display: 'flex', gap: '14px' }}>
+                      <div className="fk-sk-box skeleton-shimmer" style={{ width: '80px', height: '80px', borderRadius: '8px', flexShrink: 0 }} />
+                      <div className="fk-wishlist-details" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div className="fk-sk-line skeleton-shimmer" style={{ width: '75%', height: '15px' }} />
+                        <div className="fk-sk-line skeleton-shimmer" style={{ width: '35%', height: '14px' }} />
+                        <div className="fk-sk-line skeleton-shimmer" style={{ width: '50%', height: '12px' }} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : wishlistProducts.length === 0 ? (
               <div className="fk-empty-card-state">
