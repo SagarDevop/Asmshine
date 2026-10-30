@@ -18,7 +18,8 @@ import {
   Phone,
   Copy,
   Printer,
-  ExternalLink
+  ExternalLink,
+  HelpCircle
 } from 'lucide-react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
@@ -369,189 +370,238 @@ export const CheckoutPage = () => {
     );
   }
 
-  // --- PREMIUM ORDER CONFIRMATION VIEW ---
+  // --- AUTHENTIC FLIPKART-TIER ORDER CONFIRMATION VIEW ---
   if (orderPlaced) {
-    return (
-      <div className="asm-order-success-container">
-        <div className="asm-order-success-card">
-          {/* Celebratory Banner */}
-          <div className="asm-success-header-banner">
-            <div className="asm-success-badge-icon">
-              <Check size={40} strokeWidth={3.5} color="#FFFFFF" />
-            </div>
+    const pr = placedOrderData?.pricing;
+    const pricingMRP = pr?.totalMRP || totalMRP;
+    const pricingSubtotal = pr?.itemsSubtotal || itemsSubtotal;
+    const pricingSavings = pr?.productDiscount || Math.max(0, pricingMRP - pricingSubtotal);
+    const pricingCouponDiscount = pr?.couponDiscount || couponDiscount;
+    const pricingDeliveryFee = pr !== undefined ? pr.deliveryFee : deliveryFee;
+    const pricingFinal = pr?.finalAmount || finalPayable;
 
-            <h2 className="asm-success-title">Order Confirmed!</h2>
-            <p className="asm-success-subtitle">
+    // Ordered items list from MongoDB or state fallback
+    const orderedList = placedOrderData?.items && placedOrderData.items.length > 0
+      ? placedOrderData.items
+      : checkoutItems;
+
+    // Dynamic Delivery Date Estimate (3-4 business days)
+    const getEstimateDateStr = () => {
+      const d = new Date();
+      d.setDate(d.getDate() + 3);
+      if (d.getDay() === 0) d.setDate(d.getDate() + 1);
+      return d.toLocaleDateString('en-IN', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short'
+      });
+    };
+
+    return (
+      <div className="asm-order-success-canvas">
+        {/* Sticky Header Navbar */}
+        <header className="asm-confirm-navbar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="fk-order-back-btn"
+              aria-label="Home"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <span className="asm-confirm-nav-title">Order Confirmed</span>
+          </div>
+          <button
+            type="button"
+            className="asm-confirm-nav-btn"
+            onClick={() => navigate('/account')}
+          >
+            <HelpCircle size={14} />
+            <span>Help &amp; Orders</span>
+          </button>
+        </header>
+
+        <div className="asm-order-success-inner">
+          {/* 1. Celebratory Card */}
+          <div className="asm-celebrate-card">
+            <div className="asm-celebrate-check-circle">
+              <Check size={32} strokeWidth={3.5} />
+            </div>
+            <h1 className="asm-celebrate-title">Order Placed Successfully!</h1>
+            <p className="asm-celebrate-subtitle">
               Thank you for choosing SM Shine. Your home hygiene formulation order is verified and ready for packaging.
             </p>
 
-            <div className="asm-order-pill-row">
-              <span>Order Reference: <strong>{orderId}</strong></span>
+            <div className="asm-order-pill">
+              <span>Order ID: <strong className="asm-order-pill-code">{orderId}</strong></span>
               <button
                 type="button"
-                className="asm-order-pill-copy"
+                className="asm-order-pill-btn"
                 onClick={handleCopyOrderId}
                 title="Copy Reference ID"
               >
-                {copiedOrderId ? <Check size={13} /> : <Copy size={13} />}
+                {copiedOrderId ? <Check size={12} /> : <Copy size={12} />}
                 <span>{copiedOrderId ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
           </div>
 
-          <div className="asm-success-body">
-            {/* Express Delivery Estimate Card */}
-            <div className="asm-delivery-estimate-card">
-              <div className="asm-estimate-left">
-                <div className="asm-estimate-icon">
-                  <Truck size={24} />
-                </div>
-                <div className="asm-estimate-text">
-                  <h4>Estimated Delivery: Arriving in 2-3 Business Days</h4>
-                  <p>Pan-India Express Surface &amp; Air Logistics • Free Fast Shipping</p>
-                </div>
+          {/* 2. Express Delivery Estimate Card */}
+          <div className="asm-estimate-strip">
+            <div className="asm-estimate-content">
+              <div className="asm-estimate-truck-icon">
+                <Truck size={20} />
               </div>
-
-              <div className="asm-track-pulse-badge">
-                <span className="asm-pulse-dot" />
-                <span>Confirmed &amp; Active</span>
-              </div>
-            </div>
-
-            {/* Two-Column Grid: Delivery Destination & Payment Breakdown */}
-            <div className="asm-two-col-grid">
-              {/* Delivery Address */}
-              <div className="asm-info-block">
-                <h4 className="asm-info-title">
-                  <MapPin size={15} color="#2563EB" />
-                  <span>Delivery Destination</span>
+              <div>
+                <h4 className="asm-estimate-heading">
+                  Delivery Expected by {getEstimateDateStr()}
                 </h4>
-                <div className="asm-info-name">{address.name}</div>
-                <p className="asm-info-text">
-                  {address.street}
-                  <br />
-                  {address.city}, {address.state} - <strong>{address.pincode}</strong>
+                <p className="asm-estimate-desc">
+                  Pan-India Express Surface &amp; Air Logistics • Free Fast Shipping
                 </p>
-                <div style={{ marginTop: '8px', fontSize: '12.5px', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Phone size={13} color="#64748B" />
-                  <span>Mobile: {address.phone}</span>
-                </div>
-              </div>
-
-              {/* Payment Summary */}
-              <div className="asm-info-block">
-                <h4 className="asm-info-title">
-                  <CreditCard size={15} color="#2563EB" />
-                  <span>Payment Summary</span>
-                </h4>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Method:</span>
-                  <span style={{ fontSize: '12px', fontWeight: 800, background: '#F1F5F9', padding: '3px 8px', borderRadius: '6px' }}>
-                    {paymentMethod === 'upi' ? 'UPI Instant Prepaid' : paymentMethod.toUpperCase()}
-                  </span>
-                </div>
-
-                <div className="asm-price-breakdown">
-                  <div className="asm-price-row">
-                    <span>Items Total:</span>
-                    <span>₹{itemsSubtotal}</span>
-                  </div>
-                  {totalSavings > 0 && (
-                    <div className="asm-price-row discount">
-                      <span>Total Savings:</span>
-                      <span>-₹{totalSavings}</span>
-                    </div>
-                  )}
-                  <div className="asm-price-row">
-                    <span>Delivery Charges:</span>
-                    <span style={{ color: '#059669', fontWeight: 700 }}>FREE</span>
-                  </div>
-                  <div className="asm-price-row total">
-                    <span>Total Amount:</span>
-                    <span style={{ color: '#2563EB' }}>₹{finalPayable}</span>
-                  </div>
-                </div>
               </div>
             </div>
+            <span className="asm-status-badge-green">Confirmed</span>
+          </div>
 
-            {/* Ordered Items Preview */}
-            <div className="asm-section-box">
-              <div className="asm-section-header">
-                <h3 className="asm-section-title">
-                  <ShoppingBag size={16} color="#2563EB" />
-                  <span>Items Ordered ({checkoutItems.length})</span>
-                </h3>
-                <span style={{ fontSize: '12px', color: '#64748B' }}>
-                  Authentic SM Shine
-                </span>
-              </div>
+          {/* 3. Items Ordered Card (Strictly bounded image size to fix massive bottle bug) */}
+          <div className="asm-confirm-card">
+            <div className="asm-card-header">
+              <h3 className="asm-card-header-title">
+                <ShoppingBag size={16} color="#2563EB" />
+                <span>Items Ordered ({orderedList.length})</span>
+              </h3>
+              <span style={{ fontSize: '11.5px', color: '#16A34A', fontWeight: 700 }}>
+                ✓ Authentic SM Shine
+              </span>
+            </div>
 
-              <div className="asm-ordered-items-list">
-                {checkoutItems.map((item, idx) => (
-                  <div key={idx} className="asm-order-item-card">
-                    <img
-                      src={item.product?.image || '/favicon.svg'}
-                      alt={item.product?.name}
-                      className="asm-item-thumb"
-                      onError={(e) => { e.currentTarget.src = '/favicon.svg'; }}
-                    />
-                    <div className="asm-item-meta">
-                      <h4 className="asm-item-name">{item.product?.name}</h4>
-                      <div className="asm-item-sub">
-                        {item.size && <span className="asm-item-tag">{item.size}</span>}
-                        <span>Qty: <strong>{item.quantity}</strong></span>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {orderedList.map((item, idx) => {
+                const prod = item.product || item;
+                const img = prod.image || item.image || '/favicon.svg';
+                const name = prod.name || item.name;
+                const qty = item.quantity || 1;
+                const unitPrice = item.unitPrice || prod.price || 0;
+                const totalPrice = item.totalPrice || (unitPrice * qty);
+                const size = item.size || prod.size;
+
+                return (
+                  <div key={idx} className="asm-item-row">
+                    <div className="asm-item-thumb-box">
+                      <img
+                        src={img}
+                        alt={name}
+                        className="asm-item-thumb-img"
+                        onError={(e) => { e.currentTarget.src = '/favicon.svg'; }}
+                      />
+                    </div>
+                    <div className="asm-item-details">
+                      <h4 className="asm-item-name">{name}</h4>
+                      <div className="asm-item-submeta">
+                        {size && <span className="asm-item-size-tag">{size}</span>}
+                        <span>Qty: <strong>{qty}</strong></span>
                         <span>•</span>
-                        <span>₹{item.product?.price} each</span>
+                        <span>₹{unitPrice} each</span>
                       </div>
                     </div>
-                    <div className="asm-item-price-col">
-                      <div className="asm-item-price-current">
-                        ₹{item.product?.price * item.quantity}
-                      </div>
+                    <div className="asm-item-price-tag">
+                      ₹{totalPrice}
                     </div>
                   </div>
-                ))}
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 4. Delivery Address Card */}
+          <div className="asm-confirm-card">
+            <div className="asm-card-header">
+              <h3 className="asm-card-header-title">
+                <MapPin size={16} color="#2563EB" />
+                <span>Delivery Destination</span>
+              </h3>
+              <span style={{ fontSize: '11px', fontWeight: 700, background: '#EFF6FF', color: '#2563EB', padding: '2px 7px', borderRadius: '4px' }}>
+                {(address.type || 'HOME').toUpperCase()}
+              </span>
+            </div>
+            <div className="asm-address-name">{address.name}</div>
+            <p className="asm-address-text">
+              {address.street}
+              <br />
+              {address.city}, {address.state} - <strong>{address.pincode}</strong>
+            </p>
+            <div className="asm-address-phone">
+              <Phone size={13} color="#64748B" />
+              <span>Mobile: <strong>{address.phone}</strong></span>
+            </div>
+          </div>
+
+          {/* 5. Payment & Exact Math Breakdown */}
+          <div className="asm-confirm-card">
+            <div className="asm-card-header">
+              <h3 className="asm-card-header-title">
+                <CreditCard size={16} color="#2563EB" />
+                <span>Payment Summary</span>
+              </h3>
+              <span style={{ fontSize: '11.5px', fontWeight: 800, background: '#F1F5F9', color: '#334155', padding: '3px 8px', borderRadius: '6px' }}>
+                {paymentMethod === 'upi' ? 'UPI Instant Prepaid' : paymentMethod.toUpperCase()}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="asm-price-row">
+                <span>Items Total (MRP):</span>
+                <span>₹{pricingMRP}</span>
+              </div>
+              {pricingSavings > 0 && (
+                <div className="asm-price-row discount">
+                  <span>Discount on MRP:</span>
+                  <span>-₹{pricingSavings}</span>
+                </div>
+              )}
+              {pricingCouponDiscount > 0 && (
+                <div className="asm-price-row discount">
+                  <span>Coupon Discount ({appliedCoupon?.code || 'Applied'}):</span>
+                  <span>-₹{pricingCouponDiscount}</span>
+                </div>
+              )}
+              <div className="asm-price-row">
+                <span>Delivery Charges:</span>
+                {pricingDeliveryFee === 0 ? (
+                  <span style={{ color: '#16A34A', fontWeight: 800 }}>FREE</span>
+                ) : (
+                  <span style={{ fontWeight: 700 }}>₹{pricingDeliveryFee}</span>
+                )}
+              </div>
+              <div className="asm-price-row total">
+                <span>Total Amount:</span>
+                <span style={{ color: '#2563EB' }}>₹{pricingFinal}</span>
               </div>
             </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="asm-actions-bar">
-              <button
-                type="button"
-                className="asm-btn-primary"
-                onClick={() => navigate(`/order/${orderId}`)}
-                id="track-order-live-btn"
-              >
-                <Truck size={17} />
-                <span>Track Live Order Status</span>
-              </button>
+          {/* 6. Clean Minimal Actions */}
+          <div className="asm-confirm-actions">
+            <button
+              type="button"
+              className="asm-btn-track"
+              onClick={() => navigate(`/order/${orderId}`)}
+              id="track-order-live-btn"
+            >
+              <Truck size={18} />
+              <span>Track Live Order Status</span>
+            </button>
 
-              <button
-                type="button"
-                className="asm-btn-secondary"
-                onClick={() => window.print()}
-              >
-                <Printer size={16} />
-                <span>Print Receipt</span>
-              </button>
-
-              <button
-                type="button"
-                className="asm-btn-secondary"
-                onClick={() => navigate('/account')}
-              >
-                <ShoppingBag size={16} />
-                <span>View My Orders</span>
-              </button>
-
-              <button
-                type="button"
-                className="asm-btn-secondary"
-                onClick={() => navigate('/')}
-              >
-                <span>Continue Shopping</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              className="asm-btn-shop"
+              onClick={() => navigate('/')}
+            >
+              <ShoppingBag size={16} />
+              <span>Continue Shopping</span>
+            </button>
           </div>
         </div>
       </div>

@@ -1129,3 +1129,400 @@
   align-items: center;
   gap: 12px;
 }
+
+/* ==============================================================
+   ASM SHINE — FLIPKART-TIER ORDER CONFIRMATION VIEW STYLES
+   ============================================================== */
+.asm-order-success-canvas {
+  min-height: 100vh;
+  background-color: #F1F3F6;
+  padding-bottom: 60px;
+}
+
+.asm-order-success-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Header Navbar */
+.asm-confirm-navbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: #2874F0;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.asm-confirm-nav-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.asm-confirm-nav-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Common Card */
+.asm-confirm-card {
+  background: #FFFFFF;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Celebratory Banner */
+.asm-celebrate-card {
+  text-align: center;
+  padding: 24px 18px 20px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.asm-celebrate-check-circle {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #10B981;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px auto;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.asm-celebrate-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.asm-celebrate-subtitle {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0 0 14px 0;
+  line-height: 1.45;
+}
+
+.asm-order-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12.5px;
+  color: #334155;
+}
+
+.asm-order-pill-code {
+  font-weight: 800;
+  color: #2563EB;
+  letter-spacing: 0.02em;
+}
+
+.asm-order-pill-btn {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #2563EB;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Delivery Estimate Banner */
+.asm-estimate-strip {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.asm-estimate-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.asm-estimate-truck-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #DCFCE7;
+  color: #16A34A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.asm-estimate-heading {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #166534;
+  margin: 0 0 2px 0;
+}
+
+.asm-estimate-desc {
+  font-size: 11.5px;
+  color: #15803D;
+  margin: 0;
+}
+
+.asm-status-badge-green {
+  background: #16A34A;
+  color: #FFFFFF;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+/* Card Header */
+.asm-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F1F5F9;
+  margin-bottom: 12px;
+}
+
+.asm-card-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1E293B;
+  margin: 0;
+}
+
+/* Address Card */
+.asm-address-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 4px;
+}
+
+.asm-address-text {
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0 0 8px 0;
+}
+
+.asm-address-phone {
+  font-size: 12px;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Ordered Items List - STRICTLY BOUNDED IMAGE */
+.asm-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.asm-item-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.asm-item-thumb-box {
+  width: 68px;
+  height: 68px;
+  min-width: 68px;
+  max-width: 68px;
+  max-height: 68px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  background: #FFFFFF;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.asm-item-thumb-img {
+  width: 100%;
+  height: 100%;
+  max-width: 60px;
+  max-height: 60px;
+  object-fit: contain;
+  display: block;
+}
+
+.asm-item-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.asm-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0F172A;
+  line-height: 1.35;
+  margin: 0 0 4px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.asm-item-submeta {
+  font-size: 11.5px;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.asm-item-size-tag {
+  background: #F1F5F9;
+  color: #334155;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 10.5px;
+}
+
+.asm-item-price-tag {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0F172A;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Price Breakdown */
+.asm-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #475569;
+  padding: 4px 0;
+}
+
+.asm-price-row.discount {
+  color: #16A34A;
+  font-weight: 600;
+}
+
+.asm-price-row.total {
+  border-top: 1px dashed #E2E8F0;
+  padding-top: 10px;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+/* Action Buttons Bar */
+.asm-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.asm-btn-track {
+  width: 100%;
+  height: 46px;
+  background: #2874F0;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 6px rgba(40, 116, 240, 0.25);
+  transition: background 0.15s ease;
+}
+
+.asm-btn-track:hover {
+  background: #1D5FC9;
+}
+
+.asm-btn-shop {
+  width: 100%;
+  height: 42px;
+  background: #FFFFFF;
+  color: #334155;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.asm-btn-shop:hover {
+  background: #F8FAFC;
+  border-color: #94A3B8;
+  color: #0F172A;
+}
+
