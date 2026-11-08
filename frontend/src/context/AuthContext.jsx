@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../services/api';
+import { sanitizeAddressLocation, resolvePincodeLocal } from '../utils/pincodeData';
 
 const AuthContext = createContext();
 
@@ -19,14 +20,11 @@ export const AuthProvider = ({ children }) => {
           localStorage.removeItem('asm_selected_address');
           return null;
         }
-        if (parsed && parsed.city && parsed.city.startsWith('Area (') && parsed.pincode) {
-          if (parsed.pincode === '210001') {
-            parsed.city = 'Banda';
-            parsed.state = 'Uttar Pradesh';
-            parsed.street = parsed.street ? parsed.street.replace(/Area \(\d+\)/g, 'Banda') : 'Delivery Hub, Banda';
-          }
+        const sanitized = sanitizeAddressLocation(parsed);
+        if (JSON.stringify(sanitized) !== saved) {
+          localStorage.setItem('asm_selected_address', JSON.stringify(sanitized));
         }
-        return parsed;
+        return sanitized;
       }
     } catch (e) {}
     return null;
@@ -40,11 +38,12 @@ export const AuthProvider = ({ children }) => {
       } catch (e) {}
       return;
     }
+    const sanitized = sanitizeAddressLocation(addr);
     const formatted = {
-      ...addr,
-      fullName: addr.fullName || addr.name || '',
-      name: addr.name || addr.fullName || '',
-      type: addr.type || 'HOME'
+      ...sanitized,
+      fullName: sanitized.fullName || sanitized.name || '',
+      name: sanitized.name || sanitized.fullName || '',
+      type: sanitized.type || 'HOME'
     };
     setSelectedAddressState(formatted);
     try {
@@ -52,21 +51,33 @@ export const AuthProvider = ({ children }) => {
     } catch (e) {}
   };
 
-  // Automatically heal legacy or incomplete addresses using live pincode resolver
+  // Automatically heal legacy or incomplete addresses using deterministic pincode resolver
   useEffect(() => {
-    if (selectedAddress?.pincode && (!selectedAddress.city || selectedAddress.city.startsWith('Area ('))) {
-      api.lookupPincode(selectedAddress.pincode).then((info) => {
-        if (info && info.city) {
-          selectAddress({
-            ...selectedAddress,
-            city: info.city,
-            state: info.state || selectedAddress.state || 'India',
-            street: (selectedAddress.street || '').replace(/Area \(\d+\)/g, info.city) || `Delivery Hub, ${info.city}`
-          });
-        }
-      }).catch(() => {});
+    if (selectedAddress?.pincode) {
+      const isAjeeb =
+        !selectedAddress.city ||
+        selectedAddress.city.startsWith('Area (') ||
+        selectedAddress.city.includes('Area (') ||
+        selectedAddress.city.includes('/') ||
+        selectedAddress.city === 'India' ||
+        selectedAddress.city === 'Pan-India';
+
+      if (isAjeeb) {
+        api.lookupPincode(selectedAddress.pincode).then((info) => {
+          if (info && info.city) {
+            selectAddress({
+              ...selectedAddress,
+              city: info.city,
+              state: info.state || selectedAddress.state || 'India',
+              street: (selectedAddress.street || '')
+                .replace(/Area \(\d+\)/g, info.city)
+                .replace(/Delivery Hub, Area \(\d+\)/g, `Delivery Hub, ${info.city}`) || `Delivery Hub, ${info.city}`
+            });
+          }
+        }).catch(() => {});
+      }
     }
-  }, [selectedAddress?.pincode]);
+  }, [selectedAddress?.pincode, selectedAddress?.city]);
 
   // Sync selectedAddress whenever user's saved addresses load or change
   useEffect(() => {
@@ -75,8 +86,9 @@ export const AuthProvider = ({ children }) => {
       const matched = targetId
         ? user.addresses.find((a) => (a._id || a.id) === targetId)
         : null;
-      const active = matched || user.addresses.find((a) => a.isDefault) || user.addresses[0];
-      if (active) {
+      const rawActive = matched || user.addresses.find((a) => a.isDefault) || user.addresses[0];
+      if (rawActive) {
+        const active = sanitizeAddressLocation(rawActive);
         selectAddress(active);
       }
     } else if (!user) {
@@ -139,6 +151,42 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       setAuthError(err.message || 'Google authentication failed');
+      throw err;
+    }
+  };
+
+  const sendLoginOtp = async ({ email }) => {
+    setAuthError(null);
+    try {
+      const response = await api.sendLoginOtp({ email });
+      return response;
+    } catch (err) {
+      setAuthError(err.message || 'Failed to send login code');
+      throw err;
+    }
+  };
+
+  const verifyLoginOtp = async ({ email, otp }) => {
+    setAuthError(null);
+    try {
+      const response = await api.verifyLoginOtp({ email, otp });
+      if (response && response.user) {
+        setUser(response.user);
+        return response.user;
+      }
+    } catch (err) {
+      setAuthError(err.message || 'Login verification failed');
+      throw err;
+    }
+  };
+
+  const resendLoginOtp = async (email) => {
+    setAuthError(null);
+    try {
+      const response = await api.resendLoginOtp(email);
+      return response;
+    } catch (err) {
+      setAuthError(err.message || 'Failed to resend login code');
       throw err;
     }
   };
@@ -264,6 +312,9 @@ export const AuthProvider = ({ children }) => {
     setSelectedAddress: selectAddress,
     login,
     loginWithGoogle,
+    sendLoginOtp,
+    verifyLoginOtp,
+    resendLoginOtp,
     sendSignupOtp,
     verifySignupOtp,
     resendSignupOtp,

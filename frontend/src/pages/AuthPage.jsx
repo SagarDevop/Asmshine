@@ -20,7 +20,16 @@ const sanitizeRedirect = (target) => {
 export const AuthPage = ({ initialTab = 'login' }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, loginWithGoogle, sendSignupOtp, verifySignupOtp, resendSignupOtp } = useAuth();
+  const {
+    login,
+    loginWithGoogle,
+    sendLoginOtp,
+    verifyLoginOtp,
+    resendLoginOtp,
+    sendSignupOtp,
+    verifySignupOtp,
+    resendSignupOtp
+  } = useAuth();
 
   const [activeTab, setActiveTab] = useState(
     location.pathname === '/signup' ? 'signup' : initialTab
@@ -33,7 +42,13 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // OTP Signup state
+  // Login flow state ('OTP' vs 'PASSWORD')
+  const [loginMethod, setLoginMethod] = useState('OTP'); // 'OTP' | 'PASSWORD'
+  const [loginStep, setLoginStep] = useState('FORM'); // 'FORM' | 'OTP'
+  const [loginOtp, setLoginOtp] = useState('');
+  const [loginCooldown, setLoginCooldown] = useState(0);
+
+  // Signup flow state
   const [signupStep, setSignupStep] = useState('FORM'); // 'FORM' | 'OTP'
   const [otp, setOtp] = useState('');
   const [cooldown, setCooldown] = useState(0);
@@ -54,7 +69,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
     }
   }, [location.pathname]);
 
-  // 60-second OTP cooldown ticker
+  // Signup OTP cooldown ticker (60s)
   useEffect(() => {
     if (cooldown <= 0) return;
     const interval = setInterval(() => {
@@ -63,20 +78,29 @@ export const AuthPage = ({ initialTab = 'login' }) => {
     return () => clearInterval(interval);
   }, [cooldown]);
 
+  // Login OTP cooldown ticker (60s)
+  useEffect(() => {
+    if (loginCooldown <= 0) return;
+    const interval = setInterval(() => {
+      setLoginCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [loginCooldown]);
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setErrorMessage('');
     setSuccessNotice('');
-    if (tab === 'login') {
-      setSignupStep('FORM');
-      setOtp('');
-    }
+    setLoginStep('FORM');
+    setSignupStep('FORM');
+    setOtp('');
+    setLoginOtp('');
   };
 
   // -------------------------------------------------------------
-  // Login Submit Handler (Email & Password)
+  // Login: Password Submit Handler
   // -------------------------------------------------------------
-  const handleLoginSubmit = async (e) => {
+  const handlePasswordLoginSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessNotice('');
@@ -98,9 +122,90 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   };
 
   // -------------------------------------------------------------
-  // Step 1: Send Registration OTP Handler
+  // Login: Send Email OTP Handler
   // -------------------------------------------------------------
-  const handleSendOtpSubmit = async (e) => {
+  const handleSendLoginOtp = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setSuccessNotice('');
+
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setErrorMessage('Please enter a valid email address.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await sendLoginOtp({ email: email.trim().toLowerCase() });
+      setLoginStep('OTP');
+      setLoginCooldown(60);
+      if (res && res.devOtp) {
+        setSuccessNotice(`Login code sent! (Dev Code: ${res.devOtp})`);
+      } else {
+        setSuccessNotice(res?.message || `A 6-digit login code has been sent to ${email.trim()}`);
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Failed to send login code. Please check your email or click Create Account.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // Login: Verify Email OTP Handler
+  // -------------------------------------------------------------
+  const handleVerifyLoginOtp = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setSuccessNotice('');
+
+    const cleanOtp = loginOtp.trim();
+    if (!cleanOtp || cleanOtp.length !== 6) {
+      setErrorMessage('Please enter the complete 6-digit verification code.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await verifyLoginOtp({
+        email: email.trim().toLowerCase(),
+        otp: cleanOtp
+      });
+      navigate(from, { replace: true });
+    } catch (err) {
+      setErrorMessage(err.message || 'Invalid or expired verification code.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // Login: Resend Email OTP Handler
+  // -------------------------------------------------------------
+  const handleResendLoginOtp = async () => {
+    if (loginCooldown > 0) return;
+    setErrorMessage('');
+    setSuccessNotice('');
+    setSubmitting(true);
+    try {
+      const res = await resendLoginOtp(email.trim().toLowerCase());
+      setLoginCooldown(60);
+      if (res && res.devOtp) {
+        setSuccessNotice(`Fresh login code sent! (Dev Code: ${res.devOtp})`);
+      } else {
+        setSuccessNotice(res?.message || 'A fresh verification code has been sent to your email.');
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Failed to resend code. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // Signup: Step 1 Send Registration OTP Handler
+  // -------------------------------------------------------------
+  const handleSendSignupOtp = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessNotice('');
@@ -135,7 +240,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
       setSignupStep('OTP');
       setCooldown(60);
       if (res && res.devOtp) {
-        setSuccessNotice(`Verification code sent! (Dev OTP: ${res.devOtp})`);
+        setSuccessNotice(`Verification code sent! (Dev Code: ${res.devOtp})`);
       } else {
         setSuccessNotice(res?.message || `A 6-digit verification code has been sent to ${email.trim()}`);
       }
@@ -147,9 +252,9 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   };
 
   // -------------------------------------------------------------
-  // Step 2: Verify Registration OTP Handler
+  // Signup: Step 2 Verify Registration OTP Handler
   // -------------------------------------------------------------
-  const handleVerifyOtpSubmit = async (e) => {
+  const handleVerifySignupOtp = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessNotice('');
@@ -175,9 +280,9 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   };
 
   // -------------------------------------------------------------
-  // Resend OTP Code
+  // Signup: Resend Registration OTP
   // -------------------------------------------------------------
-  const handleResendOtp = async () => {
+  const handleResendSignupOtp = async () => {
     if (cooldown > 0) return;
     setErrorMessage('');
     setSuccessNotice('');
@@ -186,7 +291,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
       const res = await resendSignupOtp(email.trim().toLowerCase());
       setCooldown(60);
       if (res && res.devOtp) {
-        setSuccessNotice(`Fresh verification code sent! (Dev OTP: ${res.devOtp})`);
+        setSuccessNotice(`Fresh verification code sent! (Dev Code: ${res.devOtp})`);
       } else {
         setSuccessNotice(res?.message || 'A fresh verification code has been sent to your email.');
       }
@@ -216,6 +321,8 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   const handleGoogleError = (msg) => {
     setErrorMessage(msg);
   };
+
+  const isOtpScreen = (activeTab === 'login' && loginStep === 'OTP') || (activeTab === 'signup' && signupStep === 'OTP');
 
   return (
     <div className="minimal-auth-page">
@@ -248,22 +355,28 @@ export const AuthPage = ({ initialTab = 'login' }) => {
             </div>
             <h1 className="minimal-auth-title">
               {activeTab === 'login'
-                ? 'Welcome back'
+                ? loginStep === 'OTP'
+                  ? 'Verify your email'
+                  : 'Welcome back'
                 : signupStep === 'OTP'
                 ? 'Verify your email'
                 : 'Create an account'}
             </h1>
             <p className="minimal-auth-subtitle">
               {activeTab === 'login'
-                ? 'Sign in to access your orders, wishlist, and rewards.'
+                ? loginStep === 'OTP'
+                  ? `Enter the 6-digit login verification code sent to ${email}`
+                  : loginMethod === 'OTP'
+                  ? 'Sign in instantly with a 6-digit verification code.'
+                  : 'Sign in to access your orders, wishlist, and rewards.'
                 : signupStep === 'OTP'
-                ? `Enter the 6-digit verification code sent to ${email}`
+                ? `Enter the 6-digit registration code sent to ${email}`
                 : 'Enter your details to get started with ASM Shine.'}
             </p>
           </div>
 
-          {/* Mode Switch Tabs (Hidden on OTP screen) */}
-          {signupStep !== 'OTP' && (
+          {/* Mode Switch Tabs (Hidden on OTP verification screen) */}
+          {!isOtpScreen && (
             <div className="minimal-auth-tabs">
               <button
                 type="button"
@@ -298,72 +411,153 @@ export const AuthPage = ({ initialTab = 'login' }) => {
             </div>
           )}
 
-          {/* VIEW A: LOGIN */}
-          {activeTab === 'login' && (
+          {/* ========================================================= */}
+          {/* VIEW A: LOGIN (Step 1: FORM) */}
+          {/* ========================================================= */}
+          {activeTab === 'login' && loginStep === 'FORM' && (
             <div>
-              <form onSubmit={handleLoginSubmit} className="minimal-form" noValidate>
-                <div className="minimal-field">
-                  <label className="minimal-label" htmlFor="auth-login-email">
-                    Email Address
-                  </label>
-                  <div className="minimal-input-wrap">
-                    <span className="minimal-input-icon">
-                      <Mail size={16} />
-                    </span>
-                    <input
-                      id="auth-login-email"
-                      type="email"
-                      className="minimal-input"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      autoComplete="email"
-                      required
-                      disabled={submitting}
-                    />
-                  </div>
-                </div>
-
-                <div className="minimal-field">
-                  <label className="minimal-label" htmlFor="auth-login-password">
-                    Password
-                  </label>
-                  <div className="minimal-input-wrap">
-                    <span className="minimal-input-icon">
-                      <Lock size={16} />
-                    </span>
-                    <input
-                      id="auth-login-password"
-                      type={showPassword ? 'text' : 'password'}
-                      className="minimal-input has-toggle"
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      autoComplete="current-password"
-                      required
-                      disabled={submitting}
-                    />
-                    <button
-                      type="button"
-                      className="minimal-toggle-btn"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                </div>
-
+              {/* Method Switch: Email OTP vs Password */}
+              <div style={{ display: 'flex', gap: '6px', marginBottom: '18px', background: '#F1F5F9', padding: '4px', borderRadius: '10px' }}>
                 <button
-                  type="submit"
-                  className="minimal-submit-btn"
-                  disabled={submitting}
-                  id="login-submit-button"
+                  type="button"
+                  onClick={() => { setLoginMethod('OTP'); setErrorMessage(''); }}
+                  style={{
+                    flex: 1,
+                    padding: '8px 12px',
+                    fontSize: '12.5px',
+                    fontWeight: loginMethod === 'OTP' ? 700 : 500,
+                    color: loginMethod === 'OTP' ? '#1E293B' : '#64748B',
+                    background: loginMethod === 'OTP' ? '#FFFFFF' : 'transparent',
+                    border: 'none',
+                    borderRadius: '7px',
+                    cursor: 'pointer',
+                    boxShadow: loginMethod === 'OTP' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    transition: 'all 0.15s ease'
+                  }}
                 >
-                  {submitting ? 'Signing in...' : 'Sign In'}
+                  ✉️ Email OTP
                 </button>
-              </form>
+                <button
+                  type="button"
+                  onClick={() => { setLoginMethod('PASSWORD'); setErrorMessage(''); }}
+                  style={{
+                    flex: 1,
+                    padding: '8px 12px',
+                    fontSize: '12.5px',
+                    fontWeight: loginMethod === 'PASSWORD' ? 700 : 500,
+                    color: loginMethod === 'PASSWORD' ? '#1E293B' : '#64748B',
+                    background: loginMethod === 'PASSWORD' ? '#FFFFFF' : 'transparent',
+                    border: 'none',
+                    borderRadius: '7px',
+                    cursor: 'pointer',
+                    boxShadow: loginMethod === 'PASSWORD' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  🔒 Password
+                </button>
+              </div>
+
+              {/* Login Method: Email OTP */}
+              {loginMethod === 'OTP' ? (
+                <form onSubmit={handleSendLoginOtp} className="minimal-form" noValidate>
+                  <div className="minimal-field">
+                    <label className="minimal-label" htmlFor="auth-login-otp-email">
+                      Email Address
+                    </label>
+                    <div className="minimal-input-wrap">
+                      <span className="minimal-input-icon">
+                        <Mail size={16} />
+                      </span>
+                      <input
+                        id="auth-login-otp-email"
+                        type="email"
+                        className="minimal-input"
+                        placeholder="Enter your registered email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        autoComplete="email"
+                        required
+                        disabled={submitting}
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="minimal-submit-btn"
+                    disabled={submitting || !email.trim()}
+                    id="login-send-otp-button"
+                  >
+                    {submitting ? 'Sending Verification Code...' : 'Send Verification Code'}
+                  </button>
+                </form>
+              ) : (
+                /* Login Method: Password */
+                <form onSubmit={handlePasswordLoginSubmit} className="minimal-form" noValidate>
+                  <div className="minimal-field">
+                    <label className="minimal-label" htmlFor="auth-login-email">
+                      Email Address
+                    </label>
+                    <div className="minimal-input-wrap">
+                      <span className="minimal-input-icon">
+                        <Mail size={16} />
+                      </span>
+                      <input
+                        id="auth-login-email"
+                        type="email"
+                        className="minimal-input"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        autoComplete="email"
+                        required
+                        disabled={submitting}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="minimal-field">
+                    <label className="minimal-label" htmlFor="auth-login-password">
+                      Password
+                    </label>
+                    <div className="minimal-input-wrap">
+                      <span className="minimal-input-icon">
+                        <Lock size={16} />
+                      </span>
+                      <input
+                        id="auth-login-password"
+                        type={showPassword ? 'text' : 'password'}
+                        className="minimal-input has-toggle"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        autoComplete="current-password"
+                        required
+                        disabled={submitting}
+                      />
+                      <button
+                        type="button"
+                        className="minimal-toggle-btn"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        tabIndex={-1}
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="minimal-submit-btn"
+                    disabled={submitting}
+                    id="login-submit-button"
+                  >
+                    {submitting ? 'Signing in...' : 'Sign In'}
+                  </button>
+                </form>
+              )}
 
               <div className="minimal-divider">
                 <span>or continue with</span>
@@ -377,10 +571,100 @@ export const AuthPage = ({ initialTab = 'login' }) => {
             </div>
           )}
 
-          {/* VIEW B: SIGNUP (Form Step 1) */}
+          {/* ========================================================= */}
+          {/* VIEW B: LOGIN (Step 2: OTP Verification) */}
+          {/* ========================================================= */}
+          {activeTab === 'login' && loginStep === 'OTP' && (
+            <div className="minimal-otp-panel">
+              <div className="minimal-otp-card-header">
+                <div className="minimal-otp-badge">
+                  <Mail size={22} />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
+                  <span style={{ fontSize: '13px', color: '#0F172A', fontWeight: 600 }}>{email}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLoginStep('FORM');
+                      setLoginOtp('');
+                      setErrorMessage('');
+                    }}
+                    className="minimal-otp-edit-email"
+                  >
+                    Change
+                  </button>
+                </div>
+              </div>
+
+              <form onSubmit={handleVerifyLoginOtp} className="minimal-form" noValidate>
+                <div className="minimal-field">
+                  <label className="minimal-label" htmlFor="auth-login-otp-input" style={{ textAlign: 'center' }}>
+                    Enter 6-Digit Login Code
+                  </label>
+                  <input
+                    id="auth-login-otp-input"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    className="minimal-otp-input"
+                    placeholder="••••••"
+                    value={loginOtp}
+                    onChange={(e) => setLoginOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    autoFocus
+                    required
+                    disabled={submitting}
+                  />
+                </div>
+
+                <div className="minimal-otp-row">
+                  <span>Didn't receive code?</span>
+                  {loginCooldown > 0 ? (
+                    <span style={{ color: '#94A3B8', fontWeight: 600 }}>Resend in {loginCooldown}s</span>
+                  ) : (
+                    <button
+                      type="button"
+                      className="minimal-otp-resend"
+                      onClick={handleResendLoginOtp}
+                      disabled={submitting}
+                    >
+                      Resend Code
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  className="minimal-submit-btn"
+                  disabled={submitting || loginOtp.trim().length !== 6}
+                  id="login-verify-otp-button"
+                >
+                  {submitting ? 'Verifying & Signing In...' : 'Verify & Sign In'}
+                </button>
+
+                <div style={{ textAlign: 'center', marginTop: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLoginStep('FORM');
+                      setLoginMethod('PASSWORD');
+                      setErrorMessage('');
+                    }}
+                    style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '12px', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
+                  >
+                    Sign in with password instead
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* ========================================================= */}
+          {/* VIEW C: SIGNUP (Step 1: FORM) */}
+          {/* ========================================================= */}
           {activeTab === 'signup' && signupStep === 'FORM' && (
             <div>
-              <form onSubmit={handleSendOtpSubmit} className="minimal-form" noValidate>
+              <form onSubmit={handleSendSignupOtp} className="minimal-form" noValidate>
                 <div className="minimal-field">
                   <label className="minimal-label" htmlFor="auth-signup-name">
                     Full Name
@@ -500,7 +784,9 @@ export const AuthPage = ({ initialTab = 'login' }) => {
             </div>
           )}
 
-          {/* VIEW C: SIGNUP (OTP Step 2) */}
+          {/* ========================================================= */}
+          {/* VIEW D: SIGNUP (Step 2: OTP Verification) */}
+          {/* ========================================================= */}
           {activeTab === 'signup' && signupStep === 'OTP' && (
             <div className="minimal-otp-panel">
               <div className="minimal-otp-card-header">
@@ -523,10 +809,10 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                 </div>
               </div>
 
-              <form onSubmit={handleVerifyOtpSubmit} className="minimal-form" noValidate>
+              <form onSubmit={handleVerifySignupOtp} className="minimal-form" noValidate>
                 <div className="minimal-field">
                   <label className="minimal-label" htmlFor="auth-otp-input" style={{ textAlign: 'center' }}>
-                    Enter 6-Digit Code
+                    Enter 6-Digit Registration Code
                   </label>
                   <input
                     id="auth-otp-input"
@@ -552,7 +838,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                     <button
                       type="button"
                       className="minimal-otp-resend"
-                      onClick={handleResendOtp}
+                      onClick={handleResendSignupOtp}
                       disabled={submitting}
                     >
                       Resend Code

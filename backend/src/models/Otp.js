@@ -13,14 +13,20 @@ const otpSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    purpose: {
+      type: String,
+      enum: ['SIGNUP', 'LOGIN', 'RESET'],
+      default: 'SIGNUP',
+      index: true
+    },
     name: {
       type: String,
-      required: true,
-      trim: true
+      trim: true,
+      default: ''
     },
     passwordHash: {
       type: String,
-      required: true
+      default: ''
     },
     attempts: {
       type: Number,
@@ -33,7 +39,7 @@ const otpSchema = new mongoose.Schema(
     expiresAt: {
       type: Date,
       required: true,
-      index: { expires: 0 } // Automatically expires and cleans up after expiry
+      index: { expires: 0 } // MongoDB TTL index automatically purges expired records
     }
   },
   {

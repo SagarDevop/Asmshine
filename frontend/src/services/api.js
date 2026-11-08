@@ -1,4 +1,5 @@
 // ASM SHINE - Client API Layer (Connected to Express REST API & MongoDB Database)
+import { resolvePincodeLocal } from '../utils/pincodeData';
 
 // Base API configuration (Supports Vercel & Render production hosting)
 const getApiBase = () => {
@@ -141,6 +142,65 @@ export const api = {
       throw new Error(data.message || 'Failed to fetch current user profile');
     }
     return data.user || null;
+  },
+
+  // Email OTP Login Endpoints
+  sendLoginOtp: async ({ email }) => {
+    const res = await apiFetch('/api/v1/auth/login/send-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.message || 'Failed to send login code');
+      err.cooldownRemaining = data.cooldownRemaining;
+      throw err;
+    }
+    return data;
+  },
+
+  verifyLoginOtp: async ({ email, otp }) => {
+    const res = await apiFetch('/api/v1/auth/login/verify-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email, otp })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Login verification failed');
+    }
+    return data;
+  },
+
+  resendLoginOtp: async (email) => {
+    const res = await apiFetch('/api/v1/auth/login/resend-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.message || 'Failed to resend login code');
+      err.cooldownRemaining = data.cooldownRemaining;
+      throw err;
+    }
+    return data;
   },
 
   // Email OTP Signup Endpoints
@@ -730,18 +790,38 @@ export const api = {
     const cleanPin = String(pincode || '').replace(/\D/g, '').slice(0, 6);
     if (cleanPin.length !== 6) return null;
 
+    // Instant local baseline covering all Indian postal circles
+    const local = resolvePincodeLocal(cleanPin);
+
+    // Try backend resolver with short timeout (avoids waiting on sleeping containers)
     try {
-      const res = await apiFetch(`/api/v1/delivery/pincode/${encodeURIComponent(cleanPin)}`);
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 2000) : null;
+      const res = await apiFetch(`/api/v1/delivery/pincode/${encodeURIComponent(cleanPin)}`, {
+        signal: controller?.signal
+      });
+      if (timeoutId) clearTimeout(timeoutId);
       const data = await res.json().catch(() => ({}));
-      if (res.ok && data.success) {
-        return data;
+      if (res.ok && data.success && data.city && !data.city.includes('/')) {
+        return {
+          ...data,
+          city: data.city,
+          state: data.state || local?.state || 'India',
+          area: data.area || data.city
+        };
       }
     } catch (e) {
-      // Fallback to direct client-side fetch if backend is unreachable
+      // Backend asleep or offline, proceed smoothly to fallback
     }
 
+    // Try direct India Post lookup with short timeout
     try {
-      const postRes = await fetch(`https://api.postalpincode.in/pincode/${encodeURIComponent(cleanPin)}`);
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 2500) : null;
+      const postRes = await fetch(`https://api.postalpincode.in/pincode/${encodeURIComponent(cleanPin)}`, {
+        signal: controller?.signal
+      });
+      if (timeoutId) clearTimeout(timeoutId);
       if (postRes.ok) {
         const list = await postRes.json();
         if (Array.isArray(list) && list[0]?.Status === 'Success' && list[0]?.PostOffice?.length > 0) {
@@ -749,15 +829,16 @@ export const api = {
           return {
             success: true,
             pincode: cleanPin,
-            city: po.District || po.Name || 'India',
-            district: po.District || '',
-            state: po.State || 'India',
-            area: po.Name || ''
+            city: po.District || po.Name || local?.city || 'India',
+            district: po.District || local?.district || '',
+            state: po.State || local?.state || 'India',
+            area: po.Name || local?.area || ''
           };
         }
       }
     } catch {}
 
-    return null;
+    // 100% Guaranteed deterministic local resolution
+    return local;
   }
 };

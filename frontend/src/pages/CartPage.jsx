@@ -304,7 +304,7 @@ export const CartPage = ({
                       {selectedAddress.fullName || selectedAddress.name || 'Your Location'}, {selectedAddress.city} - {selectedAddress.pincode}
                     </strong>
                   </span>
-                  <small>{selectedAddress.street ? `${selectedAddress.street} • ` : ''}Free Express Delivery</small>
+                  <small>{selectedAddress.street ? `${selectedAddress.street} • ` : ''}{isFreeDelivery ? 'Free Express Delivery' : 'Standard Delivery'}</small>
                 </>
               ) : (
                 <>
@@ -498,9 +498,9 @@ export const CartPage = ({
                       )}
                     </div>
 
-                    <div className="cart-delivery-tag">
-                      <Truck size={13} color="#059669" />
-                      <span>Free Delivery by Tomorrow</span>
+                    <div className="cart-delivery-tag" style={{ color: isFreeDelivery ? '#059669' : '#0284C7' }}>
+                      <Truck size={13} color={isFreeDelivery ? '#059669' : '#0284C7'} />
+                      <span>{isFreeDelivery ? 'Free Delivery' : 'Standard Delivery'} by Tomorrow</span>
                     </div>
                   </div>
                 </div>

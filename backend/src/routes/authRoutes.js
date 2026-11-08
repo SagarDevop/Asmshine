@@ -24,6 +24,11 @@ router.post('/google', authLimiter, authController.googleLogin);
 router.post('/logout', authController.logout);
 router.get('/me', authenticate.optionalAuth, authController.getMe);
 
+// Email OTP Login Flow
+router.post('/login/send-otp', authLimiter, authController.sendLoginOtp);
+router.post('/login/verify-otp', authLimiter, authController.verifyLoginOtp);
+router.post('/login/resend-otp', authLimiter, authController.resendLoginOtp);
+
 // Email OTP Signup Flow
 router.post('/signup/send-otp', authLimiter, authController.sendSignupOtp);
 router.post('/signup/verify-otp', authLimiter, authController.verifySignupOtp);

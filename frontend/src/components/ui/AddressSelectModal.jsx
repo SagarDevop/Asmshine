@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCartWishlist } from '../../context/CartWishlistContext';
 import { api } from '../../services/api';
+import { resolvePincodeLocal } from '../../utils/pincodeData';
 
 export const AddressSelectModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
@@ -103,10 +104,18 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
 
     setCheckingPin(true);
     try {
-      const info = await api.lookupPincode(cleanPin);
-      const city = info?.city || 'India';
-      const state = info?.state || 'India';
-      const area = info?.area || city;
+      // Get instant guaranteed local mapping first
+      const local = resolvePincodeLocal(cleanPin);
+
+      // Attempt live lookup with fast timeout
+      let info = null;
+      try {
+        info = await api.lookupPincode(cleanPin);
+      } catch (e) {}
+
+      const city = info?.city && !info.city.includes('/') ? info.city : (local?.city || 'India');
+      const state = info?.state && info.state !== 'India' ? info.state : (local?.state || 'Uttar Pradesh');
+      const area = info?.area || local?.area || city;
 
       selectAddress({
         fullName: user?.name || 'Guest Shopper',
@@ -136,14 +145,22 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
     if (clean.length === 6) {
       setDetectingFormPin(true);
       try {
-        const info = await api.lookupPincode(clean);
-        if (info && info.city) {
+        const local = resolvePincodeLocal(clean);
+        let info = null;
+        try {
+          info = await api.lookupPincode(clean);
+        } catch (e) {}
+
+        const city = info?.city && !info.city.includes('/') ? info.city : (local?.city || '');
+        const state = info?.state && info.state !== 'India' ? info.state : (local?.state || '');
+
+        if (city) {
           setNewAddr((prev) => ({
             ...prev,
-            city: info.city,
-            state: info.state
+            city: city,
+            state: state || prev.state
           }));
-          showToast(`Location detected: ${info.city}, ${info.state}`);
+          showToast(`Location detected: ${city}, ${state}`);
         }
       } catch (err) {
         // silent fallback
@@ -155,6 +172,7 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
 
   const popularCities = [
     { city: 'New Delhi', pin: '110001', state: 'Delhi' },
+    { city: 'Banda', pin: '210001', state: 'Uttar Pradesh' },
     { city: 'Noida', pin: '201301', state: 'Uttar Pradesh' },
     { city: 'Gurugram', pin: '122002', state: 'Haryana' },
     { city: 'Mumbai', pin: '400001', state: 'Maharashtra' },
