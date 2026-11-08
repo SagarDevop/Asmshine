@@ -19,16 +19,28 @@ const deductOrderStock = async (items, orderId, user = null) => {
       const pid = item.productId;
       const qty = item.quantity;
 
+      const mongoose = require('mongoose');
+      const isObjectId = (id) => mongoose.isValidObjectId(id);
+
       // 1. Fetch current product state
       const current = await Product.findOne({
-        $or: [{ id: pid }]
+        $or: [
+          { id: pid },
+          { _id: isObjectId(pid) ? pid : null }
+        ]
       });
 
       if (!current) {
         throw new Error(`Product '${item.name || pid}' was not found in inventory.`);
       }
 
-      const available = current.stockQuantity || 0;
+      // Ensure stockQuantity is initialized if legacy product had it unset
+      if (current.stockQuantity === undefined || current.stockQuantity === null) {
+        current.stockQuantity = 50;
+        await Product.findByIdAndUpdate(current._id, { stockQuantity: 50 });
+      }
+
+      const available = current.stockQuantity;
       if (available < qty) {
         throw new Error(
           `Insufficient stock for '${current.name}'. Requested: ${qty}, Available: ${available}`
@@ -39,7 +51,11 @@ const deductOrderStock = async (items, orderId, user = null) => {
       const updated = await Product.findOneAndUpdate(
         {
           _id: current._id,
-          stockQuantity: { $gte: qty }
+          $or: [
+            { stockQuantity: { $gte: qty } },
+            { stockQuantity: { $exists: false } },
+            { stockQuantity: null }
+          ]
         },
         {
           $inc: { stockQuantity: -qty }

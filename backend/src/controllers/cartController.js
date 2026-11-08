@@ -21,10 +21,18 @@ const buildCartResponse = async (cart) => {
   const objectIds = productIds.filter((id) => mongoose.isValidObjectId(id));
 
   const products = await Product.find({
-    status: 'active',
     $or: [
-      { id: { $in: productIds } },
-      { _id: { $in: objectIds } }
+      { status: 'active' },
+      { status: { $exists: false } },
+      { status: null }
+    ],
+    $and: [
+      {
+        $or: [
+          { id: { $in: productIds } },
+          { _id: { $in: objectIds } }
+        ]
+      }
     ]
   }).lean();
 
@@ -156,10 +164,18 @@ const addToCart = async (req, res, next) => {
     // Validate product exists and is active in MongoDB
     const isObjectId = mongoose.isValidObjectId(productId);
     const product = await Product.findOne({
-      status: 'active',
       $or: [
-        { id: productId },
-        { _id: isObjectId ? productId : null }
+        { status: 'active' },
+        { status: { $exists: false } },
+        { status: null }
+      ],
+      $and: [
+        {
+          $or: [
+            { id: productId },
+            { _id: isObjectId ? productId : null }
+          ]
+        }
       ]
     });
 

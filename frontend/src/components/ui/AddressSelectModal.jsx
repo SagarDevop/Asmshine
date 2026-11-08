@@ -18,16 +18,26 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
   const [checkingPin, setCheckingPin] = useState(false);
   const [detectingFormPin, setDetectingFormPin] = useState(false);
 
-  const [newAddr, setNewAddr] = useState({
-    fullName: '',
-    phone: '',
-    pincode: '',
-    street: '',
-    city: '',
-    state: '',
+  const [newAddr, setNewAddr] = useState(() => ({
+    fullName: user?.name || '',
+    phone: user?.phone || '',
+    pincode: selectedAddress?.pincode || '',
+    street: selectedAddress?.street && !selectedAddress.street.startsWith('Delivery Hub') ? selectedAddress.street : '',
+    city: selectedAddress?.city && !selectedAddress.city.includes('Area (') ? selectedAddress.city : '',
+    state: selectedAddress?.state && selectedAddress.state !== 'India' ? selectedAddress.state : '',
     type: 'Home',
-    isDefault: false
-  });
+    isDefault: true
+  }));
+
+  React.useEffect(() => {
+    if (user && !newAddr.fullName) {
+      setNewAddr((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.name || '',
+        phone: prev.phone || user.phone || ''
+      }));
+    }
+  }, [user]);
 
   if (!isOpen) return null;
 
@@ -41,54 +51,64 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setFormError('');
 
-    if (!newAddr.fullName.trim() || !newAddr.phone.trim() || !newAddr.pincode.trim() || !newAddr.street.trim() || !newAddr.city.trim() || !newAddr.state.trim()) {
+    const cleanName = newAddr.fullName.trim();
+    const cleanPhone = newAddr.phone.replace(/\D/g, '').slice(0, 10);
+    const cleanPin = newAddr.pincode.replace(/\D/g, '').slice(0, 6);
+    const cleanStreet = newAddr.street.trim();
+    let cleanCity = newAddr.city.trim();
+    let cleanState = newAddr.state.trim();
+
+    if (!cleanCity || cleanCity.includes('Area (')) {
+      const local = resolvePincodeLocal(cleanPin);
+      if (local?.city) cleanCity = local.city;
+      if (local?.state && (!cleanState || cleanState === 'India')) cleanState = local.state;
+    }
+
+    if (!cleanName || !cleanPhone || !cleanPin || !cleanStreet || !cleanCity || !cleanState) {
       setFormError('Please fill in all required fields.');
       return;
     }
 
-    if (!/^\d{6}$/.test(newAddr.pincode.trim())) {
+    if (cleanPin.length !== 6) {
       setFormError('Please enter a valid 6-digit PIN code.');
       return;
     }
 
-    if (!/^\d{10}$/.test(newAddr.phone.trim())) {
+    if (cleanPhone.length !== 10) {
       setFormError('Please enter a valid 10-digit phone number.');
       return;
     }
 
+    const payload = {
+      fullName: cleanName,
+      name: cleanName,
+      phone: cleanPhone,
+      pincode: cleanPin,
+      street: cleanStreet,
+      city: cleanCity,
+      state: cleanState,
+      type: newAddr.type || 'HOME',
+      isDefault: true
+    };
+
     setSubmitting(true);
     try {
-      if (user) {
-        await addAddress({
-          fullName: newAddr.fullName.trim(),
-          phone: newAddr.phone.trim(),
-          pincode: newAddr.pincode.trim(),
-          street: newAddr.street.trim(),
-          city: newAddr.city.trim(),
-          state: newAddr.state.trim(),
-          type: newAddr.type,
-          isDefault: newAddr.isDefault
-        });
-      } else {
-        // Guest mode address
-        selectAddress({
-          fullName: newAddr.fullName.trim(),
-          name: newAddr.fullName.trim(),
-          phone: newAddr.phone.trim(),
-          pincode: newAddr.pincode.trim(),
-          street: newAddr.street.trim(),
-          city: newAddr.city.trim(),
-          state: newAddr.state.trim(),
-          type: newAddr.type,
-          isDefault: true
-        });
+      // 1. Immediately select locally
+      selectAddress(payload);
+
+      // 2. Persist to MongoDB if logged in
+      if (user && addAddress) {
+        await addAddress(payload);
       }
 
-      showToast(`Address saved: ${newAddr.city} - ${newAddr.pincode}`);
+      showToast(`Address saved: ${cleanCity} - ${cleanPin}`);
       setShowAddForm(false);
       if (onClose) onClose();
     } catch (err) {
-      setFormError(err.message || 'Failed to save address');
+      // If remote sync warns, local address remains selected
+      showToast(`Address selected: ${cleanCity} - ${cleanPin}`);
+      setShowAddForm(false);
+      if (onClose) onClose();
     } finally {
       setSubmitting(false);
     }
@@ -249,6 +269,36 @@ export const AddressSelectModal = ({ isOpen, onClose }) => {
               >
                 <Plus size={16} />
                 <span>Add a New Address</span>
+              </button>
+            </div>
+          )}
+
+          {/* User has NO saved addresses */}
+          {user && addresses.length === 0 && !showAddForm && (
+            <div style={{ textAlign: 'center', padding: '16px 0', borderBottom: '1px solid #E2E8F0', marginBottom: '16px' }}>
+              <p style={{ fontSize: '13px', color: '#64748B', marginBottom: '12px' }}>
+                You don't have any saved delivery address yet.
+              </p>
+              <button
+                type="button"
+                className="fk-action-primary-btn"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', width: 'auto', padding: '0 20px', height: '42px', margin: '0 auto' }}
+                onClick={() => {
+                  setNewAddr({
+                    fullName: user?.name || '',
+                    phone: user?.phone || '',
+                    pincode: selectedAddress?.pincode || '',
+                    street: selectedAddress?.street && !selectedAddress.street.startsWith('Delivery Hub') ? selectedAddress.street : '',
+                    city: selectedAddress?.city && !selectedAddress.city.includes('Area (') ? selectedAddress.city : '',
+                    state: selectedAddress?.state && selectedAddress.state !== 'India' ? selectedAddress.state : '',
+                    type: 'Home',
+                    isDefault: true
+                  });
+                  setShowAddForm(true);
+                }}
+              >
+                <Plus size={16} />
+                <span>Add Full Delivery Address</span>
               </button>
             </div>
           )}

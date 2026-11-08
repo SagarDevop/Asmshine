@@ -26,9 +26,13 @@ const getAllProducts = async (filters = {}) => {
         console.log('[Database] Auto-seeded initial ASM Shine products to MongoDB');
       }
 
-      // Strictly return ACTIVE products only. Exclude any archived or deleted items.
+      // Strictly return ACTIVE products only. Exclude any inactive or archived items.
       const query = {
-        status: 'active'
+        $or: [
+          { status: 'active' },
+          { status: { $exists: false } },
+          { status: null }
+        ]
       };
 
       if (filters.section) {

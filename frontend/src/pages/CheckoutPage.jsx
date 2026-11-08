@@ -26,6 +26,7 @@ import { useCartWishlist } from '../context/CartWishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 import { api } from '../services/api';
+import { resolvePincodeLocal } from '../utils/pincodeData';
 import '../styles/skeleton.css';
 import '../styles/orderTracking.css';
 
@@ -34,7 +35,7 @@ export const CheckoutPage = () => {
   const [searchParams] = useSearchParams();
   const buyNowId = searchParams.get('buyNow');
   const { cartData, clearCart, showToast, updateCartQuantity } = useCartWishlist();
-  const { user, selectedAddress, selectAddress } = useAuth();
+  const { user, selectedAddress, selectAddress, addAddress } = useAuth();
 
   const location = useLocation();
   const [checkoutItems, setCheckoutItems] = useState([]);
@@ -245,12 +246,116 @@ export const CheckoutPage = () => {
     }
   };
 
+  const handleSaveInlineAddress = async () => {
+    const cleanName = (address.name || user?.name || '').trim();
+    const cleanPhone = (address.phone || '').replace(/\D/g, '').slice(0, 10);
+    const cleanPin = (address.pincode || '').replace(/\D/g, '').slice(0, 6);
+    const cleanStreet = (address.street || '').trim();
+    let cleanCity = (address.city || '').trim();
+    let cleanState = (address.state || '').trim();
+
+    // Auto-resolve city/state from pincode if missing or placeholder
+    if (cleanPin.length === 6 && (!cleanCity || !cleanState || cleanCity.includes('Area ('))) {
+      const local = resolvePincodeLocal(cleanPin);
+      if (local) {
+        if (!cleanCity || cleanCity.includes('Area (')) cleanCity = local.city;
+        if (!cleanState || cleanState === 'India') cleanState = local.state;
+      }
+    }
+
+    if (!cleanName) {
+      showToast('Please enter your full name');
+      return;
+    }
+    if (cleanPhone.length !== 10) {
+      showToast('Please enter a valid 10-digit mobile number');
+      return;
+    }
+    if (!cleanStreet || cleanStreet.startsWith('Delivery Hub')) {
+      showToast('Please enter complete house/flat number and street');
+      return;
+    }
+    if (cleanPin.length !== 6) {
+      showToast('Please enter a valid 6-digit PIN code');
+      return;
+    }
+    if (!cleanCity) {
+      showToast('Please enter your city');
+      return;
+    }
+    if (!cleanState) {
+      showToast('Please enter your state');
+      return;
+    }
+
+    const updated = {
+      name: cleanName,
+      fullName: cleanName,
+      phone: cleanPhone,
+      street: cleanStreet,
+      pincode: cleanPin,
+      city: cleanCity,
+      state: cleanState,
+      type: address.type || 'HOME',
+      isDefault: true
+    };
+
+    setAddress(updated);
+    selectAddress(updated);
+    if (user && addAddress) {
+      addAddress(updated).catch(() => {});
+    }
+    setIsChangingAddress(false);
+    showToast('Delivery address updated');
+  };
+
   const handlePlaceOrder = async () => {
     if (orderSubmitting) return;
 
-    // Validate delivery address
-    if (!address.name || !address.phone || !address.pincode || !address.street || !address.city || !address.state) {
-      showToast('Please enter your complete delivery address before placing order.');
+    // Validate delivery address with granular, actionable feedback
+    const cleanName = (address.name || user?.name || '').trim();
+    const cleanPhone = (address.phone || user?.phone || '').replace(/\D/g, '').slice(0, 10);
+    const cleanPin = (address.pincode || '').replace(/\D/g, '').slice(0, 6);
+    let cleanStreet = (address.street || '').trim();
+    let cleanCity = (address.city || '').trim();
+    let cleanState = (address.state || '').trim();
+
+    // Auto-resolve city/state from pincode if placeholder
+    if (cleanPin.length === 6 && (!cleanCity || !cleanState || cleanCity.includes('Area ('))) {
+      const local = resolvePincodeLocal(cleanPin);
+      if (local) {
+        if (!cleanCity || cleanCity.includes('Area (')) cleanCity = local.city;
+        if (!cleanState || cleanState === 'India') cleanState = local.state;
+      }
+    }
+
+    if (!cleanName) {
+      showToast('Please enter your full name for delivery.');
+      setIsChangingAddress(true);
+      return;
+    }
+    if (cleanPhone.length !== 10) {
+      showToast('Please enter a valid 10-digit mobile number.');
+      setIsChangingAddress(true);
+      return;
+    }
+    if (cleanPin.length !== 6) {
+      showToast('Please enter a valid 6-digit PIN code.');
+      setIsChangingAddress(true);
+      return;
+    }
+    if (!cleanStreet || cleanStreet.startsWith('Delivery Hub')) {
+      showToast('Please enter your complete house/flat number and street.');
+      setIsChangingAddress(true);
+      return;
+    }
+    if (!cleanCity) {
+      showToast('Please enter your delivery city.');
+      setIsChangingAddress(true);
+      return;
+    }
+    if (!cleanState) {
+      showToast('Please enter your delivery state.');
       setIsChangingAddress(true);
       return;
     }
@@ -269,13 +374,13 @@ export const CheckoutPage = () => {
           size: item.size || item.product.size || ''
         })),
         shippingAddress: {
-          fullName: address.name,
-          name: address.name,
-          phone: address.phone,
-          pincode: address.pincode,
-          street: address.street,
-          city: address.city,
-          state: address.state,
+          fullName: cleanName,
+          name: cleanName,
+          phone: cleanPhone,
+          pincode: cleanPin,
+          street: cleanStreet,
+          city: cleanCity,
+          state: cleanState,
           type: address.type || 'HOME'
         },
         paymentMethod,
@@ -670,60 +775,140 @@ export const CheckoutPage = () => {
 
           {!isChangingAddress ? (
             <div className="fk-address-content">
-              <p className="fk-address-text">
-                {address.street}, {address.city}, {address.state} - {address.pincode}
-              </p>
-              <span className="fk-address-phone">Phone: {address.phone}</span>
+              {(() => {
+                const rawCity = address.city;
+                const displayCity = (rawCity && !rawCity.includes('Area ('))
+                  ? rawCity
+                  : (resolvePincodeLocal(address.pincode)?.city || rawCity || '');
+                const cleanStreet = (address.street || '')
+                  .replace(/Area \(\d+\)/g, displayCity)
+                  .replace(/Delivery Hub, Area \(\d+\)/g, `Delivery Hub, ${displayCity}`);
+                const isPlaceholderStreet = !cleanStreet || cleanStreet.startsWith('Delivery Hub');
+                const isPhoneMissing = !address.phone || address.phone.replace(/\D/g, '').length !== 10;
+
+                return (
+                  <>
+                    <p className="fk-address-text">
+                      {cleanStreet ? `${cleanStreet}, ` : ''}{displayCity}, {address.state || 'India'} - <strong>{address.pincode}</strong>
+                    </p>
+                    <span className="fk-address-phone">
+                      {address.phone ? `Phone: ${address.phone}` : <span style={{ color: '#E11D48', fontWeight: 600 }}>10-Digit Mobile required</span>}
+                    </span>
+                    {(isPlaceholderStreet || isPhoneMissing) && (
+                      <div style={{ marginTop: '10px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setIsChangingAddress(true)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontSize: '12.5px',
+                            color: '#2874F0',
+                            background: '#EFF6FF',
+                            border: '1px solid #BAE6FD',
+                            padding: '7px 14px',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontWeight: 700
+                          }}
+                        >
+                          <MapPin size={14} /> Complete Full Delivery Address
+                        </button>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </div>
           ) : (
             <div className="fk-address-edit-box">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                <input
+                  type="text"
+                  className="fk-addr-input"
+                  value={address.name}
+                  onChange={(e) => setAddress({ ...address, name: e.target.value })}
+                  placeholder="Full Name *"
+                />
+                <input
+                  type="tel"
+                  className="fk-addr-input"
+                  value={address.phone}
+                  onChange={(e) => setAddress({ ...address, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                  placeholder="10-Digit Mobile *"
+                />
+              </div>
+
               <input
                 type="text"
                 className="fk-addr-input"
-                value={address.name}
-                onChange={(e) => setAddress({ ...address, name: e.target.value })}
-                placeholder="Full Name"
-              />
-              <input
-                type="text"
-                className="fk-addr-input"
-                value={address.phone}
-                onChange={(e) => setAddress({ ...address, phone: e.target.value })}
-                placeholder="Mobile Number"
-              />
-              <input
-                type="text"
-                className="fk-addr-input"
+                style={{ marginBottom: '10px' }}
                 value={address.street}
                 onChange={(e) => setAddress({ ...address, street: e.target.value })}
-                placeholder="Flat / House / Street"
+                placeholder="House No, Building, Street, Area *"
               />
-              <div className="fk-addr-row">
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+                <input
+                  type="text"
+                  className="fk-addr-input"
+                  value={address.pincode}
+                  onChange={(e) => {
+                    const pin = e.target.value.replace(/\D/g, '').slice(0, 6);
+                    const local = pin.length === 6 ? resolvePincodeLocal(pin) : null;
+                    setAddress({
+                      ...address,
+                      pincode: pin,
+                      city: local?.city && (!address.city || address.city.includes('Area (')) ? local.city : address.city,
+                      state: local?.state && (!address.state || address.state === 'India') ? local.state : address.state
+                    });
+                  }}
+                  placeholder="6-Digit PIN *"
+                />
                 <input
                   type="text"
                   className="fk-addr-input"
                   value={address.city}
                   onChange={(e) => setAddress({ ...address, city: e.target.value })}
-                  placeholder="City"
+                  placeholder="City *"
                 />
                 <input
                   type="text"
                   className="fk-addr-input"
-                  value={address.pincode}
-                  onChange={(e) => setAddress({ ...address, pincode: e.target.value })}
-                  placeholder="Pincode"
+                  value={address.state}
+                  onChange={(e) => setAddress({ ...address, state: e.target.value })}
+                  placeholder="State *"
                 />
               </div>
-              <button
-                type="button"
-                className="fk-save-addr-btn"
-                onClick={() => {
-                  setIsChangingAddress(false);
-                  showToast('Delivery address updated');
-                }}
-              >
-                Save &amp; Deliver Here
-              </button>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  className="fk-save-addr-btn"
+                  onClick={handleSaveInlineAddress}
+                  style={{ flex: 1 }}
+                >
+                  Save &amp; Deliver Here
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsChangingAddress(false)}
+                  style={{
+                    padding: '0 16px',
+                    height: '42px',
+                    borderRadius: '6px',
+                    border: '1px solid #CBD5E1',
+                    background: '#FFFFFF',
+                    color: '#475569',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           )}
         </section>

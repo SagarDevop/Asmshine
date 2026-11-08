@@ -180,6 +180,9 @@ export const api = {
     if (!res.ok) {
       throw new Error(data.message || 'Login verification failed');
     }
+    if (data.token && typeof window !== 'undefined') {
+      localStorage.setItem('cleanora_token', data.token);
+    }
     return data;
   },
 
@@ -238,6 +241,9 @@ export const api = {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       throw new Error(data.message || 'Verification failed');
+    }
+    if (data.token && typeof window !== 'undefined') {
+      localStorage.setItem('cleanora_token', data.token);
     }
     return data;
   },

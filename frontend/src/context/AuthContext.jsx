@@ -63,18 +63,34 @@ export const AuthProvider = ({ children }) => {
         selectedAddress.city === 'Pan-India';
 
       if (isAjeeb) {
-        api.lookupPincode(selectedAddress.pincode).then((info) => {
-          if (info && info.city) {
-            selectAddress({
-              ...selectedAddress,
-              city: info.city,
-              state: info.state || selectedAddress.state || 'India',
-              street: (selectedAddress.street || '')
-                .replace(/Area \(\d+\)/g, info.city)
-                .replace(/Delivery Hub, Area \(\d+\)/g, `Delivery Hub, ${info.city}`) || `Delivery Hub, ${info.city}`
-            });
-          }
-        }).catch(() => {});
+        const local = resolvePincodeLocal(selectedAddress.pincode);
+        if (local && local.city && !local.city.includes('Area (')) {
+          const resolvedCity = local.city;
+          const resolvedState = (local.state && local.state !== 'India') ? local.state : (selectedAddress.state || 'India');
+          const resolvedStreet = (selectedAddress.street || '')
+            .replace(/Area \(\d+\)/g, resolvedCity)
+            .replace(/Delivery Hub, Area \(\d+\)/g, `Delivery Hub, ${resolvedCity}`) || `Delivery Hub, ${resolvedCity}`;
+
+          selectAddress({
+            ...selectedAddress,
+            city: resolvedCity,
+            state: resolvedState,
+            street: resolvedStreet
+          });
+        } else {
+          api.lookupPincode(selectedAddress.pincode).then((info) => {
+            if (info && info.city && !info.city.includes('Area (')) {
+              selectAddress({
+                ...selectedAddress,
+                city: info.city,
+                state: info.state || selectedAddress.state || 'India',
+                street: (selectedAddress.street || '')
+                  .replace(/Area \(\d+\)/g, info.city)
+                  .replace(/Delivery Hub, Area \(\d+\)/g, `Delivery Hub, ${info.city}`) || `Delivery Hub, ${info.city}`
+              });
+            }
+          }).catch(() => {});
+        }
       }
     }
   }, [selectedAddress?.pincode, selectedAddress?.city]);
@@ -86,16 +102,14 @@ export const AuthProvider = ({ children }) => {
       const matched = targetId
         ? user.addresses.find((a) => (a._id || a.id) === targetId)
         : null;
-      const rawActive = matched || user.addresses.find((a) => a.isDefault) || user.addresses[0];
-      if (rawActive) {
-        const active = sanitizeAddressLocation(rawActive);
-        selectAddress(active);
+      // If user already has an address selected with complete fields, prioritize it
+      if (!selectedAddress || !selectedAddress.street || selectedAddress.street.startsWith('Delivery Hub,')) {
+        const rawActive = matched || user.addresses.find((a) => a.isDefault) || user.addresses[0];
+        if (rawActive) {
+          const active = sanitizeAddressLocation(rawActive);
+          selectAddress(active);
+        }
       }
-    } else if (!user) {
-      setSelectedAddressState(null);
-      try {
-        localStorage.removeItem('asm_selected_address');
-      } catch (e) {}
     }
   }, [user]);
 
@@ -132,6 +146,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.login({ email, password });
       if (response && response.user) {
+        if (response.token && typeof window !== 'undefined') {
+          localStorage.setItem('cleanora_token', response.token);
+        }
         setUser(response.user);
         return response.user;
       }
@@ -146,6 +163,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.googleAuth(credential);
       if (response && response.user) {
+        if (response.token && typeof window !== 'undefined') {
+          localStorage.setItem('cleanora_token', response.token);
+        }
         setUser(response.user);
         return response.user;
       }
@@ -171,6 +191,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.verifyLoginOtp({ email, otp });
       if (response && response.user) {
+        if (response.token && typeof window !== 'undefined') {
+          localStorage.setItem('cleanora_token', response.token);
+        }
         setUser(response.user);
         return response.user;
       }
@@ -207,6 +230,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.verifySignupOtp({ email, otp });
       if (response && response.user) {
+        if (response.token && typeof window !== 'undefined') {
+          localStorage.setItem('cleanora_token', response.token);
+        }
         setUser(response.user);
         return response.user;
       }
@@ -254,6 +280,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.resetPassword({ email, otp, resetToken, newPassword });
       if (response && response.user) {
+        if (response.token && typeof window !== 'undefined') {
+          localStorage.setItem('cleanora_token', response.token);
+        }
         setUser(response.user);
         return response.user;
       }
@@ -304,15 +333,23 @@ export const AuthProvider = ({ children }) => {
   };
 
   const addAddress = async (addressData) => {
-    const updatedAddresses = await api.addAddress(addressData);
-    if (user) {
-      setUser({ ...user, addresses: updatedAddresses });
+    // Immediately select the address locally to guarantee continuity
+    selectAddress(addressData);
+
+    try {
+      const updatedAddresses = await api.addAddress(addressData);
+      if (user) {
+        setUser({ ...user, addresses: updatedAddresses });
+      }
+      const newlyAdded = Array.isArray(updatedAddresses) ? updatedAddresses[updatedAddresses.length - 1] : null;
+      if (newlyAdded) {
+        selectAddress(newlyAdded);
+      }
+      return updatedAddresses;
+    } catch (err) {
+      console.warn('[AuthContext] Remote address save warning:', err.message);
+      return user?.addresses || [addressData];
     }
-    const newlyAdded = updatedAddresses[updatedAddresses.length - 1];
-    if (newlyAdded) {
-      selectAddress(newlyAdded);
-    }
-    return updatedAddresses;
   };
 
   const deleteAddress = async (addressId) => {

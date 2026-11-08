@@ -230,6 +230,37 @@ const createOrder = async (req, res, next) => {
       console.warn('[Order] Could not clear cart after order placement:', cartErr.message);
     }
 
+    // 10. Auto-persist phone and shipping address to user profile if missing
+    try {
+      if (req.user) {
+        let userNeedsUpdate = false;
+        if (!req.user.phone && phone) {
+          req.user.phone = phone;
+          userNeedsUpdate = true;
+        }
+        if (!req.user.addresses || req.user.addresses.length === 0) {
+          const addrType = ['HOME', 'WORK', 'OTHER'].includes(type) ? type : 'HOME';
+          req.user.addresses = [{
+            name: recipientName,
+            fullName: recipientName,
+            phone,
+            street,
+            city,
+            state,
+            pincode,
+            type: addrType,
+            isDefault: true
+          }];
+          userNeedsUpdate = true;
+        }
+        if (userNeedsUpdate) {
+          await req.user.save();
+        }
+      }
+    } catch (userErr) {
+      console.warn('[Order] User phone/address profile auto-update warning:', userErr.message);
+    }
+
     res.status(201).json({
       success: true,
       message: 'Order placed successfully.',

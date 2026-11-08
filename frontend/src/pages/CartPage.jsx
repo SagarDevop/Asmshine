@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
+import { resolvePincodeLocal } from '../utils/pincodeData';
 import { api } from '../services/api';
 import '../styles/skeleton.css';
 
@@ -297,15 +298,26 @@ export const CartPage = ({
             <MapPin size={16} className="cart-pin-icon" />
             <div className="cart-address-text">
               {selectedAddress ? (
-                <>
-                  <span>
-                    Deliver to:{' '}
-                    <strong>
-                      {selectedAddress.fullName || selectedAddress.name || 'Your Location'}, {selectedAddress.city} - {selectedAddress.pincode}
-                    </strong>
-                  </span>
-                  <small>{selectedAddress.street ? `${selectedAddress.street} • ` : ''}{isFreeDelivery ? 'Free Express Delivery' : 'Standard Delivery'}</small>
-                </>
+                (() => {
+                  const rawCity = selectedAddress.city;
+                  const displayCity = (rawCity && !rawCity.includes('Area ('))
+                    ? rawCity
+                    : (resolvePincodeLocal(selectedAddress.pincode)?.city || rawCity || 'Your Location');
+                  const cleanStreet = (selectedAddress.street || '')
+                    .replace(/Area \(\d+\)/g, displayCity)
+                    .replace(/Delivery Hub, Area \(\d+\)/g, `Delivery Hub, ${displayCity}`);
+                  return (
+                    <>
+                      <span>
+                        Deliver to:{' '}
+                        <strong>
+                          {selectedAddress.fullName || selectedAddress.name || user?.name || 'Your Location'}, {displayCity} - {selectedAddress.pincode}
+                        </strong>
+                      </span>
+                      <small>{cleanStreet ? `${cleanStreet} • ` : ''}{isFreeDelivery ? 'Free Express Delivery' : 'Standard Delivery'}</small>
+                    </>
+                  );
+                })()
               ) : (
                 <>
                   <span>
