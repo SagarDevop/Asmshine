@@ -504,27 +504,29 @@ export const CheckoutPage = () => {
 
     return (
       <div className="asm-order-success-canvas">
-        {/* Sticky Header Navbar */}
+        {/* Sticky Header Navbar - 100% Flush, Zero Margin Edge-to-Edge */}
         <header className="asm-confirm-navbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="asm-confirm-navbar-inner">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="fk-order-back-btn"
+                aria-label="Home"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <span className="asm-confirm-nav-title">Order Confirmed</span>
+            </div>
             <button
               type="button"
-              onClick={() => navigate('/')}
-              className="fk-order-back-btn"
-              aria-label="Home"
+              className="asm-confirm-nav-btn"
+              onClick={() => navigate('/account')}
             >
-              <ArrowLeft size={20} />
+              <HelpCircle size={14} />
+              <span>Help &amp; Orders</span>
             </button>
-            <span className="asm-confirm-nav-title">Order Confirmed</span>
           </div>
-          <button
-            type="button"
-            className="asm-confirm-nav-btn"
-            onClick={() => navigate('/account')}
-          >
-            <HelpCircle size={14} />
-            <span>Help &amp; Orders</span>
-          </button>
         </header>
 
         <div className="asm-order-success-inner">

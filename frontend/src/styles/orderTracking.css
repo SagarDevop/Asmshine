@@ -3,21 +3,45 @@
    Minimalist, Authentic, 100% Responsive with Native Skeleton Loaders
    ============================================================== */
 
-/* --- Top Sticky Flipkart Header --- */
+/* --- Tracking Outer Page Wrapper --- */
+.fk-order-tracking-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #F1F3F6;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* --- Top Sticky Flipkart Header (100% Flush, Zero Margin Edge-to-Edge) --- */
 .fk-order-nav-header {
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
-  height: 54px;
+  width: 100%;
+  height: 52px;
   background-color: #2874F0;
   color: #FFFFFF;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  z-index: 999;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.fk-order-nav-header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  z-index: 999;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  width: 100%;
+  max-width: 720px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 14px;
+  box-sizing: border-box;
 }
 
 .fk-order-nav-left {
@@ -101,17 +125,22 @@
 
 /* --- Tracking Page Canvas --- */
 .fk-tracking-canvas {
-  min-height: calc(100vh - 54px);
+  width: 100%;
+  min-height: calc(100vh - 52px);
   background-color: #F1F3F6;
-  padding: 12px 12px 48px;
+  margin: 0;
+  padding: 0 0 64px 0; /* Zero top/left/right padding - no margin on header! */
+  box-sizing: border-box;
 }
 
 .fk-tracking-inner {
   max-width: 720px;
   margin: 0 auto;
+  padding: 10px 12px 24px 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-sizing: border-box;
 }
 
 /* --- Standard Flipkart Card --- */
@@ -1134,35 +1163,53 @@
    ASM SHINE — FLIPKART-TIER ORDER CONFIRMATION VIEW STYLES
    ============================================================== */
 .asm-order-success-canvas {
+  width: 100%;
   min-height: 100vh;
   background-color: #F1F3F6;
-  padding-bottom: 60px;
+  margin: 0;
+  padding: 0 0 60px 0; /* Zero top/left/right padding - flush with viewport */
+  box-sizing: border-box;
 }
 
 .asm-order-success-inner {
   max-width: 640px;
   margin: 0 auto;
-  padding: 12px 14px;
+  padding: 10px 12px 24px 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  box-sizing: border-box;
 }
 
-/* Header Navbar */
+/* Header Navbar: 100% Flush, Zero Margin Edge-to-Edge */
 .asm-confirm-navbar {
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
+  width: 100%;
   height: 52px;
   background: #2874F0;
   color: #FFFFFF;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.asm-confirm-navbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  z-index: 100;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 640px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 14px;
+  box-sizing: border-box;
 }
 
 .asm-confirm-nav-title {

@@ -31,24 +31,27 @@ import '../styles/orderTracking.css';
  */
 function OrderTrackingSkeleton({ onBack, orderId }) {
   return (
-    <div className="fk-tracking-canvas" aria-busy="true" aria-label="Loading order details">
-      {/* Sticky Header */}
+    <div className="fk-order-tracking-page" aria-busy="true" aria-label="Loading order details">
+      {/* Sticky Header - 100% Edge-to-Edge Flush */}
       <header className="fk-order-nav-header">
-        <div className="fk-order-nav-left">
-          <button type="button" className="fk-order-back-btn" onClick={onBack} aria-label="Back">
-            <ArrowLeft size={20} />
-          </button>
-          <div className="fk-order-nav-title-group">
-            <span className="fk-order-nav-title">Order Details</span>
-            <span className="fk-order-nav-sub">{orderId ? `OD • ${orderId}` : 'Fetching tracking...'}</span>
+        <div className="fk-order-nav-header-inner">
+          <div className="fk-order-nav-left">
+            <button type="button" className="fk-order-back-btn" onClick={onBack} aria-label="Back">
+              <ArrowLeft size={20} />
+            </button>
+            <div className="fk-order-nav-title-group">
+              <span className="fk-order-nav-title">Order Details</span>
+              <span className="fk-order-nav-sub">{orderId ? `OD • ${orderId}` : 'Fetching tracking...'}</span>
+            </div>
           </div>
-        </div>
-        <div className="fk-order-nav-right">
-          <div className="fk-sk-box skeleton-shimmer" style={{ width: '70px', height: '26px', borderRadius: '4px' }} />
+          <div className="fk-order-nav-right">
+            <div className="fk-sk-box skeleton-shimmer" style={{ width: '70px', height: '26px', borderRadius: '4px' }} />
+          </div>
         </div>
       </header>
 
-      <div className="fk-tracking-inner" style={{ marginTop: '12px' }}>
+      <div className="fk-tracking-canvas">
+        <div className="fk-tracking-inner">
         {/* Item & Delivery Shimmer Card */}
         <div className="fk-track-card fk-item-hero-card">
           <div className="fk-item-hero-img-wrap fk-sk-box skeleton-shimmer" style={{ width: '72px', height: '72px' }} />
@@ -108,6 +111,7 @@ function OrderTrackingSkeleton({ onBack, orderId }) {
         </div>
       </div>
     </div>
+  </div>
   );
 }
 
@@ -241,92 +245,97 @@ export const OrderTrackingPage = () => {
   // 2. Search / Not Found View
   if (!activeOrderId || error || !order) {
     return (
-      <div className="fk-tracking-canvas">
+      <div className="fk-order-tracking-page">
+        {/* Sticky Header - 100% Flush, Zero Margin Edge-to-Edge */}
         <header className="fk-order-nav-header">
-          <div className="fk-order-nav-left">
-            <button type="button" className="fk-order-back-btn" onClick={handleBack} aria-label="Back">
-              <ArrowLeft size={20} />
-            </button>
-            <div className="fk-order-nav-title-group">
-              <span className="fk-order-nav-title">Track Order</span>
-              <span className="fk-order-nav-sub">ASM Shine Logistics</span>
+          <div className="fk-order-nav-header-inner">
+            <div className="fk-order-nav-left">
+              <button type="button" className="fk-order-back-btn" onClick={handleBack} aria-label="Back">
+                <ArrowLeft size={20} />
+              </button>
+              <div className="fk-order-nav-title-group">
+                <span className="fk-order-nav-title">Track Order</span>
+                <span className="fk-order-nav-sub">ASM Shine Logistics</span>
+              </div>
             </div>
-          </div>
-          <div className="fk-order-nav-right">
-            <Link to="/account" className="fk-order-header-action-btn">
-              My Orders
-            </Link>
+            <div className="fk-order-nav-right">
+              <Link to="/account" className="fk-order-header-action-btn">
+                My Orders
+              </Link>
+            </div>
           </div>
         </header>
 
-        <div className="fk-tracking-inner" style={{ marginTop: '20px' }}>
-          <div className="fk-track-card" style={{ textAlign: 'center', padding: '36px 20px' }}>
-            <div
-              style={{
-                width: '54px',
-                height: '54px',
-                borderRadius: '50%',
-                background: error ? '#FEF2F2' : '#EFF6FF',
-                color: error ? '#DC2626' : '#2874F0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 14px'
-              }}
-            >
-              {error ? <AlertCircle size={28} /> : <Search size={28} />}
-            </div>
-
-            <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#212121', margin: '0 0 6px 0' }}>
-              {error ? 'Order Not Found' : 'Track Your Shipment'}
-            </h3>
-            <p style={{ color: '#878787', fontSize: '13px', maxWidth: '420px', margin: '0 auto 20px' }}>
-              {error
-                ? error
-                : 'Enter your genuine Order Reference ID (e.g. ASM-20261030-105912) to see real-time packaging, dispatch and courier tracking updates.'}
-            </p>
-
-            <form
-              onSubmit={handleSearchSubmit}
-              style={{ display: 'flex', maxWidth: '440px', margin: '0 auto', gap: '8px', flexWrap: 'wrap' }}
-            >
-              <input
-                type="text"
-                placeholder="Enter Order ID (e.g. ASM-20261030-105912)"
-                value={searchIdInput}
-                onChange={(e) => setSearchIdInput(e.target.value)}
+        <div className="fk-tracking-canvas">
+          <div className="fk-tracking-inner">
+            <div className="fk-track-card" style={{ textAlign: 'center', padding: '36px 20px' }}>
+              <div
                 style={{
-                  flex: 1,
-                  minWidth: '220px',
-                  padding: '10px 14px',
-                  borderRadius: '6px',
-                  border: '1.5px solid #CBD5E1',
-                  fontSize: '13.5px',
-                  outline: 'none'
-                }}
-                required
-              />
-              <button
-                type="submit"
-                style={{
-                  background: '#2874F0',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  padding: '10px 18px',
-                  borderRadius: '6px',
-                  fontSize: '13.5px',
-                  fontWeight: 700,
-                  cursor: 'pointer'
+                  width: '54px',
+                  height: '54px',
+                  borderRadius: '50%',
+                  background: error ? '#FEF2F2' : '#EFF6FF',
+                  color: error ? '#DC2626' : '#2874F0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 14px'
                 }}
               >
-                Track
-              </button>
-            </form>
+                {error ? <AlertCircle size={28} /> : <Search size={28} />}
+              </div>
 
-            <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #F1F3F6' }}>
-              <Link to="/account" style={{ fontSize: '13px', color: '#2874F0', fontWeight: 600, textDecoration: 'none' }}>
-                ← View All Orders in My Account
-              </Link>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#212121', margin: '0 0 6px 0' }}>
+                {error ? 'Order Not Found' : 'Track Your Shipment'}
+              </h3>
+              <p style={{ color: '#878787', fontSize: '13px', maxWidth: '420px', margin: '0 auto 20px' }}>
+                {error
+                  ? error
+                  : 'Enter your genuine Order Reference ID (e.g. ASM-20261030-105912) to see real-time packaging, dispatch and courier tracking updates.'}
+              </p>
+
+              <form
+                onSubmit={handleSearchSubmit}
+                style={{ display: 'flex', maxWidth: '440px', margin: '0 auto', gap: '8px', flexWrap: 'wrap' }}
+              >
+                <input
+                  type="text"
+                  placeholder="Enter Order ID (e.g. ASM-20261030-105912)"
+                  value={searchIdInput}
+                  onChange={(e) => setSearchIdInput(e.target.value)}
+                  style={{
+                    flex: 1,
+                    minWidth: '220px',
+                    padding: '10px 14px',
+                    borderRadius: '6px',
+                    border: '1.5px solid #CBD5E1',
+                    fontSize: '13.5px',
+                    outline: 'none'
+                  }}
+                  required
+                />
+                <button
+                  type="submit"
+                  style={{
+                    background: '#2874F0',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '10px 18px',
+                    borderRadius: '6px',
+                    fontSize: '13.5px',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Track
+                </button>
+              </form>
+
+              <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #F1F3F6' }}>
+                <Link to="/account" style={{ fontSize: '13px', color: '#2874F0', fontWeight: 600, textDecoration: 'none' }}>
+                  ← View All Orders in My Account
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -359,45 +368,48 @@ export const OrderTrackingPage = () => {
   const firstItem = order.items?.[0] || {};
 
   return (
-    <div className="fk-tracking-canvas">
-      {/* 1. Flipkart Top Navigation Bar */}
+    <div className="fk-order-tracking-page">
+      {/* 1. Flipkart Top Navigation Bar - 100% Flush, Zero Margin Edge-to-Edge */}
       <header className="fk-order-nav-header">
-        <div className="fk-order-nav-left">
-          <button type="button" className="fk-order-back-btn" onClick={handleBack} aria-label="Go Back">
-            <ArrowLeft size={20} />
-          </button>
-          <div className="fk-order-nav-title-group">
-            <span className="fk-order-nav-title">Order Details</span>
-            <span className="fk-order-nav-sub">OD • {order.orderId || order.id}</span>
+        <div className="fk-order-nav-header-inner">
+          <div className="fk-order-nav-left">
+            <button type="button" className="fk-order-back-btn" onClick={handleBack} aria-label="Go Back">
+              <ArrowLeft size={20} />
+            </button>
+            <div className="fk-order-nav-title-group">
+              <span className="fk-order-nav-title">Order Details</span>
+              <span className="fk-order-nav-sub">OD • {order.orderId || order.id}</span>
+            </div>
           </div>
-        </div>
 
-        <div className="fk-order-nav-right">
-          <button
-            type="button"
-            className="fk-order-header-action-btn"
-            onClick={() => {
-              setSupportTopic('menu');
-              setShowSupportModal(true);
-            }}
-          >
-            <HelpCircle size={14} />
-            <span>Help</span>
-          </button>
-          <button
-            type="button"
-            className="fk-order-header-action-btn"
-            onClick={() => navigate('/cart')}
-            title="Cart"
-          >
-            <ShoppingBag size={14} />
-            {cartCount > 0 && <span>({cartCount})</span>}
-          </button>
+          <div className="fk-order-nav-right">
+            <button
+              type="button"
+              className="fk-order-header-action-btn"
+              onClick={() => {
+                setSupportTopic('menu');
+                setShowSupportModal(true);
+              }}
+            >
+              <HelpCircle size={14} />
+              <span>Help</span>
+            </button>
+            <button
+              type="button"
+              className="fk-order-header-action-btn"
+              onClick={() => navigate('/cart')}
+              title="Cart"
+            >
+              <ShoppingBag size={14} />
+              {cartCount > 0 && <span>({cartCount})</span>}
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Main Flipkart Content Container */}
-      <div className="fk-tracking-inner">
+      <main className="fk-tracking-canvas">
+        <div className="fk-tracking-inner">
         {/* Order ID & Status Strip */}
         <div className="fk-track-card" style={{ padding: '10px 14px' }}>
           <div className="fk-order-id-strip" style={{ margin: 0, padding: 0, border: 'none' }}>
@@ -696,6 +708,7 @@ export const OrderTrackingPage = () => {
           </button>
         </div>
       </div>
+    </main>
 
       {/* Flipkart-Tier 24x7 Help Center Modal */}
       {showSupportModal && (
