@@ -189,6 +189,18 @@ function SignupRoute() {
   );
 }
 
+function ForgotPasswordRoute() {
+  return (
+    <div className="app-shell">
+      <DesktopNav />
+      <div className="screen-container">
+        <AuthPage initialTab="forgot" />
+      </div>
+      <BottomNav activeTab="account" />
+    </div>
+  );
+}
+
 function AccountRoute() {
   return (
     <div className="app-shell">
@@ -259,6 +271,7 @@ export function App() {
                 {/* Authentication & Profile Routes */}
                 <Route path="/login" element={<LoginRoute />} />
                 <Route path="/signup" element={<SignupRoute />} />
+                <Route path="/forgot-password" element={<ForgotPasswordRoute />} />
                 <Route path="/account" element={<AccountRoute />} />
                 <Route path="/profile" element={<Navigate to="/account" replace />} />
                 {/* Wildcard redirect to home */}

@@ -262,6 +262,86 @@ export const api = {
     return data;
   },
 
+  // Forgot Password / Password Reset Flow
+  sendForgotPasswordOtp: async ({ email }) => {
+    const res = await apiFetch('/api/v1/auth/forgot-password/send-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.message || 'Failed to send reset code');
+      err.cooldownRemaining = data.cooldownRemaining;
+      throw err;
+    }
+    return data;
+  },
+
+  verifyForgotPasswordOtp: async ({ email, otp }) => {
+    const res = await apiFetch('/api/v1/auth/forgot-password/verify-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email, otp })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Verification of reset code failed');
+    }
+    return data;
+  },
+
+  resetPassword: async ({ email, otp, resetToken, newPassword }) => {
+    const res = await apiFetch('/api/v1/auth/forgot-password/reset-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email, otp, resetToken, newPassword })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to reset password');
+    }
+    if (data.token) {
+      localStorage.setItem('cleanora_token', data.token);
+    }
+    return data;
+  },
+
+  resendForgotPasswordOtp: async (email) => {
+    const res = await apiFetch('/api/v1/auth/forgot-password/resend-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.message || 'Failed to resend reset code');
+      err.cooldownRemaining = data.cooldownRemaining;
+      throw err;
+    }
+    return data;
+  },
+
   // Account Profile & Address API
   updateProfile: async ({ name, phone }) => {
     const res = await apiFetch('/api/v1/auth/profile', {

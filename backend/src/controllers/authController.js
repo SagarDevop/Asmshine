@@ -519,6 +519,329 @@ exports.resendLoginOtp = async (req, res, next) => {
 };
 
 /**
+ * POST /api/v1/auth/forgot-password/send-otp
+ * Validates account existence, creates secure 6-digit OTP, and sends reset code via email
+ */
+exports.sendForgotPasswordOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email || !emailRegex.test(email.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address.'
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user exists
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No registered account found with this email address.'
+      });
+    }
+
+    // Cooldown check (60s)
+    const existingOtp = await Otp.findOne({ email: normalizedEmail, purpose: 'RESET' });
+    if (existingOtp && existingOtp.lastResendAt) {
+      const secondsSinceLast = Math.floor((Date.now() - existingOtp.lastResendAt.getTime()) / 1000);
+      if (secondsSinceLast < 60) {
+        return res.status(429).json({
+          success: false,
+          cooldownRemaining: 60 - secondsSinceLast,
+          message: `Please wait ${60 - secondsSinceLast} seconds before requesting another reset code.`
+        });
+      }
+    }
+
+    // Generate secure cryptographic 6-digit OTP
+    const otpNumber = crypto.randomInt(100000, 999999).toString();
+    const otpHash = hashOtp(otpNumber);
+
+    // Save or update pending RESET OTP record (10 minute expiry)
+    await Otp.findOneAndUpdate(
+      { email: normalizedEmail, purpose: 'RESET' },
+      {
+        email: normalizedEmail,
+        purpose: 'RESET',
+        name: user.name || 'Member',
+        otpHash,
+        attempts: 0,
+        lastResendAt: new Date(),
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000)
+      },
+      { upsert: true, new: true }
+    );
+
+    // Send reset email via Brevo / SMTP
+    const emailResult = await emailService.sendOtpEmail({
+      to: normalizedEmail,
+      name: user.name,
+      otp: otpNumber,
+      purpose: 'RESET'
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'A 6-digit password reset code has been sent to your email.',
+      email: normalizedEmail,
+      simulated: emailResult.simulated,
+      devOtp: emailResult.simulated ? otpNumber : undefined
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/v1/auth/forgot-password/verify-otp
+ * Verifies reset OTP code and returns single-use reset authorization token
+ */
+exports.verifyForgotPasswordOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and 6-digit verification code are required.'
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const cleanOtp = otp.toString().trim();
+
+    const otpRecord = await Otp.findOne({ email: normalizedEmail, purpose: 'RESET' });
+
+    if (!otpRecord) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password reset code not found or expired. Please request a new code.'
+      });
+    }
+
+    if (new Date() > otpRecord.expiresAt) {
+      await Otp.deleteOne({ _id: otpRecord._id });
+      return res.status(400).json({
+        success: false,
+        message: 'Reset code has expired. Please request a new code.'
+      });
+    }
+
+    if (otpRecord.attempts >= 5) {
+      await Otp.deleteOne({ _id: otpRecord._id });
+      return res.status(429).json({
+        success: false,
+        message: 'Maximum verification attempts exceeded. Please request a new code.'
+      });
+    }
+
+    // Verify OTP hash
+    const submittedHash = hashOtp(cleanOtp);
+    if (submittedHash !== otpRecord.otpHash) {
+      otpRecord.attempts += 1;
+      await otpRecord.save();
+      const remaining = 5 - otpRecord.attempts;
+      return res.status(400).json({
+        success: false,
+        message: `Invalid reset code. (${remaining} attempts remaining)`
+      });
+    }
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Account not found.'
+      });
+    }
+
+    // Issue a short-lived 15-minute reset token
+    const jwtSecret = process.env.JWT_SECRET || 'dev_jwt_secret_local_apex';
+    const resetToken = jwt.sign(
+      { id: user._id.toString(), email: normalizedEmail, purpose: 'PASSWORD_RESET' },
+      jwtSecret,
+      { expiresIn: '15m' }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Reset code verified successfully. Please enter your new password.',
+      resetToken
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/v1/auth/forgot-password/reset-password
+ * Securely updates user password using resetToken OR verified OTP, cleans up OTP records, and logs user in
+ */
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { email, otp, resetToken, newPassword } = req.body;
+
+    if (!newPassword || typeof newPassword !== 'string' || newPassword.trim().length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long.'
+      });
+    }
+
+    let user = null;
+    const jwtSecret = process.env.JWT_SECRET || 'dev_jwt_secret_local_apex';
+
+    // Path A: Authenticated via verified resetToken
+    if (resetToken) {
+      try {
+        const decoded = jwt.verify(resetToken, jwtSecret);
+        if (decoded.purpose !== 'PASSWORD_RESET') {
+          return res.status(401).json({
+            success: false,
+            message: 'Invalid password reset token.'
+          });
+        }
+        user = await User.findById(decoded.id);
+      } catch (err) {
+        return res.status(401).json({
+          success: false,
+          message: 'Password reset session has expired. Please start over.'
+        });
+      }
+    }
+    // Path B: Direct verification via email + OTP
+    else if (email && otp) {
+      const normalizedEmail = email.toLowerCase().trim();
+      const cleanOtp = otp.toString().trim();
+      const otpRecord = await Otp.findOne({ email: normalizedEmail, purpose: 'RESET' });
+
+      if (!otpRecord) {
+        return res.status(400).json({
+          success: false,
+          message: 'Reset code not found or expired. Please request a new code.'
+        });
+      }
+
+      if (new Date() > otpRecord.expiresAt) {
+        await Otp.deleteOne({ _id: otpRecord._id });
+        return res.status(400).json({
+          success: false,
+          message: 'Reset code has expired. Please request a new code.'
+        });
+      }
+
+      const submittedHash = hashOtp(cleanOtp);
+      if (submittedHash !== otpRecord.otpHash) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid reset code.'
+        });
+      }
+
+      user = await User.findOne({ email: normalizedEmail });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide either a valid resetToken or email with verification code.'
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Account not found.'
+      });
+    }
+
+    // Set new password (pre-save middleware handles bcrypt hashing with 12 rounds)
+    user.password = newPassword.trim();
+    await user.save();
+
+    // Clean up all pending reset OTP records for this email
+    await Otp.deleteMany({ email: user.email.toLowerCase(), purpose: 'RESET' });
+
+    // Automatically establish a fresh session so the user is logged in immediately
+    const token = generateToken(user._id);
+    res.cookie('token', token, getCookieOptions());
+
+    res.status(200).json({
+      success: true,
+      message: 'Password has been reset successfully. You are now logged in.',
+      token,
+      user: user.toSafeObject()
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/v1/auth/forgot-password/resend-otp
+ * Resend forgot-password reset code with 60-second cooldown check
+ */
+exports.resendForgotPasswordOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email address is required.'
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const otpRecord = await Otp.findOne({ email: normalizedEmail, purpose: 'RESET' });
+
+    if (!otpRecord) {
+      return res.status(400).json({
+        success: false,
+        message: 'No pending password reset found for this email. Please request a reset code.'
+      });
+    }
+
+    // Cooldown check (60s)
+    const secondsSinceLast = Math.floor((Date.now() - otpRecord.lastResendAt.getTime()) / 1000);
+    if (secondsSinceLast < 60) {
+      return res.status(429).json({
+        success: false,
+        cooldownRemaining: 60 - secondsSinceLast,
+        message: `Please wait ${60 - secondsSinceLast} seconds before requesting a new code.`
+      });
+    }
+
+    // Generate new OTP
+    const otpNumber = crypto.randomInt(100000, 999999).toString();
+    otpRecord.otpHash = hashOtp(otpNumber);
+    otpRecord.attempts = 0;
+    otpRecord.lastResendAt = new Date();
+    otpRecord.expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    await otpRecord.save();
+
+    const emailResult = await emailService.sendOtpEmail({
+      to: normalizedEmail,
+      name: otpRecord.name,
+      otp: otpNumber,
+      purpose: 'RESET'
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'A fresh password reset code has been sent to your email.',
+      email: normalizedEmail,
+      simulated: emailResult.simulated,
+      devOtp: emailResult.simulated ? otpNumber : undefined
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * POST /api/v1/auth/register
  * Direct registration (backward compatible)
  */

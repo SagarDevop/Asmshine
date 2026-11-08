@@ -227,6 +227,54 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const sendForgotPasswordOtp = async ({ email }) => {
+    setAuthError(null);
+    try {
+      const response = await api.sendForgotPasswordOtp({ email });
+      return response;
+    } catch (err) {
+      setAuthError(err.message || 'Failed to send password reset code');
+      throw err;
+    }
+  };
+
+  const verifyForgotPasswordOtp = async ({ email, otp }) => {
+    setAuthError(null);
+    try {
+      const response = await api.verifyForgotPasswordOtp({ email, otp });
+      return response;
+    } catch (err) {
+      setAuthError(err.message || 'Failed to verify reset code');
+      throw err;
+    }
+  };
+
+  const resetPassword = async ({ email, otp, resetToken, newPassword }) => {
+    setAuthError(null);
+    try {
+      const response = await api.resetPassword({ email, otp, resetToken, newPassword });
+      if (response && response.user) {
+        setUser(response.user);
+        return response.user;
+      }
+      return response;
+    } catch (err) {
+      setAuthError(err.message || 'Failed to reset password');
+      throw err;
+    }
+  };
+
+  const resendForgotPasswordOtp = async (email) => {
+    setAuthError(null);
+    try {
+      const response = await api.resendForgotPasswordOtp(email);
+      return response;
+    } catch (err) {
+      setAuthError(err.message || 'Failed to resend reset code');
+      throw err;
+    }
+  };
+
   const registerDirect = async ({ name, email, password }) => {
     setAuthError(null);
     try {
@@ -318,6 +366,10 @@ export const AuthProvider = ({ children }) => {
     sendSignupOtp,
     verifySignupOtp,
     resendSignupOtp,
+    sendForgotPasswordOtp,
+    verifyForgotPasswordOtp,
+    resetPassword,
+    resendForgotPasswordOtp,
     register: registerDirect,
     updateProfile,
     getAddresses,

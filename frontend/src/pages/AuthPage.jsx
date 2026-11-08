@@ -28,11 +28,19 @@ export const AuthPage = ({ initialTab = 'login' }) => {
     resendLoginOtp,
     sendSignupOtp,
     verifySignupOtp,
-    resendSignupOtp
+    resendSignupOtp,
+    sendForgotPasswordOtp,
+    verifyForgotPasswordOtp,
+    resetPassword,
+    resendForgotPasswordOtp
   } = useAuth();
 
   const [activeTab, setActiveTab] = useState(
-    location.pathname === '/signup' ? 'signup' : initialTab
+    location.pathname === '/signup'
+      ? 'signup'
+      : location.pathname === '/forgot-password'
+      ? 'forgot'
+      : initialTab
   );
 
   // Form inputs (persisted across tab switches)
@@ -53,6 +61,15 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   const [otp, setOtp] = useState('');
   const [cooldown, setCooldown] = useState(0);
 
+  // Forgot Password flow state
+  const [forgotStep, setForgotStep] = useState('EMAIL'); // 'EMAIL' | 'RESET'
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotOtp, setForgotOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [forgotCooldown, setForgotCooldown] = useState(0);
+
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successNotice, setSuccessNotice] = useState('');
@@ -66,6 +83,8 @@ export const AuthPage = ({ initialTab = 'login' }) => {
       setActiveTab('signup');
     } else if (location.pathname === '/login') {
       setActiveTab('login');
+    } else if (location.pathname === '/forgot-password') {
+      setActiveTab('forgot');
     }
   }, [location.pathname]);
 
@@ -87,14 +106,27 @@ export const AuthPage = ({ initialTab = 'login' }) => {
     return () => clearInterval(interval);
   }, [loginCooldown]);
 
+  // Forgot Password cooldown ticker (60s)
+  useEffect(() => {
+    if (forgotCooldown <= 0) return;
+    const interval = setInterval(() => {
+      setForgotCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [forgotCooldown]);
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setErrorMessage('');
     setSuccessNotice('');
     setLoginStep('FORM');
     setSignupStep('FORM');
+    setForgotStep('EMAIL');
     setOtp('');
     setLoginOtp('');
+    setForgotOtp('');
+    setNewPassword('');
+    setConfirmNewPassword('');
   };
 
   // -------------------------------------------------------------
@@ -197,6 +229,101 @@ export const AuthPage = ({ initialTab = 'login' }) => {
       }
     } catch (err) {
       setErrorMessage(err.message || 'Failed to resend code. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // Forgot Password: Send Reset Code Handler
+  // -------------------------------------------------------------
+  const handleSendForgotPasswordOtp = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setSuccessNotice('');
+
+    const targetEmail = (forgotEmail || email).trim().toLowerCase();
+    if (!targetEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(targetEmail)) {
+      setErrorMessage('Please enter a valid email address.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await sendForgotPasswordOtp({ email: targetEmail });
+      setForgotEmail(targetEmail);
+      setForgotStep('RESET');
+      setForgotCooldown(60);
+      if (res && res.devOtp) {
+        setSuccessNotice(`Password reset code sent! (Dev Code: ${res.devOtp})`);
+      } else {
+        setSuccessNotice(res?.message || `A 6-digit reset code has been sent to ${targetEmail}`);
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'No registered account found with this email.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // Forgot Password: Submit New Password Handler
+  // -------------------------------------------------------------
+  const handleResetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setSuccessNotice('');
+
+    const cleanOtp = forgotOtp.trim();
+    if (!cleanOtp || cleanOtp.length !== 6) {
+      setErrorMessage('Please enter the complete 6-digit verification code.');
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      setErrorMessage('New password must be at least 6 characters long.');
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      setErrorMessage('New passwords do not match. Please verify both fields.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await resetPassword({
+        email: forgotEmail.trim().toLowerCase(),
+        otp: cleanOtp,
+        newPassword
+      });
+      // User is now logged in! Navigate to destination
+      navigate(from, { replace: true });
+    } catch (err) {
+      setErrorMessage(err.message || 'Failed to reset password. Please check the code.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // Forgot Password: Resend Code Handler
+  // -------------------------------------------------------------
+  const handleResendForgotPasswordOtp = async () => {
+    if (forgotCooldown > 0) return;
+    setErrorMessage('');
+    setSuccessNotice('');
+    setSubmitting(true);
+    try {
+      const res = await resendForgotPasswordOtp(forgotEmail.trim().toLowerCase());
+      setForgotCooldown(60);
+      if (res && res.devOtp) {
+        setSuccessNotice(`Fresh reset code sent! (Dev Code: ${res.devOtp})`);
+      } else {
+        setSuccessNotice(res?.message || 'A fresh reset code has been sent to your email.');
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Failed to resend reset code. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -322,7 +449,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
     setErrorMessage(msg);
   };
 
-  const isOtpScreen = (activeTab === 'login' && loginStep === 'OTP') || (activeTab === 'signup' && signupStep === 'OTP');
+  const isOtpScreen = (activeTab === 'login' && loginStep === 'OTP') || (activeTab === 'signup' && signupStep === 'OTP') || activeTab === 'forgot';
 
   return (
     <div className="minimal-auth-page">
@@ -354,7 +481,11 @@ export const AuthPage = ({ initialTab = 'login' }) => {
               <img src="/favicon.svg" alt="ASM Shine" className="minimal-auth-logo-img" />
             </div>
             <h1 className="minimal-auth-title">
-              {activeTab === 'login'
+              {activeTab === 'forgot'
+                ? forgotStep === 'RESET'
+                  ? 'Set New Password'
+                  : 'Reset Password'
+                : activeTab === 'login'
                 ? loginStep === 'OTP'
                   ? 'Verify your email'
                   : 'Welcome back'
@@ -363,7 +494,11 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                 : 'Create an account'}
             </h1>
             <p className="minimal-auth-subtitle">
-              {activeTab === 'login'
+              {activeTab === 'forgot'
+                ? forgotStep === 'RESET'
+                  ? `Enter the 6-digit reset code sent to ${forgotEmail} and choose a new password.`
+                  : 'Enter your email to receive a secure 6-digit password reset code.'
+                : activeTab === 'login'
                 ? loginStep === 'OTP'
                   ? `Enter the 6-digit login verification code sent to ${email}`
                   : loginMethod === 'OTP'
@@ -375,8 +510,29 @@ export const AuthPage = ({ initialTab = 'login' }) => {
             </p>
           </div>
 
-          {/* Mode Switch Tabs (Hidden on OTP verification screen) */}
-          {!isOtpScreen && (
+          {/* Mode Switch Tabs (Hidden on OTP verification screen and Forgot Password view) */}
+          {activeTab === 'forgot' ? (
+            <div style={{ marginBottom: '16px' }}>
+              <button
+                type="button"
+                onClick={() => handleTabChange('login')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#1C8E8F',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  padding: 0
+                }}
+              >
+                <ArrowLeft size={14} /> Back to Sign In
+              </button>
+            </div>
+          ) : !isOtpScreen ? (
             <div className="minimal-auth-tabs">
               <button
                 type="button"
@@ -393,7 +549,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                 Create Account
               </button>
             </div>
-          )}
+          ) : null}
 
           {/* Error Message */}
           {errorMessage && (
@@ -491,6 +647,28 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                   >
                     {submitting ? 'Sending Verification Code...' : 'Send Verification Code'}
                   </button>
+
+                  <div style={{ textAlign: 'center', marginTop: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForgotEmail(email);
+                        setActiveTab('forgot');
+                        setForgotStep('EMAIL');
+                        setErrorMessage('');
+                        setSuccessNotice('');
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#64748B',
+                        fontSize: '12px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Forgot your password? <strong style={{ color: '#1C8E8F' }}>Reset Password</strong>
+                    </button>
+                  </div>
                 </form>
               ) : (
                 /* Login Method: Password */
@@ -518,9 +696,32 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                   </div>
 
                   <div className="minimal-field">
-                    <label className="minimal-label" htmlFor="auth-login-password">
-                      Password
-                    </label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <label className="minimal-label" htmlFor="auth-login-password">
+                        Password
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setForgotEmail(email);
+                          setActiveTab('forgot');
+                          setForgotStep('EMAIL');
+                          setErrorMessage('');
+                          setSuccessNotice('');
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#1C8E8F',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          padding: 0
+                        }}
+                      >
+                        Forgot Password?
+                      </button>
+                    </div>
                     <div className="minimal-input-wrap">
                       <span className="minimal-input-icon">
                         <Lock size={16} />
@@ -855,6 +1056,191 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                   {submitting ? 'Verifying & Creating Account...' : 'Verify & Create Account'}
                 </button>
               </form>
+            </div>
+          )}
+
+          {/* ========================================================= */}
+          {/* VIEW E: FORGOT PASSWORD */}
+          {/* ========================================================= */}
+          {activeTab === 'forgot' && (
+            <div>
+              {forgotStep === 'EMAIL' ? (
+                /* Step 1: Enter Email */
+                <form onSubmit={handleSendForgotPasswordOtp} className="minimal-form" noValidate>
+                  <div className="minimal-field">
+                    <label className="minimal-label" htmlFor="auth-forgot-email">
+                      Registered Email Address
+                    </label>
+                    <div className="minimal-input-wrap">
+                      <span className="minimal-input-icon">
+                        <Mail size={16} />
+                      </span>
+                      <input
+                        id="auth-forgot-email"
+                        type="email"
+                        className="minimal-input"
+                        placeholder="Enter your registered email address"
+                        value={forgotEmail || email}
+                        onChange={(e) => {
+                          setForgotEmail(e.target.value);
+                          setEmail(e.target.value);
+                        }}
+                        autoComplete="email"
+                        required
+                        disabled={submitting}
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="minimal-submit-btn"
+                    disabled={submitting || !(forgotEmail || email).trim()}
+                    id="forgot-send-otp-button"
+                  >
+                    {submitting ? 'Sending Reset Code...' : 'Send Reset Code'}
+                  </button>
+
+                  <div style={{ textAlign: 'center', marginTop: '14px' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleTabChange('login')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#64748B',
+                        fontSize: '12.5px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Remember your password? <strong style={{ color: '#1C8E8F' }}>Sign In</strong>
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                /* Step 2: Enter 6-digit Code & New Password */
+                <div className="minimal-otp-panel">
+                  <div className="minimal-otp-card-header">
+                    <div className="minimal-otp-badge">
+                      <Mail size={22} />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
+                      <span style={{ fontSize: '13px', color: '#0F172A', fontWeight: 600 }}>{forgotEmail}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setForgotStep('EMAIL');
+                          setForgotOtp('');
+                          setErrorMessage('');
+                        }}
+                        className="minimal-otp-edit-email"
+                      >
+                        Change
+                      </button>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleResetPasswordSubmit} className="minimal-form" noValidate>
+                    <div className="minimal-field">
+                      <label className="minimal-label" htmlFor="auth-forgot-otp-input" style={{ textAlign: 'center' }}>
+                        Enter 6-Digit Password Reset Code
+                      </label>
+                      <input
+                        id="auth-forgot-otp-input"
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={6}
+                        className="minimal-otp-input"
+                        placeholder="••••••"
+                        value={forgotOtp}
+                        onChange={(e) => setForgotOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        autoFocus
+                        required
+                        disabled={submitting}
+                      />
+                    </div>
+
+                    <div className="minimal-otp-row">
+                      <span>Didn't receive code?</span>
+                      {forgotCooldown > 0 ? (
+                        <span style={{ color: '#94A3B8', fontWeight: 600 }}>Resend in {forgotCooldown}s</span>
+                      ) : (
+                        <button
+                          type="button"
+                          className="minimal-otp-resend"
+                          onClick={handleResendForgotPasswordOtp}
+                          disabled={submitting}
+                        >
+                          Resend Code
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="minimal-field" style={{ marginTop: '14px' }}>
+                      <label className="minimal-label" htmlFor="auth-forgot-new-password">
+                        New Password
+                      </label>
+                      <div className="minimal-input-wrap">
+                        <span className="minimal-input-icon">
+                          <Lock size={16} />
+                        </span>
+                        <input
+                          id="auth-forgot-new-password"
+                          type={showNewPassword ? 'text' : 'password'}
+                          className="minimal-input has-toggle"
+                          placeholder="At least 6 characters"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          autoComplete="new-password"
+                          required
+                          disabled={submitting}
+                        />
+                        <button
+                          type="button"
+                          className="minimal-toggle-btn"
+                          onClick={() => setShowNewPassword((prev) => !prev)}
+                          aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                          tabIndex={-1}
+                        >
+                          {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="minimal-field">
+                      <label className="minimal-label" htmlFor="auth-forgot-confirm-password">
+                        Confirm New Password
+                      </label>
+                      <div className="minimal-input-wrap">
+                        <span className="minimal-input-icon">
+                          <Lock size={16} />
+                        </span>
+                        <input
+                          id="auth-forgot-confirm-password"
+                          type={showNewPassword ? 'text' : 'password'}
+                          className="minimal-input has-toggle"
+                          placeholder="Re-enter new password"
+                          value={confirmNewPassword}
+                          onChange={(e) => setConfirmNewPassword(e.target.value)}
+                          autoComplete="new-password"
+                          required
+                          disabled={submitting}
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="minimal-submit-btn"
+                      disabled={submitting || forgotOtp.trim().length !== 6 || !newPassword || !confirmNewPassword}
+                      id="forgot-reset-submit-button"
+                    >
+                      {submitting ? 'Resetting Password...' : 'Reset Password & Sign In'}
+                    </button>
+                  </form>
+                </div>
+              )}
             </div>
           )}
 

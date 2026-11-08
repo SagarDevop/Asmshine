@@ -34,6 +34,12 @@ router.post('/signup/send-otp', authLimiter, authController.sendSignupOtp);
 router.post('/signup/verify-otp', authLimiter, authController.verifySignupOtp);
 router.post('/signup/resend-otp', authLimiter, authController.resendSignupOtp);
 
+// Forgot Password / Password Reset Flow (Protected by authLimiter)
+router.post('/forgot-password/send-otp', authLimiter, authController.sendForgotPasswordOtp);
+router.post('/forgot-password/verify-otp', authLimiter, authController.verifyForgotPasswordOtp);
+router.post('/forgot-password/reset-password', authLimiter, authController.resetPassword);
+router.post('/forgot-password/resend-otp', authLimiter, authController.resendForgotPasswordOtp);
+
 // Account Profile & Address Management
 router.put('/profile', authenticate, authController.updateProfile);
 router.get('/addresses', authenticate, authController.getAddresses);
