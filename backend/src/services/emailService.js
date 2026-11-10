@@ -225,10 +225,15 @@ exports.sendOtpEmail = async ({ to, name, otp, purpose = 'SIGNUP' }) => {
     }
   }
 
-  // 3. Development Mode Simulation (when neither Brevo nor SMTP is set yet)
+  // 3. Fallback Handling
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Email delivery service is currently unavailable. Please verify email credentials or contact support.');
+  }
+
+  // Development Mode Simulation (when neither Brevo nor SMTP is configured locally)
   console.log('\n=============================================================');
   console.log('[DEV EMAIL SERVICE NOTICE] Brevo API Key not configured in .env');
-  console.log(`[DEV OTP DELIVERY] Code for ${to} (${purpose}): ${otp} (Valid for 10m)`);
+  console.log(`[DEV OTP DELIVERY] Code for ${to} (${purpose}): [PROTECTED IN LOGS] (Valid for 10m)`);
   console.log('To send real emails to customer inboxes:');
   console.log('Set BREVO_API_KEY and BREVO_SENDER_EMAIL in backend/.env');
   console.log('=============================================================\n');
@@ -236,7 +241,6 @@ exports.sendOtpEmail = async ({ to, name, otp, purpose = 'SIGNUP' }) => {
   return {
     success: true,
     provider: 'simulated',
-    simulated: true,
-    otp // Provided in response only when unconfigured in local dev mode
+    simulated: true
   };
 };

@@ -16,7 +16,7 @@ const parseArgs = () => {
 const run = async () => {
   const args = parseArgs();
   const email = (args.email || process.env.ADMIN_INITIAL_EMAIL || 'admin@asmshine.com').trim().toLowerCase();
-  const password = args.password || process.env.ADMIN_INITIAL_PASSWORD || 'Admin@AsmShine2026';
+  const password = args.password || process.env.ADMIN_INITIAL_PASSWORD;
   const name = (args.name || 'SM Shine Administrator').trim();
   const role = args.role || 'superadmin';
 
@@ -26,7 +26,7 @@ const run = async () => {
   }
 
   if (!password || password.length < 8) {
-    console.error('Error: Password must be at least 8 characters long.');
+    console.error('Error: Password must be at least 8 characters long. Provide via --password=<secret> or ADMIN_INITIAL_PASSWORD env var.');
     process.exit(1);
   }
 

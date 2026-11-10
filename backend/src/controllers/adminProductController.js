@@ -5,6 +5,33 @@ const StockMovement = require('../models/StockMovement');
 const { logAdminAction } = require('../services/auditService');
 const { removeMemoryProduct } = require('../services/productService');
 const realtimeHub = require('../services/realtimeHub');
+const { sanitizeSearchQuery } = require('../utils/sanitize');
+
+// Security helper: Validate image URLs to prevent SSRF and XSS injection
+const isValidImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  // Allow relative local asset paths
+  if (trimmed.startsWith('/images/')) return true;
+  // Disallow hazardous schemes (javascript:, data:, file:)
+  if (/^(javascript|data|file|vbscript):/i.test(trimmed)) return false;
+  // External URLs must use secure HTTPS protocol
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol !== 'https:') return false;
+    // Approved CDNs & domains
+    const allowedDomains = [
+      'res.cloudinary.com',
+      'cloudinary.com',
+      'images.unsplash.com',
+      'localhost',
+      '127.0.0.1'
+    ];
+    return allowedDomains.some((d) => parsed.hostname === d || parsed.hostname.endsWith(`.${d}`));
+  } catch (e) {
+    return false;
+  }
+};
 
 /**
  * GET /api/v1/admin/products
@@ -23,8 +50,9 @@ const getProducts = async (req, res, next) => {
 
     const query = { status: { $ne: 'archived' } };
 
-    if (search.trim()) {
-      const reg = new RegExp(search.trim(), 'i');
+    const safeSearch = sanitizeSearchQuery(search, 50);
+    if (safeSearch) {
+      const reg = new RegExp(safeSearch, 'i');
       query.$or = [{ name: reg }, { id: reg }, { sku: reg }, { category: reg }];
     }
 
@@ -153,6 +181,26 @@ const createProduct = async (req, res, next) => {
         success: false,
         message: 'Prices must be non-negative values.'
       });
+    }
+
+    // Validate primary image URL
+    if (image && !isValidImageUrl(image)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product image URL. Must be an approved HTTPS URL (Cloudinary) or local /images/ path.'
+      });
+    }
+
+    // Validate available size variant image URLs
+    if (Array.isArray(availableSizes)) {
+      for (const s of availableSizes) {
+        if (s.image && !isValidImageUrl(s.image)) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid image URL for size variant '${s.size}'. Must be an approved HTTPS URL or local /images/ path.`
+          });
+        }
+      }
     }
 
     // Auto-generate slug ID if not provided
@@ -328,7 +376,15 @@ const updateProduct = async (req, res, next) => {
     if (badge !== undefined) product.badge = badge.trim();
     if (isFestiveDeal !== undefined) product.isFestiveDeal = Boolean(isFestiveDeal);
     if (festiveBadge !== undefined) product.festiveBadge = String(festiveBadge).trim();
-    if (image) product.image = image;
+    if (image) {
+      if (!isValidImageUrl(image)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid product image URL. Must be an approved HTTPS URL (Cloudinary) or local /images/ path.'
+        });
+      }
+      product.image = image;
+    }
     if (status) product.status = status;
     if (highlights !== undefined) {
       product.highlights = Array.isArray(highlights)
@@ -419,6 +475,15 @@ const updateProduct = async (req, res, next) => {
     }
 
     if (availableSizes !== undefined && Array.isArray(availableSizes)) {
+      for (const s of availableSizes) {
+        if (s.image && !isValidImageUrl(s.image)) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid image URL for size variant '${s.size || 'unknown'}'. Must be an approved HTTPS URL or local /images/ path.`
+          });
+        }
+      }
+
       product.availableSizes = availableSizes.map((s, idx) => {
         const sPrice = Number(s.price || product.price);
         const sMRP = Number(s.originalPrice || sPrice);

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const rateLimit = require('express-rate-limit');
 const authenticate = require('../middleware/auth');
 const {
   createOrder,
@@ -9,14 +10,25 @@ const {
   publicTrackOrder
 } = require('../controllers/orderController');
 
-// Public Live Order Tracking (Accessible with Order ID)
-router.get('/track/:id', publicTrackOrder);
+// Rate limit for order creation (prevents automated bot checkouts and transaction spam)
+const orderCreationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => process.env.NODE_ENV === 'test',
+  message: {
+    success: false,
+    message: 'Too many order requests. Please wait a few minutes before placing another order.'
+  }
+});
 
-// Authenticated customer order operations
+// All order operations strictly require authentication and ownership verification
 router.use(authenticate);
 
-router.post('/', createOrder);
+router.post('/', orderCreationLimiter, createOrder);
 router.get('/', getOrders);
+router.get('/track/:id', publicTrackOrder);
 router.get('/:id', getOrderById);
 router.post('/:id/cancel', cancelCustomerOrder);
 

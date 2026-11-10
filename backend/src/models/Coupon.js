@@ -38,10 +38,21 @@ const couponSchema = new mongoose.Schema(
       type: Number,
       default: 0 // 0 means unlimited
     },
+    userUsageLimit: {
+      type: Number,
+      default: 0 // 0 means unlimited per user
+    },
     usedCount: {
       type: Number,
       default: 0
     },
+    usedBy: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        orderId: { type: String, trim: true },
+        usedAt: { type: Date, default: Date.now }
+      }
+    ],
     validFrom: {
       type: Date,
       default: Date.now
@@ -60,7 +71,10 @@ const couponSchema = new mongoose.Schema(
   }
 );
 
-couponSchema.methods.isValidForOrder = function (orderSubtotal) {
+couponSchema.index({ isActive: 1, validFrom: 1, validUntil: 1 });
+couponSchema.index({ code: 1, isActive: 1 });
+
+couponSchema.methods.isValidForOrder = function (orderSubtotal, userId = null) {
   if (!this.isActive) return { valid: false, message: 'Coupon is currently inactive.' };
   const now = new Date();
   if (this.validFrom && now < this.validFrom) return { valid: false, message: 'Coupon is not yet active.' };
@@ -68,6 +82,14 @@ couponSchema.methods.isValidForOrder = function (orderSubtotal) {
   if (this.usageLimit > 0 && this.usedCount >= this.usageLimit) return { valid: false, message: 'Coupon usage limit has been reached.' };
   if (this.minOrderValue > 0 && orderSubtotal < this.minOrderValue) {
     return { valid: false, message: `Minimum order value of ₹${this.minOrderValue} required for this coupon.` };
+  }
+  if (userId && this.userUsageLimit > 0 && Array.isArray(this.usedBy)) {
+    const userUses = this.usedBy.filter(
+      (entry) => entry.user && entry.user.toString() === userId.toString()
+    ).length;
+    if (userUses >= this.userUsageLimit) {
+      return { valid: false, message: `You have already used this coupon the maximum allowed number of times (${this.userUsageLimit}).` };
+    }
   }
   return { valid: true };
 };

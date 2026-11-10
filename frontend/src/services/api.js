@@ -738,13 +738,17 @@ export const api = {
   // Genuine Order Management API (MongoDB Backed)
   // -------------------------------------------------------------
 
-  createOrder: async (orderPayload) => {
+  createOrder: async (orderPayload, options = {}) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    };
+    if (options.idempotencyKey) {
+      headers['Idempotency-Key'] = options.idempotencyKey;
+    }
     const res = await apiFetch('/api/v1/orders', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
+      headers,
       credentials: 'include',
       body: JSON.stringify(orderPayload)
     });

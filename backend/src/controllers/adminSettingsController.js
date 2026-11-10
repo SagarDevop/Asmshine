@@ -105,7 +105,7 @@ const getAuditLogs = async (req, res, next) => {
 
 /**
  * GET /api/v1/admin/reports/export-orders
- * Streams orders as downloadable CSV
+ * Streams orders as downloadable CSV with CSV injection (Formula Injection) protection
  */
 const exportOrdersCsv = async (req, res, next) => {
   try {
@@ -123,34 +123,56 @@ const exportOrdersCsv = async (req, res, next) => {
       }
     }
 
-    const orders = await Order.find(query)
+    // CSV Formula Injection (CWE-1236) Sanitizer:
+    // Any value beginning with =, +, -, @, \t, or \r is prefixed with a single quote '
+    const sanitizeCsvCell = (val) => {
+      let str = String(val ?? '').trim();
+      if (/^[=+\-@\t\r]/.test(str)) {
+        str = `'${str}`;
+      }
+      return `"${str.replace(/"/g, '""')}"`;
+    };
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="asm_shine_orders_${Date.now()}.csv"`);
+
+    // Write header
+    res.write('Order ID,Date,Customer Name,Phone,Email,City,State,Items Count,Total Amount,Payment Method,Payment Status,Order Status\n');
+
+    // Stream records via Mongoose Cursor to prevent high memory usage and buffer overflows
+    const cursor = Order.find(query)
       .sort({ createdAt: -1 })
       .populate('user', 'email')
-      .lean();
+      .cursor();
 
-    // Generate CSV Header
-    let csv = 'Order ID,Date,Customer Name,Phone,Email,City,State,Items Count,Total Amount,Payment Method,Payment Status,Order Status\n';
-
-    orders.forEach((o) => {
-      const escape = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
-      const date = o.createdAt ? new Date(o.createdAt).toISOString().slice(0, 10) : '';
-      const name = escape(o.shippingAddress?.fullName || 'Customer');
-      const phone = escape(o.shippingAddress?.phone || '');
-      const email = escape(o.user?.email || '');
-      const city = escape(o.shippingAddress?.city || '');
-      const state = escape(o.shippingAddress?.state || '');
-      const itemsCount = o.items?.length || 0;
-      const total = o.totalAmount || 0;
-      const method = escape(o.paymentMethod || 'cod');
-      const payStatus = escape(o.paymentStatus || 'pending');
-      const ordStatus = escape(o.status || 'CONFIRMED');
-
-      csv += `${o.orderId},${date},${name},${phone},${email},${city},${state},${itemsCount},${total},${method},${payStatus},${ordStatus}\n`;
+    let clientDisconnected = false;
+    req.on('close', () => {
+      clientDisconnected = true;
     });
 
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename="asm_shine_orders_${Date.now()}.csv"`);
-    res.status(200).send(csv);
+    for await (const o of cursor) {
+      if (clientDisconnected || res.writableEnded) {
+        break;
+      }
+      const orderId = sanitizeCsvCell(o.orderId);
+      const date = o.createdAt ? new Date(o.createdAt).toISOString().slice(0, 10) : '';
+      const name = sanitizeCsvCell(o.shippingAddress?.fullName || 'Customer');
+      const phone = sanitizeCsvCell(o.shippingAddress?.phone || '');
+      const email = sanitizeCsvCell(o.user?.email || '');
+      const city = sanitizeCsvCell(o.shippingAddress?.city || '');
+      const state = sanitizeCsvCell(o.shippingAddress?.state || '');
+      const itemsCount = o.items?.length || 0;
+      const total = Number(o.totalAmount || 0);
+      const method = sanitizeCsvCell(o.paymentMethod || 'cod');
+      const payStatus = sanitizeCsvCell(o.paymentStatus || 'pending');
+      const ordStatus = sanitizeCsvCell(o.status || 'CONFIRMED');
+
+      res.write(`${orderId},${date},${name},${phone},${email},${city},${state},${itemsCount},${total},${method},${payStatus},${ordStatus}\n`);
+    }
+
+    if (!clientDisconnected && !res.writableEnded) {
+      res.end();
+    }
   } catch (error) {
     next(error);
   }

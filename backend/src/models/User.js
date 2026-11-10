@@ -66,6 +66,17 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true
+    },
+    failedLoginAttempts: {
+      type: Number,
+      default: 0
+    },
+    lockUntil: {
+      type: Date
+    },
+    passwordChangedAt: {
+      type: Date,
+      default: () => new Date(Date.now() - 10000) // Initialized in past so fresh session JWTs are immediately valid
     }
   },
   {
@@ -77,6 +88,11 @@ const userSchema = new mongoose.Schema(
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password') || !this.password) {
     return next();
+  }
+
+  // Record password change timestamp for session invalidation
+  if (!this.isNew) {
+    this.passwordChangedAt = new Date();
   }
 
   // If password is already a valid bcrypt hash, don't re-hash it

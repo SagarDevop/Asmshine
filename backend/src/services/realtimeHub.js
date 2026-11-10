@@ -41,28 +41,49 @@ class RealtimeHub extends EventEmitter {
       try {
         res.write(`: ping ${Date.now()}\n\n`);
       } catch (err) {
-        clearInterval(heartbeatInterval);
-        this.adminClients.delete(client);
+        cleanup();
       }
     }, 20000);
 
-    // Clean up on disconnect
-    req.on('close', () => {
+    // Clean up on disconnect, connection reset, or socket error
+    let cleanedUp = false;
+    const cleanup = () => {
+      if (cleanedUp) return;
+      cleanedUp = true;
       clearInterval(heartbeatInterval);
       this.adminClients.delete(client);
       console.log(`[RealtimeHub] Admin disconnected (${client.id}). Remaining admins: ${this.adminClients.size}`);
-    });
+    };
+
+    req.on('close', cleanup);
+    req.on('end', cleanup);
+    res.on('close', cleanup);
+    res.on('finish', cleanup);
+    res.on('error', cleanup);
   }
 
   /**
-   * Broadcast message to all connected admin streams
+   * Broadcast message to all connected admin streams with Role-Based PII Masking
+   * (Inventory managers receive masked customer PII; full data only for superadmin/admin/order_manager)
    */
   broadcastToAdmins(eventName, payload) {
     if (this.adminClients.size === 0) return;
 
-    const dataString = `event: ${eventName}\ndata: ${JSON.stringify(payload)}\n\n`;
     for (const client of this.adminClients) {
       try {
+        let clientPayload = payload;
+
+        // Mask customer PII for staff without customer-support / order-management clearance
+        if (eventName === 'new_order' && client.user && client.user.role === 'inventory_manager') {
+          clientPayload = {
+            ...payload,
+            customerName: 'Customer (Restricted)',
+            customerPhone: payload.customerPhone ? '******' + String(payload.customerPhone).slice(-4) : '',
+            customerEmail: '******@***.***'
+          };
+        }
+
+        const dataString = `event: ${eventName}\ndata: ${JSON.stringify(clientPayload)}\n\n`;
         client.res.write(dataString);
       } catch (err) {
         console.warn(`[RealtimeHub] Error writing to admin client ${client.id}:`, err.message);

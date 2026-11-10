@@ -78,8 +78,14 @@ const productSchema = new mongoose.Schema({
   timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
-  strict: false
+  strict: true
 });
+
+// Compound and text indexes for rapid catalog navigation and ReDoS-immune search
+productSchema.index({ category: 1, status: 1 });
+productSchema.index({ section: 1, status: 1 });
+productSchema.index({ isFestiveDeal: 1, status: 1 });
+productSchema.index({ name: 'text', description: 'text', brand: 'text' });
 
 // Virtual for available stock (onHand - reserved)
 productSchema.virtual('availableStock').get(function () {

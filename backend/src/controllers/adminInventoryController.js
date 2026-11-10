@@ -2,6 +2,7 @@ const Product = require('../models/Product');
 const StockMovement = require('../models/StockMovement');
 const { adjustStock } = require('../services/inventoryService');
 const { logAdminAction } = require('../services/auditService');
+const { sanitizeSearchQuery } = require('../utils/sanitize');
 
 /**
  * GET /api/v1/admin/inventory
@@ -13,8 +14,9 @@ const getInventory = async (req, res, next) => {
 
     const query = { status: { $ne: 'archived' } };
 
-    if (search.trim()) {
-      const reg = new RegExp(search.trim(), 'i');
+    const safeSearch = sanitizeSearchQuery(search, 50);
+    if (safeSearch) {
+      const reg = new RegExp(safeSearch, 'i');
       query.$or = [{ name: reg }, { id: reg }, { sku: reg }, { category: reg }];
     }
 

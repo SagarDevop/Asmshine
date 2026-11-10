@@ -11,7 +11,10 @@
     "admin:create": "node src/scripts/createAdmin.js",
     "test:inventory": "node src/tests/inventoryOrderTest.js",
     "test:auth": "node src/tests/authRoleTest.js",
-    "test": "node src/tests/inventoryOrderTest.js && node src/tests/authRoleTest.js",
+    "test:security": "node src/tests/phase1SecurityTest.js",
+    "test:phase2": "node src/tests/phase2SecurityTest.js",
+    "test:phase22": "node src/tests/phase22DefectTest.js",
+    "test": "node src/tests/inventoryOrderTest.js && node src/tests/authRoleTest.js && node src/tests/phase1SecurityTest.js && node src/tests/phase2SecurityTest.js && node src/tests/phase22DefectTest.js",
     "migrate:images": "node src/scripts/migrateImagesToCloudinary.js"
   },
   "dependencies": {

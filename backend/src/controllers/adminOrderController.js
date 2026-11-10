@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const { restoreOrderStock } = require('../services/inventoryService');
+const { restoreOrderCoupon } = require('../services/couponService');
 const { logAdminAction } = require('../services/auditService');
 const realtimeHub = require('../services/realtimeHub');
+const { sanitizeSearchQuery } = require('../utils/sanitize');
 
 /**
  * Valid order status transitions map
@@ -36,8 +38,9 @@ const getOrders = async (req, res, next) => {
 
     const query = {};
 
-    if (search.trim()) {
-      const reg = new RegExp(search.trim(), 'i');
+    const safeSearch = sanitizeSearchQuery(search, 50);
+    if (safeSearch) {
+      const reg = new RegExp(safeSearch, 'i');
       query.$or = [
         { orderId: reg },
         { 'shippingAddress.fullName': reg },
@@ -274,7 +277,8 @@ const cancelOrder = async (req, res, next) => {
       cancelledAt: new Date(),
       reason: reason.trim(),
       cancelledBy: req.user._id,
-      stockRestored: true
+      stockRestored: true,
+      couponRestored: false
     };
 
     if (refundPayment && order.paymentStatus === 'completed') {
@@ -301,6 +305,9 @@ const cancelOrder = async (req, res, next) => {
     // Safely restore stock (idempotent)
     const restoreResult = await restoreOrderStock(order, reason.trim(), req.user);
 
+    // Safely restore coupon (idempotent)
+    const couponRestoreResult = await restoreOrderCoupon(order);
+
     await logAdminAction({
       req,
       action: 'ORDER_CANCEL',
@@ -309,7 +316,8 @@ const cancelOrder = async (req, res, next) => {
       details: {
         previousStatus: prevStatus,
         reason: reason.trim(),
-        stockRestoredItems: restoreResult.restoredCount
+        stockRestoredItems: restoreResult.restoredCount,
+        couponRestored: couponRestoreResult.restored
       }
     });
 

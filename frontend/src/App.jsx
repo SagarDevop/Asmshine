@@ -13,6 +13,7 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { AuthPage } from './pages/AuthPage';
 import { AccountPage } from './pages/AccountPage';
 import { OrderTrackingPage } from './pages/OrderTrackingPage';
+import { CancelOrderPage } from './pages/CancelOrderPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { DesktopNav } from './components/navigation/DesktopNav';
 import { BottomNav } from './components/navigation/BottomNav';
@@ -227,6 +228,18 @@ function OrderTrackingRoute() {
   );
 }
 
+function CancelOrderRoute() {
+  return (
+    <div className="app-shell">
+      <DesktopNav />
+      <div className="screen-container">
+        <CancelOrderPage />
+      </div>
+      <BottomNav activeTab="account" />
+    </div>
+  );
+}
+
 
 const DEFAULT_GOOGLE_CLIENT_ID = '544546980474-8pgk6kkellbbtmec3iun2p0v5kis143e.apps.googleusercontent.com';
 const googleClientId =
@@ -265,6 +278,7 @@ export function App() {
                 <Route path="/product/:id" element={<ProductDetailRoute />} />
                 <Route path="/checkout" element={<CheckoutRoute />} />
                 {/* Order Tracking Routes */}
+                <Route path="/order/:orderId/cancel" element={<CancelOrderRoute />} />
                 <Route path="/order/:orderId" element={<OrderTrackingRoute />} />
                 <Route path="/track-order" element={<OrderTrackingRoute />} />
                 <Route path="/track-order/:orderId" element={<OrderTrackingRoute />} />

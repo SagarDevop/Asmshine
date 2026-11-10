@@ -156,7 +156,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['PENDING_CONFIRMATION', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'RETURNED'],
+      enum: ['PENDING_PAYMENT', 'PENDING_CONFIRMATION', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'RETURNED'],
       default: 'CONFIRMED',
       index: true
     },
@@ -185,7 +185,8 @@ const orderSchema = new mongoose.Schema(
       cancelledAt: { type: Date },
       reason: { type: String, default: '' },
       cancelledBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      stockRestored: { type: Boolean, default: false }
+      stockRestored: { type: Boolean, default: false },
+      couponRestored: { type: Boolean, default: false }
     },
     internalNotes: {
       type: String,
@@ -205,5 +206,10 @@ const orderSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+// High-performance compound indexes for customer lookups and admin dashboard queries
+orderSchema.index({ user: 1, createdAt: -1 });
+orderSchema.index({ status: 1, createdAt: -1 });
+orderSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Order', orderSchema);

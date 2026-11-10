@@ -429,10 +429,7 @@ export const OrderTrackingPage = () => {
                 <button
                   type="button"
                   className="fk-subtle-cancel-link"
-                  onClick={() => {
-                    setSupportTopic('cancel');
-                    setShowSupportModal(true);
-                  }}
+                  onClick={() => navigate(`/order/${order.orderId || order.id}/cancel`)}
                   title="Cancel order before dispatch"
                 >
                   Cancel Order
@@ -790,7 +787,10 @@ export const OrderTrackingPage = () => {
                     <button
                       type="button"
                       className="fk-help-topic-item"
-                      onClick={() => setSupportTopic('cancel')}
+                      onClick={() => {
+                        setShowSupportModal(false);
+                        navigate(`/order/${order.orderId || order.id}/cancel`);
+                      }}
                     >
                       <div className="fk-help-topic-icon-wrap cancel">
                         <XCircle size={18} />

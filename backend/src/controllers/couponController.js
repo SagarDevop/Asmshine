@@ -77,7 +77,7 @@ const validateCoupon = async (req, res, next) => {
     }
 
     const subtotal = Math.max(0, Number(orderSubtotal) || 0);
-    const validity = coupon.isValidForOrder(subtotal);
+    const validity = coupon.isValidForOrder(subtotal, req.user?._id);
 
     if (!validity.valid) {
       return res.status(400).json({

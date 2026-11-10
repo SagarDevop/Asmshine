@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const { initialProducts } = require('../data/seedData');
 const { getDbStatus } = require('../config/db');
+const { sanitizeSearchQuery } = require('../utils/sanitize');
 
 // In-memory cache & fallback store
 let memoryProducts = [...initialProducts];
@@ -43,9 +44,9 @@ const getAllProducts = async (filters = {}) => {
         query.category = filters.category;
       }
 
-      if (filters.search && filters.search.trim()) {
-        const q = filters.search.trim();
-        const regex = { $regex: q, $options: 'i' };
+      const safeQ = sanitizeSearchQuery(filters.search, 50);
+      if (safeQ) {
+        const regex = { $regex: safeQ, $options: 'i' };
         query.$or = [
           { name: regex },
           { shortName: regex },

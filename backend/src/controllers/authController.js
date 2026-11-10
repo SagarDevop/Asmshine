@@ -130,9 +130,7 @@ exports.sendSignupOtp = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Verification code sent to your email address.',
-      email: normalizedEmail,
-      simulated: emailResult.simulated,
-      devOtp: emailResult.simulated ? otpNumber : undefined
+      email: normalizedEmail
     });
   } catch (error) {
     next(error);
@@ -287,9 +285,7 @@ exports.resendSignupOtp = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'A new verification code has been sent to your email.',
-      email: normalizedEmail,
-      simulated: emailResult.simulated,
-      devOtp: emailResult.simulated ? otpNumber : undefined
+      email: normalizedEmail
     });
   } catch (error) {
     next(error);
@@ -365,9 +361,7 @@ exports.sendLoginOtp = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'A 6-digit login verification code has been sent to your email.',
-      email: normalizedEmail,
-      simulated: emailResult.simulated,
-      devOtp: emailResult.simulated ? otpNumber : undefined
+      email: normalizedEmail
     });
   } catch (error) {
     next(error);
@@ -509,9 +503,7 @@ exports.resendLoginOtp = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'A fresh login code has been sent to your email.',
-      email: normalizedEmail,
-      simulated: emailResult.simulated,
-      devOtp: emailResult.simulated ? otpNumber : undefined
+      email: normalizedEmail
     });
   } catch (error) {
     next(error);
@@ -538,9 +530,11 @@ exports.sendForgotPasswordOtp = async (req, res, next) => {
     // Check if user exists
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'No registered account found with this email address.'
+      // Account enumeration defense: return generic response without leaking account existence
+      return res.status(200).json({
+        success: true,
+        message: 'If an account with that email exists, a 6-digit password reset code has been sent.',
+        email: normalizedEmail
       });
     }
 
@@ -586,10 +580,8 @@ exports.sendForgotPasswordOtp = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'A 6-digit password reset code has been sent to your email.',
-      email: normalizedEmail,
-      simulated: emailResult.simulated,
-      devOtp: emailResult.simulated ? otpNumber : undefined
+      message: 'If an account with that email exists, a 6-digit password reset code has been sent.',
+      email: normalizedEmail
     });
   } catch (error) {
     next(error);
@@ -659,10 +651,13 @@ exports.verifyForgotPasswordOtp = async (req, res, next) => {
       });
     }
 
-    // Issue a short-lived 15-minute reset token
+    // Capture current passwordChangedAt timestamp to enforce single-use reset authorization
+    const pwdTimestamp = user.passwordChangedAt ? user.passwordChangedAt.getTime() : 0;
+
+    // Issue a short-lived 15-minute reset token bound to this password state
     const jwtSecret = process.env.JWT_SECRET || 'dev_jwt_secret_local_apex';
     const resetToken = jwt.sign(
-      { id: user._id.toString(), email: normalizedEmail, purpose: 'PASSWORD_RESET' },
+      { id: user._id.toString(), email: normalizedEmail, purpose: 'PASSWORD_RESET', pwdTimestamp },
       jwtSecret,
       { expiresIn: '15m' }
     );
@@ -695,7 +690,7 @@ exports.resetPassword = async (req, res, next) => {
     let user = null;
     const jwtSecret = process.env.JWT_SECRET || 'dev_jwt_secret_local_apex';
 
-    // Path A: Authenticated via verified resetToken
+    // Path A: Authenticated via verified resetToken (Single-use strictly enforced)
     if (resetToken) {
       try {
         const decoded = jwt.verify(resetToken, jwtSecret);
@@ -706,6 +701,19 @@ exports.resetPassword = async (req, res, next) => {
           });
         }
         user = await User.findById(decoded.id);
+        if (!user) {
+          return res.status(404).json({
+            success: false,
+            message: 'Account not found.'
+          });
+        }
+        const currentPwdTime = user.passwordChangedAt ? user.passwordChangedAt.getTime() : 0;
+        if (decoded.pwdTimestamp !== currentPwdTime) {
+          return res.status(401).json({
+            success: false,
+            message: 'Password reset token has already been used. Please request a new reset code.'
+          });
+        }
       } catch (err) {
         return res.status(401).json({
           success: false,
@@ -734,11 +742,22 @@ exports.resetPassword = async (req, res, next) => {
         });
       }
 
+      if (otpRecord.attempts >= 5) {
+        await Otp.deleteOne({ _id: otpRecord._id });
+        return res.status(429).json({
+          success: false,
+          message: 'Maximum verification attempts exceeded. Please request a new code.'
+        });
+      }
+
       const submittedHash = hashOtp(cleanOtp);
       if (submittedHash !== otpRecord.otpHash) {
+        otpRecord.attempts += 1;
+        await otpRecord.save();
+        const remaining = 5 - otpRecord.attempts;
         return res.status(400).json({
           success: false,
-          message: 'Invalid reset code.'
+          message: `Invalid reset code. (${remaining} attempts remaining)`
         });
       }
 
@@ -757,11 +776,13 @@ exports.resetPassword = async (req, res, next) => {
       });
     }
 
-    // Set new password (pre-save middleware handles bcrypt hashing with 12 rounds)
+    // Set new password (pre-save middleware handles bcrypt hashing and updates passwordChangedAt)
     user.password = newPassword.trim();
+    user.passwordChangedAt = new Date();
     await user.save();
 
     // Clean up all pending reset OTP records for this email
+    await Otp.deleteMany({ email: user.email.toLowerCase(), purpose: 'RESET' });
     await Otp.deleteMany({ email: user.email.toLowerCase(), purpose: 'RESET' });
 
     // Automatically establish a fresh session so the user is logged in immediately
@@ -832,9 +853,7 @@ exports.resendForgotPasswordOtp = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'A fresh password reset code has been sent to your email.',
-      email: normalizedEmail,
-      simulated: emailResult.simulated,
-      devOtp: emailResult.simulated ? otpNumber : undefined
+      email: normalizedEmail
     });
   } catch (error) {
     next(error);
@@ -932,12 +951,47 @@ exports.login = async (req, res, next) => {
       });
     }
 
+    // Account deactivation check
+    if (user.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been deactivated. Please contact support.'
+      });
+    }
+
+    // Account lockout check (after 5 failed attempts)
+    if (user.lockUntil && user.lockUntil > new Date()) {
+      const remainingMinutes = Math.ceil((user.lockUntil.getTime() - Date.now()) / (60 * 1000));
+      return res.status(423).json({
+        success: false,
+        message: `Account is temporarily locked due to multiple failed login attempts. Please try again in ${remainingMinutes} minute(s).`
+      });
+    }
+
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+      if (user.failedLoginAttempts >= 5) {
+        user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15-minute lock
+        await user.save();
+        return res.status(423).json({
+          success: false,
+          message: 'Too many failed login attempts. Account temporarily locked for 15 minutes.'
+        });
+      }
+      await user.save();
+      const remainingAttempts = 5 - user.failedLoginAttempts;
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password.'
+        message: `Invalid email or password. (${remainingAttempts} attempt(s) remaining before account lockout)`
       });
+    }
+
+    // Reset failed attempts upon successful login
+    if (user.failedLoginAttempts > 0 || user.lockUntil) {
+      user.failedLoginAttempts = 0;
+      user.lockUntil = null;
+      await user.save();
     }
 
     const token = generateToken(user._id);

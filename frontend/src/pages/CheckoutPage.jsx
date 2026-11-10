@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   ShieldCheck,
@@ -40,7 +40,7 @@ export const CheckoutPage = () => {
   const location = useLocation();
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState('upi'); // 'upi' | 'card' | 'netbanking' | 'cod'
+  const [paymentMethod, setPaymentMethod] = useState('cod'); // Default to 'cod' for instant verification
   const [selectedUpiApp, setSelectedUpiApp] = useState('gpay');
   const [upiIdInput, setUpiIdInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(() => {
@@ -58,6 +58,12 @@ export const CheckoutPage = () => {
   const [placedOrderData, setPlacedOrderData] = useState(null);
   const [copiedOrderId, setCopiedOrderId] = useState(false);
   const [orderSubmitting, setOrderSubmitting] = useState(false);
+
+  // Idempotency key tracking to guarantee single-order execution on double clicks / retries
+  const idempotencyKeyRef = useRef(null);
+  if (!idempotencyKeyRef.current) {
+    idempotencyKeyRef.current = 'idemp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+  }
 
   // Address State - dynamically synced with selectedAddress and user account
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
@@ -216,8 +222,8 @@ export const CheckoutPage = () => {
   const isFreeDelivery = netSubtotal >= threshold;
   const deliveryFee = isFreeDelivery ? 0 : standardDeliveryFee;
 
-  // Extra 5% instant UPI prepaid discount
-  const prepaidDiscount = paymentMethod === 'upi' ? Math.round(netSubtotal * 0.05) : 0;
+  // Extra 5% instant UPI discount disabled until real payment gateway integration
+  const prepaidDiscount = 0;
 
   const finalPayable = Math.max(0, netSubtotal - prepaidDiscount + deliveryFee);
   const totalSavings = productDiscount + couponDiscount + prepaidDiscount + (isFreeDelivery ? standardDeliveryFee : 0);
@@ -387,8 +393,11 @@ export const CheckoutPage = () => {
         couponCode: appliedCoupon?.code || appliedCoupon || null
       };
 
-      const response = await api.createOrder(orderPayload);
+      const response = await api.createOrder(orderPayload, {
+        idempotencyKey: idempotencyKeyRef.current
+      });
       if (response && response.success && response.order) {
+        idempotencyKeyRef.current = null; // Reset for next order cycle
         const placedOrderId = response.order.orderId || response.order.id;
         setOrderId(placedOrderId);
         setPlacedOrderData(response.order);
@@ -1073,93 +1082,7 @@ export const CheckoutPage = () => {
           </div>
 
           <div className="fk-payment-options-list">
-            {/* Option 1: UPI */}
-            <div
-              className={`fk-payment-opt ${paymentMethod === 'upi' ? 'selected' : ''}`}
-              onClick={() => setPaymentMethod('upi')}
-            >
-              <div className="fk-opt-radio">
-                <div className={`fk-radio-dot ${paymentMethod === 'upi' ? 'checked' : ''}`} />
-              </div>
-              <div className="fk-opt-info">
-                <div className="fk-opt-title-row">
-                  <strong>UPI (Google Pay, PhonePe, Paytm, Any UPI)</strong>
-                  <span className="fk-upi-instant-badge">EXTRA 5% OFF</span>
-                </div>
-                <p className="fk-opt-desc">Pay directly from your bank via any UPI App. Zero fees.</p>
-
-                {paymentMethod === 'upi' && (
-                  <div className="fk-upi-suboptions">
-                    <div className="fk-upi-app-chips">
-                      <button
-                        type="button"
-                        className={`fk-upi-chip ${selectedUpiApp === 'gpay' ? 'active' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedUpiApp('gpay');
-                        }}
-                      >
-                        Google Pay
-                      </button>
-                      <button
-                        type="button"
-                        className={`fk-upi-chip ${selectedUpiApp === 'phonepe' ? 'active' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedUpiApp('phonepe');
-                        }}
-                      >
-                        PhonePe
-                      </button>
-                      <button
-                        type="button"
-                        className={`fk-upi-chip ${selectedUpiApp === 'paytm' ? 'active' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedUpiApp('paytm');
-                        }}
-                      >
-                        Paytm
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Option 2: Credit / Debit / ATM Card */}
-            <div
-              className={`fk-payment-opt ${paymentMethod === 'card' ? 'selected' : ''}`}
-              onClick={() => setPaymentMethod('card')}
-            >
-              <div className="fk-opt-radio">
-                <div className={`fk-radio-dot ${paymentMethod === 'card' ? 'checked' : ''}`} />
-              </div>
-              <div className="fk-opt-info">
-                <div className="fk-opt-title-row">
-                  <strong>Credit / Debit / ATM Card</strong>
-                </div>
-                <p className="fk-opt-desc">Visa, MasterCard, RuPay, Maestro, Diners</p>
-              </div>
-            </div>
-
-            {/* Option 3: Net Banking */}
-            <div
-              className={`fk-payment-opt ${paymentMethod === 'netbanking' ? 'selected' : ''}`}
-              onClick={() => setPaymentMethod('netbanking')}
-            >
-              <div className="fk-opt-radio">
-                <div className={`fk-radio-dot ${paymentMethod === 'netbanking' ? 'checked' : ''}`} />
-              </div>
-              <div className="fk-opt-info">
-                <div className="fk-opt-title-row">
-                  <strong>Net Banking</strong>
-                </div>
-                <p className="fk-opt-desc">All Indian banks supported (HDFC, ICICI, SBI, Axis)</p>
-              </div>
-            </div>
-
-            {/* Option 4: Cash on Delivery */}
+            {/* Option 1: Cash on Delivery (Recommended & Confirmed immediately) */}
             <div
               className={`fk-payment-opt ${paymentMethod === 'cod' ? 'selected' : ''}`}
               onClick={() => setPaymentMethod('cod')}
@@ -1170,8 +1093,68 @@ export const CheckoutPage = () => {
               <div className="fk-opt-info">
                 <div className="fk-opt-title-row">
                   <strong>Cash on Delivery (COD)</strong>
+                  <span style={{ fontSize: '11px', fontWeight: 700, background: '#DCFCE7', color: '#166534', padding: '2px 8px', borderRadius: '4px' }}>
+                    RECOMMENDED
+                  </span>
                 </div>
-                <p className="fk-opt-desc">Pay cash or scan QR code when your order arrives</p>
+                <p className="fk-opt-desc">Pay cash or scan QR code when your order arrives. Verified &amp; dispatched immediately.</p>
+              </div>
+            </div>
+
+            {/* Option 2: UPI (Online gateway pending) */}
+            <div
+              className={`fk-payment-opt ${paymentMethod === 'upi' ? 'selected' : ''}`}
+              onClick={() => setPaymentMethod('upi')}
+            >
+              <div className="fk-opt-radio">
+                <div className={`fk-radio-dot ${paymentMethod === 'upi' ? 'checked' : ''}`} />
+              </div>
+              <div className="fk-opt-info">
+                <div className="fk-opt-title-row">
+                  <strong>UPI (Google Pay, PhonePe, Paytm, Any UPI)</strong>
+                  <span style={{ fontSize: '10.5px', fontWeight: 600, background: '#FEF3C7', color: '#92400E', padding: '2px 6px', borderRadius: '4px' }}>
+                    GATEWAY PENDING
+                  </span>
+                </div>
+                <p className="fk-opt-desc">Online payment gateway integration in progress. Order will be recorded in Payment Pending status.</p>
+              </div>
+            </div>
+
+            {/* Option 3: Credit / Debit / ATM Card */}
+            <div
+              className={`fk-payment-opt ${paymentMethod === 'card' ? 'selected' : ''}`}
+              onClick={() => setPaymentMethod('card')}
+            >
+              <div className="fk-opt-radio">
+                <div className={`fk-radio-dot ${paymentMethod === 'card' ? 'checked' : ''}`} />
+              </div>
+              <div className="fk-opt-info">
+                <div className="fk-opt-title-row">
+                  <strong>Credit / Debit / ATM Card</strong>
+                  <span style={{ fontSize: '10.5px', fontWeight: 600, background: '#F1F5F9', color: '#64748B', padding: '2px 6px', borderRadius: '4px' }}>
+                    GATEWAY PENDING
+                  </span>
+                </div>
+                <p className="fk-opt-desc">Visa, MasterCard, RuPay, Maestro (Awaiting live payment gateway integration)</p>
+              </div>
+            </div>
+
+            {/* Option 4: Net Banking */}
+            <div
+              className={`fk-payment-opt ${paymentMethod === 'netbanking' ? 'selected' : ''}`}
+              onClick={() => setPaymentMethod('netbanking')}
+            >
+              <div className="fk-opt-radio">
+                <div className={`fk-radio-dot ${paymentMethod === 'netbanking' ? 'checked' : ''}`} />
+              </div>
+              <div className="fk-opt-info">
+                <div className="fk-opt-title-row">
+                  <strong>Net Banking</strong>
+                  <span style={{ fontSize: '10.5px', fontWeight: 600, background: '#F1F5F9', color: '#64748B', padding: '2px 6px', borderRadius: '4px' }}>
+                    GATEWAY PENDING
+                  </span>
+                </div>
+                <p className="fk-opt-desc">All Indian banks (Awaiting live payment gateway integration)</p>
               </div>
             </div>
           </div>

@@ -21,8 +21,8 @@ const authenticate = async (req, res, next) => {
     ) {
       token = req.headers.authorization.split(' ')[1];
     }
-    // 3. Fallback to query param (essential for browser EventSource / SSE live stream)
-    else if (req.query && req.query.token) {
+    // 3. Fallback to query param strictly for browser EventSource / SSE live stream
+    else if (req.query && req.query.token && (req.path.includes('/live-stream') || req.baseUrl.includes('/admin'))) {
       token = req.query.token;
     }
 
@@ -54,6 +54,25 @@ const authenticate = async (req, res, next) => {
         success: false,
         message: 'User account not found or session expired.'
       });
+    }
+
+    // Account deactivation enforcement
+    if (user.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been deactivated. Please contact support.'
+      });
+    }
+
+    // Session revocation check: token issued before recent password change
+    if (user.passwordChangedAt && decoded.iat) {
+      const changedTimestamp = Math.floor(user.passwordChangedAt.getTime() / 1000);
+      if (decoded.iat < changedTimestamp) {
+        return res.status(401).json({
+          success: false,
+          message: 'Session invalidated due to recent password change. Please log in again.'
+        });
+      }
     }
 
     req.user = user;
@@ -101,7 +120,18 @@ const optionalAuth = async (req, res, next) => {
 
     if (decoded && decoded.id) {
       const user = await User.findById(decoded.id);
-      req.user = user || null;
+      if (user && user.isActive !== false) {
+        if (user.passwordChangedAt && decoded.iat) {
+          const changedTimestamp = Math.floor(user.passwordChangedAt.getTime() / 1000);
+          if (decoded.iat < changedTimestamp) {
+            req.user = null;
+            return next();
+          }
+        }
+        req.user = user;
+      } else {
+        req.user = null;
+      }
     } else {
       req.user = null;
     }

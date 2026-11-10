@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const Order = require('../models/Order');
+const { sanitizeSearchQuery } = require('../utils/sanitize');
 
 /**
  * GET /api/v1/admin/customers
@@ -12,8 +13,9 @@ const getCustomers = async (req, res, next) => {
 
     const query = { role: 'customer' };
 
-    if (search.trim()) {
-      const reg = new RegExp(search.trim(), 'i');
+    const safeSearch = sanitizeSearchQuery(search, 50);
+    if (safeSearch) {
+      const reg = new RegExp(safeSearch, 'i');
       query.$or = [{ name: reg }, { email: reg }, { phone: reg }];
     }
 

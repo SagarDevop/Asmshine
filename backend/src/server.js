@@ -18,13 +18,24 @@ const ensureInitialAdmin = async () => {
     const adminExists = await User.findOne({ role: { $in: ['superadmin', 'admin'] } });
     if (!adminExists) {
       const email = (process.env.ADMIN_INITIAL_EMAIL || 'admin@asmshine.com').trim().toLowerCase();
-      const password = process.env.ADMIN_INITIAL_PASSWORD || 'Admin@AsmShine2026';
+      const password = process.env.ADMIN_INITIAL_PASSWORD;
       const name = 'SM Shine Administrator';
+
+      if (!password || password.trim().length < 8) {
+        if (process.env.NODE_ENV === 'production') {
+          console.error('[FATAL CONFIG ERROR] ADMIN_INITIAL_PASSWORD environment secret must be set (min 8 chars) to bootstrap initial superadmin.');
+          process.exit(1);
+        } else {
+          console.warn('[Auto-Bootstrap] ADMIN_INITIAL_PASSWORD not configured in backend/.env. Superadmin provisioning skipped.');
+          return;
+        }
+      }
 
       let user = await User.findOne({ email });
       if (user) {
         user.role = 'superadmin';
         user.isActive = true;
+        user.password = password;
         await user.save();
       } else {
         user = new User({
@@ -36,7 +47,7 @@ const ensureInitialAdmin = async () => {
         });
         await user.save();
       }
-      console.log(`[Auto-Bootstrap] Initial superadmin '${email}' ready for production.`);
+      console.log(`[Auto-Bootstrap] Initial superadmin '${email}' provisioned securely.`);
     }
   } catch (err) {
     console.warn('[Auto-Bootstrap] Admin bootstrap notice:', err.message);

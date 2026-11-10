@@ -1,7 +1,30 @@
 const StoreSettings = require('../models/StoreSettings');
 
-// In-memory LRU-style cache for rapid pincode lookups
+// Bounded LRU Cache with TTL to prevent memory exhaustion DoS
+const MAX_CACHE_SIZE = 1000;
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24-hour cache duration
 const pincodeCache = new Map();
+
+const getCachedPincode = (key) => {
+  const entry = pincodeCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    pincodeCache.delete(key);
+    return null;
+  }
+  // Refresh LRU order on hit
+  pincodeCache.delete(key);
+  pincodeCache.set(key, entry);
+  return entry.data;
+};
+
+const setCachedPincode = (key, data) => {
+  if (pincodeCache.size >= MAX_CACHE_SIZE) {
+    const oldestKey = pincodeCache.keys().next().value;
+    pincodeCache.delete(oldestKey);
+  }
+  pincodeCache.set(key, { data, timestamp: Date.now() });
+};
 
 // Comprehensive Regional Pincode Prefix Dictionary covering all Indian Postal Circles
 const PINCODE_PREFIX_MAP = [
@@ -121,8 +144,9 @@ const PINCODE_PREFIX_MAP = [
  * Queries official India Post API with in-memory cache and seamless offline dictionary fallback.
  */
 const lookupPincodeDetails = async (cleanPin) => {
-  if (pincodeCache.has(cleanPin)) {
-    return pincodeCache.get(cleanPin);
+  const cached = getCachedPincode(cleanPin);
+  if (cached) {
+    return cached;
   }
 
   // Find longest prefix match (3-digit first, then 2-digit)
@@ -155,7 +179,7 @@ const lookupPincodeDetails = async (cleanPin) => {
           days: defaultDays
         };
 
-        pincodeCache.set(cleanPin, resolved);
+        setCachedPincode(cleanPin, resolved);
         return resolved;
       }
     }
@@ -171,7 +195,7 @@ const lookupPincodeDetails = async (cleanPin) => {
     days: defaultDays
   };
 
-  pincodeCache.set(cleanPin, fallback);
+  setCachedPincode(cleanPin, fallback);
   return fallback;
 };
 
