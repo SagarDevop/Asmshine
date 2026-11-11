@@ -20,13 +20,15 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://frontend-exjb.vercel.app https://asmshine.onrender.com http://localhost:* http://127.0.0.1:*; frame-ancestors 'self';"
+    "default-src 'self'; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://lh3.googleusercontent.com; script-src 'self' 'unsafe-inline' https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.asmshine.com https://asmshine.com https://frontend-exjb.vercel.app https://asmshine.onrender.com https://accounts.google.com http://localhost:* http://127.0.0.1:*; frame-src https://accounts.google.com; frame-ancestors 'self';"
   );
   next();
 });
 
 // Whitelist of Explicitly Allowed Frontend Origins
 const defaultProductionOrigins = [
+  'https://www.asmshine.com',
+  'https://asmshine.com',
   'https://frontend-exjb.vercel.app'
 ];
 
