@@ -75,8 +75,7 @@ const userSchema = new mongoose.Schema(
       type: Date
     },
     passwordChangedAt: {
-      type: Date,
-      default: () => new Date(Date.now() - 10000) // Initialized in past so fresh session JWTs are immediately valid
+      type: Date
     }
   },
   {
