@@ -33,14 +33,13 @@ export const AdminAuthProvider = ({ children }) => {
             setAdmin(res.user);
             localStorage.setItem('asm_admin_user', JSON.stringify(res.user));
           } else {
-            // Not an admin
+            // User account does not have staff or admin role
             logout();
           }
-        } else {
-          logout();
         }
-      } catch {
-        logout();
+      } catch (err) {
+        // Do not wipe credentials on transient network drops or server restarts
+        console.warn('[AdminAuth] Session verification notice:', err.message);
       } finally {
         if (isMounted) setLoading(false);
       }

@@ -10,16 +10,16 @@ const authenticate = async (req, res, next) => {
   try {
     let token = null;
 
-    // 1. Check HttpOnly cookie first
-    if (req.cookies && req.cookies.token) {
-      token = req.cookies.token;
-    }
-    // 2. Fallback to Authorization header
-    else if (
+    // 1. Check Authorization Bearer header first (Explicit client token takes precedence over ambient cookies)
+    if (
       req.headers.authorization &&
       req.headers.authorization.startsWith('Bearer ')
     ) {
       token = req.headers.authorization.split(' ')[1];
+    }
+    // 2. Fallback to HttpOnly cookie for web browser sessions
+    else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
     }
     // 3. Fallback to query param strictly for browser EventSource / SSE live stream
     else if (req.query && req.query.token && (req.path.includes('/live-stream') || req.baseUrl.includes('/admin'))) {
@@ -101,13 +101,16 @@ const optionalAuth = async (req, res, next) => {
   try {
     let token = null;
 
-    if (req.cookies && req.cookies.token) {
-      token = req.cookies.token;
-    } else if (
+    // 1. Check Authorization Bearer header first (Explicit client token takes precedence over ambient cookies)
+    if (
       req.headers.authorization &&
       req.headers.authorization.startsWith('Bearer ')
     ) {
       token = req.headers.authorization.split(' ')[1];
+    }
+    // 2. Fallback to HttpOnly cookie for web browser sessions
+    else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
     }
 
     if (!token) {
