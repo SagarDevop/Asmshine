@@ -1269,6 +1269,7 @@ export const AccountPage = () => {
                             className="fk-wishlist-title"
                             onClick={() => navigate(`/product/${pid}`)}
                             style={{ cursor: 'pointer' }}
+                            title={p.name}
                           >
                             {p.name}
                           </h4>
