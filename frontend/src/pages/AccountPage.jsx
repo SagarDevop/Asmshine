@@ -34,7 +34,9 @@ import {
   Award,
   Copy,
   Check,
-  X
+  X,
+  SprayCan,
+  Utensils
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -990,8 +992,9 @@ export const AccountPage = () => {
                           Deliver to this address
                         </button>
                       ) : (
-                        <span style={{ fontSize: '12px', color: '#0284C7', fontWeight: 700 }}>
-                          ✓ Active Delivery Address
+                        <span style={{ fontSize: '12px', color: '#0284C7', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <CheckCircle2 size={13} color="#0284C7" />
+                          <span>Active Delivery Address</span>
                         </span>
                       )}
                     </div>
@@ -1549,28 +1552,40 @@ export const AccountPage = () => {
               {modalView === 'qa' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '380px', overflowY: 'auto' }}>
                   <div style={{ padding: '12px 14px', border: '1px solid #E2E8F0', borderRadius: '8px', backgroundColor: '#F8FAFC' }}>
-                    <strong style={{ fontSize: '13.5px', color: '#1E3A8A', display: 'block', marginBottom: '4px' }}>🚽 ASM Shine Power Toilet Cleaner</strong>
+                    <strong style={{ fontSize: '13.5px', color: '#1E3A8A', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <ShieldCheck size={16} color="#2563EB" />
+                      <span>ASM Shine Power Toilet Cleaner</span>
+                    </strong>
                     <p style={{ fontSize: '12px', color: '#475569', margin: 0, lineHeight: 1.5 }}>
                       Apply undiluted directly under the toilet rim. Allow thick formula to coat for 15-20 minutes to dissolve tough yellow lime scale and kill 99.9% germs. Scrub lightly with toilet brush and flush.
                     </p>
                   </div>
 
                   <div style={{ padding: '12px 14px', border: '1px solid #E2E8F0', borderRadius: '8px', backgroundColor: '#F8FAFC' }}>
-                    <strong style={{ fontSize: '13.5px', color: '#1E3A8A', display: 'block', marginBottom: '4px' }}>✨ Surface &amp; Floor Disinfectant</strong>
+                    <strong style={{ fontSize: '13.5px', color: '#1E3A8A', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <Sparkles size={16} color="#059669" />
+                      <span>Surface &amp; Floor Disinfectant</span>
+                    </strong>
                     <p style={{ fontSize: '12px', color: '#475569', margin: 0, lineHeight: 1.5 }}>
                       Dilute 1 cap (20ml) into half bucket of water (approx. 4 Litres). Mop gently over tiles, marble, and granite. No need to rinse. Dries fast without slippery residue.
                     </p>
                   </div>
 
                   <div style={{ padding: '12px 14px', border: '1px solid #E2E8F0', borderRadius: '8px', backgroundColor: '#F8FAFC' }}>
-                    <strong style={{ fontSize: '13.5px', color: '#1E3A8A', display: 'block', marginBottom: '4px' }}>🪞 Crystal Glass &amp; Mirror Cleaner</strong>
+                    <strong style={{ fontSize: '13.5px', color: '#1E3A8A', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <SprayCan size={16} color="#0284C7" />
+                      <span>Crystal Glass &amp; Mirror Cleaner</span>
+                    </strong>
                     <p style={{ fontSize: '12px', color: '#475569', margin: 0, lineHeight: 1.5 }}>
                       Turn spray nozzle to ON. Spray mist directly from 15-20 cm distance. Wipe immediately with clean dry microfiber cloth for streak-free sparkling shine.
                     </p>
                   </div>
 
                   <div style={{ padding: '12px 14px', border: '1px solid #E2E8F0', borderRadius: '8px', backgroundColor: '#F8FAFC' }}>
-                    <strong style={{ fontSize: '13.5px', color: '#1E3A8A', display: 'block', marginBottom: '4px' }}>🍽️ Concentrated Dishwash Gel</strong>
+                    <strong style={{ fontSize: '13.5px', color: '#1E3A8A', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <Utensils size={16} color="#D97706" />
+                      <span>Concentrated Dishwash Gel</span>
+                    </strong>
                     <p style={{ fontSize: '12px', color: '#475569', margin: 0, lineHeight: 1.5 }}>
                       Mix 1 teaspoon (4ml) in a small bowl of water (approx. 40ml). Dip sponge and clean utensils to dissolve oil, curry stains, and food odors easily.
                     </p>

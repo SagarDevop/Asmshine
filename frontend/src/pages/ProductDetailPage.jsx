@@ -480,7 +480,10 @@ export const ProductDetailPage = ({
               <span className="pdp-mp-badge">BUY FROM MARKETPLACES</span>
               <h3 className="pdp-marketplaces-heading">Also Available On</h3>
             </div>
-            <span className="pdp-mp-verified-tag">✓ Official Store Listings</span>
+            <span className="pdp-mp-verified-tag" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <ShieldCheck size={13} color="#2563EB" />
+              <span>Official Store Listings</span>
+            </span>
           </div>
 
           <div className="pdp-marketplaces-grid">
@@ -687,8 +690,9 @@ export const ProductDetailPage = ({
                 <span style={{ fontSize: '12px', color: '#334155', fontWeight: 600 }}>
                   Deliver to <strong>{deliveryInfo.city}{deliveryInfo.state && deliveryInfo.state !== 'India' ? `, ${deliveryInfo.state}` : ''} ({deliveryInfo.pincode})</strong>
                 </span>
-                <span style={{ fontSize: '11px', color: '#059669', fontWeight: 700, background: '#DCFCE7', padding: '2px 8px', borderRadius: '12px' }}>
-                  ✓ SERVICEABLE
+                <span style={{ fontSize: '11px', color: '#059669', fontWeight: 700, background: '#DCFCE7', padding: '2px 8px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <Check size={12} color="#059669" />
+                  <span>SERVICEABLE</span>
                 </span>
               </div>
 
@@ -701,8 +705,9 @@ export const ProductDetailPage = ({
 
               <div style={{ fontSize: '12px', color: '#64748B' }}>
                 {deliveryInfo.isFreeDelivery ? (
-                  <span style={{ color: '#059669', fontWeight: 700 }}>
-                    🎉 FREE Delivery Applied (Order above ₹{deliveryInfo.freeShippingThreshold})
+                  <span style={{ color: '#059669', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <Truck size={13} color="#059669" />
+                    <span>FREE Delivery Applied (Order above ₹{deliveryInfo.freeShippingThreshold})</span>
                   </span>
                 ) : (
                   <span>
@@ -913,7 +918,10 @@ export const ProductDetailPage = ({
                 { stars: 1, pct: '0%' }
               ].map((b) => (
                 <div className="pdp-bar-row" key={b.stars}>
-                  <span className="pdp-bar-label">{b.stars}★</span>
+                  <span className="pdp-bar-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                    <span>{b.stars}</span>
+                    <Star size={10} fill="#F59E0B" color="#F59E0B" />
+                  </span>
                   <div className="pdp-bar-track">
                     <div className="pdp-bar-fill" style={{ width: b.pct, backgroundColor: '#1C8E8F' }} />
                   </div>

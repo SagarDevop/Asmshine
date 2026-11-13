@@ -591,7 +591,10 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  ✉️ Email OTP
+                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <Mail size={14} />
+                    <span>Email OTP</span>
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -610,7 +613,10 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  🔒 Password
+                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <Lock size={14} />
+                    <span>Password</span>
+                  </span>
                 </button>
               </div>
 

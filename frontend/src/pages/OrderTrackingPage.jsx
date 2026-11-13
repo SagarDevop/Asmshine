@@ -17,7 +17,9 @@ import {
   CheckCircle2,
   AlertCircle,
   ChevronRight,
-  Headphones
+  Headphones,
+  X,
+  MessageSquare
 } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -754,7 +756,7 @@ export const OrderTrackingPage = () => {
                 }}
                 aria-label="Close"
               >
-                ✕
+                <X size={18} />
               </button>
             </div>
 
@@ -890,7 +892,7 @@ export const OrderTrackingPage = () => {
                         rel="noopener noreferrer"
                         className="fk-help-contact-card whatsapp"
                       >
-                        <span style={{ fontSize: '18px' }}>💬</span>
+                        <MessageSquare size={18} color="#FFFFFF" />
                         <div>
                           <div>WhatsApp</div>
                           <small style={{ fontWeight: 400, opacity: 0.85 }}>Instant Chat</small>
@@ -926,7 +928,10 @@ export const OrderTrackingPage = () => {
                       </p>
                       <div className="fk-help-lock-policy-box">
                         <div>Reason: <strong>{order.cancellation?.reason || 'Cancelled by customer'}</strong></div>
-                        <div style={{ color: '#16A34A', fontWeight: 600 }}>✓ Stock restored to inventory</div>
+                        <div style={{ color: '#16A34A', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <CheckCircle2 size={13} color="#16A34A" />
+                          <span>Stock restored to inventory</span>
+                        </div>
                       </div>
                       <div style={{ marginTop: '14px' }}>
                         <button

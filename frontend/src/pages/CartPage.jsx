@@ -430,8 +430,8 @@ export const CartPage = ({
                 }}
               >
                 <Truck size={17} color="#059669" />
-                <span style={{ color: '#065F46', fontSize: '13px', fontWeight: 600 }}>
-                  🎉 Congratulations! You have unlocked <strong>FREE Express Delivery</strong> on this order.
+                <span style={{ color: '#065F46', fontSize: '12.5px', fontWeight: 600 }}>
+                  You have unlocked <strong>FREE Express Delivery</strong> on this order.
                 </span>
               </div>
             ) : (

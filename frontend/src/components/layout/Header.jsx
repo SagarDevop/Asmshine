@@ -203,7 +203,7 @@ export const Header = ({
             <button
               type="button"
               className="fk-voucher-btn"
-              onClick={() => showToast('🎟️ 15% OFF ASM Shine Coupon applied!')}
+              onClick={() => showToast('15% OFF ASM Shine Coupon applied!')}
               title="Special Coupons"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="#7C3AED">

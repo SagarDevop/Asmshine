@@ -168,7 +168,7 @@ export const HomePage = () => {
           {/* 4. Bestsellers Cleaning Essentials */}
           <ProductSection
             title="Bestsellers"
-            badge="4.8★ & ABOVE"
+            badge="4.8 RATED & ABOVE"
             subtitle="Most loved cleaning essentials trusted by 50,000+ homes"
             actionText="View All"
             actionLinkStyle="chevron"

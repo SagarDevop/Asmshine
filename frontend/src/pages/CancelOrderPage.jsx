@@ -270,8 +270,9 @@ export const CancelOrderPage = () => {
                 <div style={{ marginBottom: '4px' }}>
                   Reason: <strong>{order.cancellation?.reason || 'Cancelled by customer'}</strong>
                 </div>
-                <div style={{ color: '#16A34A', fontWeight: 600 }}>
-                  ✓ Product stock restored to inventory
+                <div style={{ color: '#16A34A', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <CheckCircle2 size={13} color="#16A34A" />
+                  <span>Product stock restored to inventory</span>
                 </div>
               </div>
 
@@ -484,8 +485,9 @@ export const CancelOrderPage = () => {
                   )}
 
                   {couponDiscount > 0 && (
-                    <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed #CBD5E1', color: '#16A34A', fontWeight: 600 }}>
-                      ✓ Applied coupon will be restored to your account
+                    <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed #CBD5E1', color: '#16A34A', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <CheckCircle2 size={13} color="#16A34A" />
+                      <span>Applied coupon will be restored to your account</span>
                     </div>
                   )}
                 </div>

@@ -588,8 +588,9 @@ export const CheckoutPage = () => {
                 <ShoppingBag size={16} color="#2563EB" />
                 <span>Items Ordered ({orderedList.length})</span>
               </h3>
-              <span style={{ fontSize: '11.5px', color: '#16A34A', fontWeight: 700 }}>
-                ✓ Authentic SM Shine
+              <span style={{ fontSize: '11.5px', color: '#16A34A', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <ShieldCheck size={13} color="#16A34A" />
+                <span>Authentic ASM Shine</span>
               </span>
             </div>
 
