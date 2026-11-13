@@ -1,62 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import {
-  Shield,
-  FileText,
-  Lock,
-  RotateCcw,
-  Clock,
-  CheckCircle2,
-  ExternalLink,
-  ChevronRight,
-  ArrowLeft,
-  Mail,
-  Printer
-} from 'lucide-react';
 import { api } from '../services/api';
 import { DEFAULT_POLICIES } from '../data/defaultPolicies';
 
-const policyIcons = {
-  terms_and_conditions: FileText,
-  privacy_policy: Lock,
-  refund_policy: RotateCcw
-};
+/**
+ * Utility to parse inline markdown (bold text, email addresses, hyperlinks)
+ */
+function renderInlineMarkdown(text) {
+  if (!text) return null;
+  const parts = [];
+  const regex = /(\*\*[^*]+\*\*|\[([^\]]+)\]\(([^)]+)\)|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+  let lastIndex = 0;
+  let match;
 
-const policyRoutes = [
-  { id: 'terms_and_conditions', label: 'Terms & Conditions', path: '/terms-and-conditions' },
-  { id: 'privacy_policy', label: 'Privacy Policy', path: '/privacy-policy' },
-  { id: 'refund_policy', label: 'Refund & Return Policy', path: '/refund-policy' }
-];
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    const token = match[0];
+    if (token.startsWith('**') && token.endsWith('**')) {
+      parts.push(
+        <strong key={match.index} style={{ fontWeight: 600, color: '#172B4D' }}>
+          {token.slice(2, -2)}
+        </strong>
+      );
+    } else if (token.startsWith('[') && match[2] && match[3]) {
+      parts.push(
+        <a key={match.index} href={match[3]} style={{ color: '#2563EB', textDecoration: 'underline' }}>
+          {match[2]}
+        </a>
+      );
+    } else if (token.includes('@')) {
+      parts.push(
+        <a key={match.index} href={`mailto:${token}`} style={{ color: '#2563EB', textDecoration: 'underline' }}>
+          {token}
+        </a>
+      );
+    }
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+  return parts.length > 0 ? parts : text;
+}
 
 export const LegalPolicyPage = ({ policyType, fallbackTitle }) => {
-  const navigate = useNavigate();
   const [policy, setPolicy] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  const IconComponent = policyIcons[policyType] || Shield;
+  const fallback = DEFAULT_POLICIES[policyType] || {
+    title: fallbackTitle,
+    version: '1.0',
+    effectiveDate: '2026-01-01',
+    lastUpdated: '2026-11-14',
+    content: ''
+  };
 
   useEffect(() => {
     let isMounted = true;
     const fetchPolicy = async () => {
       setLoading(true);
-      setError(null);
       try {
         const res = await api.getPublicPolicy(policyType);
         if (isMounted && res.success && res.data) {
           setPolicy(res.data);
         }
       } catch (err) {
-        console.warn(`[LegalPolicy] Live fetch failed for ${policyType}, using approved offline draft:`, err.message);
+        console.warn(`[LegalDocument] Using approved offline policy for ${policyType}:`, err.message);
         if (isMounted) {
-          // Use approved default fallback policy so page never fails to display
           setPolicy({
             policyType,
-            title: DEFAULT_POLICIES[policyType]?.title || fallbackTitle,
-            version: DEFAULT_POLICIES[policyType]?.version || '1.0',
-            content: DEFAULT_POLICIES[policyType]?.content || '',
-            publishedAt: new Date(),
-            effectiveDate: new Date()
+            ...fallback
           });
         }
       } finally {
@@ -68,278 +82,291 @@ export const LegalPolicyPage = ({ policyType, fallbackTitle }) => {
     return () => {
       isMounted = false;
     };
-  }, [policyType, fallbackTitle]);
+  }, [policyType]);
 
-  const activePolicy = policy || {
-    title: fallbackTitle,
-    version: '1.0',
-    content: DEFAULT_POLICIES[policyType]?.content || ''
-  };
+  const activePolicy = policy || fallback;
+  const pageTitle = activePolicy.title || fallbackTitle;
+
+  // Set browser tab title
+  useEffect(() => {
+    document.title = `${pageTitle} — ASM Shine`;
+    return () => {
+      document.title = 'ASM Shine — Hygiene & Cleaning Formulations';
+    };
+  }, [pageTitle]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return 'January 1, 2026';
     const d = new Date(dateStr);
-    return d.toLocaleDateString('en-IN', {
+    return d.toLocaleDateString('en-US', {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const rawContent = activePolicy.content || fallback.content || '';
+
+  // Parse markdown content into structured document blocks
+  const blocks = rawContent
+    .split(/\n\n+/)
+    .map((block) => block.trim())
+    .filter(Boolean);
 
   return (
-    <div className="legal-policy-page-wrap" style={{ minHeight: '80vh', backgroundColor: '#F8FAFC', padding: '24px 16px 60px 16px' }}>
-      <div style={{ maxWidth: '960px', margin: '0 auto' }}>
-        {/* Navigation Breadcrumb */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#64748B' }}>
-            <Link to="/" style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 600 }}>Home</Link>
-            <ChevronRight size={13} color="#94A3B8" />
-            <span>Legal</span>
-            <ChevronRight size={13} color="#94A3B8" />
-            <span style={{ color: '#0F172A', fontWeight: 700 }}>{activePolicy.title}</span>
-          </div>
+    <div className="legal-document-wrapper">
+      <style>{`
+        /* Standalone White Document Styles */
+        html, body {
+          background-color: #FFFFFF !important;
+          margin: 0;
+          padding: 0;
+          font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
 
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              onClick={handlePrint}
-              type="button"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                border: '1px solid #E2E8F0',
-                background: '#FFFFFF',
-                color: '#475569',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-              title="Print Policy"
-            >
-              <Printer size={14} />
-              <span>Print Policy</span>
-            </button>
-            <button
-              onClick={() => navigate(-1)}
-              type="button"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                border: '1px solid #E2E8F0',
-                background: '#FFFFFF',
-                color: '#475569',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-            >
-              <ArrowLeft size={14} />
-              <span>Back</span>
-            </button>
-          </div>
-        </div>
+        .legal-document-wrapper {
+          min-height: 100vh;
+          background-color: #FFFFFF;
+          width: 100%;
+          box-sizing: border-box;
+          padding: 56px 24px 96px 24px;
+        }
 
-        {/* Policy Tab Bar */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            marginBottom: '20px',
-            overflowX: 'auto',
-            paddingBottom: '4px'
-          }}
-        >
-          {policyRoutes.map((tab) => {
-            const isActive = tab.id === policyType;
+        .legal-document-container {
+          max-width: 800px;
+          margin: 0 auto;
+          background-color: #FFFFFF;
+          box-sizing: border-box;
+          text-align: left;
+        }
+
+        .legal-doc-title {
+          font-size: 30px;
+          line-height: 1.25;
+          font-weight: 700;
+          color: #172B4D;
+          margin: 0 0 10px 0;
+          letter-spacing: -0.02em;
+        }
+
+        .legal-doc-meta {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 16px;
+          font-size: 13px;
+          font-weight: 400;
+          color: #64748B;
+          padding-bottom: 24px;
+          margin-bottom: 32px;
+          border-bottom: 1px solid #E2E8F0;
+        }
+
+        .legal-doc-meta span {
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .legal-doc-heading {
+          font-size: 18px;
+          line-height: 1.4;
+          font-weight: 600;
+          color: #172B4D;
+          margin: 32px 0 12px 0;
+          letter-spacing: -0.01em;
+          page-break-after: avoid;
+          break-after: avoid;
+        }
+
+        .legal-doc-subheading {
+          font-size: 15px;
+          line-height: 1.4;
+          font-weight: 600;
+          color: #172B4D;
+          margin: 20px 0 8px 0;
+          page-break-after: avoid;
+          break-after: avoid;
+        }
+
+        .legal-doc-paragraph {
+          font-size: 14.5px;
+          line-height: 1.75;
+          font-weight: 400;
+          color: #334155;
+          margin: 0 0 16px 0;
+        }
+
+        .legal-doc-list {
+          margin: 0 0 18px 0;
+          padding-left: 22px;
+          list-style-type: disc;
+        }
+
+        .legal-doc-list-item {
+          font-size: 14.5px;
+          line-height: 1.75;
+          font-weight: 400;
+          color: #334155;
+          margin-bottom: 6px;
+        }
+
+        .legal-doc-divider {
+          border: none;
+          border-top: 1px solid #E2E8F0;
+          margin: 32px 0;
+        }
+
+        /* Responsive Mobile Layout */
+        @media (max-width: 640px) {
+          .legal-document-wrapper {
+            padding: 32px 20px 60px 20px;
+          }
+
+          .legal-doc-title {
+            font-size: 25px;
+            margin-bottom: 8px;
+          }
+
+          .legal-doc-meta {
+            font-size: 12px;
+            gap: 10px;
+            padding-bottom: 18px;
+            margin-bottom: 24px;
+          }
+
+          .legal-doc-heading {
+            font-size: 16.5px;
+            margin-top: 26px;
+            margin-bottom: 10px;
+          }
+
+          .legal-doc-paragraph, .legal-doc-list-item {
+            font-size: 14px;
+            line-height: 1.7;
+          }
+        }
+
+        /* Clean Print Formatting */
+        @media print {
+          @page {
+            margin: 20mm 15mm;
+          }
+
+          html, body, .legal-document-wrapper {
+            background-color: #FFFFFF !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+
+          .legal-document-container {
+            max-width: 100% !important;
+            margin: 0 !important;
+          }
+
+          .legal-doc-title {
+            font-size: 24pt !important;
+            color: #000000 !important;
+          }
+
+          .legal-doc-meta {
+            color: #555555 !important;
+            border-bottom: 1pt solid #CCCCCC !important;
+          }
+
+          .legal-doc-heading {
+            color: #000000 !important;
+            break-after: avoid;
+            page-break-after: avoid;
+          }
+
+          .legal-doc-paragraph, .legal-doc-list-item {
+            color: #111111 !important;
+          }
+        }
+      `}</style>
+
+      <main className="legal-document-container" role="main">
+        {/* Document Header */}
+        <header style={{ marginBottom: '8px' }}>
+          <h1 className="legal-doc-title">{pageTitle}</h1>
+          <div className="legal-doc-meta">
+            <span>Version: {activePolicy.version || fallback.version || '1.0'}</span>
+            <span>•</span>
+            <span>Effective Date: {formatDate(activePolicy.effectiveDate || fallback.effectiveDate)}</span>
+            <span>•</span>
+            <span>Last Updated: {formatDate(activePolicy.publishedAt || fallback.lastUpdated)}</span>
+          </div>
+        </header>
+
+        {/* Document Content */}
+        <article className="legal-doc-body">
+          {blocks.map((block, idx) => {
+            // Ignore the top document title if present as markdown # Title
+            if (block.startsWith('# ')) {
+              return null;
+            }
+
+            // Ignore redundant inline Effective Date line if present in markdown
+            if (block.startsWith('**Effective Date:**') || block.startsWith('Effective Date:')) {
+              return null;
+            }
+
+            // Horizontal rule
+            if (block === '---' || block === '***') {
+              return <hr key={idx} className="legal-doc-divider" />;
+            }
+
+            // Section Heading: ### 1. Introduction or #### Section
+            if (block.startsWith('### ')) {
+              const headingText = block.replace(/^###\s+/, '');
+              return (
+                <h2 key={idx} className="legal-doc-heading">
+                  {headingText}
+                </h2>
+              );
+            }
+
+            // Subheading: #### Subheading
+            if (block.startsWith('#### ')) {
+              const subText = block.replace(/^####\s+/, '');
+              return (
+                <h3 key={idx} className="legal-doc-subheading">
+                  {subText}
+                </h3>
+              );
+            }
+
+            // Numbered / bullet lists
+            if (block.split('\n').some((line) => line.trim().startsWith('- ') || line.trim().startsWith('* '))) {
+              const lines = block.split('\n');
+              return (
+                <ul key={idx} className="legal-doc-list">
+                  {lines.map((line, lIdx) => {
+                    const clean = line.trim().replace(/^[-*]\s+/, '');
+                    if (!clean) return null;
+                    return (
+                      <li key={lIdx} className="legal-doc-list-item">
+                        {renderInlineMarkdown(clean)}
+                      </li>
+                    );
+                  })}
+                </ul>
+              );
+            }
+
+            // Standard Body Paragraph
             return (
-              <Link
-                key={tab.id}
-                to={tab.path}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  fontSize: '12.5px',
-                  fontWeight: 700,
-                  textDecoration: 'none',
-                  whiteSpace: 'nowrap',
-                  border: isActive ? '1.5px solid #2563EB' : '1px solid #E2E8F0',
-                  background: isActive ? '#EFF6FF' : '#FFFFFF',
-                  color: isActive ? '#1D4ED8' : '#64748B',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                {tab.label}
-              </Link>
+              <p key={idx} className="legal-doc-paragraph">
+                {renderInlineMarkdown(block)}
+              </p>
             );
           })}
-        </div>
-
-        {/* Main Document Card */}
-        <div
-          style={{
-            background: '#FFFFFF',
-            border: '1px solid #E2E8F0',
-            borderRadius: '16px',
-            boxShadow: '0 1px 3px rgba(15, 23, 42, 0.05)',
-            overflow: 'hidden'
-          }}
-        >
-          {/* Document Header Banner */}
-          <div
-            style={{
-              padding: '28px 32px',
-              borderBottom: '1px solid #E2E8F0',
-              background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-              <div
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '10px',
-                  background: '#EFF6FF',
-                  border: '1px solid #BFDBFE',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#2563EB'
-                }}
-              >
-                <IconComponent size={22} />
-              </div>
-              <div>
-                <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.02em' }}>
-                  {activePolicy.title}
-                </h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px', fontSize: '12px', color: '#64748B' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, color: '#16A34A', background: '#DCFCE7', padding: '2px 8px', borderRadius: '12px' }}>
-                    <CheckCircle2 size={12} />
-                    <span>Official Verified Policy</span>
-                  </span>
-                  <span>Version <strong>{activePolicy.version || '1.0'}</strong></span>
-                  <span>•</span>
-                  <span>Effective Date: <strong>{formatDate(activePolicy.effectiveDate || activePolicy.publishedAt)}</strong></span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Document Content Body */}
-          <div style={{ padding: '36px 32px' }}>
-            {loading && !policy ? (
-              <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <div style={{ width: '32px', height: '32px', border: '3px solid #E2E8F0', borderTopColor: '#2563EB', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 12px auto' }} />
-                <p style={{ color: '#64748B', fontSize: '13px' }}>Loading official policy publication...</p>
-              </div>
-            ) : (
-              <div
-                className="legal-content-prose"
-                style={{
-                  fontSize: '14px',
-                  lineHeight: '1.7',
-                  color: '#334155'
-                }}
-              >
-                {/* Clean formatted text rendering */}
-                {activePolicy.content.split('\n\n').map((paragraph, idx) => {
-                  const trimmed = paragraph.trim();
-                  if (!trimmed) return null;
-
-                  // Heading Level 1
-                  if (trimmed.startsWith('# ')) {
-                    return null; // Already rendered in top card banner
-                  }
-
-                  // Heading Level 3 / 4
-                  if (trimmed.startsWith('### ') || trimmed.startsWith('#### ')) {
-                    const headingText = trimmed.replace(/^###* /, '');
-                    return (
-                      <h2
-                        key={idx}
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: 700,
-                          color: '#0F172A',
-                          marginTop: '28px',
-                          marginBottom: '10px',
-                          letterSpacing: '-0.01em',
-                          borderBottom: '1px solid #F1F5F9',
-                          paddingBottom: '6px'
-                        }}
-                      >
-                        {headingText}
-                      </h2>
-                    );
-                  }
-
-                  // Horizontal separator
-                  if (trimmed === '---') {
-                    return <hr key={idx} style={{ border: 'none', borderTop: '1px solid #E2E8F0', margin: '24px 0' }} />;
-                  }
-
-                  // Bullet lists
-                  if (trimmed.includes('\n- ') || trimmed.startsWith('- ')) {
-                    const items = trimmed.split('\n').filter((l) => l.trim().startsWith('- '));
-                    return (
-                      <ul key={idx} style={{ paddingLeft: '22px', margin: '8px 0 16px 0' }}>
-                        {items.map((it, i) => (
-                          <li key={i} style={{ marginBottom: '6px' }}>
-                            {it.replace(/^- /, '')}
-                          </li>
-                        ))}
-                      </ul>
-                    );
-                  }
-
-                  // Standard Paragraph
-                  return (
-                    <p key={idx} style={{ margin: '0 0 14px 0' }}>
-                      {trimmed}
-                    </p>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Document Footer Note */}
-          <div
-            style={{
-              padding: '18px 32px',
-              borderTop: '1px solid #E2E8F0',
-              background: '#F8FAFC',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '12px',
-              fontSize: '12.5px',
-              color: '#64748B'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Shield size={14} color="#2563EB" />
-              <span>ASM Shine Legal Operations &amp; Consumer Protection Compliance</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Mail size={13} />
-              <span>Questions? Email: <strong>support@asmshine.com</strong></span>
-            </div>
-          </div>
-        </div>
-      </div>
+        </article>
+      </main>
     </div>
   );
 };
-export default LegalPolicyPage;
 
+export default LegalPolicyPage;

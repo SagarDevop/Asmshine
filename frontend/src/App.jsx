@@ -246,42 +246,15 @@ function CancelOrderRoute() {
 }
 
 function TermsRoute() {
-  return (
-    <div className="app-shell">
-      <DesktopNav />
-      <div className="screen-container">
-        <TermsPage />
-        <Footer />
-      </div>
-      <BottomNav />
-    </div>
-  );
+  return <TermsPage />;
 }
 
 function PrivacyPolicyRoute() {
-  return (
-    <div className="app-shell">
-      <DesktopNav />
-      <div className="screen-container">
-        <PrivacyPolicyPage />
-        <Footer />
-      </div>
-      <BottomNav />
-    </div>
-  );
+  return <PrivacyPolicyPage />;
 }
 
 function RefundPolicyRoute() {
-  return (
-    <div className="app-shell">
-      <DesktopNav />
-      <div className="screen-container">
-        <RefundPolicyPage />
-        <Footer />
-      </div>
-      <BottomNav />
-    </div>
-  );
+  return <RefundPolicyPage />;
 }
 
 
