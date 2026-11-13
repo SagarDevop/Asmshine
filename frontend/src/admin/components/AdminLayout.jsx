@@ -16,8 +16,8 @@ import {
   Bell,
   Volume2,
   VolumeX,
-  CheckCircle2,
-  Sparkles
+  Sparkles,
+  ChevronRight
 } from 'lucide-react';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import { AdminLiveOrderProvider, useAdminLiveOrder } from '../context/AdminLiveOrderContext';
@@ -65,14 +65,34 @@ const AdminLayoutInner = () => {
     navigate('/admin/login');
   };
 
-  const navItems = [
-    { label: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
-    { label: 'Orders', path: '/admin/orders', icon: ShoppingBag, badge: unreadCount > 0 ? `+${unreadCount}` : null },
-    { label: 'Products', path: '/admin/products', icon: Package },
-    { label: 'Inventory', path: '/admin/inventory', icon: Layers },
-    { label: 'Customers', path: '/admin/customers', icon: Users },
-    { label: 'Coupons & Offers', path: '/admin/coupons', icon: Tag },
-    { label: 'Settings & Logs', path: '/admin/settings', icon: Settings }
+  const navGroups = [
+    {
+      group: 'Core',
+      items: [
+        { label: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
+        { label: 'Orders', path: '/admin/orders', icon: ShoppingBag, badge: unreadCount > 0 ? `+${unreadCount}` : null }
+      ]
+    },
+    {
+      group: 'Catalogue & Stock',
+      items: [
+        { label: 'Products', path: '/admin/products', icon: Package },
+        { label: 'Inventory', path: '/admin/inventory', icon: Layers }
+      ]
+    },
+    {
+      group: 'Customers & Offers',
+      items: [
+        { label: 'Customers', path: '/admin/customers', icon: Users },
+        { label: 'Coupons & Offers', path: '/admin/coupons', icon: Tag }
+      ]
+    },
+    {
+      group: 'System',
+      items: [
+        { label: 'Settings & Logs', path: '/admin/settings', icon: Settings }
+      ]
+    }
   ];
 
   const getPageTitle = () => {
@@ -93,7 +113,7 @@ const AdminLayoutInner = () => {
       {latestAlert && (
         <div className="admin-live-order-toast" role="alert">
           <div className="admin-live-order-toast-icon">
-            <ShoppingBag size={20} />
+            <ShoppingBag size={18} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
@@ -101,12 +121,12 @@ const AdminLayoutInner = () => {
                 <Sparkles size={12} />
                 NEW ORDER RECEIVED!
               </span>
-              <span style={{ fontSize: '11px', color: '#94A3B8' }}>Live</span>
+              <span style={{ fontSize: '10.5px', color: '#94A3B8' }}>Live</span>
             </div>
-            <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               #{latestAlert.orderId}
             </div>
-            <div style={{ fontSize: '12.5px', color: '#475569', marginTop: '3px' }}>
+            <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px' }}>
               <strong>{latestAlert.customerName}</strong> • ₹{latestAlert.totalAmount} ({(latestAlert.paymentMethod || 'COD').toUpperCase()})
             </div>
             <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
@@ -116,14 +136,14 @@ const AdminLayoutInner = () => {
                   navigate('/admin/orders');
                 }}
                 className="admin-btn admin-btn-sm admin-btn-primary"
-                style={{ padding: '5px 12px', fontSize: '11.5px', fontWeight: 700 }}
+                style={{ padding: '4px 10px', fontSize: '11px', fontWeight: 700 }}
               >
-                View Order Table
+                View Order
               </button>
               <button
                 onClick={dismissAlert}
                 className="admin-btn admin-btn-sm admin-btn-secondary"
-                style={{ padding: '5px 9px', fontSize: '11.5px' }}
+                style={{ padding: '4px 8px', fontSize: '11px' }}
               >
                 Dismiss
               </button>
@@ -134,53 +154,58 @@ const AdminLayoutInner = () => {
             style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: '2px', marginLeft: '4px' }}
             title="Close"
           >
-            <X size={16} />
+            <X size={15} />
           </button>
         </div>
       )}
 
-      {/* 1. Left Sidebar */}
+      {/* 1. Left Obsidian Sidebar */}
       <aside className={`admin-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
           <img src="/favicon.svg" alt="ASM Shine" className="admin-sidebar-logo" />
-          <div>
-            <div className="admin-sidebar-brand-name">SM SHINE</div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="admin-sidebar-brand-name">ASM SHINE</div>
             <span className="admin-sidebar-brand-badge">ADMIN CONSOLE</span>
           </div>
           {mobileMenuOpen && (
             <button
               onClick={() => setMobileMenuOpen(false)}
-              style={{ background: 'none', border: 'none', color: '#94A3B8', marginLeft: 'auto', cursor: 'pointer' }}
+              style={{ background: 'none', border: 'none', color: '#94A3B8', marginLeft: 'auto', cursor: 'pointer', padding: '4px' }}
+              aria-label="Close navigation"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           )}
         </div>
 
-        <div className="admin-nav-group">
-          <div className="admin-nav-title">Navigation</div>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
+        <div style={{ flex: 1, padding: '10px 0' }}>
+          {navGroups.map((grp) => (
+            <div key={grp.group} className="admin-nav-group">
+              <div className="admin-nav-title">{grp.group}</div>
+              {grp.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
 
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.exact}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`admin-nav-link ${isActive ? 'active' : ''}`}
-              >
-                <div className="admin-nav-link-content" style={{ width: '100%' }}>
-                  <Icon size={18} />
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span className="admin-nav-live-badge">{item.badge}</span>
-                  )}
-                </div>
-              </NavLink>
-            );
-          })}
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    end={item.exact}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`admin-nav-link ${isActive ? 'active' : ''}`}
+                  >
+                    <div className="admin-nav-link-content" style={{ width: '100%' }}>
+                      <Icon size={17} />
+                      <span>{item.label}</span>
+                      {item.badge && (
+                        <span className="admin-nav-live-badge">{item.badge}</span>
+                      )}
+                    </div>
+                  </NavLink>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
         <div className="admin-sidebar-footer">
@@ -196,7 +221,20 @@ const AdminLayoutInner = () => {
           <button
             onClick={handleLogout}
             title="Sign out of admin console"
-            style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '6px' }}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#94A3B8',
+              cursor: 'pointer',
+              padding: '6px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.15s ease'
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#EF4444')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#94A3B8')}
           >
             <LogOut size={16} />
           </button>
@@ -212,11 +250,11 @@ const AdminLayoutInner = () => {
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open sidebar"
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
             <div className="admin-breadcrumb">
               <span>Admin</span>
-              <span>/</span>
+              <ChevronRight size={13} color="#94A3B8" />
               <span className="admin-breadcrumb-active">{getPageTitle()}</span>
             </div>
           </div>
@@ -228,14 +266,14 @@ const AdminLayoutInner = () => {
               title={isLiveConnected ? 'Connected to live push server. Instant updates without page refresh.' : 'Reconnecting to live sync server...'}
             >
               <span className={`admin-live-dot ${!isLiveConnected ? 'disconnected' : ''}`} />
-              <span>{isLiveConnected ? 'Live Real-Time Sync' : 'Reconnecting...'}</span>
+              <span>{isLiveConnected ? 'Live Real-Time' : 'Reconnecting...'}</span>
             </div>
 
             {/* Audio Chime Notification Toggle */}
             <button
               onClick={toggleSound}
               className="admin-header-tool-btn"
-              title={soundEnabled ? 'Order sound alert is ON (click to mute)' : 'Order sound alert is MUTED (click to enable)'}
+              title={soundEnabled ? 'Order audio chime is ON (click to mute)' : 'Order audio chime is MUTED (click to enable)'}
             >
               {soundEnabled ? (
                 <>
@@ -259,9 +297,9 @@ const AdminLayoutInner = () => {
                 }}
                 className="admin-header-tool-btn"
                 title="Recent incoming orders"
-                style={{ padding: '0 9px' }}
+                style={{ padding: '0 8px' }}
               >
-                <Bell size={16} />
+                <Bell size={15} />
                 {unreadCount > 0 && (
                   <span className="admin-badge-count">{unreadCount}</span>
                 )}
@@ -270,7 +308,7 @@ const AdminLayoutInner = () => {
               {bellOpen && (
                 <div className="admin-bell-popover">
                   <div className="admin-bell-popover-header">
-                    <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#0F172A' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A' }}>
                       Live Activity ({incomingOrders.length})
                     </span>
                     <button
@@ -280,7 +318,7 @@ const AdminLayoutInner = () => {
                       }}
                       style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '11.5px', fontWeight: 600, cursor: 'pointer' }}
                     >
-                      Close
+                      Clear
                     </button>
                   </div>
                   <div style={{ maxHeight: '280px', overflowY: 'auto' }}>
@@ -298,12 +336,12 @@ const AdminLayoutInner = () => {
                             navigate('/admin/orders');
                           }}
                         >
-                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', marginTop: '6px', flexShrink: 0 }} />
+                          <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10B981', marginTop: '6px', flexShrink: 0 }} />
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: '12.5px', fontWeight: 700, color: '#0F172A' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A' }}>
                               #{ord.orderId}
                             </div>
-                            <div style={{ fontSize: '11.5px', color: '#64748B' }}>
+                            <div style={{ fontSize: '11px', color: '#64748B' }}>
                               {ord.customerName} • ₹{ord.totalAmount} ({ord.paymentMethod?.toUpperCase()})
                             </div>
                           </div>
@@ -318,7 +356,7 @@ const AdminLayoutInner = () => {
                           setBellOpen(false);
                           navigate('/admin/orders');
                         }}
-                        style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+                        style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '11.5px', fontWeight: 700, cursor: 'pointer' }}
                       >
                         Go to Order Management →
                       </button>
@@ -335,13 +373,13 @@ const AdminLayoutInner = () => {
               className="admin-view-store-btn"
               title="Open customer storefront in new tab"
             >
-              <ExternalLink size={14} />
-              <span>Live Storefront</span>
+              <ExternalLink size={13} />
+              <span>Storefront</span>
             </a>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#EFF6FF', color: '#1D4ED8', padding: '4px 10px', borderRadius: '20px', fontSize: '11.5px', fontWeight: 700 }}>
-                <Shield size={13} />
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#EFF6FF', color: '#1D4ED8', padding: '3px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700 }}>
+                <Shield size={12} />
                 <span>{(admin?.role || 'admin').toUpperCase()}</span>
               </div>
             </div>
@@ -349,8 +387,9 @@ const AdminLayoutInner = () => {
             <button
               onClick={handleLogout}
               className="admin-logout-btn"
+              title="Sign out"
             >
-              <LogOut size={14} />
+              <LogOut size={13} />
               <span>Logout</span>
             </button>
           </div>
@@ -372,8 +411,8 @@ export const AdminLayout = () => {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F8FAFC' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: '40px', height: '40px', border: '3px solid #E2E8F0', borderTopColor: '#2563EB', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 12px auto' }} />
-          <p style={{ color: '#64748B', fontSize: '14px', fontWeight: 600 }}>Verifying Administrator Session...</p>
+          <div style={{ width: '36px', height: '36px', border: '3px solid #E2E8F0', borderTopColor: '#2563EB', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 12px auto' }} />
+          <p style={{ color: '#64748B', fontSize: '13px', fontWeight: 600 }}>Verifying Administrator Session...</p>
         </div>
       </div>
     );
@@ -389,3 +428,4 @@ export const AdminLayout = () => {
     </AdminLiveOrderProvider>
   );
 };
+export default AdminLayout;
