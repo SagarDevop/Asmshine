@@ -36,6 +36,7 @@ import { AdminCustomersPage } from './admin/pages/AdminCustomersPage';
 import { AdminCouponsPage } from './admin/pages/AdminCouponsPage';
 import { AdminSettingsPage } from './admin/pages/AdminSettingsPage';
 import { AdminPoliciesPage } from './admin/pages/AdminPoliciesPage';
+import { AdminAboutPage } from './admin/pages/AdminAboutPage';
 
 /**
  * HashRedirectHandler:
@@ -283,6 +284,7 @@ export function App() {
                   <Route path="inventory" element={<AdminInventoryPage />} />
                   <Route path="customers" element={<AdminCustomersPage />} />
                   <Route path="coupons" element={<AdminCouponsPage />} />
+                  <Route path="about" element={<AdminAboutPage />} />
                   <Route path="policies" element={<AdminPoliciesPage />} />
                   <Route path="settings" element={<AdminSettingsPage />} />
                 </Route>

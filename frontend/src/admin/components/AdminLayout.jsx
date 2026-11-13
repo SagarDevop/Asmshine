@@ -90,6 +90,12 @@ const AdminLayoutInner = () => {
       ]
     },
     {
+      group: 'Content & CMS',
+      items: [
+        { label: 'About Us CMS', path: '/admin/about', icon: FileText }
+      ]
+    },
+    {
       group: 'System & Legal',
       items: [
         { label: 'Legal & Policies', path: '/admin/policies', icon: ShieldCheck },
@@ -106,6 +112,7 @@ const AdminLayoutInner = () => {
     if (p.startsWith('/admin/inventory')) return 'Inventory & Stock Control';
     if (p.startsWith('/admin/customers')) return 'Customer Management';
     if (p.startsWith('/admin/coupons')) return 'Coupons & Discounts';
+    if (p.startsWith('/admin/about')) return 'About Us CMS';
     if (p.startsWith('/admin/policies')) return 'Legal Policies & Compliance';
     if (p.startsWith('/admin/settings')) return 'Store Settings & Audit Logs';
     return 'Admin';

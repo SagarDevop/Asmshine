@@ -948,5 +948,15 @@ export const api = {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.message || 'Failed to fetch policy');
     return data;
+  },
+
+  // -------------------------------------------------------------
+  // About Us Content
+  // -------------------------------------------------------------
+  getAboutContent: async () => {
+    const res = await apiFetch('/api/v1/about');
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch about content');
+    return data;
   }
 };

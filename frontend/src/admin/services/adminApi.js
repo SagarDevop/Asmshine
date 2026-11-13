@@ -237,5 +237,33 @@ export const adminApi = {
   getConsentRecords: async (params = {}) => {
     const qs = new URLSearchParams(params).toString();
     return adminFetch(`/api/v1/policies/admin/consents?${qs}`);
+  },
+
+  // -------------------------------------------------------------
+  // About Us CMS Management
+  // -------------------------------------------------------------
+  getAboutContent: async () => {
+    return adminFetch('/api/v1/about/admin/content');
+  },
+
+  saveAboutDraft: async (data) => {
+    return adminFetch('/api/v1/about/admin/draft', {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+
+  publishAboutContent: async (data = {}) => {
+    return adminFetch('/api/v1/about/admin/publish', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+
+  uploadAboutImage: async (data) => {
+    return adminFetch('/api/v1/about/admin/upload-image', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
   }
 };
