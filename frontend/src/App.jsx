@@ -14,6 +14,10 @@ import { AuthPage } from './pages/AuthPage';
 import { AccountPage } from './pages/AccountPage';
 import { OrderTrackingPage } from './pages/OrderTrackingPage';
 import { CancelOrderPage } from './pages/CancelOrderPage';
+import { TermsPage } from './pages/TermsPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { RefundPolicyPage } from './pages/RefundPolicyPage';
+import { Footer } from './components/layout/Footer';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { DesktopNav } from './components/navigation/DesktopNav';
 import { BottomNav } from './components/navigation/BottomNav';
@@ -31,6 +35,7 @@ import { AdminInventoryPage } from './admin/pages/AdminInventoryPage';
 import { AdminCustomersPage } from './admin/pages/AdminCustomersPage';
 import { AdminCouponsPage } from './admin/pages/AdminCouponsPage';
 import { AdminSettingsPage } from './admin/pages/AdminSettingsPage';
+import { AdminPoliciesPage } from './admin/pages/AdminPoliciesPage';
 
 /**
  * HashRedirectHandler:
@@ -240,6 +245,45 @@ function CancelOrderRoute() {
   );
 }
 
+function TermsRoute() {
+  return (
+    <div className="app-shell">
+      <DesktopNav />
+      <div className="screen-container">
+        <TermsPage />
+        <Footer />
+      </div>
+      <BottomNav />
+    </div>
+  );
+}
+
+function PrivacyPolicyRoute() {
+  return (
+    <div className="app-shell">
+      <DesktopNav />
+      <div className="screen-container">
+        <PrivacyPolicyPage />
+        <Footer />
+      </div>
+      <BottomNav />
+    </div>
+  );
+}
+
+function RefundPolicyRoute() {
+  return (
+    <div className="app-shell">
+      <DesktopNav />
+      <div className="screen-container">
+        <RefundPolicyPage />
+        <Footer />
+      </div>
+      <BottomNav />
+    </div>
+  );
+}
+
 
 const DEFAULT_GOOGLE_CLIENT_ID = '544546980474-8pgk6kkellbbtmec3iun2p0v5kis143e.apps.googleusercontent.com';
 const googleClientId =
@@ -266,6 +310,7 @@ export function App() {
                   <Route path="inventory" element={<AdminInventoryPage />} />
                   <Route path="customers" element={<AdminCustomersPage />} />
                   <Route path="coupons" element={<AdminCouponsPage />} />
+                  <Route path="policies" element={<AdminPoliciesPage />} />
                   <Route path="settings" element={<AdminSettingsPage />} />
                 </Route>
 
@@ -277,6 +322,13 @@ export function App() {
                 <Route path="/cart" element={<CartRoute />} />
                 <Route path="/product/:id" element={<ProductDetailRoute />} />
                 <Route path="/checkout" element={<CheckoutRoute />} />
+                {/* Legal & Policy Management Pages */}
+                <Route path="/terms-and-conditions" element={<TermsRoute />} />
+                <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicyRoute />} />
+                <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
+                <Route path="/refund-policy" element={<RefundPolicyRoute />} />
+                <Route path="/refunds" element={<Navigate to="/refund-policy" replace />} />
                 {/* Order Tracking Routes */}
                 <Route path="/order/:orderId/cancel" element={<CancelOrderRoute />} />
                 <Route path="/order/:orderId" element={<OrderTrackingRoute />} />

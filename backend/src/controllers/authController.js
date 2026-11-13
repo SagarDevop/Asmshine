@@ -6,6 +6,7 @@ const User = require('../models/User');
 const Otp = require('../models/Otp');
 const Order = require('../models/Order');
 const emailService = require('../services/emailService');
+const policyService = require('../services/policyService');
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -48,7 +49,14 @@ const hashOtp = (otp) => {
  */
 exports.sendSignupOtp = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, policyConsent } = req.body;
+
+    if (!policyConsent || policyConsent.accepted !== true) {
+      return res.status(400).json({
+        success: false,
+        message: 'You must review and accept the Terms & Conditions, Privacy Policy, and Refund Policy to create an account.'
+      });
+    }
 
     if (!name || !name.trim()) {
       return res.status(400).json({
@@ -111,6 +119,7 @@ exports.sendSignupOtp = async (req, res, next) => {
         purpose: 'SIGNUP',
         name: name.trim(),
         passwordHash,
+        policyConsentAccepted: true,
         otpHash,
         attempts: 0,
         lastResendAt: new Date(),
@@ -213,6 +222,20 @@ exports.verifySignupOtp = async (req, res, next) => {
     });
     // Skip pre-save hashing since password is already hashed
     await user.save({ validateBeforeSave: true });
+
+    // Record verified signup consent in audit log with active published policy versions
+    try {
+      await policyService.recordConsent({
+        userId: user._id,
+        userEmail: user.email,
+        consentType: 'SIGNUP',
+        policyTypes: ['terms_and_conditions', 'privacy_policy', 'refund_policy'],
+        ipAddress: req.ip || req.connection?.remoteAddress || '',
+        userAgent: req.headers['user-agent'] || ''
+      });
+    } catch (consentErr) {
+      console.warn('[Auth] Signup consent record warning:', consentErr.message);
+    }
 
     // Clean up OTP record
     await Otp.deleteMany({ email: normalizedEmail, purpose: 'SIGNUP' });
@@ -866,7 +889,14 @@ exports.resendForgotPasswordOtp = async (req, res, next) => {
  */
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, policyConsent } = req.body;
+
+    if (!policyConsent || policyConsent.accepted !== true) {
+      return res.status(400).json({
+        success: false,
+        message: 'You must review and accept the Terms & Conditions, Privacy Policy, and Refund Policy to create an account.'
+      });
+    }
 
     if (!name || !name.trim()) {
       return res.status(400).json({
@@ -905,6 +935,19 @@ exports.register = async (req, res, next) => {
       password,
       provider: 'local'
     });
+
+    try {
+      await policyService.recordConsent({
+        userId: user._id,
+        userEmail: user.email,
+        consentType: 'SIGNUP',
+        policyTypes: ['terms_and_conditions', 'privacy_policy', 'refund_policy'],
+        ipAddress: req.ip || req.connection?.remoteAddress || '',
+        userAgent: req.headers['user-agent'] || ''
+      });
+    } catch (consentErr) {
+      console.warn('[Auth] Direct signup consent warning:', consentErr.message);
+    }
 
     const token = generateToken(user._id);
     res.cookie('token', token, getCookieOptions());
@@ -1083,6 +1126,19 @@ exports.googleLogin = async (req, res, next) => {
           provider: 'google',
           avatar: payload.picture || ''
         });
+
+        try {
+          await policyService.recordConsent({
+            userId: user._id,
+            userEmail: user.email,
+            consentType: 'SIGNUP',
+            policyTypes: ['terms_and_conditions', 'privacy_policy', 'refund_policy'],
+            ipAddress: req.ip || '',
+            userAgent: req.headers['user-agent'] || ''
+          });
+        } catch (consentErr) {
+          console.warn('[Auth] Google signup consent warning:', consentErr.message);
+        }
       }
     } else {
       if (payload.picture && user.avatar !== payload.picture) {

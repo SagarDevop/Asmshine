@@ -13,6 +13,8 @@ import {
   Menu,
   X,
   Shield,
+  ShieldCheck,
+  FileText,
   Bell,
   Volume2,
   VolumeX,
@@ -88,8 +90,9 @@ const AdminLayoutInner = () => {
       ]
     },
     {
-      group: 'System',
+      group: 'System & Legal',
       items: [
+        { label: 'Legal & Policies', path: '/admin/policies', icon: ShieldCheck },
         { label: 'Settings & Logs', path: '/admin/settings', icon: Settings }
       ]
     }
@@ -103,6 +106,7 @@ const AdminLayoutInner = () => {
     if (p.startsWith('/admin/inventory')) return 'Inventory & Stock Control';
     if (p.startsWith('/admin/customers')) return 'Customer Management';
     if (p.startsWith('/admin/coupons')) return 'Coupons & Discounts';
+    if (p.startsWith('/admin/policies')) return 'Legal Policies & Compliance';
     if (p.startsWith('/admin/settings')) return 'Store Settings & Audit Logs';
     return 'Admin';
   };

@@ -214,10 +214,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const sendSignupOtp = async ({ name, email, password }) => {
+  const sendSignupOtp = async ({ name, email, password, policyConsent }) => {
     setAuthError(null);
     try {
-      const response = await api.sendSignupOtp({ name, email, password });
+      const response = await api.sendSignupOtp({ name, email, password, policyConsent });
       return response;
     } catch (err) {
       setAuthError(err.message || 'Failed to send verification code');
@@ -304,10 +304,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const registerDirect = async ({ name, email, password }) => {
+  const registerDirect = async ({ name, email, password, policyConsent }) => {
     setAuthError(null);
     try {
-      const response = await api.register({ name, email, password });
+      const response = await api.register({ name, email, password, policyConsent });
       if (response && response.user) {
         setUser(response.user);
         return response.user;

@@ -549,14 +549,36 @@ export const AccountPage = () => {
 
           {/* 6. Policies & Support */}
           <div className="fk-hub-section-group">
-            <h3 className="fk-hub-section-title">Policies &amp; Support</h3>
+            <h3 className="fk-hub-section-title">Policies &amp; Legal</h3>
 
-            <button type="button" className="fk-hub-row-item" onClick={() => navigate('/about')}>
+            <button type="button" className="fk-hub-row-item" onClick={() => navigate('/terms-and-conditions')}>
               <div className="fk-hub-row-left">
                 <FileText size={20} className="fk-hub-row-icon" />
                 <div className="fk-hub-row-text">
-                  <span className="fk-hub-row-title">Terms, Policies &amp; Return Policy</span>
-                  <span className="fk-hub-row-sub">30-day money-back guarantee &amp; shipping standards</span>
+                  <span className="fk-hub-row-title">Terms &amp; Conditions</span>
+                  <span className="fk-hub-row-sub">Platform usage guidelines &amp; commercial terms</span>
+                </div>
+              </div>
+              <ChevronRight size={17} className="fk-hub-row-chevron" />
+            </button>
+
+            <button type="button" className="fk-hub-row-item" onClick={() => navigate('/privacy-policy')}>
+              <div className="fk-hub-row-left">
+                <ShieldCheck size={20} className="fk-hub-row-icon" />
+                <div className="fk-hub-row-text">
+                  <span className="fk-hub-row-title">Privacy Policy</span>
+                  <span className="fk-hub-row-sub">Data handling, encryption &amp; privacy rights</span>
+                </div>
+              </div>
+              <ChevronRight size={17} className="fk-hub-row-chevron" />
+            </button>
+
+            <button type="button" className="fk-hub-row-item" onClick={() => navigate('/refund-policy')}>
+              <div className="fk-hub-row-left">
+                <FileText size={20} className="fk-hub-row-icon" />
+                <div className="fk-hub-row-text">
+                  <span className="fk-hub-row-title">Refund &amp; Return Policy</span>
+                  <span className="fk-hub-row-sub">Damaged item reporting &amp; refund criteria</span>
                 </div>
               </div>
               <ChevronRight size={17} className="fk-hub-row-chevron" />
@@ -1611,9 +1633,9 @@ export const AccountPage = () => {
                   </div>
 
                   <div style={{ padding: '10px 12px', border: '1px solid #E2E8F0', borderRadius: '8px' }}>
-                    <strong style={{ fontSize: '13px', color: '#0F172A', display: 'block' }}>What is the 30-Day Return &amp; Refund Policy?</strong>
+                    <strong style={{ fontSize: '13px', color: '#0F172A', display: 'block' }}>What is the Replacement &amp; Refund Policy?</strong>
                     <span style={{ fontSize: '12px', color: '#64748B', display: 'block', marginTop: '3px' }}>
-                      If any bottle arrives leaking, broken, or not to your satisfaction, contact us for an instant free replacement or 100% refund.
+                      Due to the hygiene nature of cleaning formulations, we cannot accept returns for opened items or change of mind. If any bottle arrives damaged, defective, or leaking, report it within 48 hours for a prompt replacement or approved refund.
                     </span>
                   </div>
 

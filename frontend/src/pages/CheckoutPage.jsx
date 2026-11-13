@@ -21,7 +21,7 @@ import {
   ExternalLink,
   HelpCircle
 } from 'lucide-react';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation, Link } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
@@ -390,7 +390,8 @@ export const CheckoutPage = () => {
           type: address.type || 'HOME'
         },
         paymentMethod,
-        couponCode: appliedCoupon?.code || appliedCoupon || null
+        couponCode: appliedCoupon?.code || appliedCoupon || null,
+        policyAcknowledgement: { accepted: true }
       };
 
       const response = await api.createOrder(orderPayload, {
@@ -1228,6 +1229,40 @@ export const CheckoutPage = () => {
             <strong>Safe and Secure Payments. 100% Authentic Products.</strong>
             <span>Directly dispatched from ASM Shine Hygiene Labs</span>
           </div>
+        </div>
+
+        {/* 8. Checkout Legal Policy Acknowledgement */}
+        <div className="fk-checkout-policy-notice" style={{
+          marginTop: '16px',
+          marginBottom: '20px',
+          padding: '12px 14px',
+          background: '#F8FAFC',
+          borderRadius: '8px',
+          border: '1px solid #E2E8F0',
+          fontSize: '12px',
+          lineHeight: '1.5',
+          color: '#475569',
+          textAlign: 'center'
+        }}>
+          By placing your order, you agree to ASM Shine's{' '}
+          <Link
+            to="/terms-and-conditions"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#1C8E8F', fontWeight: 600, textDecoration: 'underline' }}
+          >
+            Terms &amp; Conditions
+          </Link>{' '}
+          and understand our{' '}
+          <Link
+            to="/refund-policy"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#1C8E8F', fontWeight: 600, textDecoration: 'underline' }}
+          >
+            Refund &amp; Return Policy
+          </Link>
+          .
         </div>
       </main>
 

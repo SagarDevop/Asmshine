@@ -10,6 +10,7 @@ const IdempotencyKey = require('../models/IdempotencyKey');
 const inventoryService = require('../services/inventoryService');
 const couponService = require('../services/couponService');
 const realtimeHub = require('../services/realtimeHub');
+const policyService = require('../services/policyService');
 
 /**
  * Normalizes checkout request payload into a deterministic canonical structure
@@ -391,6 +392,21 @@ const createOrder = async (req, res, next) => {
     });
 
     await newOrder.save();
+
+    // Record checkout policy acknowledgement in audit trail
+    try {
+      await policyService.recordConsent({
+        userId: req.user._id,
+        userEmail: req.user.email,
+        consentType: 'CHECKOUT',
+        policyTypes: ['terms_and_conditions', 'refund_policy'],
+        orderId: newOrder.orderId,
+        ipAddress: req.ip || req.connection?.remoteAddress || '',
+        userAgent: req.headers['user-agent'] || ''
+      });
+    } catch (consentErr) {
+      console.warn('[Order] Checkout policy consent warning:', consentErr.message);
+    }
 
     // 11. Broadcast to admin fulfillment stream only for confirmed orders
     if (isCOD) {

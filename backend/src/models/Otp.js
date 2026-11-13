@@ -28,6 +28,10 @@ const otpSchema = new mongoose.Schema(
       type: String,
       default: ''
     },
+    policyConsentAccepted: {
+      type: Boolean,
+      default: false
+    },
     attempts: {
       type: Number,
       default: 0

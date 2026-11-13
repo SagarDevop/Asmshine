@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, AlertCircle, ArrowLeft, ShieldCheck, Sparkles, CheckCircle2, Mail, Lock, User } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GoogleAuthButton } from '../components/auth/GoogleAuthButton';
 
@@ -60,6 +60,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
   const [signupStep, setSignupStep] = useState('FORM'); // 'FORM' | 'OTP'
   const [otp, setOtp] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  const [policyConsentAccepted, setPolicyConsentAccepted] = useState(false);
 
   // Forgot Password flow state
   const [forgotStep, setForgotStep] = useState('EMAIL'); // 'EMAIL' | 'RESET'
@@ -357,12 +358,21 @@ export const AuthPage = ({ initialTab = 'login' }) => {
       return;
     }
 
+    if (!policyConsentAccepted) {
+      setErrorMessage('Please accept the Terms & Conditions, Privacy Policy, and Refund & Return Policy to create an account.');
+      return;
+    }
+
     setSubmitting(true);
     try {
       const res = await sendSignupOtp({
         name: name.trim(),
         email: email.trim().toLowerCase(),
-        password
+        password,
+        policyConsent: {
+          accepted: true,
+          policyTypes: ['terms_and_conditions', 'privacy_policy', 'refund_policy']
+        }
       });
       setSignupStep('OTP');
       setCooldown(60);
@@ -967,6 +977,70 @@ export const AuthPage = ({ initialTab = 'login' }) => {
                       disabled={submitting}
                     />
                   </div>
+                </div>
+
+                <div className="auth-policy-consent-wrap" style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                  margin: '14px 0 16px 0',
+                  padding: '10px 12px',
+                  background: '#F8FAFC',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  lineHeight: '1.5',
+                  color: '#475569'
+                }}>
+                  <input
+                    type="checkbox"
+                    id="signup-policy-consent"
+                    checked={policyConsentAccepted}
+                    onChange={(e) => setPolicyConsentAccepted(e.target.checked)}
+                    disabled={submitting}
+                    style={{
+                      marginTop: '3px',
+                      cursor: 'pointer',
+                      accentColor: '#2563EB',
+                      width: '16px',
+                      height: '16px',
+                      flexShrink: 0
+                    }}
+                    required
+                  />
+                  <label htmlFor="signup-policy-consent" style={{ cursor: 'pointer', margin: 0 }}>
+                    I have read and agree to the{' '}
+                    <Link
+                      to="/terms-and-conditions"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#2563EB', textDecoration: 'underline', fontWeight: 600 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Terms & Conditions
+                    </Link>
+                    ,{' '}
+                    <Link
+                      to="/privacy-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#2563EB', textDecoration: 'underline', fontWeight: 600 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Privacy Policy
+                    </Link>
+                    , and{' '}
+                    <Link
+                      to="/refund-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#2563EB', textDecoration: 'underline', fontWeight: 600 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Refund & Return Policy
+                    </Link>
+                    .
+                  </label>
                 </div>
 
                 <button

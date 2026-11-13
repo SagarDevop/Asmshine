@@ -14,6 +14,7 @@
     "test:security": "node src/tests/phase1SecurityTest.js",
     "test:phase2": "node src/tests/phase2SecurityTest.js",
     "test:phase22": "node src/tests/phase22DefectTest.js",
+    "test:policies": "node src/tests/legalPolicyTest.js",
     "test": "node src/tests/inventoryOrderTest.js && node src/tests/authRoleTest.js && node src/tests/phase1SecurityTest.js && node src/tests/phase2SecurityTest.js && node src/tests/phase22DefectTest.js",
     "migrate:images": "node src/scripts/migrateImagesToCloudinary.js"
   },

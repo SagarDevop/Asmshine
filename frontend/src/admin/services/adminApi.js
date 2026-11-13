@@ -201,5 +201,41 @@ export const adminApi = {
   exportOrdersCsvUrl: (params = {}) => {
     const qs = new URLSearchParams(params).toString();
     return `${API_BASE}/api/v1/admin/reports/export-orders?${qs}`;
+  },
+
+  // -------------------------------------------------------------
+  // Legal Policies & Consent Management
+  // -------------------------------------------------------------
+  getPolicyOverview: async () => {
+    return adminFetch('/api/v1/policies/admin/overview');
+  },
+
+  getPolicyVersions: async (policyType) => {
+    return adminFetch(`/api/v1/policies/admin/${policyType}/versions`);
+  },
+
+  createPolicyDraft: async (policyType, data) => {
+    return adminFetch(`/api/v1/policies/admin/${policyType}/draft`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+
+  updatePolicyDraft: async (policyType, version, data) => {
+    return adminFetch(`/api/v1/policies/admin/${policyType}/draft/${version}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+
+  publishPolicyVersion: async (policyType, version) => {
+    return adminFetch(`/api/v1/policies/admin/${policyType}/publish/${version}`, {
+      method: 'POST'
+    });
+  },
+
+  getConsentRecords: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return adminFetch(`/api/v1/policies/admin/consents?${qs}`);
   }
 };

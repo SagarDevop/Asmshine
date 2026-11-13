@@ -41,14 +41,14 @@ export const api = {
   // -------------------------------------------------------------
   // Authentication Endpoints
   // -------------------------------------------------------------
-  register: async ({ name, email, password }) => {
+  register: async ({ name, email, password, policyConsent }) => {
     const res = await apiFetch('/api/v1/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, email, password, policyConsent })
     });
 
     const data = await res.json().catch(() => ({}));
@@ -207,7 +207,7 @@ export const api = {
   },
 
   // Email OTP Signup Endpoints
-  sendSignupOtp: async ({ name, email, password }) => {
+  sendSignupOtp: async ({ name, email, password, policyConsent }) => {
     const res = await apiFetch('/api/v1/auth/signup/send-otp', {
       method: 'POST',
       headers: {
@@ -215,7 +215,7 @@ export const api = {
         'Accept': 'application/json'
       },
       credentials: 'include',
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, email, password, policyConsent })
     });
 
     const data = await res.json().catch(() => ({}));
@@ -930,5 +930,23 @@ export const api = {
 
     // 100% Guaranteed deterministic local resolution
     return local;
+  },
+
+  // -------------------------------------------------------------
+  // Legal Policies Endpoints
+  // -------------------------------------------------------------
+  getPublicPolicies: async () => {
+    const res = await apiFetch('/api/v1/policies');
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch policies');
+    return data;
+  },
+
+  getPublicPolicy: async (policyType, version = null) => {
+    const query = version ? `?version=${encodeURIComponent(version)}` : '';
+    const res = await apiFetch(`/api/v1/policies/${policyType}${query}`);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch policy');
+    return data;
   }
 };

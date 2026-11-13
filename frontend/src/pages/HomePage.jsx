@@ -8,6 +8,7 @@ import { DealsForYou } from '../components/ui/DealsForYou';
 import { DiwaliSaleSection } from '../components/ui/DiwaliSaleSection';
 import { ProductSection } from '../components/ui/ProductSection';
 import { FlipkartPromoBanners } from '../components/ui/FlipkartPromoBanners';
+import { Footer } from '../components/layout/Footer';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { api } from '../services/api';
 
@@ -187,13 +188,8 @@ export const HomePage = () => {
           />
         </main>
 
-        {/* Desktop & Mobile Footer */}
-        <footer className="desktop-footer">
-          <div className="desktop-footer-inner">
-            <span>© 2026 ASM Shine. All rights reserved.</span>
-            <span>ADVANCED CLEANING &amp; HYGIENE SOLUTIONS</span>
-          </div>
-        </footer>
+        {/* Persistent Desktop & Mobile Footer with Mandatory Legal Policy Links */}
+        <Footer />
       </div>
 
       {/* Mobile Bottom Navigation Bar */}

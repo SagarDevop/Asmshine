@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Settings,
   Shield,
@@ -196,6 +197,27 @@ export const AdminSettingsPage = () => {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+        {/* Compliance & Legal Policies Quick Link */}
+        <div className="admin-card" style={{ padding: '20px 24px', background: 'linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%)', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <Shield size={18} color="#2563EB" />
+              <strong style={{ fontSize: '15px', color: '#1E3A8A' }}>Legal Policies &amp; Consent Management</strong>
+            </div>
+            <p style={{ margin: 0, fontSize: '12.5px', color: '#475569', maxWidth: '620px', lineHeight: '1.5' }}>
+              Publish immutable revisions for Terms &amp; Conditions, Privacy Policy, and Refund Policy, and review server-verified customer consent audit records for payment gateway compliance.
+            </p>
+          </div>
+          <Link
+            to="/admin/policies"
+            className="admin-btn admin-btn-primary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          >
+            <span>Manage Policies &amp; Consents</span>
+            <ChevronRight size={15} />
+          </Link>
+        </div>
+
         {/* Section 1: Store Configuration Form */}
         <div className="admin-card">
           <div className="admin-card-header">
