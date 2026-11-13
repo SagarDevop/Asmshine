@@ -1332,13 +1332,13 @@ export const AuthPage = ({ initialTab = 'login' }) => {
             </div>
             <p className="minimal-auth-terms">
               By continuing, you agree to ASM Shine's{' '}
-              <button type="button" onClick={() => navigate('/about')} className="minimal-link">
-                Terms of Use
-              </button>{' '}
+              <Link to="/terms-and-conditions" target="_blank" rel="noopener noreferrer" className="minimal-link">
+                Terms &amp; Conditions
+              </Link>{' '}
               &amp;{' '}
-              <button type="button" onClick={() => navigate('/about')} className="minimal-link">
+              <Link to="/privacy-policy" target="_blank" rel="noopener noreferrer" className="minimal-link">
                 Privacy Policy
-              </button>.
+              </Link>.
             </p>
           </div>
         </div>

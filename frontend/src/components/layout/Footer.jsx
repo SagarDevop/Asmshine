@@ -4,7 +4,7 @@ import { ShieldCheck, Mail, Phone, MapPin, ExternalLink, Heart, Clock } from 'lu
 
 export const Footer = () => {
   return (
-    <footer className="desktop-footer" style={{ borderTop: '1px solid #E2E8F0', backgroundColor: '#FFFFFF', padding: '40px 20px 24px 20px' }}>
+    <footer className="app-global-footer" style={{ borderTop: '1px solid #E2E8F0', backgroundColor: '#FFFFFF', padding: '40px 20px 32px 20px', marginBottom: '64px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '32px', marginBottom: '32px' }}>
         {/* Col 1: Brand & Promise */}
         <div>
@@ -64,17 +64,17 @@ export const Footer = () => {
           </h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '9px', fontSize: '13px' }}>
             <li>
-              <Link to="/terms-and-conditions" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s', fontWeight: 500 }}>
+              <Link to="/terms-and-conditions" target="_blank" rel="noopener noreferrer" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s', fontWeight: 500 }}>
                 Terms &amp; Conditions
               </Link>
             </li>
             <li>
-              <Link to="/privacy-policy" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s', fontWeight: 500 }}>
+              <Link to="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s', fontWeight: 500 }}>
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link to="/refund-policy" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s', fontWeight: 500 }}>
+              <Link to="/refund-policy" target="_blank" rel="noopener noreferrer" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s', fontWeight: 500 }}>
                 Refund &amp; Return Policy
               </Link>
             </li>
