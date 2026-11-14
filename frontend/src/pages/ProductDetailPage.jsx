@@ -450,10 +450,10 @@ export const ProductDetailPage = ({
             <div className="pdp-special-tag">Special Price</div>
             <div className="pdp-price-numbers-row">
               <span className="pdp-price-current">₹{currentPrice}</span>
-              {currentOriginalPrice && (
+              {currentOriginalPrice && Number(currentOriginalPrice) > Number(currentPrice) && (
                 <span className="pdp-price-original">₹{currentOriginalPrice}</span>
               )}
-              {currentDiscount && (
+              {currentDiscount && currentDiscount !== '0% off' && (
                 <span className="pdp-price-discount">{currentDiscount}</span>
               )}
             </div>

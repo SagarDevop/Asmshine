@@ -97,6 +97,13 @@ export const adminApi = {
     });
   },
 
+  uploadProductImage: async (imageBase64, folder = 'asm-shine/products') => {
+    return adminFetch('/api/v1/admin/products/upload-image', {
+      method: 'POST',
+      body: JSON.stringify({ imageBase64, folder })
+    });
+  },
+
   // Inventory
   getInventory: async (params = {}) => {
     const qs = new URLSearchParams(params).toString();

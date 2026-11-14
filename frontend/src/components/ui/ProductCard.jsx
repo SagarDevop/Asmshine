@@ -69,10 +69,10 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
 
         <div className="price-row">
           <span className="price-current">₹{product.price}</span>
-          {product.originalPrice && (
+          {product.originalPrice && Number(product.originalPrice) > Number(product.price) && (
             <span className="price-original">₹{product.originalPrice}</span>
           )}
-          {product.discountPercent && (
+          {product.discountPercent && Number(product.discountPercent) > 0 && (
             <span className="price-discount">{product.discountPercent}% off</span>
           )}
         </div>

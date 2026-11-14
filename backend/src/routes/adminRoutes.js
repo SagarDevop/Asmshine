@@ -38,6 +38,11 @@ router.post(
   authorize('admin', 'superadmin', 'inventory_manager'),
   productController.createProduct
 );
+router.post(
+  '/products/upload-image',
+  authorize('admin', 'superadmin', 'inventory_manager'),
+  productController.uploadProductImage
+);
 router.put(
   '/products/:id',
   authorize('admin', 'superadmin', 'inventory_manager'),

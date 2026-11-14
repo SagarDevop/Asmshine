@@ -629,11 +629,62 @@ const deleteProduct = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /api/v1/admin/products/upload-image
+ * Upload local image (file/gallery/drag-drop) directly to Cloudinary
+ */
+const uploadProductImage = async (req, res, next) => {
+  try {
+    const { imageBase64, imageUrl, folder = 'asm-shine/products' } = req.body;
+    const imagePayload = imageBase64 || imageUrl;
+
+    if (!imagePayload) {
+      return res.status(400).json({
+        success: false,
+        message: 'No image data provided. Please select or drag an image file.'
+      });
+    }
+
+    try {
+      const { getCloudinary } = require('../config/cloudinary');
+      const cloudinary = getCloudinary();
+      const result = await cloudinary.uploader.upload(imagePayload, {
+        folder,
+        resource_type: 'image',
+        overwrite: false
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Product image uploaded to Cloudinary successfully.',
+        data: {
+          url: result.secure_url,
+          secureUrl: result.secure_url,
+          publicId: result.public_id,
+          bytes: result.bytes,
+          format: result.format,
+          width: result.width,
+          height: result.height
+        }
+      });
+    } catch (cloudErr) {
+      console.warn('[AdminProductController] Cloudinary upload warning:', cloudErr.message);
+      return res.status(500).json({
+        success: false,
+        message: `Cloudinary upload failed: ${cloudErr.message}`
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getProducts,
   getProductById,
   createProduct,
   updateProduct,
   toggleProductStatus,
-  deleteProduct
+  deleteProduct,
+  uploadProductImage
 };

@@ -502,10 +502,10 @@ export const CartPage = ({
 
                     <div className="cart-item-price-row">
                       <span className="cart-item-price">₹{product.price}</span>
-                      {product.originalPrice && (
+                      {product.originalPrice && Number(product.originalPrice) > Number(product.price) && (
                         <span className="cart-item-mrp">₹{product.originalPrice}</span>
                       )}
-                      {product.discountPercent && (
+                      {product.discountPercent && Number(product.discountPercent) > 0 && (
                         <span className="cart-item-discount">{product.discountPercent}% off</span>
                       )}
                     </div>
