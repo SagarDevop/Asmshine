@@ -16,7 +16,7 @@ const storeSettingsSchema = new mongoose.Schema(
     },
     supportPhone: {
       type: String,
-      default: '+91 98765 43210'
+      default: '+91 8901 271 271'
     },
     currency: {
       type: String,
@@ -39,10 +39,10 @@ const storeSettingsSchema = new mongoose.Schema(
       default: 5
     },
     businessAddress: {
-      street: { type: String, default: 'Industrial Area, Phase 1' },
-      city: { type: String, default: 'New Delhi' },
-      state: { type: String, default: 'Delhi' },
-      pincode: { type: String, default: '110020' },
+      street: { type: String, default: 'Shop No. 11, Paras Enclave' },
+      city: { type: String, default: 'Kurukshetra' },
+      state: { type: String, default: 'Haryana' },
+      pincode: { type: String, default: '136118' },
       country: { type: String, default: 'India' }
     },
     enableEmailNotifications: {

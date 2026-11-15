@@ -134,9 +134,9 @@ const DEFAULT_ABOUT = {
   contact: {
     tag: 'CUSTOMER CARE',
     title: 'Direct Manufacturer Support',
-    helpline: '1800-ASM-SHINE (276-744)',
-    email: 'care@asmshine.com',
-    address: 'ASM Shine Hygiene Labs Pvt Ltd, New Delhi 110001',
+    helpline: '+91 8901 271 271',
+    email: 'support@asmshine.com',
+    address: 'Shop No. 11, Paras Enclave, Kurukshetra, Haryana, PIN Code: 136118',
     operatingHours: 'Monday – Saturday, 9:00 AM – 6:00 PM IST',
     isVisible: true
   },
@@ -221,16 +221,17 @@ export const AboutPage = ({ onExploreCatalog }) => {
       description: seo.metaDescription,
       contactPoint: {
         '@type': 'ContactPoint',
-        telephone: '+91-1800-276-744',
+        telephone: '+91-8901-271-271',
         contactType: 'Customer Support',
-        email: content.contact?.email || 'care@asmshine.com',
+        email: content.contact?.email || 'support@asmshine.com',
         areaServed: 'IN'
       },
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Industrial Area, Phase 1',
-        addressLocality: 'New Delhi',
-        postalCode: '110001',
+        streetAddress: 'Shop No. 11, Paras Enclave',
+        addressLocality: 'Kurukshetra',
+        addressRegion: 'Haryana',
+        postalCode: '136118',
         addressCountry: 'IN'
       }
     });
@@ -890,7 +891,13 @@ export const AboutPage = ({ onExploreCatalog }) => {
                       <Phone size={18} className="about-contact-icon" />
                       <div>
                         <span className="about-contact-lbl">Helpline Support</span>
-                        <span className="about-contact-val">{contact.helpline}</span>
+                        <a
+                          href={`tel:${contact.helpline.replace(/\s+/g, '')}`}
+                          className="about-contact-val"
+                          style={{ color: '#0F172A', textDecoration: 'none' }}
+                        >
+                          {contact.helpline}
+                        </a>
                       </div>
                     </div>
                   )}

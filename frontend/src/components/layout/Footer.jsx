@@ -88,6 +88,12 @@ export const Footer = () => {
           </h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#475569' }}>
             <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Phone size={15} color="#2563EB" />
+              <a href="tel:+918901271271" style={{ color: '#475569', textDecoration: 'none' }}>
+                +91 8901 271 271
+              </a>
+            </li>
+            <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Mail size={15} color="#2563EB" />
               <a href="mailto:support@asmshine.com" style={{ color: '#475569', textDecoration: 'none' }}>
                 support@asmshine.com
@@ -97,9 +103,9 @@ export const Footer = () => {
               <Clock size={15} color="#2563EB" style={{ flexShrink: 0, marginTop: '2px' }} />
               <span>Monday – Saturday<br />9:00 AM – 6:00 PM IST</span>
             </li>
-            <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <MapPin size={15} color="#2563EB" />
-              <span>New Delhi, India</span>
+            <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', lineHeight: '1.4' }}>
+              <MapPin size={15} color="#2563EB" style={{ flexShrink: 0, marginTop: '2px' }} />
+              <span>Shop No. 11, Paras Enclave, Kurukshetra, Haryana - 136118</span>
             </li>
           </ul>
         </div>

@@ -69,9 +69,9 @@ export const AboutModal = ({ isOpen, onClose }) => {
 
           <div className="about-contact-box">
             <h4>Customer Care &amp; Institutional Supply</h4>
-            <p>Email: <strong>care@asmshine.com</strong></p>
-            <p>Toll-Free Helpline: <strong>1800-ASM-SHINE (276-744)</strong></p>
-            <p>New Delhi 110001, India</p>
+            <p>Helpline: <strong>+91 8901 271 271</strong></p>
+            <p>Email: <strong>support@asmshine.com</strong></p>
+            <p>Shop No. 11, Paras Enclave, Kurukshetra, Haryana - 136118</p>
           </div>
         </div>
 

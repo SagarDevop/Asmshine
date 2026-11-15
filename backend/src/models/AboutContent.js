@@ -159,9 +159,9 @@ const aboutContentSchema = new mongoose.Schema(
     contact: {
       tag: { type: String, default: 'CUSTOMER CARE' },
       title: { type: String, default: 'Direct Manufacturer Support' },
-      helpline: { type: String, default: '1800-ASM-SHINE (276-744)' },
-      email: { type: String, default: 'care@asmshine.com' },
-      address: { type: String, default: 'ASM Shine Hygiene Labs Pvt Ltd, New Delhi 110001' },
+      helpline: { type: String, default: '+91 8901 271 271' },
+      email: { type: String, default: 'support@asmshine.com' },
+      address: { type: String, default: 'Shop No. 11, Paras Enclave, Kurukshetra, Haryana, PIN Code: 136118' },
       operatingHours: { type: String, default: 'Monday – Saturday, 9:00 AM – 6:00 PM IST' },
       isVisible: { type: Boolean, default: true }
     },

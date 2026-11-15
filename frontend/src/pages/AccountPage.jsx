@@ -1423,18 +1423,18 @@ export const AccountPage = () => {
                   </p>
                   
                   <a
-                    href="tel:9876543210"
+                    href="tel:918901271271"
                     style={{ textDecoration: 'none', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '14px', padding: '12px 14px', border: '1px solid #E2E8F0', borderRadius: '8px', backgroundColor: '#FFFFFF' }}
                   >
                     <Phone size={20} color="#2874F0" />
                     <div>
                       <strong style={{ fontSize: '14px', display: 'block' }}>Call Support Helpline</strong>
-                      <span style={{ fontSize: '12px', color: '#64748B' }}>1800-ASM-SHINE / +91 98765 43210</span>
+                      <span style={{ fontSize: '12px', color: '#64748B' }}>+91 8901 271 271</span>
                     </div>
                   </a>
 
                   <a
-                    href="https://wa.me/919876543210?text=Hi%20ASM%20Shine%20Support%2C%20I%20need%20help%20with%20my%20order"
+                    href="https://wa.me/918901271271?text=Hi%20ASM%20Shine%20Support%2C%20I%20need%20help%20with%20my%20order"
                     target="_blank"
                     rel="noreferrer"
                     style={{ textDecoration: 'none', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '14px', padding: '12px 14px', border: '1px solid #BBF7D0', borderRadius: '8px', backgroundColor: '#F0FDF4' }}
@@ -1560,7 +1560,7 @@ export const AccountPage = () => {
                   </div>
 
                   <a
-                    href="https://wa.me/919876543210?text=Hi%2C%20I%20am%20interested%20in%20becoming%20an%20ASM%20Shine%20distributor%20or%20bulk%20buyer."
+                    href="https://wa.me/918901271271?text=Hi%2C%20I%20am%20interested%20in%20becoming%20an%20ASM%20Shine%20distributor%20or%20bulk%20buyer."
                     target="_blank"
                     rel="noreferrer"
                     style={{ textDecoration: 'none', color: '#FFFFFF', backgroundColor: '#16A34A', padding: '12px', borderRadius: '6px', textAlign: 'center', fontWeight: 700, fontSize: '14px', display: 'block' }}
