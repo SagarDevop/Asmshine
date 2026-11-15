@@ -217,22 +217,54 @@ const aboutContentSchema = new mongoose.Schema(
 
 /**
  * Singleton getter for Published content.
- * Automatically seeds the existing About Us content if no record exists.
+ * Automatically seeds the existing About Us content if no record exists,
+ * and auto-heals any legacy or placeholder contact details.
  */
 aboutContentSchema.statics.getPublishedContent = async function () {
   let content = await this.findOne({ status: 'PUBLISHED' }).sort({ updatedAt: -1 });
   if (!content) {
     content = await this.create({ status: 'PUBLISHED' });
     console.log('[AboutContent] Seeded initial published About Us content.');
-  } else if (!content.pillars || content.pillars.length === 0) {
-    content.pillars = DEFAULT_PILLARS;
-    if (!content.comparison || !content.comparison.items || content.comparison.items.length === 0) {
-      content.comparison = content.comparison || {};
-      content.comparison.items = DEFAULT_COMPARISON_ITEMS;
-    }
-    await content.save();
-    console.log('[AboutContent] Auto-healed empty pillars and comparison items.');
+    return content;
   }
+
+  let dirty = false;
+
+  if (!content.pillars || content.pillars.length === 0) {
+    content.pillars = DEFAULT_PILLARS;
+    dirty = true;
+  }
+  if (!content.comparison || !content.comparison.items || content.comparison.items.length === 0) {
+    content.comparison = content.comparison || {};
+    content.comparison.items = DEFAULT_COMPARISON_ITEMS;
+    dirty = true;
+  }
+
+  // Auto-migrate legacy/dummy contact details to real manufacturer details
+  const contact = content.contact || {};
+  if (
+    !contact.helpline ||
+    contact.helpline.includes('1800-ASM-SHINE') ||
+    contact.email === 'care@asmshine.com' ||
+    (contact.address && contact.address.includes('New Delhi'))
+  ) {
+    content.contact = {
+      tag: 'CUSTOMER CARE',
+      title: 'Direct Manufacturer Support',
+      helpline: '+91 8901 271 271',
+      email: 'support@asmshine.com',
+      address: 'Shop No. 11, Paras Enclave, Kurukshetra, Haryana, PIN Code: 136118',
+      operatingHours: 'Monday – Saturday, 9:00 AM – 6:00 PM IST',
+      isVisible: true
+    };
+    dirty = true;
+    console.log('[AboutContent] Auto-migrated published contact info to Kurukshetra details.');
+  }
+
+  if (dirty) {
+    await content.save();
+  }
+
   return content;
 };
 
@@ -255,6 +287,26 @@ aboutContentSchema.statics.getDraftContent = async function () {
       status: 'DRAFT'
     });
     console.log('[AboutContent] Created draft clone from published About Us content.');
+  } else {
+    const contact = draft.contact || {};
+    if (
+      !contact.helpline ||
+      contact.helpline.includes('1800-ASM-SHINE') ||
+      contact.email === 'care@asmshine.com' ||
+      (contact.address && contact.address.includes('New Delhi'))
+    ) {
+      draft.contact = {
+        tag: 'CUSTOMER CARE',
+        title: 'Direct Manufacturer Support',
+        helpline: '+91 8901 271 271',
+        email: 'support@asmshine.com',
+        address: 'Shop No. 11, Paras Enclave, Kurukshetra, Haryana, PIN Code: 136118',
+        operatingHours: 'Monday – Saturday, 9:00 AM – 6:00 PM IST',
+        isVisible: true
+      };
+      await draft.save();
+      console.log('[AboutContent] Auto-migrated draft contact info to Kurukshetra details.');
+    }
   }
   return draft;
 };

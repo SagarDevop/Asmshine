@@ -49,8 +49,9 @@ We reserve the right to revise, modify, or update these Terms at any time to ref
 ### 13. Contact Information
 If you have any questions, clarifications, or feedback regarding these Terms & Conditions, please contact us at:
 - **Email:** support@asmshine.com
+- **Helpline:** +91 8901 271 271
 - **Customer Support Hours:** Monday to Saturday, 9:00 AM – 6:00 PM IST
-- **Registered Address:** ASM Shine Hygiene Labs, New Delhi, India`
+- **Registered Address:** Shop No. 11, Paras Enclave, Kurukshetra, Haryana, PIN Code: 136118`
   },
 
   privacy_policy: {
@@ -106,8 +107,9 @@ Under applicable Indian data protection principles, you possess the right to:
 ### 12. Contact Information
 For privacy questions, data requests, or to reach our Grievance Officer, please contact:
 - **Grievance Officer / Privacy Support:** support@asmshine.com
+- **Helpline:** +91 8901 271 271
 - **Response Timeline:** Within 48 business hours
-- **Official Address:** ASM Shine Hygiene Labs, New Delhi, India`
+- **Official Address:** Shop No. 11, Paras Enclave, Kurukshetra, Haryana, PIN Code: 136118`
   },
 
   refund_policy: {
@@ -146,8 +148,9 @@ Once a damaged or incorrect shipment claim is verified, a replacement shipment w
 ### 9. Contact Information
 To submit a replacement request, report a transit issue, or inquire about refund status, contact our dedicated support team:
 - **Support Email:** support@asmshine.com
+- **Helpline:** +91 8901 271 271
 - **Customer Care Hours:** Monday to Saturday, 9:00 AM – 6:00 PM IST
-- **Physical Address:** ASM Shine Customer Support, New Delhi, India`
+- **Physical Address:** Shop No. 11, Paras Enclave, Kurukshetra, Haryana, PIN Code: 136118`
   }
 };
 

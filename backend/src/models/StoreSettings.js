@@ -60,7 +60,33 @@ storeSettingsSchema.statics.getSettings = async function () {
   let settings = await this.findOne();
   if (!settings) {
     settings = await this.create({});
+    return settings;
   }
+
+  let dirty = false;
+  if (!settings.supportPhone || settings.supportPhone.includes('1800')) {
+    settings.supportPhone = '+91 8901 271 271';
+    dirty = true;
+  }
+  if (!settings.supportEmail || settings.supportEmail === 'care@asmshine.com') {
+    settings.supportEmail = 'support@asmshine.com';
+    dirty = true;
+  }
+  if (!settings.businessAddress || settings.businessAddress.city !== 'Kurukshetra') {
+    settings.businessAddress = {
+      street: 'Shop No. 11, Paras Enclave',
+      city: 'Kurukshetra',
+      state: 'Haryana',
+      pincode: '136118',
+      country: 'India'
+    };
+    dirty = true;
+  }
+
+  if (dirty) {
+    await settings.save();
+  }
+
   return settings;
 };
 
