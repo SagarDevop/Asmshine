@@ -14,7 +14,15 @@ import {
   Layers,
   Check,
   Upload,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Tag,
+  Flame,
+  Sliders,
+  ListChecks,
+  CheckCircle2,
+  Sparkles,
+  Percent,
+  HelpCircle
 } from 'lucide-react';
 import { adminApi } from '../services/adminApi';
 
@@ -53,7 +61,7 @@ export const AdminProductsPage = () => {
   const [variants, setVariants] = useState([]);
   const [highlights, setHighlights] = useState([]);
   const [specifications, setSpecifications] = useState([]);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [activeTab, setActiveTab] = useState('general'); // 'general' | 'specs'
 
   // Image Uploading & Drag/Drop States
   const [mainImageUploading, setMainImageUploading] = useState(false);
@@ -352,6 +360,7 @@ export const AdminProductsPage = () => {
       { key: 'Country of Origin', value: 'India' }
     ]);
     setShowAdvanced(false);
+    setActiveTab('general');
     setFormError('');
     setModalOpen(true);
   };
@@ -421,6 +430,7 @@ export const AdminProductsPage = () => {
     }
 
     setShowAdvanced(false);
+    setActiveTab('general');
     setFormError('');
     setModalOpen(true);
   };
@@ -667,13 +677,17 @@ export const AdminProductsPage = () => {
                               <span style={{
                                 background: '#FEF3C7',
                                 color: '#92400E',
-                                fontSize: '9.5px',
-                                fontWeight: 800,
-                                padding: '2px 6px',
+                                fontSize: '10px',
+                                fontWeight: 700,
+                                padding: '2px 7px',
                                 borderRadius: '4px',
-                                border: '1px solid #FCD34D'
+                                border: '1px solid #FCD34D',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '3px'
                               }}>
-                                🪔 DIWALI BANNER
+                                <Flame size={11} style={{ color: '#D97706' }} />
+                                <span>FESTIVE DEAL</span>
                               </span>
                             )}
                           </div>
@@ -817,88 +831,174 @@ export const AdminProductsPage = () => {
       {/* Add / Edit Product Modal */}
       {modalOpen && (
         <div className="admin-modal-backdrop">
-          <div className="admin-modal-card">
-            <div className="admin-modal-header">
-              <h2 className="admin-modal-title">
-                {editingProduct ? `Edit Product: ${editingProduct.name}` : 'Add New Product'}
-              </h2>
+          <div className="admin-modal-card admin-modal-card-lg">
+            <div className="admin-modal-header" style={{ padding: '18px 24px' }}>
+              <div>
+                <h2 className="admin-modal-title" style={{ fontSize: '16.5px', fontWeight: 700, color: '#0F172A' }}>
+                  {editingProduct ? `Edit Product: ${editingProduct.name}` : 'Add New Product'}
+                </h2>
+                <p style={{ margin: '3px 0 0 0', fontSize: '12px', color: '#64748B' }}>
+                  Configure catalog details, pricing rules, inventory variants, and specifications.
+                </p>
+              </div>
               <button
                 onClick={() => setModalOpen(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B', padding: '6px', borderRadius: '6px' }}
+                aria-label="Close"
               >
-                <X size={20} />
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Flipkart / Shopify Style Navigation Tabs */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '0 24px',
+              borderBottom: '1px solid #E2E8F0',
+              background: '#F8FAFC'
+            }}>
+              <button
+                type="button"
+                onClick={() => setActiveTab('general')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '12px 16px',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: activeTab === 'general' ? '2.5px solid #2563EB' : '2.5px solid transparent',
+                  color: activeTab === 'general' ? '#1D4ED8' : '#64748B',
+                  fontWeight: activeTab === 'general' ? 700 : 500,
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <Package size={15} />
+                <span>General &amp; Pricing</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('specs')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '12px 16px',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: activeTab === 'specs' ? '2.5px solid #2563EB' : '2.5px solid transparent',
+                  color: activeTab === 'specs' ? '#1D4ED8' : '#64748B',
+                  fontWeight: activeTab === 'specs' ? 700 : 500,
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <ListChecks size={15} />
+                <span>Highlights &amp; Specifications</span>
+                {(highlights.length > 0 || specifications.length > 0) && (
+                  <span style={{
+                    background: activeTab === 'specs' ? '#DBEAFE' : '#E2E8F0',
+                    color: activeTab === 'specs' ? '#1D4ED8' : '#475569',
+                    padding: '1px 7px',
+                    borderRadius: '999px',
+                    fontSize: '11px',
+                    fontWeight: 700
+                  }}>
+                    {highlights.length + specifications.length}
+                  </span>
+                )}
               </button>
             </div>
 
             <form onSubmit={handleFormSubmit}>
-              <div className="admin-modal-body">
+              <div className="admin-modal-body" style={{ padding: '22px 24px' }}>
                 {formError && (
                   <div style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#991B1B', padding: '10px 14px', borderRadius: '8px', fontSize: '12.5px', marginBottom: '16px' }}>
                     {formError}
                   </div>
                 )}
 
-                <div className="admin-form-group">
-                  <label className="admin-form-label">Product Name *</label>
-                  <input
-                    type="text"
-                    className="admin-form-input"
-                    placeholder="e.g. Pure Shine Dishwash Gel"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">SKU (Unique Stock Keeping Unit)</label>
-                    <input
-                      type="text"
-                      className="admin-form-input"
-                      placeholder="e.g. SKU-DISHWASH-500ML"
-                      value={sku}
-                      onChange={(e) => setSku(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Category *</label>
-                    <select
-                      className="admin-select"
-                      style={{ width: '100%', height: '42px' }}
-                      value={cat}
-                      onChange={(e) => setCat(e.target.value)}
-                      required
-                    >
-                      <option value="everyday_essentials">Everyday Essentials</option>
-                      <option value="dishwash_solutions">Dishwash Solutions</option>
-                      <option value="laundry_fabrics">Laundry &amp; Fabrics</option>
-                      <option value="bathroom_surfaces">Bathroom &amp; Surfaces</option>
-                      <option value="floor_care">Floor Care</option>
-                      <option value="glass_care">Glass Care</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* 2. Smart Pricing & Flipkart Discount Calculator */}
-                <div style={{
-                  background: '#F8FAFC',
-                  border: '1px solid #E2E8F0',
-                  borderRadius: '10px',
-                  padding: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>🏷️ Smart Pricing &amp; Flipkart Discount Calculator</span>
+                {activeTab === 'general' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                      <label className="admin-form-label">Product Name *</label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        placeholder="e.g. Pure Shine Dishwash Gel"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                      />
                     </div>
-                    <span style={{ fontSize: '11px', color: '#64748B' }}>
-                      Auto-computes selling price &amp; customer discount
-                    </span>
-                  </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                        <label className="admin-form-label">SKU (Unique Stock Keeping Unit)</label>
+                        <input
+                          type="text"
+                          className="admin-form-input"
+                          placeholder="e.g. SKU-DISHWASH-500ML"
+                          value={sku}
+                          onChange={(e) => setSku(e.target.value)}
+                        />
+                      </div>
+
+                      <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                        <label className="admin-form-label">Category *</label>
+                        <select
+                          className="admin-select"
+                          style={{ width: '100%', height: '42px' }}
+                          value={cat}
+                          onChange={(e) => setCat(e.target.value)}
+                          required
+                        >
+                          <option value="everyday_essentials">Everyday Essentials</option>
+                          <option value="dishwash_solutions">Dishwash Solutions</option>
+                          <option value="laundry_fabrics">Laundry &amp; Fabrics</option>
+                          <option value="bathroom_surfaces">Bathroom &amp; Surfaces</option>
+                          <option value="floor_care">Floor Care</option>
+                          <option value="glass_care">Glass Care</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* 2. Smart Pricing & Flipkart Discount Calculator */}
+                    <div style={{
+                      background: '#F8FAFC',
+                      border: '1px solid #E2E8F0',
+                      borderRadius: '10px',
+                      padding: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ fontWeight: 700, fontSize: '13px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '6px',
+                            background: '#EFF6FF',
+                            color: '#2563EB',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}>
+                            <Tag size={13} />
+                          </div>
+                          <span>Pricing &amp; Discount Calculator</span>
+                        </div>
+                        <span style={{ fontSize: '11px', color: '#64748B' }}>
+                          Auto-computes selling price &amp; customer discount
+                        </span>
+                      </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.2fr 1fr', gap: '12px' }}>
                     <div className="admin-form-group" style={{ marginBottom: 0 }}>
@@ -1011,8 +1111,9 @@ export const AdminProductsPage = () => {
                       )}
                     </div>
                     {Number(originalPrice) > Number(price) ? (
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#166534' }}>
-                        🎉 Customer saves ₹{Number(originalPrice) - Number(price)} ({discountPercent}% OFF)!
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#166534', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <Sparkles size={13} style={{ color: '#16A34A' }} />
+                        <span>Customer saves ₹{Number(originalPrice) - Number(price)} ({discountPercent}% OFF)</span>
                       </span>
                     ) : (
                       <span style={{ fontSize: '11.5px', color: '#64748B' }}>
@@ -1477,30 +1578,33 @@ export const AdminProductsPage = () => {
                   />
                 </div>
 
-                {/* Diwali / Festive Sale Banner Placement */}
+                {/* Promotional & Festive Banner Placement */}
                 <div style={{
-                  padding: '14px',
-                  borderRadius: '8px',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
                   background: isFestiveDeal ? '#FFFBEB' : '#F8FAFC',
-                  border: `1.5px solid ${isFestiveDeal ? '#F59E0B' : '#E2E8F0'}`,
-                  marginBottom: '16px'
+                  border: `1px solid ${isFestiveDeal ? '#FCD34D' : '#E2E8F0'}`,
+                  transition: 'all 0.2s ease'
                 }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#1E293B' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#1E293B' }}>
                     <input
                       type="checkbox"
                       checked={isFestiveDeal}
                       onChange={(e) => setIsFestiveDeal(e.target.checked)}
                       style={{ width: '17px', height: '17px', accentColor: '#D97706', cursor: 'pointer' }}
                     />
-                    <span>🪔 Feature in Diwali Sale / Festive Banner Cards</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Flame size={16} style={{ color: '#D97706' }} />
+                      <span>Promotional &amp; Festive Banner Placement</span>
+                    </div>
                   </label>
-                  <p style={{ fontSize: '11.5px', color: '#64748B', margin: '4px 0 8px 25px' }}>
-                    When checked, this product will appear inside the Diwali Deep Cleaning Mega Sale poster cards on the storefront.
+                  <p style={{ fontSize: '11.5px', color: '#64748B', margin: '4px 0 0 27px' }}>
+                    When checked, this product will appear inside promotional sale cards and festive deal sections on the storefront.
                   </p>
                   {isFestiveDeal && (
-                    <div style={{ marginLeft: '25px', marginTop: '6px' }}>
+                    <div style={{ marginLeft: '27px', marginTop: '10px' }}>
                       <label className="admin-form-label" style={{ fontSize: '11px', marginBottom: '4px' }}>
-                        Festive Offer Tag (e.g. &ldquo;FESTIVE ₹69&rdquo;, &ldquo;5L VALUE PACK&rdquo;, &ldquo;DIWALI SPECIAL&rdquo;)
+                        Festive Offer Tag (e.g. &ldquo;FESTIVE ₹69&rdquo;, &ldquo;5L VALUE PACK&rdquo;, &ldquo;SPECIAL DEAL&rdquo;)
                       </label>
                       <input
                         type="text"
@@ -1508,171 +1612,237 @@ export const AdminProductsPage = () => {
                         placeholder="e.g. FESTIVE ₹69"
                         value={festiveBadge}
                         onChange={(e) => setFestiveBadge(e.target.value)}
-                        style={{ height: '36px', fontSize: '12px' }}
+                        style={{ height: '36px', fontSize: '12px', maxWidth: '340px' }}
                       />
                     </div>
                   )}
                 </div>
 
-                {/* Collapsible Advanced Details: Highlights & Specifications */}
-                <div style={{ marginTop: '10px' }}>
+                {/* Quick navigation hint to Tab 2 */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 14px',
+                  background: '#F1F5F9',
+                  borderRadius: '8px',
+                  border: '1px solid #E2E8F0'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#475569' }}>
+                    Want to add bullet points or technical specs for this product?
+                  </div>
                   <button
                     type="button"
-                    onClick={() => setShowAdvanced(!showAdvanced)}
-                    className="admin-btn admin-btn-secondary"
-                    style={{
-                      width: '100%',
-                      justifyContent: 'space-between',
-                      padding: '10px 14px',
+                    onClick={() => setActiveTab('specs')}
+                    className="admin-btn admin-btn-secondary admin-btn-sm"
+                    style={{ gap: '6px' }}
+                  >
+                    <span>Open Highlights &amp; Specs Tab</span>
+                    <ListChecks size={13} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'specs' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Top Info Banner */}
+                <div style={{
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  background: '#EFF6FF',
+                  border: '1px solid #BFDBFE',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}>
+                  <ListChecks size={20} style={{ color: '#2563EB', flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '12.5px', color: '#1E40AF' }}>
+                      Product Detail Page (PDP) Content
+                    </div>
+                    <div style={{ fontSize: '11.5px', color: '#3B82F6', marginTop: '1px' }}>
+                      Bullet points appear under the product title on storefront. Technical specs display in the specification table.
+                    </div>
+                  </div>
+                </div>
+
+                {/* 1. Product Highlights Point-by-Point Section */}
+                <div className="admin-meta-box">
+                  <div className="admin-meta-header">
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '13.5px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <CheckCircle2 size={16} style={{ color: '#10B981' }} />
+                        <span>Product Highlights ({highlights.length} Points)</span>
+                      </div>
+                      <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
+                        Key feature bullet points shown with stylish checkmarks on the product page.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddHighlight}
+                      className="admin-btn admin-btn-secondary admin-btn-sm"
+                      style={{ gap: '5px' }}
+                    >
+                      <Plus size={13} />
+                      <span>Add Point</span>
+                    </button>
+                  </div>
+
+                  {highlights.length === 0 ? (
+                    <div style={{
+                      padding: '24px 16px',
                       background: '#F8FAFC',
                       border: '1px dashed #CBD5E1',
-                      borderRadius: '8px'
-                    }}
-                  >
-                    <span style={{ fontWeight: 700, fontSize: '12.5px', color: '#334155' }}>
-                      ✨ Optional Details: Product Highlights &amp; Technical Specifications ({highlights.length} points, {specifications.length} specs)
-                    </span>
-                    <span style={{ fontSize: '12px', color: '#64748B', fontWeight: 700 }}>
-                      {showAdvanced ? '▲ Collapse' : '▼ Click to Expand'}
-                    </span>
-                  </button>
-
-                  {showAdvanced && (
-                    <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                      {/* 1. Product Highlights Point-by-Point Section */}
-                      <div className="admin-meta-box">
-                        <div className="admin-meta-header">
-                          <div>
-                            <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A' }}>
-                              Product Highlights ({highlights.length} Points)
-                            </div>
-                            <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
-                              Key feature bullet points shown with stylish checkmarks on the product page.
-                            </p>
-                          </div>
+                      borderRadius: '8px',
+                      textAlign: 'center'
+                    }}>
+                      <p style={{ fontSize: '12.5px', color: '#64748B', margin: '0 0 8px 0' }}>
+                        No highlights added yet. Click &ldquo;+ Add Point&rdquo; to add feature bullet points.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleAddHighlight}
+                        className="admin-btn admin-btn-secondary admin-btn-sm"
+                        style={{ margin: '0 auto', gap: '5px' }}
+                      >
+                        <Plus size={13} /> Add First Point
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {highlights.map((hl, idx) => (
+                        <div key={idx} className="admin-highlight-row">
+                          <span className="admin-highlight-badge">{idx + 1}</span>
+                          <input
+                            type="text"
+                            className="admin-form-input"
+                            style={{ height: '36px', fontSize: '12.5px', flex: 1, border: 'none', background: 'transparent', boxShadow: 'none', padding: '0 4px' }}
+                            placeholder={`Highlight point #${idx + 1} (e.g. 99.9% germ kill verified formula)`}
+                            value={hl}
+                            onChange={(e) => handleUpdateHighlight(idx, e.target.value)}
+                          />
                           <button
                             type="button"
-                            onClick={handleAddHighlight}
-                            className="admin-btn admin-btn-secondary admin-btn-sm"
+                            onClick={() => handleRemoveHighlight(idx)}
+                            className="admin-icon-btn-danger"
+                            title="Remove point"
                           >
-                            <Plus size={13} /> Add Point
+                            <Trash2 size={15} />
                           </button>
                         </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-                        {highlights.length === 0 ? (
-                          <div style={{ padding: '12px', background: '#FFFFFF', border: '1px dashed #CBD5E1', borderRadius: '8px', textAlign: 'center' }}>
-                            <div style={{ fontSize: '12px', color: '#64748B' }}>
-                              No highlights added yet. Click &ldquo;+ Add Point&rdquo; above to add feature bullet points.
-                            </div>
-                          </div>
-                        ) : (
-                          highlights.map((hl, idx) => (
-                            <div key={idx} className="admin-highlight-row">
-                              <Check size={16} className="admin-highlight-check" />
-                              <input
-                                type="text"
-                                className="admin-form-input"
-                                style={{ height: '36px', fontSize: '12.5px', flex: 1 }}
-                                placeholder={`Highlight point #${idx + 1}`}
-                                value={hl}
-                                onChange={(e) => handleUpdateHighlight(idx, e.target.value)}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveHighlight(idx)}
-                                style={{ background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', padding: '4px' }}
-                                title="Remove Point"
-                              >
-                                <Trash2 size={15} />
-                              </button>
-                            </div>
-                          ))
-                        )}
+                {/* 2. Product Specifications (Technical Key-Value Table) */}
+                <div className="admin-meta-box">
+                  <div className="admin-meta-header">
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '13.5px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Sliders size={16} style={{ color: '#2563EB' }} />
+                        <span>Technical Specifications ({specifications.length} Attributes)</span>
                       </div>
+                      <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
+                        Two-column technical specification table (Attribute &amp; Value).
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddSpecification}
+                      className="admin-btn admin-btn-secondary admin-btn-sm"
+                      style={{ gap: '5px' }}
+                    >
+                      <Plus size={13} />
+                      <span>Add Attribute</span>
+                    </button>
+                  </div>
 
-                      {/* 2. Product Specifications (Technical Key-Value Table) */}
-                      <div className="admin-meta-box">
-                        <div className="admin-meta-header">
-                          <div>
-                            <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A' }}>
-                              Product Specifications ({specifications.length} Attributes)
-                            </div>
-                            <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
-                              Two-column technical specification table (Attribute &amp; Value).
-                            </p>
-                          </div>
+                  {specifications.length === 0 ? (
+                    <div style={{
+                      padding: '24px 16px',
+                      background: '#F8FAFC',
+                      border: '1px dashed #CBD5E1',
+                      borderRadius: '8px',
+                      textAlign: 'center'
+                    }}>
+                      <p style={{ fontSize: '12.5px', color: '#64748B', margin: '0 0 8px 0' }}>
+                        No specifications added yet. Click &ldquo;+ Add Attribute&rdquo; to add technical specs.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleAddSpecification}
+                        className="admin-btn admin-btn-secondary admin-btn-sm"
+                        style={{ margin: '0 auto', gap: '5px' }}
+                      >
+                        <Plus size={13} /> Add First Attribute
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {specifications.map((spec, idx) => (
+                        <div key={idx} className="admin-spec-row">
+                          <input
+                            type="text"
+                            className="admin-form-input"
+                            style={{ height: '36px', fontSize: '12.5px', background: '#FFFFFF' }}
+                            placeholder="Attribute (e.g. Form, Fragrance, Shelf Life)"
+                            value={spec.key}
+                            onChange={(e) => handleUpdateSpecification(idx, 'key', e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            className="admin-form-input"
+                            style={{ height: '36px', fontSize: '12.5px', background: '#FFFFFF' }}
+                            placeholder="Detail / Value (e.g. Active Liquid Gel, 24 Months)"
+                            value={spec.value}
+                            onChange={(e) => handleUpdateSpecification(idx, 'value', e.target.value)}
+                          />
                           <button
                             type="button"
-                            onClick={handleAddSpecification}
-                            className="admin-btn admin-btn-secondary admin-btn-sm"
+                            onClick={() => handleRemoveSpecification(idx)}
+                            className="admin-icon-btn-danger"
+                            title="Remove attribute"
                           >
-                            <Plus size={13} /> Add Attribute
+                            <Trash2 size={15} />
                           </button>
                         </div>
-
-                        {specifications.length === 0 ? (
-                          <div style={{ padding: '12px', background: '#FFFFFF', border: '1px dashed #CBD5E1', borderRadius: '8px', textAlign: 'center' }}>
-                            <div style={{ fontSize: '12px', color: '#64748B' }}>
-                              No specifications added yet. Click &ldquo;+ Add Attribute&rdquo; above to add technical specs table rows.
-                            </div>
-                          </div>
-                        ) : (
-                          specifications.map((spec, idx) => (
-                            <div key={idx} className="admin-spec-row">
-                              <input
-                                type="text"
-                                className="admin-form-input"
-                                style={{ height: '36px', fontSize: '12.5px' }}
-                                placeholder="Attribute (e.g. Form, Fragrance)"
-                                value={spec.key}
-                                onChange={(e) => handleUpdateSpecification(idx, 'key', e.target.value)}
-                              />
-                              <input
-                                type="text"
-                                className="admin-form-input"
-                                style={{ height: '36px', fontSize: '12.5px' }}
-                                placeholder="Detail / Value (e.g. Thick Foaming Action Gel)"
-                                value={spec.value}
-                                onChange={(e) => handleUpdateSpecification(idx, 'value', e.target.value)}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveSpecification(idx)}
-                                style={{ background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', padding: '4px' }}
-                                title="Remove Attribute"
-                              >
-                                <Trash2 size={15} />
-                              </button>
-                            </div>
-                          ))
-                        )}
-                      </div>
+                      ))}
                     </div>
                   )}
                 </div>
               </div>
-
-              <div className="admin-modal-footer">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="admin-btn admin-btn-secondary"
-                  disabled={formSubmitting}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="admin-btn admin-btn-primary"
-                  disabled={formSubmitting}
-                >
-                  {formSubmitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Create Product'}
-                </button>
-              </div>
-            </form>
+            )}
           </div>
-        </div>
-      )}
+
+          <div className="admin-modal-footer">
+            <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', color: '#64748B', fontWeight: 500 }}>
+                {activeTab === 'general' ? 'Tab 1: General & Pricing' : 'Tab 2: Highlights & Specifications'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setModalOpen(false)}
+              className="admin-btn admin-btn-secondary"
+              disabled={formSubmitting}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="admin-btn admin-btn-primary"
+              disabled={formSubmitting}
+            >
+              {formSubmitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Create Product'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )}
     </div>
   );
 };
