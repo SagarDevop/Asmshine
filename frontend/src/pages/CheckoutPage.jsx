@@ -448,8 +448,12 @@ export const CheckoutPage = () => {
           throw new Error(razorpayOrder?.message || 'Failed to initialize payment gateway.');
         }
 
-        // 4. Retrieve public key ID (never secret)
-        const keyId = razorpayOrder.key_id || (import.meta.env.VITE_RAZORPAY_KEY_ID || '').trim() || await api.getRazorpayKey();
+        // 4. Retrieve public key ID dynamically from backend response (Zero Vercel env required)
+        const keyId = razorpayOrder.key_id || await api.getRazorpayKey() || (import.meta.env.VITE_RAZORPAY_KEY_ID || '').trim();
+
+        if (!keyId) {
+          throw new Error('Payment gateway public key not found. Please check backend server configuration.');
+        }
 
         // 5. Open Razorpay Checkout Modal
         const rzpOptions = {
