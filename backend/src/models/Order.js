@@ -162,13 +162,19 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ['upi', 'card', 'netbanking', 'cod'],
+      enum: ['upi', 'card', 'netbanking', 'cod', 'razorpay'],
       default: 'cod'
     },
     paymentStatus: {
       type: String,
       enum: ['pending', 'completed', 'failed', 'refunded'],
       default: 'pending'
+    },
+    paymentDetails: {
+      razorpayOrderId: { type: String, default: '' },
+      razorpayPaymentId: { type: String, default: '' },
+      razorpaySignature: { type: String, default: '' },
+      paidAt: { type: Date }
     },
     coupon: {
       code: { type: String, default: '' },

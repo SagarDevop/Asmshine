@@ -1,4 +1,6 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+require('dotenv').config(); // Fallback for root or environment-provided configs
 const app = require('./app');
 const { connectDB } = require('./config/db');
 

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const apiRoutes = require('./routes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -20,7 +21,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://lh3.googleusercontent.com; script-src 'self' 'unsafe-inline' https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.asmshine.com https://asmshine.com https://frontend-exjb.vercel.app https://asmshine.onrender.com https://accounts.google.com http://localhost:* http://127.0.0.1:*; frame-src https://accounts.google.com; frame-ancestors 'self';"
+    "default-src 'self'; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://lh3.googleusercontent.com https://*.razorpay.com; script-src 'self' 'unsafe-inline' https://accounts.google.com https://checkout.razorpay.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.asmshine.com https://asmshine.com https://frontend-exjb.vercel.app https://asmshine.onrender.com https://accounts.google.com https://api.razorpay.com https://lumberjack.razorpay.com http://localhost:* http://127.0.0.1:*; frame-src 'self' https://accounts.google.com https://api.razorpay.com https://checkout.razorpay.com; frame-ancestors 'self';"
   );
   next();
 });
@@ -83,6 +84,9 @@ app.use('/images', express.static(publicImagesPath));
 
 // Mount API v1
 app.use('/api/v1', apiRoutes);
+
+// Mount payment routes under /api for Razorpay standard web checkout (/api/create-order, /api/verify-payment)
+app.use('/api', paymentRoutes);
 
 // Root route
 app.get('/', (req, res) => {

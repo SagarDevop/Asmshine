@@ -324,7 +324,7 @@ const createOrder = async (req, res, next) => {
     }
 
     // 7. Payment method resolution (prepaid discounts disabled until verified gateway integration)
-    const validPaymentMethods = ['upi', 'card', 'netbanking', 'cod'];
+    const validPaymentMethods = ['upi', 'card', 'netbanking', 'cod', 'razorpay'];
     const chosenPayment = validPaymentMethods.includes(paymentMethod) ? paymentMethod : 'cod';
     const isCOD = chosenPayment === 'cod';
     const prepaidDiscount = 0; // Disabled: unearned discount cannot be granted without gateway settlement

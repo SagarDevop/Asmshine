@@ -27,6 +27,7 @@ import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 import { api } from '../services/api';
 import { resolvePincodeLocal } from '../utils/pincodeData';
+import { loadRazorpayScript } from '../utils/razorpay';
 import '../styles/skeleton.css';
 import '../styles/orderTracking.css';
 
@@ -394,23 +395,140 @@ export const CheckoutPage = () => {
         policyAcknowledgement: { accepted: true }
       };
 
-      const response = await api.createOrder(orderPayload, {
-        idempotencyKey: idempotencyKeyRef.current
-      });
-      if (response && response.success && response.order) {
-        idempotencyKeyRef.current = null; // Reset for next order cycle
-        const placedOrderId = response.order.orderId || response.order.id;
-        setOrderId(placedOrderId);
-        setPlacedOrderData(response.order);
-        setOrderPlaced(true);
-        await clearCart();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (paymentMethod === 'cod') {
+        const response = await api.createOrder(orderPayload, {
+          idempotencyKey: idempotencyKeyRef.current
+        });
+        if (response && response.success && response.order) {
+          idempotencyKeyRef.current = null; // Reset for next order cycle
+          const placedOrderId = response.order.orderId || response.order.id;
+          setOrderId(placedOrderId);
+          setPlacedOrderData(response.order);
+          setOrderPlaced(true);
+          await clearCart();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          throw new Error(response.message || 'Order could not be confirmed.');
+        }
+        setOrderSubmitting(false);
       } else {
-        throw new Error(response.message || 'Order could not be confirmed.');
+        // --- RAZORPAY STANDARD CHECKOUT (UPI, Cards, NetBanking) ---
+        // 1. Ensure Razorpay Checkout SDK is ready
+        const isLoaded = await loadRazorpayScript();
+        if (!isLoaded || typeof window.Razorpay !== 'function') {
+          throw new Error('Razorpay SDK failed to load. Please check your internet connection.');
+        }
+
+        // 2. Register authoritative order in Cleanora database (status: PENDING_PAYMENT)
+        const orderResponse = await api.createOrder(orderPayload, {
+          idempotencyKey: idempotencyKeyRef.current
+        });
+        if (!orderResponse || !orderResponse.success || !orderResponse.order) {
+          throw new Error(orderResponse?.message || 'Could not initiate checkout session.');
+        }
+
+        const dbOrder = orderResponse.order;
+        const placedOrderId = dbOrder.orderId || dbOrder.id;
+        const orderAmountInRupees = Number(dbOrder.pricing?.finalAmount || dbOrder.totalAmount || finalPayable);
+        const amountInPaise = Math.round(orderAmountInRupees * 100);
+
+        // 3. Request Razorpay order creation from backend (POST /api/create-order)
+        const razorpayOrder = await api.createRazorpayOrder({
+          amount: amountInPaise,
+          currency: 'INR',
+          receipt: placedOrderId,
+          notes: {
+            cleanoraOrderId: placedOrderId,
+            customerPhone: cleanPhone,
+            customerEmail: user?.email || ''
+          }
+        });
+
+        if (!razorpayOrder || !razorpayOrder.order_id) {
+          throw new Error(razorpayOrder?.message || 'Failed to initialize payment gateway.');
+        }
+
+        // 4. Retrieve public key ID (never secret)
+        const keyId = razorpayOrder.key_id || (import.meta.env.VITE_RAZORPAY_KEY_ID || '').trim() || await api.getRazorpayKey();
+
+        // 5. Open Razorpay Checkout Modal
+        const rzpOptions = {
+          key: keyId,
+          amount: razorpayOrder.amount,
+          currency: razorpayOrder.currency || 'INR',
+          name: 'ASM Shine',
+          description: 'Hygiene & Cleaning Solutions',
+          image: '/favicon.svg',
+          order_id: razorpayOrder.order_id,
+          prefill: {
+            name: cleanName,
+            contact: cleanPhone,
+            email: user?.email || ''
+          },
+          notes: {
+            orderId: placedOrderId
+          },
+          theme: {
+            color: '#2874F0'
+          },
+          modal: {
+            ondismiss: function () {
+              setOrderSubmitting(false);
+              showToast('Payment window closed. You can retry payment anytime.');
+            }
+          },
+          handler: async function (paymentResponse) {
+            try {
+              setOrderSubmitting(true);
+              // Send all three tokens (order_id, payment_id, signature) to verify endpoint
+              const verifyRes = await api.verifyRazorpayPayment({
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+                orderId: placedOrderId
+              });
+
+              if (verifyRes && verifyRes.success) {
+                idempotencyKeyRef.current = null;
+                setOrderId(placedOrderId);
+                setPlacedOrderData(verifyRes.order || {
+                  ...dbOrder,
+                  status: 'CONFIRMED',
+                  paymentStatus: 'completed',
+                  paymentDetails: {
+                    razorpayOrderId: paymentResponse.razorpay_order_id,
+                    razorpayPaymentId: paymentResponse.razorpay_payment_id,
+                    razorpaySignature: paymentResponse.razorpay_signature,
+                    paidAt: new Date()
+                  }
+                });
+                setOrderPlaced(true);
+                await clearCart();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                showToast('Payment verified successfully! Order confirmed.');
+              } else {
+                throw new Error(verifyRes?.message || 'Payment signature verification failed.');
+              }
+            } catch (vErr) {
+              showToast(vErr.message || 'Payment verification failed. Please contact support.');
+            } finally {
+              setOrderSubmitting(false);
+            }
+          }
+        };
+
+        const rzp = new window.Razorpay(rzpOptions);
+
+        rzp.on('payment.failed', function (failureResponse) {
+          setOrderSubmitting(false);
+          const reason = failureResponse.error?.description || failureResponse.error?.reason || 'Payment failed';
+          showToast(`Payment failed: ${reason}. Please try again.`);
+        });
+
+        rzp.open();
       }
     } catch (err) {
       showToast(err.message || 'Failed to place order. Please try again.');
-    } finally {
       setOrderSubmitting(false);
     }
   };
@@ -1103,7 +1221,7 @@ export const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Option 2: UPI (Online gateway pending) */}
+            {/* Option 2: UPI (Razorpay Secure Standard Checkout) */}
             <div
               className={`fk-payment-opt ${paymentMethod === 'upi' ? 'selected' : ''}`}
               onClick={() => setPaymentMethod('upi')}
@@ -1113,12 +1231,12 @@ export const CheckoutPage = () => {
               </div>
               <div className="fk-opt-info">
                 <div className="fk-opt-title-row">
-                  <strong>UPI (Google Pay, PhonePe, Paytm, Any UPI)</strong>
-                  <span style={{ fontSize: '10.5px', fontWeight: 600, background: '#FEF3C7', color: '#92400E', padding: '2px 6px', borderRadius: '4px' }}>
-                    GATEWAY PENDING
+                  <strong>UPI (Google Pay, PhonePe, Paytm, QR)</strong>
+                  <span style={{ fontSize: '10.5px', fontWeight: 700, background: '#DCFCE7', color: '#166534', padding: '2px 8px', borderRadius: '4px' }}>
+                    RAZORPAY SECURE
                   </span>
                 </div>
-                <p className="fk-opt-desc">Online payment gateway integration in progress. Order will be recorded in Payment Pending status.</p>
+                <p className="fk-opt-desc">Instant payment via Google Pay, PhonePe, Paytm, BHIM, or any UPI App &amp; QR code.</p>
               </div>
             </div>
 
@@ -1133,11 +1251,11 @@ export const CheckoutPage = () => {
               <div className="fk-opt-info">
                 <div className="fk-opt-title-row">
                   <strong>Credit / Debit / ATM Card</strong>
-                  <span style={{ fontSize: '10.5px', fontWeight: 600, background: '#F1F5F9', color: '#64748B', padding: '2px 6px', borderRadius: '4px' }}>
-                    GATEWAY PENDING
+                  <span style={{ fontSize: '10.5px', fontWeight: 700, background: '#EFF6FF', color: '#1D4ED8', padding: '2px 8px', borderRadius: '4px' }}>
+                    CARDS &amp; EMI
                   </span>
                 </div>
-                <p className="fk-opt-desc">Visa, MasterCard, RuPay, Maestro (Awaiting live payment gateway integration)</p>
+                <p className="fk-opt-desc">Visa, MasterCard, RuPay, Maestro accepted with 256-bit bank grade encryption.</p>
               </div>
             </div>
 
@@ -1152,11 +1270,11 @@ export const CheckoutPage = () => {
               <div className="fk-opt-info">
                 <div className="fk-opt-title-row">
                   <strong>Net Banking</strong>
-                  <span style={{ fontSize: '10.5px', fontWeight: 600, background: '#F1F5F9', color: '#64748B', padding: '2px 6px', borderRadius: '4px' }}>
-                    GATEWAY PENDING
+                  <span style={{ fontSize: '10.5px', fontWeight: 700, background: '#EFF6FF', color: '#1D4ED8', padding: '2px 8px', borderRadius: '4px' }}>
+                    ALL BANKS
                   </span>
                 </div>
-                <p className="fk-opt-desc">All Indian banks (Awaiting live payment gateway integration)</p>
+                <p className="fk-opt-desc">HDFC, ICICI, SBI, Axis, Kotak and 50+ major Indian banks supported.</p>
               </div>
             </div>
           </div>
@@ -1281,7 +1399,11 @@ export const CheckoutPage = () => {
           style={{ opacity: orderSubmitting ? 0.7 : 1, cursor: orderSubmitting ? 'not-allowed' : 'pointer' }}
           id="checkout-place-order-btn"
         >
-          <span>{orderSubmitting ? 'SECURING ORDER...' : 'PLACE ORDER'}</span>
+          <span>
+            {orderSubmitting
+              ? 'SECURING ORDER...'
+              : (paymentMethod === 'cod' ? 'PLACE ORDER' : `PAY ₹${finalPayable} NOW`)}
+          </span>
           <ChevronRight size={16} strokeWidth={2.8} />
         </button>
       </footer>

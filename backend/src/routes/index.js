@@ -11,6 +11,7 @@ const couponRoutes = require('./couponRoutes');
 const deliveryRoutes = require('./deliveryRoutes');
 const policyRoutes = require('./policyRoutes');
 const aboutRoutes = require('./aboutRoutes');
+const paymentRoutes = require('./paymentRoutes');
 const { getDbStatus } = require('../config/db');
 
 // Health Check endpoint
@@ -36,5 +37,6 @@ router.use('/cart', cartRoutes);
 router.use('/orders', orderRoutes);
 router.use('/policies', policyRoutes);
 router.use('/about', aboutRoutes);
+router.use('/payment', paymentRoutes);
 
 module.exports = router;

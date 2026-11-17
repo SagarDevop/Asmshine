@@ -821,6 +821,61 @@ export const api = {
   },
 
   // -------------------------------------------------------------
+  // Razorpay Standard Web Checkout API
+  // -------------------------------------------------------------
+  createRazorpayOrder: async ({ amount, currency = 'INR', receipt = '', notes = {} }) => {
+    const res = await apiFetch('/api/create-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ amount, currency, receipt, notes })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || `Failed to create payment order (HTTP ${res.status})`);
+    }
+    return data;
+  },
+
+  verifyRazorpayPayment: async ({ razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId = '' }) => {
+    const res = await apiFetch('/api/verify-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+        orderId
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Payment signature verification failed.');
+    }
+    return data;
+  },
+
+  getRazorpayKey: async () => {
+    try {
+      const res = await apiFetch('/api/payment/key', {
+        headers: { 'Accept': 'application/json' }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.key_id) {
+        return data.key_id;
+      }
+    } catch (e) {}
+    return (import.meta.env.VITE_RAZORPAY_KEY_ID || '').trim();
+  },
+
+  // -------------------------------------------------------------
   // Dynamic Coupons (Controlled via Admin Panel & Backend)
   // -------------------------------------------------------------
   getAvailableCoupons: async () => {

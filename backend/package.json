@@ -16,6 +16,7 @@
     "test:phase22": "node src/tests/phase22DefectTest.js",
     "test:policies": "node src/tests/legalPolicyTest.js",
     "test:about": "node src/tests/aboutCmsTest.js",
+    "test:razorpay": "node src/tests/razorpayTest.js",
     "test": "node src/tests/inventoryOrderTest.js && node src/tests/authRoleTest.js && node src/tests/phase1SecurityTest.js && node src/tests/phase2SecurityTest.js && node src/tests/phase22DefectTest.js",
     "migrate:images": "node src/scripts/migrateImagesToCloudinary.js"
   },
@@ -30,6 +31,7 @@
     "google-auth-library": "^11.3.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.4.0",
-    "nodemailer": "^10.2.1"
+    "nodemailer": "^10.2.1",
+    "razorpay": "^2.9.8"
   }
 }
