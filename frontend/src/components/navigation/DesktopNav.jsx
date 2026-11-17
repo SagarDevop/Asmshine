@@ -1,10 +1,39 @@
 import React, { useState } from 'react';
-import { Search, ShoppingBag, Heart, MapPin, ChevronDown, Sparkles, User } from 'lucide-react';
+import {
+  Search,
+  ShoppingBag,
+  Heart,
+  MapPin,
+  ChevronDown,
+  Sparkles,
+  User,
+  ShieldCheck,
+  Bath,
+  SprayCan,
+  Brush,
+  Utensils,
+  CookingPot,
+  Shirt,
+  Droplets,
+  Layers
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartWishlist } from '../../context/CartWishlistContext';
 import { useAuth } from '../../context/AuthContext';
 import { SearchOverlay } from '../search/SearchOverlay';
 import { AddressSelectModal } from '../ui/AddressSelectModal';
+
+const CATEGORY_ITEMS = [
+  { id: 'all', label: 'All Formulations', icon: Layers },
+  { id: 'toilet_care', label: 'Toilet Cleaner', icon: ShieldCheck },
+  { id: 'bathroom_care', label: 'Bathroom & Tiles', icon: Bath },
+  { id: 'glass_care', label: 'Glass & Colin', icon: SprayCan },
+  { id: 'floor_care', label: 'Floor Cleaner', icon: Brush },
+  { id: 'dishwash', label: 'Dishwash Gel', icon: Utensils },
+  { id: 'kitchen_care', label: 'Kitchen & Chimney', icon: CookingPot },
+  { id: 'laundry_care', label: 'Laundry Detergent', icon: Shirt },
+  { id: 'hand_hygiene', label: 'Hand Hygiene', icon: Droplets }
+];
 
 export const DesktopNav = ({ onSearch, onSwitchTab }) => {
   const { cartCount, wishlist, showToast } = useCartWishlist();
@@ -30,42 +59,46 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
 
   return (
     <div className="desktop-header-wrapper">
+      {/* 1. Main Top Header Bar */}
       <div className="desktop-nav-container">
         {/* Brand Logo & Location */}
         <div className="desktop-brand-group">
           <div
             className="desktop-brand-logo"
             onClick={() => handleNav('home')}
-            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
           >
             <img 
               src="/favicon.svg" 
               alt="ASM SHINE Logo" 
-              style={{ width: '42px', height: '42px', borderRadius: '12px', objectFit: 'contain' }} 
+              style={{ width: '40px', height: '40px', borderRadius: '10px', objectFit: 'contain' }} 
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '1.3rem', fontWeight: '900', letterSpacing: '1.2px', color: '#1E293B', fontFamily: 'var(--font-base)' }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: '900', letterSpacing: '0.8px', color: '#1E293B', lineHeight: 1.1 }}>
                 ASM <span style={{ color: '#2874F0' }}>SHINE</span>
               </span>
-              <span style={{ fontSize: '0.62rem', fontWeight: '700', letterSpacing: '1.5px', color: '#2874F0', marginTop: '-2px' }}>
+              <span style={{ fontSize: '0.6rem', fontWeight: '700', letterSpacing: '1.4px', color: '#2874F0', marginTop: '1px' }}>
                 HYGIENE &amp; CLEANING
               </span>
             </div>
           </div>
 
           <button
+            type="button"
             className="delivery-location-btn"
-            style={{ marginLeft: '16px' }}
             onClick={() => setIsAddressModalOpen(true)}
             title="Click to select or change delivery address"
           >
-            <MapPin size={16} color="#2874F0" />
-            <span>Deliver to <span className="location-name">{displayLocation}</span></span>
-            <ChevronDown size={14} color="#64748B" />
+            <MapPin size={15} color="#2874F0" style={{ flexShrink: 0 }} />
+            <div className="location-text-col">
+              <span className="location-sub">Deliver to</span>
+              <span className="location-name">{displayLocation}</span>
+            </div>
+            <ChevronDown size={14} color="#64748B" style={{ flexShrink: 0 }} />
           </button>
         </div>
 
-        {/* Global Search Bar */}
+        {/* Global Search Bar (Flipkart Style) */}
         <div className="desktop-search-bar">
           <div
             className="search-input-wrapper"
@@ -80,7 +113,7 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             <input
               type="text"
               className="search-input"
-              placeholder="Search Toilet Cleaner, Colin Glass, Floor cleaner, Dishwash..."
+              placeholder="Search for Toilet Cleaner, Floor Cleaner, Colin Glass, Dishwash Gel..."
               onFocus={() => setIsSearchOpen(true)}
               onClick={(e) => {
                 e.stopPropagation();
@@ -88,56 +121,96 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
               }}
               readOnly
             />
+            <button
+              type="button"
+              className="search-submit-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsSearchOpen(true);
+              }}
+            >
+              Search
+            </button>
           </div>
         </div>
 
         {/* Desktop Quick Nav Actions */}
         <div className="desktop-actions-group">
           <button
+            type="button"
             className="desktop-nav-btn"
-            onClick={() => handleNav('categories')}
+            onClick={() => navigate('/about')}
+            title="Learn about ASM Shine laboratory standard"
           >
-            <Sparkles size={16} color="#2874F0" />
-            <span>Catalog</span>
+            <span>About Us</span>
           </button>
 
           <button
+            type="button"
             className="desktop-nav-btn"
             onClick={() => showToast(`Wishlist contains ${wishlist.size} saved items`)}
+            title="Saved items in wishlist"
           >
-            <Heart size={18} color={wishlist.size > 0 ? '#DC2626' : '#1E293B'} />
-            <span>Wishlist ({wishlist.size})</span>
+            <div className="nav-icon-wrap">
+              <Heart
+                size={18}
+                color={wishlist.size > 0 ? '#DC2626' : '#475569'}
+                fill={wishlist.size > 0 ? '#DC2626' : 'none'}
+              />
+              {wishlist.size > 0 && (
+                <span className="nav-badge-pill-count">{wishlist.size}</span>
+              )}
+            </div>
+            <span>Wishlist</span>
           </button>
 
           <button
-            className="desktop-nav-btn"
-            style={{ position: 'relative' }}
+            type="button"
+            className="desktop-nav-btn desktop-cart-btn"
             onClick={() => handleNav('cart')}
+            title="View Shopping Cart"
           >
-            <ShoppingBag size={18} color="#2874F0" />
+            <div className="nav-icon-wrap">
+              <ShoppingBag size={18} color="#2874F0" />
+              {cartCount > 0 && (
+                <span className="nav-badge-pill-count cart">{cartCount}</span>
+              )}
+            </div>
             <span>Cart</span>
-            {cartCount > 0 && (
-              <span className="nav-badge-pill" style={{ position: 'relative', top: 'auto', right: 'auto', marginLeft: '4px' }}>
-                {cartCount}
-              </span>
-            )}
           </button>
 
           <button
-            className="desktop-nav-btn"
+            type="button"
+            className="desktop-nav-btn desktop-account-btn"
             onClick={() => navigate(user ? '/account' : '/login')}
             id="desktop-account-btn"
           >
             <User size={18} color="#2874F0" />
             <span>{user ? user.name.split(' ')[0] : 'Sign In'}</span>
           </button>
+        </div>
+      </div>
 
-          <button
-            className="desktop-nav-btn"
-            onClick={() => handleNav('about')}
-          >
-            <span>Our Philosophy</span>
-          </button>
+      {/* 2. Desktop Category Sub-Navbar Strip */}
+      <div className="desktop-category-bar">
+        <div className="desktop-category-inner">
+          {CATEGORY_ITEMS.map((cat) => {
+            const IconComp = cat.icon;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                className="desktop-category-pill"
+                onClick={() => {
+                  if (cat.id === 'all') navigate('/categories');
+                  else navigate(`/categories?category=${cat.id}`, { state: { category: cat.id } });
+                }}
+              >
+                <IconComp size={14} className="cat-pill-icon" />
+                <span>{cat.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
