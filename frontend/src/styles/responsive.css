@@ -239,12 +239,21 @@
     background: #16A34A;
   }
 
-  /* Desktop Category Sub-Navbar Strip */
+  /* Desktop Category Sub-Navbar Strip (Zero Scrollbar) */
   .desktop-category-bar {
     background: #FFFFFF;
     border-top: 1px solid #F1F5F9;
     border-bottom: 1px solid #E2E8F0;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    overflow: hidden;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .desktop-category-bar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   .desktop-category-inner {
@@ -254,16 +263,24 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 4px;
     overflow-x: auto;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .desktop-category-inner::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   .desktop-category-pill {
     display: flex;
     align-items: center;
-    gap: 7px;
-    padding: 10px 12px;
-    font-size: 12.5px;
+    gap: 6px;
+    padding: 9px 8px;
+    font-size: 12px;
     font-weight: 600;
     color: #475569;
     background: transparent;
@@ -271,6 +288,7 @@
     border-bottom: 2.5px solid transparent;
     cursor: pointer;
     white-space: nowrap;
+    flex-shrink: 0;
     transition: all 0.15s ease;
   }
 
@@ -296,17 +314,55 @@
     padding: 0 24px;
   }
 
-  /* Hide mobile header and bottom navigation on desktop */
+  /* Hide mobile header, bottom navigation, mobile blue top header, and duplicate page search on desktop */
   .mobile-only,
   .app-header.mobile-only,
   .fk-header-top-banner,
   .fk-mobile-sticky-header,
-  .fk-header-sentinel {
+  .fk-header-sentinel,
+  .page-top-header,
+  .cat-search-strip {
     display: none !important;
   }
 
   .bottom-nav {
     display: none !important;
+  }
+
+  /* Categories Page Desktop Enhancement (Replaces mobile split view with clean desktop catalog layout) */
+  .categories-page-view {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding-bottom: 40px !important;
+    margin-top: 16px;
+    border-radius: 16px;
+    border: 1px solid #E2E8F0;
+    background-color: #FFFFFF;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+  }
+
+  .cat-split-layout {
+    min-height: 600px;
+    overflow: visible;
+  }
+
+  .cat-sidebar {
+    width: 110px;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    border-right: 1px solid #E2E8F0;
+  }
+
+  .cat-content-area {
+    padding: 20px 24px;
+    flex: 1;
+  }
+
+  .cat-products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
 
   /* Desktop Hero Banner (Flipkart Proportional Format) */

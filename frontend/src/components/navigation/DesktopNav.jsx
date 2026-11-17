@@ -193,7 +193,7 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
 
       {/* 2. Desktop Category Sub-Navbar Strip */}
       <div className="desktop-category-bar">
-        <div className="desktop-category-inner">
+        <div className="desktop-category-inner no-scrollbar">
           {CATEGORY_ITEMS.map((cat) => {
             const IconComp = cat.icon;
             return (
