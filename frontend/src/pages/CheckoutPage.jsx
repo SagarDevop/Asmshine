@@ -478,7 +478,12 @@ export const CheckoutPage = () => {
           modal: {
             ondismiss: function () {
               setOrderSubmitting(false);
-              showToast('Payment window closed. You can retry payment anytime.');
+              api.logPaymentFailure({
+                orderId: placedOrderId,
+                reason: 'Customer dismissed payment window without completing transaction',
+                code: 'USER_CANCELLED'
+              });
+              showToast('Payment window closed. Your items are safe in cart, you can retry whenever ready.');
             }
           },
           handler: async function (paymentResponse) {
@@ -525,8 +530,14 @@ export const CheckoutPage = () => {
 
         rzp.on('payment.failed', function (failureResponse) {
           setOrderSubmitting(false);
-          const reason = failureResponse.error?.description || failureResponse.error?.reason || 'Payment failed';
-          showToast(`Payment failed: ${reason}. Please try again.`);
+          const reason = failureResponse.error?.description || failureResponse.error?.reason || 'Payment could not be processed';
+          const code = failureResponse.error?.code || 'PAYMENT_FAILED';
+          api.logPaymentFailure({
+            orderId: placedOrderId,
+            reason: reason,
+            code: code
+          });
+          showToast(`Payment declined: ${reason}. Please try again or choose Cash on Delivery.`);
         });
 
         rzp.open();

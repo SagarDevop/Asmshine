@@ -875,6 +875,21 @@ export const api = {
     return (import.meta.env.VITE_RAZORPAY_KEY_ID || '').trim();
   },
 
+  logPaymentFailure: async ({ orderId, reason = '', code = '' }) => {
+    try {
+      await apiFetch('/api/payment/log-failure', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ orderId, reason, code })
+      });
+    } catch (e) {
+      // Non-blocking telemetry
+    }
+  },
+
   // -------------------------------------------------------------
   // Dynamic Coupons (Controlled via Admin Panel & Backend)
   // -------------------------------------------------------------
