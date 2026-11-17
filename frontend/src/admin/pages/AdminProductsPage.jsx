@@ -359,7 +359,6 @@ export const AdminProductsPage = () => {
       { key: 'Shelf Life', value: '24 Months' },
       { key: 'Country of Origin', value: 'India' }
     ]);
-    setShowAdvanced(false);
     setActiveTab('general');
     setFormError('');
     setModalOpen(true);
@@ -429,7 +428,6 @@ export const AdminProductsPage = () => {
       setSpecifications([]);
     }
 
-    setShowAdvanced(false);
     setActiveTab('general');
     setFormError('');
     setModalOpen(true);
