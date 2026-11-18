@@ -147,18 +147,20 @@ export const Header = ({
       <div className="fk-header-top-banner mobile-only">
         {/* Top 3 Mode Pills (ASM SHINE Yellow / Super Combos / Refill Store) */}
         <div className="fk-top-pills-row">
-          {/* Active Yellow Brand Pill: ASM on top, SHINE niche */}
+          {/* Active Yellow Brand Pill: Official ASM Shine Logo */}
           <button
             type="button"
             className={`fk-top-pill-btn ${activeMode === 'asm_shine' ? 'pill-yellow' : 'pill-white'}`}
             onClick={() => handleModeChange('asm_shine')}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            aria-label="ASM Shine Official Store"
+            title="ASM Shine Official Store"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 6px' }}
           >
-            <img src="/images/logo.png" alt="ASM Shine" style={{ width: '22px', height: '22px', objectFit: 'contain', flexShrink: 0 }} />
-            <div className="fk-brand-pill-text">
-              <span className="fk-pill-asm">ASM</span>
-              <span className="fk-pill-shine">SHINE</span>
-            </div>
+            <img
+              src="/images/logo.png"
+              alt="ASM Shine"
+              style={{ maxHeight: '38px', maxWidth: '100%', width: 'auto', height: 'auto', objectFit: 'contain' }}
+            />
           </button>
 
           {/* Cleaning Combos White Pill */}
