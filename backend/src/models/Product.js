@@ -9,6 +9,7 @@ const availableSizeSchema = new mongoose.Schema({
   stockQuantity: { type: Number, default: 20, min: 0 },
   inStock: { type: Boolean, default: true },
   image: { type: String }, // Local path or Cloudinary HTTPS URL
+  images: [{ type: String }], // Up to 3 gallery images for this variant
   imageData: {
     url: { type: String },
     secureUrl: { type: String },

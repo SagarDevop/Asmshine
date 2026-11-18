@@ -66,7 +66,11 @@ const buildCartResponse = async (cart) => {
       if (sizeVariant) {
         if (sizeVariant.price) unitPrice = sizeVariant.price;
         if (sizeVariant.originalPrice) unitMRP = sizeVariant.originalPrice;
-        if (sizeVariant.image) selectedImage = sizeVariant.image;
+        if (sizeVariant.image) {
+          selectedImage = sizeVariant.image;
+        } else if (Array.isArray(sizeVariant.images) && sizeVariant.images.length > 0) {
+          selectedImage = sizeVariant.images[0];
+        }
       }
     }
 

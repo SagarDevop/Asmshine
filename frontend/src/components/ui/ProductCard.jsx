@@ -76,6 +76,24 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
             <span className="price-discount">{product.discountPercent}% off</span>
           )}
         </div>
+
+        {Array.isArray(product.availableSizes) && product.availableSizes.length > 1 && (
+          <div style={{ marginTop: '4px' }}>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              fontSize: '10.5px',
+              fontWeight: 700,
+              color: '#0284C7',
+              backgroundColor: '#F0F9FF',
+              border: '1px solid #BAE6FD',
+              borderRadius: '4px',
+              padding: '1.5px 6px'
+            }}>
+              {product.availableSizes.length} Sizes Available
+            </span>
+          </div>
+        )}
       </div>
     </article>
   );

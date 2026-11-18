@@ -331,27 +331,36 @@ export const ProductDetailPage = ({
     }
   }, []);
 
-  // Multi-Image Gallery Support (Max 4 images: 1 main + up to 3 thumbnails)
+  // Multi-Image Gallery Support (Variant-Isolated: Strictly shows selected variant images)
   const galleryImages = useMemo(() => {
     if (!product) return [];
-    const list = [];
-    if (selectedVariant?.image) {
-      list.push(selectedVariant.image);
+    // 1. If variant has an array of images (up to 3 images)
+    if (selectedVariant?.images && Array.isArray(selectedVariant.images)) {
+      const vImgs = selectedVariant.images
+        .map((img) => (typeof img === 'string' ? img.trim() : ''))
+        .filter(Boolean);
+      if (vImgs.length > 0) {
+        return vImgs.slice(0, 3);
+      }
     }
+    // 2. If variant has a single image
+    if (selectedVariant?.image && typeof selectedVariant.image === 'string' && selectedVariant.image.trim()) {
+      return [selectedVariant.image.trim()];
+    }
+    // 3. Backward compatibility: fallback to parent product images only if variant has no custom images
     if (Array.isArray(product.images) && product.images.length > 0) {
-      product.images.forEach((img) => {
-        if (img && !list.includes(img)) list.push(img);
-      });
-    } else if (product.image && !list.includes(product.image)) {
-      list.push(product.image);
+      const cleanProdImgs = product.images
+        .map((img) => (typeof img === 'string' ? img.trim() : ''))
+        .filter(Boolean);
+      if (cleanProdImgs.length > 0) return cleanProdImgs.slice(0, 4);
     }
-    const clean = list.slice(0, 4);
-    return clean.length > 0 ? clean : [product.image || '/images/products/all_shine_dishwash_gel_500ml.png'];
+    return [product.image || '/images/products/all_shine_dishwash_gel_500ml.png'];
   }, [product, selectedVariant]);
 
   // Reset active image index when variant changes
   useEffect(() => {
     setActiveImageIndex(0);
+    setMainImgLoaded(false);
   }, [selectedVariant?.size, product?.id]);
 
   const handlePrevImage = (e) => {
@@ -366,9 +375,15 @@ export const ProductDetailPage = ({
     setMainImgLoaded(false);
   };
 
+  const currentSelectedSize = selectedVariant?.size || product?.size || '';
   const isInCart = Boolean(
     justAdded ||
-    (product && cartData?.items?.some((item) => item.product?.id === product.id))
+    (product && cartData?.items?.some((item) => {
+      const matchId = (item.productId === product.id) || (item.product?.id === product.id);
+      if (!matchId) return false;
+      if (!currentSelectedSize) return true;
+      return (item.size || '').trim().toLowerCase() === currentSelectedSize.trim().toLowerCase();
+    }))
   );
 
   const isProductOutOfStock =
@@ -383,6 +398,8 @@ export const ProductDetailPage = ({
 
   const handleSelectVariant = (v) => {
     setSelectedVariant(v);
+    setJustAdded(false);
+    setActiveImageIndex(0);
     setMainImgLoaded(false);
   };
 
@@ -396,7 +413,19 @@ export const ProductDetailPage = ({
       return;
     }
     try {
-      await addToCart(product.id, 1, selectedVariant?.size || '', product);
+      const targetSize = selectedVariant?.size || product.size || '';
+      const targetPrice = selectedVariant ? selectedVariant.price : product.price;
+      const targetMRP = selectedVariant ? (selectedVariant.originalPrice || selectedVariant.price) : (product.originalPrice || product.price);
+      const targetImage = (selectedVariant?.images && selectedVariant.images[0]) || selectedVariant?.image || product.image;
+
+      const variantSnapshot = {
+        ...product,
+        size: targetSize,
+        price: targetPrice,
+        originalPrice: targetMRP,
+        image: targetImage
+      };
+      await addToCart(product.id, 1, targetSize, variantSnapshot);
       setJustAdded(true);
     } catch (err) {
       setJustAdded(false);
@@ -410,8 +439,20 @@ export const ProductDetailPage = ({
       return;
     }
     try {
-      await addToCart(product.id, 1, selectedVariant?.size || '', product);
-      navigate(`/checkout?buyNow=${product.id}`);
+      const targetSize = selectedVariant?.size || product.size || '';
+      const targetPrice = selectedVariant ? selectedVariant.price : product.price;
+      const targetMRP = selectedVariant ? (selectedVariant.originalPrice || selectedVariant.price) : (product.originalPrice || product.price);
+      const targetImage = (selectedVariant?.images && selectedVariant.images[0]) || selectedVariant?.image || product.image;
+
+      const variantSnapshot = {
+        ...product,
+        size: targetSize,
+        price: targetPrice,
+        originalPrice: targetMRP,
+        image: targetImage
+      };
+      await addToCart(product.id, 1, targetSize, variantSnapshot);
+      navigate(`/checkout?buyNow=${product.id}&size=${encodeURIComponent(targetSize)}`);
     } catch (e) {
       showToast(e.message || 'Item could not be processed for checkout');
     }
@@ -631,6 +672,18 @@ export const ProductDetailPage = ({
         <section className="pdp-section pdp-info-card">
           <div className="pdp-brand-tag">ASM SHINE OFFICIAL STORE</div>
           <h1 className="pdp-product-title">{product.name}</h1>
+
+          {/* Dynamic Pack Size Subtitle & Stock Status */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', marginBottom: '8px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#1D4ED8', background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '2px 8px', borderRadius: '4px' }}>
+              Pack Size: {selectedVariant?.size || product.size || 'Standard'}
+            </span>
+            {selectedVariant && selectedVariant.stockQuantity !== undefined && (
+              <span style={{ fontSize: '12px', fontWeight: 600, color: isOutOfStock ? '#DC2626' : '#166534' }}>
+                {isOutOfStock ? '• Currently Out of Stock' : `• In Stock (${selectedVariant.stockQuantity} units available)`}
+              </span>
+            )}
+          </div>
 
           {/* Rating & Review summary pill */}
           <div className="pdp-rating-row">
@@ -971,7 +1024,22 @@ export const ProductDetailPage = ({
           </section>
         )}
 
-        {/* 9. Product Highlights & Specifications */}
+        {/* 9. Product Description */}
+        {product.description && (
+          <section className="pdp-section pdp-desc-card" style={{ background: '#FFFFFF', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+            <h2 className="pdp-section-heading" style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>
+              Product Description
+            </h2>
+            <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#475569', margin: 0 }}>
+              {product.description}
+            </p>
+            <div style={{ marginTop: '8px', fontSize: '12px', color: '#64748B' }}>
+              <strong>Selected Pack Size:</strong> {selectedVariant?.size || product.size || 'Standard'}
+            </div>
+          </section>
+        )}
+
+        {/* 10. Product Highlights & Specifications */}
         {((product.highlights && product.highlights.length > 0) || (product.specifications && Object.keys(product.specifications).length > 0)) && (
           <section className="pdp-section pdp-specs-card">
             {product.highlights && product.highlights.length > 0 && (
@@ -992,12 +1060,22 @@ export const ProductDetailPage = ({
               <>
                 <h3 className="pdp-section-heading sub">Specifications</h3>
                 <div className="pdp-specs-table">
-                  {Object.entries(product.specifications).map(([k, v]) => (
-                    <div className="pdp-spec-row" key={k}>
-                      <span className="pdp-spec-label">{k}</span>
-                      <span className="pdp-spec-value">{v}</span>
-                    </div>
-                  ))}
+                  <div className="pdp-spec-row">
+                    <span className="pdp-spec-label">Pack Size / Volume</span>
+                    <span className="pdp-spec-value" style={{ fontWeight: 700, color: '#0F172A' }}>
+                      {selectedVariant?.size || product.size || 'Standard'}
+                    </span>
+                  </div>
+                  {Object.entries(product.specifications).map(([k, v]) => {
+                    const isVolumeKey = /^(net quantity|volume|pack size|quantity|size)$/i.test(k.trim());
+                    const displayVal = isVolumeKey ? (selectedVariant?.size || v) : v;
+                    return (
+                      <div className="pdp-spec-row" key={k}>
+                        <span className="pdp-spec-label">{k}</span>
+                        <span className="pdp-spec-value">{displayVal}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </>
             )}

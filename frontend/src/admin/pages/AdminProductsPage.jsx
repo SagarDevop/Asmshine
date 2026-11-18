@@ -44,16 +44,9 @@ export const AdminProductsPage = () => {
 
   // Form Fields
   const [name, setName] = useState('');
-  const [sku, setSku] = useState('');
   const [cat, setCat] = useState('everyday_essentials');
-  const [price, setPrice] = useState('');
-  const [originalPrice, setOriginalPrice] = useState('');
-  const [discountPercent, setDiscountPercent] = useState('10');
   const [costPrice, setCostPrice] = useState('0');
-  const [stockQuantity, setStockQuantity] = useState('20');
   const [lowStockThreshold, setLowStockThreshold] = useState('5');
-  const [size, setSize] = useState('500ml');
-  const [image, setImage] = useState('');
   const [description, setDescription] = useState('');
   const [badge, setBadge] = useState('');
   const [isFestiveDeal, setIsFestiveDeal] = useState(false);
@@ -63,18 +56,14 @@ export const AdminProductsPage = () => {
   const [specifications, setSpecifications] = useState([]);
   const [activeTab, setActiveTab] = useState('general'); // 'general' | 'specs'
 
-  // 4-Slot Gallery and Marketplace Link States
-  const [galleryImages, setGalleryImages] = useState(['', '', '', '']);
-  const [slotUploadingIdx, setSlotUploadingIdx] = useState(null);
-  const [dragOverSlot, setDragOverSlot] = useState(null);
+  // Marketplace Link States
   const [flipkartUrl, setFlipkartUrl] = useState('');
   const [amazonUrl, setAmazonUrl] = useState('');
   const [meeshoUrl, setMeeshoUrl] = useState('');
 
-  // Image Uploading & Drag/Drop States
-  const [mainImageUploading, setMainImageUploading] = useState(false);
-  const [variantUploadingIdx, setVariantUploadingIdx] = useState(null);
-  const [dragOverMain, setDragOverMain] = useState(false);
+  // Variant Image Uploading & Drag/Drop States ({ varIdx, slotIdx })
+  const [uploadingSlot, setUploadingSlot] = useState(null);
+  const [dragOverSlot, setDragOverSlot] = useState(null);
 
   const handleFileUpload = (file, onUploaded) => {
     if (!file) return;
@@ -104,152 +93,75 @@ export const AdminProductsPage = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleSlotImageSelect = (slotIdx, e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSlotUploadingIdx(slotIdx);
-      setFormError('');
-      handleFileUpload(file, (url) => {
-        setGalleryImages((prev) => {
-          const next = [...prev];
-          next[slotIdx] = url;
-          return next;
-        });
-        if (slotIdx === 0) setImage(url);
-        setSlotUploadingIdx(null);
+  // Variant Slot Image Upload Handlers (Supports up to 3 images per variant)
+  const handleVariantSlotUpload = (varIdx, slotIdx, file) => {
+    if (!file) return;
+    setUploadingSlot({ varIdx, slotIdx });
+    setFormError('');
+    handleFileUpload(file, (url) => {
+      setVariants((prev) => {
+        const copy = [...prev];
+        const target = { ...copy[varIdx] };
+        const imgs = [...(target.images || ['', '', ''])];
+        while (imgs.length < 3) imgs.push('');
+        imgs[slotIdx] = url;
+        target.images = imgs;
+        target.image = imgs[0] || url;
+        copy[varIdx] = target;
+        return copy;
       });
-    }
-  };
-
-  const handleSlotImageDrop = (slotIdx, e) => {
-    e.preventDefault();
-    setDragOverSlot(null);
-    const file = e.dataTransfer?.files?.[0];
-    if (file) {
-      setSlotUploadingIdx(slotIdx);
-      setFormError('');
-      handleFileUpload(file, (url) => {
-        setGalleryImages((prev) => {
-          const next = [...prev];
-          next[slotIdx] = url;
-          return next;
-        });
-        if (slotIdx === 0) setImage(url);
-        setSlotUploadingIdx(null);
-      });
-    }
-  };
-
-  const handleRemoveSlotImage = (slotIdx) => {
-    setGalleryImages((prev) => {
-      const next = [...prev];
-      next[slotIdx] = '';
-      return next;
+      setUploadingSlot(null);
     });
-    if (slotIdx === 0) setImage('');
   };
 
-  const handleSlotUrlChange = (slotIdx, val) => {
-    setGalleryImages((prev) => {
-      const next = [...prev];
-      next[slotIdx] = val;
-      return next;
+  const handleVariantSlotUrlChange = (varIdx, slotIdx, val) => {
+    setVariants((prev) => {
+      const copy = [...prev];
+      const target = { ...copy[varIdx] };
+      const imgs = [...(target.images || ['', '', ''])];
+      while (imgs.length < 3) imgs.push('');
+      imgs[slotIdx] = val;
+      target.images = imgs;
+      target.image = imgs[0] || val;
+      copy[varIdx] = target;
+      return copy;
     });
-    if (slotIdx === 0) setImage(val);
   };
 
-  const handleVariantImageSelect = (idx, e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setVariantUploadingIdx(idx);
-      setFormError('');
-      try {
-        handleFileUpload(file, (url) => {
-          handleUpdateVariant(idx, 'image', url);
-          setVariantUploadingIdx(null);
-        });
-      } catch {
-        setVariantUploadingIdx(null);
-      }
-    }
-  };
-
-  const handleVariantImageDrop = (idx, e) => {
-    e.preventDefault();
-    const file = e.dataTransfer?.files?.[0];
-    if (file) {
-      setVariantUploadingIdx(idx);
-      setFormError('');
-      try {
-        handleFileUpload(file, (url) => {
-          handleUpdateVariant(idx, 'image', url);
-          setVariantUploadingIdx(null);
-        });
-      } catch {
-        setVariantUploadingIdx(null);
-      }
-    }
-  };
-
-  // Synchronized Pricing Handlers for Main Product
-  const handleMrpChange = (val) => {
-    setOriginalPrice(val);
-    const mrp = Number(val);
-    const disc = Number(discountPercent || 0);
-    if (mrp > 0 && disc >= 0) {
-      setPrice(String(Math.round(mrp * (1 - disc / 100))));
-    } else if (mrp > 0 && price) {
-      const p = Number(price);
-      if (mrp > p) {
-        setDiscountPercent(String(Math.round(((mrp - p) / mrp) * 100)));
-      }
-    }
-  };
-
-  const handleDiscountChange = (val) => {
-    setDiscountPercent(val);
-    const disc = Number(val);
-    const mrp = Number(originalPrice || 0);
-    if (mrp > 0) {
-      setPrice(String(Math.max(0, Math.round(mrp * (1 - disc / 100)))));
-    }
-  };
-
-  const handlePriceChange = (val) => {
-    setPrice(val);
-    const p = Number(val);
-    const mrp = Number(originalPrice || 0);
-    if (mrp > 0 && mrp > p) {
-      setDiscountPercent(String(Math.round(((mrp - p) / mrp) * 100)));
-    } else if (mrp > 0 && mrp <= p) {
-      setDiscountPercent('0');
-    }
+  const handleRemoveVariantSlotImage = (varIdx, slotIdx) => {
+    setVariants((prev) => {
+      const copy = [...prev];
+      const target = { ...copy[varIdx] };
+      const imgs = [...(target.images || ['', '', ''])];
+      while (imgs.length < 3) imgs.push('');
+      imgs[slotIdx] = '';
+      target.images = imgs;
+      target.image = imgs[0] || '';
+      copy[varIdx] = target;
+      return copy;
+    });
   };
 
   // Synchronized Variant Handlers
   const handleAddVariant = (presetSize = '') => {
-    const defaultMrp = originalPrice ? String(originalPrice) : '299';
-    const defaultDisc = discountPercent ? String(discountPercent) : '10';
+    const mainVar = variants[0];
+    const defaultMrp = mainVar?.originalPrice || '299';
+    const defaultDisc = mainVar?.discountPercent || '10';
     const mrpNum = Number(defaultMrp);
     const discNum = Number(defaultDisc);
     const calcPrice = discNum > 0 ? String(Math.round(mrpNum * (1 - discNum / 100))) : defaultMrp;
 
-    const nextIdx = variants.length + 1;
-    const cleanSize = typeof presetSize === 'string' && presetSize ? presetSize : '';
-    const autoSku = cleanSize
-      ? `${sku || 'SKU'}-${cleanSize.toUpperCase().replace(/\s+/g, '')}`
-      : (sku ? `${sku}-${nextIdx}` : `SKU-V${nextIdx}`);
-
     setVariants((prev) => [
       ...prev,
       {
-        size: cleanSize,
-        sku: autoSku,
+        id: `var-${Date.now()}-${Math.random()}`,
+        size: typeof presetSize === 'string' ? presetSize : '',
+        stockQuantity: mainVar?.stockQuantity || '20',
         originalPrice: defaultMrp,
         discountPercent: defaultDisc,
         price: calcPrice,
-        stockQuantity: stockQuantity || '20',
-        image: image || ''
+        images: ['', '', ''],
+        image: ''
       }
     ]);
   };
@@ -290,6 +202,7 @@ export const AdminProductsPage = () => {
   };
 
   const handleRemoveVariant = (idx) => {
+    if (idx === 0) return; // Cannot delete main variant
     setVariants((prev) => prev.filter((_, i) => i !== idx));
   };
 
@@ -361,26 +274,31 @@ export const AdminProductsPage = () => {
   const openCreateModal = () => {
     setEditingProduct(null);
     setName('');
-    setSku('');
     setCat('everyday_essentials');
-    setOriginalPrice('400');
-    setDiscountPercent('10');
-    setPrice('360');
-    setCostPrice('180');
-    setStockQuantity('20');
-    setLowStockThreshold('5');
-    setSize('500ml');
-    const defaultImg = '/images/products/all_shine_dishwash_gel_500ml.png';
-    setImage(defaultImg);
-    setGalleryImages([defaultImg, '', '', '']);
-    setFlipkartUrl('');
-    setAmazonUrl('');
-    setMeeshoUrl('');
     setDescription('');
     setBadge('BEST SELLER');
     setIsFestiveDeal(false);
     setFestiveBadge('');
-    setVariants([]);
+    setFlipkartUrl('');
+    setAmazonUrl('');
+    setMeeshoUrl('');
+    setCostPrice('0');
+    setLowStockThreshold('5');
+
+    const defaultImg = '/images/products/all_shine_dishwash_gel_500ml.png';
+    setVariants([
+      {
+        id: 'var-1',
+        size: '500ml',
+        stockQuantity: '20',
+        originalPrice: '400',
+        discountPercent: '10',
+        price: '360',
+        images: [defaultImg, '', ''],
+        image: defaultImg
+      }
+    ]);
+
     setHighlights([
       '99.9% germ eradication certified laboratory formula',
       'Formulated with organic botanicals and zero toxic fumes',
@@ -400,38 +318,16 @@ export const AdminProductsPage = () => {
   const openEditModal = (p) => {
     setEditingProduct(p);
     setName(p.name || '');
-    setSku(p.sku || '');
     setCat(p.category || 'everyday_essentials');
-
-    const pPrice = Number(p.price || 0);
-    const pMrp = Number(p.originalPrice || pPrice || 0);
-    const pDisc = p.discountPercent !== undefined && p.discountPercent !== null
-      ? p.discountPercent
-      : (pMrp > pPrice && pMrp > 0 ? Math.round(((pMrp - pPrice) / pMrp) * 100) : 0);
-
-    setPrice(String(pPrice || ''));
-    setOriginalPrice(String(pMrp || ''));
-    setDiscountPercent(String(pDisc || '0'));
-    setCostPrice(String(p.costPrice || '0'));
-    setStockQuantity(String(p.stockQuantity || '0'));
-    setLowStockThreshold(String(p.lowStockThreshold || '5'));
-    setSize(p.size || '500ml');
-
-    const pImgs = Array.isArray(p.images) && p.images.length > 0
-      ? [...p.images]
-      : (p.image ? [p.image] : []);
-    while (pImgs.length < 4) pImgs.push('');
-    const fourImgs = pImgs.slice(0, 4);
-    setGalleryImages(fourImgs);
-    setImage(fourImgs[0] || p.image || '');
-    setFlipkartUrl(p.marketplaceLinks?.flipkart || '');
-    setAmazonUrl(p.marketplaceLinks?.amazon || '');
-    setMeeshoUrl(p.marketplaceLinks?.meesho || '');
-
     setDescription(p.description || '');
     setBadge(p.badge || '');
     setIsFestiveDeal(Boolean(p.isFestiveDeal));
     setFestiveBadge(p.festiveBadge || '');
+    setFlipkartUrl(p.marketplaceLinks?.flipkart || '');
+    setAmazonUrl(p.marketplaceLinks?.amazon || '');
+    setMeeshoUrl(p.marketplaceLinks?.meesho || '');
+    setCostPrice(String(p.costPrice || '0'));
+    setLowStockThreshold(String(p.lowStockThreshold || '5'));
 
     if (Array.isArray(p.availableSizes) && p.availableSizes.length > 0) {
       setVariants(
@@ -441,19 +337,61 @@ export const AdminProductsPage = () => {
           const vDisc = vMrp > vPrice && vMrp > 0
             ? Math.round(((vMrp - vPrice) / vMrp) * 100)
             : (v.discount ? parseInt(v.discount, 10) || 0 : 0);
+
+          let varImgs = [];
+          if (Array.isArray(v.images) && v.images.length > 0) {
+            varImgs = [...v.images];
+          } else if (v.image) {
+            varImgs = [v.image];
+          } else if (i === 0 && Array.isArray(p.images) && p.images.length > 0) {
+            varImgs = [...p.images];
+          } else if (i === 0 && p.image) {
+            varImgs = [p.image];
+          }
+          while (varImgs.length < 3) varImgs.push('');
+          const threeImgs = varImgs.slice(0, 3);
+
           return {
-            size: v.size || '',
-            sku: v.sku || (p.sku ? `${p.sku}-${i + 1}` : ''),
+            id: `var-${i + 1}-${Date.now()}`,
+            size: v.size || (i === 0 ? p.size || '500ml' : `Size ${i + 1}`),
+            stockQuantity: String(v.stockQuantity !== undefined ? v.stockQuantity : (i === 0 ? p.stockQuantity || '0' : '0')),
             originalPrice: String(vMrp || ''),
             discountPercent: String(vDisc || '0'),
             price: String(vPrice || ''),
-            stockQuantity: String(v.stockQuantity !== undefined ? v.stockQuantity : p.stockQuantity || '0'),
-            image: v.image || p.image || ''
+            images: threeImgs,
+            image: threeImgs[0] || v.image || ''
           };
         })
       );
     } else {
-      setVariants([]);
+      // Backward compatibility: synthesize Main Variant from product level
+      const pPrice = Number(p.price || 0);
+      const pMrp = Number(p.originalPrice || pPrice || 0);
+      const pDisc = p.discountPercent !== undefined && p.discountPercent !== null
+        ? p.discountPercent
+        : (pMrp > pPrice && pMrp > 0 ? Math.round(((pMrp - pPrice) / pMrp) * 100) : 0);
+
+      let pImgs = [];
+      if (Array.isArray(p.images) && p.images.length > 0) {
+        pImgs = [...p.images];
+      } else if (p.image) {
+        pImgs = [p.image];
+      }
+      while (pImgs.length < 3) pImgs.push('');
+      const threeImgs = pImgs.slice(0, 3);
+
+      setVariants([
+        {
+          id: `var-1-${Date.now()}`,
+          size: p.size || '500ml',
+          stockQuantity: String(p.stockQuantity || '0'),
+          originalPrice: String(pMrp || ''),
+          discountPercent: String(pDisc || '0'),
+          price: String(pPrice || ''),
+          images: threeImgs,
+          image: threeImgs[0] || p.image || ''
+        }
+      ]);
     }
 
     if (Array.isArray(p.highlights) && p.highlights.length > 0) {
@@ -481,22 +419,49 @@ export const AdminProductsPage = () => {
     e.preventDefault();
     setFormError('');
 
-    if (!name.trim() || !cat.trim() || !price) {
-      setFormError('Please fill in product name, category, and selling price.');
+    if (!name.trim()) {
+      setFormError('Please enter the Product Name.');
+      return;
+    }
+    if (!cat.trim()) {
+      setFormError('Please select a Category.');
+      return;
+    }
+    if (!variants || variants.length === 0) {
+      setFormError('Every product must have at least one variant (the Main Variant).');
       return;
     }
 
-    const cleanImgs = galleryImages.map((s) => (s || '').trim()).filter(Boolean).slice(0, 4);
-    if (cleanImgs.length === 0 && !image.trim()) {
-      setFormError('Please provide at least the Main Product Image (Slot 1).');
+    const mainVar = variants[0];
+    if (!mainVar.size || !mainVar.size.trim()) {
+      setFormError('Please enter the Pack Size / Variant Name for Variant #1 (Main Variant).');
       return;
     }
-    const primaryImg = cleanImgs[0] || image.trim();
+    if (!mainVar.price || Number(mainVar.price) < 0) {
+      setFormError('Please enter a valid Selling Price for Variant #1 (Main Variant).');
+      return;
+    }
+    const mainCleanImgs = (mainVar.images || []).map((img) => (img || '').trim()).filter(Boolean);
+    if (mainCleanImgs.length === 0 && !mainVar.image) {
+      setFormError('Variant #1 (Main Variant) requires at least Image Slot 1.');
+      return;
+    }
+
+    // Validate additional variants
+    for (let i = 1; i < variants.length; i++) {
+      const v = variants[i];
+      if (!v.size || !v.size.trim()) {
+        setFormError(`Please enter a Pack Size / Variant Name for Variant #${i + 1}.`);
+        return;
+      }
+      if (!v.price || Number(v.price) < 0) {
+        setFormError(`Please enter a valid Selling Price for Variant #${i + 1}.`);
+        return;
+      }
+    }
 
     setFormSubmitting(true);
     try {
-      const cleanStock = parseInt(stockQuantity, 10) || 0;
-      const cleanSku = sku.trim();
       const cleanHighlights = highlights.map((h) => h.trim()).filter(Boolean);
       const specsObject = {};
       specifications.forEach((s) => {
@@ -507,19 +472,45 @@ export const AdminProductsPage = () => {
         }
       });
 
+      const primaryImg = mainCleanImgs[0] || mainVar.image;
+      const parentMRP = Number(mainVar.originalPrice || mainVar.price);
+      const parentPrice = Number(mainVar.price);
+      const parentDisc = parentMRP > parentPrice
+        ? Math.round(((parentMRP - parentPrice) / parentMRP) * 100)
+        : (Number(mainVar.discountPercent) || 0);
+      const parentStock = variants.reduce((sum, v) => sum + (parseInt(v.stockQuantity, 10) || 0), 0);
+
+      const availableSizesPayload = variants.map((v, idx) => {
+        const vMRP = Number(v.originalPrice || v.price);
+        const vPrice = Number(v.price);
+        const vStock = parseInt(v.stockQuantity, 10) || 0;
+        const vDiscPercent = vMRP > vPrice ? Math.round(((vMRP - vPrice) / vMRP) * 100) : (Number(v.discountPercent) || 0);
+        const vImgs = (v.images || []).map((img) => (img || '').trim()).filter(Boolean).slice(0, 3);
+        const vPrimary = vImgs[0] || v.image || primaryImg;
+        return {
+          size: v.size.trim(),
+          price: vPrice,
+          originalPrice: vMRP,
+          discount: vDiscPercent > 0 ? `${vDiscPercent}% off` : '',
+          stockQuantity: vStock,
+          inStock: vStock > 0,
+          image: vPrimary,
+          images: vImgs.length > 0 ? vImgs : [vPrimary]
+        };
+      });
+
       const payload = {
         name: name.trim(),
-        sku: cleanSku,
         category: cat.trim(),
-        price: Number(price),
-        originalPrice: Number(originalPrice || price),
-        discountPercent: Number(discountPercent) || (Number(originalPrice) > Number(price) ? Math.round(((Number(originalPrice) - Number(price)) / Number(originalPrice)) * 100) : 0),
+        price: parentPrice,
+        originalPrice: parentMRP,
+        discountPercent: parentDisc,
         costPrice: Number(costPrice) || 0,
-        stockQuantity: cleanStock,
+        stockQuantity: parentStock,
         lowStockThreshold: parseInt(lowStockThreshold, 10) || 5,
-        size: size.trim(),
+        size: mainVar.size.trim(),
         image: primaryImg,
-        images: cleanImgs.length > 0 ? cleanImgs : [primaryImg],
+        images: mainCleanImgs.length > 0 ? mainCleanImgs : [primaryImg],
         marketplaceLinks: {
           flipkart: flipkartUrl.trim(),
           amazon: amazonUrl.trim(),
@@ -529,25 +520,10 @@ export const AdminProductsPage = () => {
         badge: badge.trim(),
         isFestiveDeal: Boolean(isFestiveDeal),
         festiveBadge: festiveBadge.trim(),
-        inStock: cleanStock > 0,
+        inStock: parentStock > 0,
         highlights: cleanHighlights,
         specifications: specsObject,
-        availableSizes: variants.length > 0 ? variants.map((v, idx) => {
-          const vMRP = Number(v.originalPrice || v.price || price);
-          const vPrice = Number(v.price || (v.originalPrice ? Math.round(vMRP * (1 - (Number(v.discountPercent) || 0) / 100)) : price));
-          const vStock = parseInt(v.stockQuantity, 10) || 0;
-          const vDiscPercent = vMRP > vPrice ? Math.round(((vMRP - vPrice) / vMRP) * 100) : (Number(v.discountPercent) || 0);
-          return {
-            size: (v.size || `Size ${idx + 1}`).trim(),
-            sku: (v.sku || (cleanSku ? `${cleanSku}-${idx + 1}` : `SKU-${idx + 1}`)).trim(),
-            price: vPrice,
-            originalPrice: vMRP,
-            discount: vDiscPercent > 0 ? `${vDiscPercent}% off` : '',
-            stockQuantity: vStock,
-            inStock: vStock > 0,
-            image: (v.image || image).trim()
-          };
-        }) : []
+        availableSizes: availableSizesPayload
       };
 
       if (editingProduct) {
@@ -980,726 +956,517 @@ export const AdminProductsPage = () => {
                 )}
 
                 {activeTab === 'general' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                      <label className="admin-form-label">Product Name *</label>
-                      <input
-                        type="text"
-                        className="admin-form-input"
-                        placeholder="e.g. Pure Shine Dishwash Gel"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                      />
-                    </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                    {/* Step 1: Basic Common Product Information */}
+                    <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      <div style={{ fontWeight: 800, fontSize: '14px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Package size={17} color="#2563EB" />
+                        <span>Step 1: Basic Product Information</span>
+                      </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '12px' }}>
+                        <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                          <label className="admin-form-label">Product Name *</label>
+                          <input
+                            type="text"
+                            className="admin-form-input"
+                            placeholder="e.g. Pure Shield Liquid Handwash"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                          />
+                        </div>
+
+                        <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                          <label className="admin-form-label">Category *</label>
+                          <select
+                            className="admin-select"
+                            style={{ width: '100%', height: '42px' }}
+                            value={cat}
+                            onChange={(e) => setCat(e.target.value)}
+                            required
+                          >
+                            <option value="everyday_essentials">Everyday Essentials</option>
+                            <option value="dishwash_solutions">Dishwash Solutions</option>
+                            <option value="laundry_fabrics">Laundry &amp; Fabrics</option>
+                            <option value="bathroom_surfaces">Bathroom &amp; Surfaces</option>
+                            <option value="floor_care">Floor Care</option>
+                            <option value="glass_care">Glass Care</option>
+                          </select>
+                        </div>
+                      </div>
+
                       <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                        <label className="admin-form-label">SKU (Unique Stock Keeping Unit)</label>
-                        <input
-                          type="text"
-                          className="admin-form-input"
-                          placeholder="e.g. SKU-DISHWASH-500ML"
-                          value={sku}
-                          onChange={(e) => setSku(e.target.value)}
+                        <label className="admin-form-label">Common Product Description</label>
+                        <textarea
+                          className="admin-form-textarea"
+                          rows={3}
+                          placeholder="Authentic formulation specifications, skin-friendly benefits, active ingredients, etc."
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
                         />
                       </div>
 
-                      <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                        <label className="admin-form-label">Category *</label>
-                        <select
-                          className="admin-select"
-                          style={{ width: '100%', height: '42px' }}
-                          value={cat}
-                          onChange={(e) => setCat(e.target.value)}
-                          required
-                        >
-                          <option value="everyday_essentials">Everyday Essentials</option>
-                          <option value="dishwash_solutions">Dishwash Solutions</option>
-                          <option value="laundry_fabrics">Laundry &amp; Fabrics</option>
-                          <option value="bathroom_surfaces">Bathroom &amp; Surfaces</option>
-                          <option value="floor_care">Floor Care</option>
-                          <option value="glass_care">Glass Care</option>
-                        </select>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                          <label className="admin-form-label">Promotional Storefront Badge</label>
+                          <input
+                            type="text"
+                            className="admin-form-input"
+                            placeholder="e.g. BEST SELLER, TRENDING, 20% OFF"
+                            value={badge}
+                            onChange={(e) => setBadge(e.target.value)}
+                          />
+                        </div>
+
+                        <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                          <label className="admin-form-label">Low-Stock Alert Level</label>
+                          <input
+                            type="number"
+                            className="admin-form-input"
+                            placeholder="5"
+                            value={lowStockThreshold}
+                            onChange={(e) => setLowStockThreshold(e.target.value)}
+                            min="0"
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    {/* 2. Smart Pricing & Flipkart Discount Calculator */}
+                    {/* Step 2 & 3: Flipkart-Style Variant Management */}
+                    <div style={{ background: '#FFFFFF', padding: '16px', borderRadius: '12px', border: '1.5px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                        <div>
+                          <div style={{ fontWeight: 800, fontSize: '14.5px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Layers size={18} color="#2563EB" />
+                            <span>Step 2 &amp; 3: Product Variants &amp; Pack Sizes ({variants.length})</span>
+                          </div>
+                          <p style={{ fontSize: '12px', color: '#64748B', margin: '3px 0 0 0' }}>
+                            Variant #1 is the default storefront variant. Add multiple pack sizes (e.g., 200 ML, 500 ML, 1 Litre, 5 Litre) with independent pricing, stock, and up to 3 images.
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleAddVariant('')}
+                          className="admin-btn admin-btn-secondary admin-btn-sm"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}
+                        >
+                          <Plus size={14} />
+                          <span>+ Add Another Variant</span>
+                        </button>
+                      </div>
+
+                      {/* Quick 1-Click Preset Buttons */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', padding: '8px 12px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                        <span style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>Quick Add Presets:</span>
+                        {['200 ML', '500 ML', '1 Litre', '2 Litre', '5 Litre'].map((preset) => (
+                          <button
+                            key={preset}
+                            type="button"
+                            onClick={() => handleAddVariant(preset)}
+                            style={{
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              padding: '3px 9px',
+                              borderRadius: '6px',
+                              background: '#EFF6FF',
+                              color: '#1D4ED8',
+                              border: '1px solid #BFDBFE',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            + {preset}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Variant Cards */}
+                      {variants.map((v, vIdx) => {
+                        const isMain = vIdx === 0;
+                        const isOut = v.stockQuantity === 0 || v.stockQuantity === '0';
+                        const mrp = Number(v.originalPrice || 0);
+                        const selling = Number(v.price || 0);
+                        const discount = Number(v.discountPercent || 0);
+                        const savings = mrp > selling ? mrp - selling : 0;
+
+                        return (
+                          <div
+                            key={v.id || vIdx}
+                            style={{
+                              background: '#FFFFFF',
+                              border: `1.5px solid ${isMain ? '#2563EB' : '#CBD5E1'}`,
+                              borderRadius: '12px',
+                              padding: '16px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '12px',
+                              boxShadow: isMain ? '0 2px 8px rgba(37,99,235,0.08)' : '0 1px 3px rgba(0,0,0,0.04)'
+                            }}
+                          >
+                            {/* Card Header */}
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: '13px', fontWeight: 800, color: isMain ? '#1D4ED8' : '#0F172A' }}>
+                                  {isMain ? 'Variant #1 (Main / Default Variant)' : `Variant #${vIdx + 1}`}
+                                </span>
+                                {isMain && (
+                                  <span style={{ fontSize: '10.5px', fontWeight: 800, background: '#DBEAFE', color: '#1E40AF', padding: '2px 8px', borderRadius: '4px' }}>
+                                    DEFAULT STOREFRONT DISPLAY
+                                  </span>
+                                )}
+                                <span
+                                  style={{
+                                    fontSize: '10.5px',
+                                    fontWeight: 700,
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    background: isOut ? '#FEF2F2' : '#ECFDF5',
+                                    color: isOut ? '#DC2626' : '#059669',
+                                    border: `1px solid ${isOut ? '#FECACA' : '#A7F3D0'}`
+                                  }}
+                                >
+                                  {isOut ? 'OUT OF STOCK' : `IN STOCK (${v.stockQuantity || 0} units)`}
+                                </span>
+                              </div>
+
+                              {!isMain && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveVariant(vIdx)}
+                                  style={{
+                                    background: '#FEF2F2',
+                                    border: '1px solid #FECACA',
+                                    color: '#DC2626',
+                                    borderRadius: '6px',
+                                    padding: '4px 8px',
+                                    fontSize: '11px',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px'
+                                  }}
+                                  title="Delete this variant"
+                                >
+                                  <Trash2 size={13} />
+                                  <span>Delete Variant</span>
+                                </button>
+                              )}
+                            </div>
+
+                            {/* Row 1: Size & Stock Quantity */}
+                            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '12px' }}>
+                              <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                                <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700 }}>
+                                  Variant Name / Pack Size *
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="e.g. 200 ML, 500 ML, 1 Litre, 5 Litre"
+                                  value={v.size}
+                                  onChange={(e) => handleUpdateVariant(vIdx, 'size', e.target.value)}
+                                  className="admin-form-input"
+                                  style={{ height: '38px', fontSize: '13px' }}
+                                  required
+                                />
+                              </div>
+
+                              <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                                <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700 }}>
+                                  Stock Quantity *
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="20"
+                                  value={v.stockQuantity}
+                                  onChange={(e) => handleUpdateVariant(vIdx, 'stockQuantity', e.target.value)}
+                                  className="admin-form-input"
+                                  style={{ height: '38px', fontSize: '13px' }}
+                                  min="0"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            {/* Row 2: Pricing (MRP, Discount %, Selling Price) with Auto-Calculator */}
+                            <div style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr 1.3fr',
+                              gap: '12px',
+                              background: '#F8FAFC',
+                              padding: '12px',
+                              borderRadius: '8px',
+                              border: '1px solid #E2E8F0'
+                            }}>
+                              <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                                <label className="admin-form-label" style={{ fontSize: '11px', fontWeight: 700 }}>
+                                  MRP (Original ₹) *
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="400"
+                                  value={v.originalPrice}
+                                  onChange={(e) => handleUpdateVariant(vIdx, 'originalPrice', e.target.value)}
+                                  className="admin-form-input"
+                                  style={{ height: '36px', fontSize: '12.5px' }}
+                                  min="0"
+                                  required
+                                />
+                              </div>
+
+                              <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                                <label className="admin-form-label" style={{ fontSize: '11px', fontWeight: 700 }}>
+                                  Discount (%)
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="10"
+                                  value={v.discountPercent}
+                                  onChange={(e) => handleUpdateVariant(vIdx, 'discountPercent', e.target.value)}
+                                  className="admin-form-input"
+                                  style={{ height: '36px', fontSize: '12.5px' }}
+                                  min="0"
+                                  max="100"
+                                />
+                              </div>
+
+                              <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                                <label className="admin-form-label" style={{ fontSize: '11px', fontWeight: 800, color: '#0F172A' }}>
+                                  Selling Price (Customer Pays ₹) *
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="360"
+                                  value={v.price}
+                                  onChange={(e) => handleUpdateVariant(vIdx, 'price', e.target.value)}
+                                  className="admin-form-input"
+                                  style={{ height: '36px', fontSize: '13px', fontWeight: 800, borderColor: '#10B981', background: '#F0FDF4' }}
+                                  min="0"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            {/* Live Customer Preview Strip */}
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '6px 12px',
+                              background: '#F0FDF4',
+                              borderRadius: '6px',
+                              fontSize: '11.5px',
+                              border: '1px solid #BBF7D0'
+                            }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontWeight: 800, color: '#166534' }}>Customer Sees:</span>
+                                <span style={{ fontWeight: 800, color: '#0F172A', fontSize: '13.5px' }}>₹{selling || 0}</span>
+                                {mrp > selling && (
+                                  <span style={{ color: '#94A3B8', textDecoration: 'line-through' }}>₹{mrp}</span>
+                                )}
+                                {discount > 0 && (
+                                  <span style={{ fontWeight: 800, color: '#16A34A' }}>{discount}% off</span>
+                                )}
+                              </div>
+                              {savings > 0 && (
+                                <span style={{ fontWeight: 700, color: '#15803D' }}>
+                                  Customer saves ₹{savings}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Row 3: Product Images for this variant (Max 3 Images: Slot 1 Required, 2 & 3 Optional) */}
+                            <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 800, margin: 0, color: '#0F172A' }}>
+                                  Images for {v.size || `Variant #${vIdx + 1}`} (Up to 3 Images)
+                                </label>
+                                <span style={{ fontSize: '10.5px', color: '#64748B' }}>
+                                  Slot 1 is required • Slots 2 &amp; 3 optional
+                                </span>
+                              </div>
+
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
+                                {[0, 1, 2].map((slotIdx) => {
+                                  const isSlotReq = slotIdx === 0;
+                                  const imgVal = (v.images && v.images[slotIdx]) || '';
+                                  const isUploading = uploadingSlot?.varIdx === vIdx && uploadingSlot?.slotIdx === slotIdx;
+                                  const isDragging = dragOverSlot?.varIdx === vIdx && dragOverSlot?.slotIdx === slotIdx;
+                                  const slotLabel = isSlotReq ? 'Slot 1: Main (Required)' : `Slot ${slotIdx + 1} (Optional)`;
+
+                                  return (
+                                    <div
+                                      key={slotIdx}
+                                      style={{
+                                        border: `1.5px solid ${isSlotReq ? (imgVal ? '#2563EB' : '#EF4444') : (imgVal ? '#10B981' : '#CBD5E1')}`,
+                                        borderRadius: '8px',
+                                        background: isDragging ? '#EFF6FF' : '#FFFFFF',
+                                        padding: '8px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '6px'
+                                      }}
+                                      onDragOver={(e) => { e.preventDefault(); setDragOverSlot({ varIdx: vIdx, slotIdx }); }}
+                                      onDragLeave={() => setDragOverSlot(null)}
+                                      onDrop={(e) => {
+                                        e.preventDefault();
+                                        setDragOverSlot(null);
+                                        const file = e.dataTransfer?.files?.[0];
+                                        if (file) handleVariantSlotUpload(vIdx, slotIdx, file);
+                                      }}
+                                    >
+                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <span style={{
+                                          fontSize: '10px',
+                                          fontWeight: 800,
+                                          padding: '1px 5px',
+                                          borderRadius: '3px',
+                                          background: isSlotReq ? '#DBEAFE' : '#F1F5F9',
+                                          color: isSlotReq ? '#1D4ED8' : '#475569'
+                                        }}>
+                                          {slotLabel}
+                                        </span>
+                                        {imgVal && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleRemoveVariantSlotImage(vIdx, slotIdx)}
+                                            style={{ background: 'none', border: 'none', color: '#EF4444', fontSize: '10.5px', fontWeight: 700, cursor: 'pointer', padding: '1px 3px' }}
+                                          >
+                                            Clear
+                                          </button>
+                                        )}
+                                      </div>
+
+                                      <div
+                                        onClick={() => document.getElementById(`var-${vIdx}-slot-${slotIdx}`)?.click()}
+                                        style={{
+                                          height: '95px',
+                                          borderRadius: '6px',
+                                          border: `1px dashed ${isDragging ? '#2563EB' : '#CBD5E1'}`,
+                                          background: imgVal ? '#FFFFFF' : '#F8FAFC',
+                                          display: 'flex',
+                                          flexDirection: 'column',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          cursor: 'pointer',
+                                          overflow: 'hidden',
+                                          position: 'relative'
+                                        }}
+                                      >
+                                        {isUploading ? (
+                                          <div style={{ textAlign: 'center', padding: '6px' }}>
+                                            <RefreshCw size={18} className="animate-spin" color="#2563EB" />
+                                            <div style={{ fontSize: '10px', color: '#2563EB', fontWeight: 700, marginTop: '2px' }}>Uploading...</div>
+                                          </div>
+                                        ) : imgVal ? (
+                                          <img
+                                            src={imgVal}
+                                            alt={`Variant ${vIdx + 1} Slot ${slotIdx + 1}`}
+                                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                            onError={(e) => { e.target.src = '/favicon.svg'; }}
+                                          />
+                                        ) : (
+                                          <div style={{ textAlign: 'center', padding: '6px' }}>
+                                            <Upload size={18} color="#94A3B8" />
+                                            <div style={{ fontSize: '10.5px', color: '#64748B', fontWeight: 600, marginTop: '2px' }}>Upload / Drop</div>
+                                          </div>
+                                        )}
+                                        <input
+                                          id={`var-${vIdx}-slot-${slotIdx}`}
+                                          type="file"
+                                          accept="image/*"
+                                          style={{ display: 'none' }}
+                                          disabled={isUploading}
+                                          onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) handleVariantSlotUpload(vIdx, slotIdx, file);
+                                          }}
+                                        />
+                                      </div>
+
+                                      <input
+                                        type="text"
+                                        className="admin-form-input"
+                                        style={{ height: '26px', fontSize: '10.5px', padding: '2px 6px' }}
+                                        placeholder={isSlotReq ? "Image URL (Required)" : "Image URL (Optional)"}
+                                        value={imgVal}
+                                        onChange={(e) => handleVariantSlotUrlChange(vIdx, slotIdx, e.target.value)}
+                                      />
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* External Marketplace Purchase Links (Flipkart, Amazon, Meesho) */}
                     <div style={{
+                      padding: '16px',
+                      borderRadius: '12px',
                       background: '#F8FAFC',
                       border: '1px solid #E2E8F0',
-                      borderRadius: '10px',
-                      padding: '16px',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '12px'
                     }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ fontWeight: 700, fontSize: '13px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <div style={{
-                            width: '24px',
-                            height: '24px',
-                            borderRadius: '6px',
-                            background: '#EFF6FF',
-                            color: '#2563EB',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                            <Tag size={13} />
-                          </div>
-                          <span>Pricing &amp; Discount Calculator</span>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <ExternalLink size={16} color="#2563EB" />
+                          <span>External Marketplace Purchase Links (Optional)</span>
                         </div>
-                        <span style={{ fontSize: '11px', color: '#64748B' }}>
-                          Auto-computes selling price &amp; customer discount
-                        </span>
+                        <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
+                          Configure official product URLs for external marketplaces. When set, official &ldquo;Buy on Flipkart/Amazon/Meesho&rdquo; buttons appear on the customer product page. Leave blank to hide.
+                        </p>
                       </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.2fr 1fr', gap: '12px' }}>
-                    <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                      <label className="admin-form-label" style={{ fontWeight: 700 }}>
-                        MRP (Original ₹) *
-                      </label>
-                      <input
-                        type="number"
-                        className="admin-form-input"
-                        placeholder="e.g. 400"
-                        value={originalPrice}
-                        onChange={(e) => handleMrpChange(e.target.value)}
-                        min="0"
-                        required
-                      />
-                      <span style={{ fontSize: '10.5px', color: '#64748B', marginTop: '2px', display: 'block' }}>
-                        Cut price: ~~₹{originalPrice || 0}~~
-                      </span>
-                    </div>
-
-                    <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                      <label className="admin-form-label" style={{ fontWeight: 700 }}>
-                        Discount (%)
-                      </label>
-                      <input
-                        type="number"
-                        className="admin-form-input"
-                        placeholder="e.g. 10"
-                        value={discountPercent}
-                        onChange={(e) => handleDiscountChange(e.target.value)}
-                        min="0"
-                        max="100"
-                      />
-                      <span style={{ fontSize: '10.5px', color: '#16A34A', fontWeight: 600, marginTop: '2px', display: 'block' }}>
-                        e.g. 5%, 10% OFF
-                      </span>
-                    </div>
-
-                    <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                      <label className="admin-form-label" style={{ fontWeight: 800, color: '#0F172A' }}>
-                        Final Selling Price (₹) *
-                      </label>
-                      <input
-                        type="number"
-                        className="admin-form-input"
-                        style={{ fontWeight: 800, borderColor: '#10B981', background: '#F0FDF4' }}
-                        placeholder="e.g. 360"
-                        value={price}
-                        onChange={(e) => handlePriceChange(e.target.value)}
-                        min="0"
-                        required
-                      />
-                      <span style={{ fontSize: '10.5px', color: '#059669', fontWeight: 700, marginTop: '2px', display: 'block' }}>
-                        Amount customer pays
-                      </span>
-                    </div>
-
-                    <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                      <label className="admin-form-label">Cost Price (₹)</label>
-                      <input
-                        type="number"
-                        className="admin-form-input"
-                        placeholder="110"
-                        value={costPrice}
-                        onChange={(e) => setCostPrice(e.target.value)}
-                        min="0"
-                      />
-                      <span style={{ fontSize: '10.5px', color: '#64748B', marginTop: '2px', display: 'block' }}>
-                        Internal cost
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Flipkart Live Preview Banner */}
-                  <div style={{
-                    background: '#FFFFFF',
-                    border: '1px solid #BBF7D0',
-                    borderRadius: '8px',
-                    padding: '10px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '10px'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        color: '#15803D',
-                        background: '#DCFCE7',
-                        padding: '2px 8px',
-                        borderRadius: '4px',
-                        letterSpacing: '0.03em'
-                      }}>
-                        FLIPKART-STYLE LIVE PREVIEW
-                      </span>
-                      <span style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>
-                        ₹{price || 0}
-                      </span>
-                      {Number(originalPrice) > Number(price) && (
-                        <span style={{ fontSize: '13px', color: '#94A3B8', textDecoration: 'line-through' }}>
-                          ₹{originalPrice}
-                        </span>
-                      )}
-                      {Number(discountPercent) > 0 && (
-                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#16A34A' }}>
-                          {discountPercent}% off
-                        </span>
-                      )}
-                    </div>
-                    {Number(originalPrice) > Number(price) ? (
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#166534', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <Sparkles size={13} style={{ color: '#16A34A' }} />
-                        <span>Customer saves ₹{Number(originalPrice) - Number(price)} ({discountPercent}% OFF)</span>
-                      </span>
-                    ) : (
-                      <span style={{ fontSize: '11.5px', color: '#64748B' }}>
-                        Sold at full MRP (No discount)
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Stock Quantity</label>
-                    <input
-                      type="number"
-                      className="admin-form-input"
-                      placeholder="20"
-                      value={stockQuantity}
-                      onChange={(e) => setStockQuantity(e.target.value)}
-                      min="0"
-                    />
-                  </div>
-
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Low-Stock Alert Level</label>
-                    <input
-                      type="number"
-                      className="admin-form-input"
-                      placeholder="5"
-                      value={lowStockThreshold}
-                      onChange={(e) => setLowStockThreshold(e.target.value)}
-                      min="0"
-                    />
-                  </div>
-
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Volume / Base Pack Size</label>
-                    <input
-                      type="text"
-                      className="admin-form-input"
-                      placeholder="500ml"
-                      value={size}
-                      onChange={(e) => setSize(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                {/* 4 Product Gallery Image Slots (Flipkart-Style Multi-Image Support) */}
-                <div className="admin-form-group" style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <div>
-                      <div style={{ fontWeight: 800, margin: 0, fontSize: '14px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <ImageIcon size={18} color="#2563EB" />
-                        <span>Product Image Gallery (Up to 4 Images)</span>
-                      </div>
-                      <p style={{ fontSize: '11.5px', color: '#64748B', margin: '3px 0 0 0' }}>
-                        <strong>Slot 1</strong> is the primary main image (required). <strong>Slots 2, 3, 4</strong> are optional additional images shown as thumbnails on the customer product page.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
-                    {[0, 1, 2, 3].map((slotIdx) => {
-                      const isMain = slotIdx === 0;
-                      const imgVal = galleryImages[slotIdx] || '';
-                      const isUploading = slotUploadingIdx === slotIdx;
-                      const isDragging = dragOverSlot === slotIdx;
-                      const slotLabel = isMain ? 'Slot 1: Main Image (Required)' : `Slot ${slotIdx + 1}: Image ${slotIdx + 1} (Optional)`;
-
-                      return (
-                        <div
-                          key={slotIdx}
-                          style={{
-                            border: `1.5px solid ${isMain ? (imgVal ? '#2563EB' : '#EF4444') : (imgVal ? '#10B981' : '#CBD5E1')}`,
-                            borderRadius: '10px',
-                            background: isDragging ? '#EFF6FF' : (isMain ? '#FFFFFF' : '#FFFFFF'),
-                            padding: '12px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '8px',
-                            position: 'relative',
-                            boxShadow: isMain ? '0 2px 6px rgba(37,99,235,0.08)' : '0 1px 2px rgba(0,0,0,0.03)'
-                          }}
-                          onDragOver={(e) => { e.preventDefault(); setDragOverSlot(slotIdx); }}
-                          onDragLeave={() => setDragOverSlot(null)}
-                          onDrop={(e) => handleSlotImageDrop(slotIdx, e)}
-                        >
-                          {/* Header Badge */}
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <span style={{
-                              fontSize: '11px',
-                              fontWeight: 800,
-                              padding: '2px 7px',
-                              borderRadius: '4px',
-                              background: isMain ? '#DBEAFE' : '#F1F5F9',
-                              color: isMain ? '#1D4ED8' : '#475569'
-                            }}>
-                              {slotLabel}
-                            </span>
-                            {imgVal && (
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveSlotImage(slotIdx)}
-                                style={{
-                                  background: 'none',
-                                  border: 'none',
-                                  color: '#EF4444',
-                                  fontSize: '11px',
-                                  fontWeight: 700,
-                                  cursor: 'pointer',
-                                  padding: '2px 4px'
-                                }}
-                                title={isMain ? 'Clear slot' : 'Remove image'}
-                              >
-                                Clear
-                              </button>
-                            )}
-                          </div>
-
-                          {/* Image Preview Box & Upload Trigger */}
-                          <div
-                            onClick={() => document.getElementById(`gallery-slot-input-${slotIdx}`)?.click()}
-                            style={{
-                              height: '110px',
-                              borderRadius: '8px',
-                              border: `1px dashed ${isDragging ? '#2563EB' : '#CBD5E1'}`,
-                              background: imgVal ? '#FFFFFF' : '#F8FAFC',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              cursor: 'pointer',
-                              overflow: 'hidden',
-                              position: 'relative'
-                            }}
-                          >
-                            {isUploading ? (
-                              <div style={{ textAlign: 'center', padding: '10px' }}>
-                                <RefreshCw size={22} className="animate-spin" color="#2563EB" />
-                                <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: 700, marginTop: '4px' }}>Uploading to Cloudinary...</div>
-                              </div>
-                            ) : imgVal ? (
-                              <img
-                                src={imgVal}
-                                alt={`Slot ${slotIdx + 1}`}
-                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                onError={(e) => { e.target.src = '/favicon.svg'; }}
-                              />
-                            ) : (
-                              <div style={{ textAlign: 'center', padding: '8px' }}>
-                                <Upload size={20} color="#94A3B8" />
-                                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: 600, marginTop: '4px' }}>
-                                  Click or Drop to Upload
-                                </div>
-                              </div>
-                            )}
-                            <input
-                              id={`gallery-slot-input-${slotIdx}`}
-                              type="file"
-                              accept="image/*"
-                              style={{ display: 'none' }}
-                              disabled={isUploading}
-                              onChange={(e) => handleSlotImageSelect(slotIdx, e)}
-                            />
-                          </div>
-
-                          {/* URL text input */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+                        <div>
+                          <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ color: '#1C8E8F', fontWeight: 800 }}>Flipkart</span> Product URL
+                          </label>
                           <input
-                            type="text"
+                            type="url"
                             className="admin-form-input"
-                            style={{ height: '28px', fontSize: '11px', padding: '4px 8px' }}
-                            placeholder={isMain ? "Image URL / path (Required)" : "Image URL / path (Optional)"}
-                            value={imgVal}
-                            onChange={(e) => handleSlotUrlChange(slotIdx, e.target.value)}
+                            placeholder="https://www.flipkart.com/..."
+                            value={flipkartUrl}
+                            onChange={(e) => setFlipkartUrl(e.target.value)}
+                            style={{ height: '34px', fontSize: '12px' }}
                           />
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
 
-                {/* External Marketplace Purchase Links (Flipkart, Amazon, Meesho) */}
-                <div style={{
-                  padding: '16px',
-                  borderRadius: '12px',
-                  background: '#F8FAFC',
-                  border: '1px solid #E2E8F0',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px'
-                }}>
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <ExternalLink size={16} color="#2563EB" />
-                      <span>External Marketplace Purchase Links (Optional)</span>
-                    </div>
-                    <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
-                      Configure official product URLs for external marketplaces. When set, official &ldquo;Buy on Flipkart/Amazon/Meesho&rdquo; buttons appear on the customer product page. Leave blank to hide.
-                    </p>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
-                    <div>
-                      <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <span style={{ color: '#1C8E8F', fontWeight: 800 }}>Flipkart</span> Product URL
-                      </label>
-                      <input
-                        type="url"
-                        className="admin-form-input"
-                        placeholder="https://www.flipkart.com/..."
-                        value={flipkartUrl}
-                        onChange={(e) => setFlipkartUrl(e.target.value)}
-                        style={{ height: '34px', fontSize: '12px' }}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <span style={{ color: '#D97706', fontWeight: 800 }}>Amazon</span> Product URL
-                      </label>
-                      <input
-                        type="url"
-                        className="admin-form-input"
-                        placeholder="https://www.amazon.in/..."
-                        value={amazonUrl}
-                        onChange={(e) => setAmazonUrl(e.target.value)}
-                        style={{ height: '34px', fontSize: '12px' }}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <span style={{ color: '#9A1672', fontWeight: 800 }}>Meesho</span> Product URL
-                      </label>
-                      <input
-                        type="url"
-                        className="admin-form-input"
-                        placeholder="https://www.meesho.com/..."
-                        value={meeshoUrl}
-                        onChange={(e) => setMeeshoUrl(e.target.value)}
-                        style={{ height: '34px', fontSize: '12px' }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pack Sizes & Variant Inventory Section */}
-                <div className="admin-variants-box">
-                  <div className="admin-variant-header">
-                    <div>
-                      <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A' }}>
-                        Pack Sizes &amp; Variants Inventory ({variants.length})
-                      </div>
-                      <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
-                        Add variants like 250ml, 500ml, 1L, 5L with their own MRP, discount, and stock.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleAddVariant('')}
-                      className="admin-btn admin-btn-secondary admin-btn-sm"
-                    >
-                      <Plus size={13} /> Add Variant
-                    </button>
-                  </div>
-
-                  {/* 1-Click Quick Add Preset Pills */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '2px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>Quick 1-Click Presets:</span>
-                    {['250ml', '500ml', '1 Liter', '2 Liter', '5 Liter Can'].map((preset) => (
-                      <button
-                        key={preset}
-                        type="button"
-                        onClick={() => handleAddVariant(preset)}
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          padding: '3px 8px',
-                          borderRadius: '6px',
-                          background: '#EFF6FF',
-                          color: '#1D4ED8',
-                          border: '1px solid #BFDBFE',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        + {preset}
-                      </button>
-                    ))}
-                  </div>
-
-                  {variants.length === 0 ? (
-                    <div style={{ padding: '16px', background: '#F8FAFC', border: '1px dashed #CBD5E1', borderRadius: '8px', textAlign: 'center', margin: '6px 0' }}>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '3px' }}>
-                        Single Unique Product (No Variants)
-                      </div>
-                      <div style={{ fontSize: '11.5px', color: '#64748B', marginBottom: '10px' }}>
-                        This product is sold as a standalone item using the main price, MRP, and stock above. Click any preset above or &ldquo;Add Variant&rdquo; to add size options.
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleAddVariant('1 Liter')}
-                        className="admin-btn admin-btn-secondary admin-btn-sm"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', margin: '0 auto' }}
-                      >
-                        <Plus size={13} /> Add 1 Liter Variant
-                      </button>
-                    </div>
-                  ) : (
-                    variants.map((v, idx) => {
-                      const isOut = v.stockQuantity === 0 || v.stockQuantity === '0';
-                      return (
-                        <div key={idx} className="admin-variant-row">
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <span style={{ fontSize: '12px', fontWeight: 800, color: '#2563EB' }}>
-                                Variant #{idx + 1}
-                              </span>
-                              <span
-                                style={{
-                                  fontSize: '10.5px',
-                                  fontWeight: 700,
-                                  padding: '2px 6px',
-                                  borderRadius: '4px',
-                                  background: isOut ? '#FEF2F2' : '#ECFDF5',
-                                  color: isOut ? '#DC2626' : '#059669',
-                                  border: `1px solid ${isOut ? '#FECACA' : '#A7F3D0'}`
-                                }}
-                              >
-                                {isOut ? 'OUT OF STOCK' : `IN STOCK (${v.stockQuantity || 0} units)`}
-                              </span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveVariant(idx)}
-                              style={{ background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', padding: '2px' }}
-                              title="Remove Variant"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-
-                          {/* Row 1: Size, SKU, Stock */}
-                          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 0.8fr', gap: '10px' }}>
-                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                              <label className="admin-form-label" style={{ fontSize: '11px' }}>Pack Size / Volume *</label>
-                              <input
-                                type="text"
-                                placeholder="e.g. 500ml Bottle, 1 Liter Pack"
-                                value={v.size}
-                                onChange={(e) => handleUpdateVariant(idx, 'size', e.target.value)}
-                                className="admin-form-input"
-                                style={{ height: '36px', fontSize: '12.5px' }}
-                                required
-                              />
-                            </div>
-
-                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                              <label className="admin-form-label" style={{ fontSize: '11px' }}>Variant SKU</label>
-                              <input
-                                type="text"
-                                placeholder="e.g. ASM-500ML"
-                                value={v.sku}
-                                onChange={(e) => handleUpdateVariant(idx, 'sku', e.target.value)}
-                                className="admin-form-input"
-                                style={{ height: '36px', fontSize: '12.5px' }}
-                              />
-                            </div>
-
-                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                              <label className="admin-form-label" style={{ fontSize: '11px' }}>Stock Qty *</label>
-                              <input
-                                type="number"
-                                placeholder="20"
-                                value={v.stockQuantity}
-                                onChange={(e) => handleUpdateVariant(idx, 'stockQuantity', e.target.value)}
-                                className="admin-form-input"
-                                style={{ height: '36px', fontSize: '12.5px' }}
-                                min="0"
-                                required
-                              />
-                            </div>
-                          </div>
-
-                          {/* Row 2: MRP (₹), Discount (%), Selling Price (₹) with auto-calculation */}
-                          <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr 1.2fr',
-                            gap: '10px',
-                            background: '#F8FAFC',
-                            padding: '10px',
-                            borderRadius: '6px',
-                            border: '1px solid #E2E8F0'
-                          }}>
-                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                              <label className="admin-form-label" style={{ fontSize: '11px', fontWeight: 700 }}>
-                                MRP (₹) *
-                              </label>
-                              <input
-                                type="number"
-                                placeholder="200"
-                                value={v.originalPrice}
-                                onChange={(e) => handleUpdateVariant(idx, 'originalPrice', e.target.value)}
-                                className="admin-form-input"
-                                style={{ height: '36px', fontSize: '12.5px' }}
-                                min="0"
-                                required
-                              />
-                            </div>
-
-                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                              <label className="admin-form-label" style={{ fontSize: '11px', fontWeight: 700 }}>
-                                Discount (%)
-                              </label>
-                              <input
-                                type="number"
-                                placeholder="10"
-                                value={v.discountPercent}
-                                onChange={(e) => handleUpdateVariant(idx, 'discountPercent', e.target.value)}
-                                className="admin-form-input"
-                                style={{ height: '36px', fontSize: '12.5px' }}
-                                min="0"
-                                max="100"
-                              />
-                            </div>
-
-                            <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                              <label className="admin-form-label" style={{ fontSize: '11px', fontWeight: 800, color: '#0F172A' }}>
-                                Selling Price (Customer Pays) *
-                              </label>
-                              <input
-                                type="number"
-                                placeholder="180"
-                                value={v.price}
-                                onChange={(e) => handleUpdateVariant(idx, 'price', e.target.value)}
-                                className="admin-form-input"
-                                style={{ height: '36px', fontSize: '12.5px', fontWeight: 800, borderColor: '#10B981', background: '#F0FDF4' }}
-                                min="0"
-                                required
-                              />
-                            </div>
-                          </div>
-
-                          {/* Variant Customer View Mini Pill */}
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            padding: '6px 10px',
-                            background: '#F0FDF4',
-                            borderRadius: '6px',
-                            fontSize: '11px',
-                            border: '1px solid #BBF7D0'
-                          }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <span style={{ fontWeight: 800, color: '#166534' }}>Customer View:</span>
-                              <span style={{ fontWeight: 800, color: '#0F172A' }}>₹{v.price || 0}</span>
-                              {Number(v.originalPrice) > Number(v.price) && (
-                                <span style={{ color: '#94A3B8', textDecoration: 'line-through' }}>₹{v.originalPrice}</span>
-                              )}
-                              {Number(v.discountPercent) > 0 && (
-                                <span style={{ fontWeight: 800, color: '#16A34A' }}>{v.discountPercent}% off</span>
-                              )}
-                            </div>
-                            {Number(v.originalPrice) > Number(v.price) && (
-                              <span style={{ fontWeight: 700, color: '#15803D' }}>
-                                Saves ₹{Number(v.originalPrice) - Number(v.price)}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Separate Variant Image with Drag-Drop & Cloudinary Upload */}
-                          <div
-                            onDragOver={(e) => e.preventDefault()}
-                            onDrop={(e) => handleVariantImageDrop(idx, e)}
-                            style={{
-                              background: '#F8FAFC',
-                              border: '1px dashed #CBD5E1',
-                              borderRadius: '8px',
-                              padding: '8px 12px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '12px',
-                              marginTop: '2px'
-                            }}
-                          >
-                            <img
-                              src={v.image || image || '/favicon.svg'}
-                              alt="Variant Preview"
-                              className="admin-variant-preview-thumb"
-                              onError={(e) => { e.target.src = '/favicon.svg'; }}
-                            />
-                            <div style={{ flex: 1 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
-                                <label className="admin-form-label" style={{ fontSize: '11px', margin: 0, fontWeight: 700 }}>
-                                  Variant Specific Image (Optional)
-                                </label>
-                                <label style={{ fontSize: '11px', fontWeight: 700, color: '#2563EB', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                  {variantUploadingIdx === idx ? (
-                                    <>
-                                      <RefreshCw size={11} className="animate-spin" />
-                                      <span>Uploading to Cloudinary...</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Upload size={11} />
-                                      <span>Upload from Gallery / PC</span>
-                                    </>
-                                  )}
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    disabled={variantUploadingIdx === idx}
-                                    onChange={(e) => handleVariantImageSelect(idx, e)}
-                                  />
-                                </label>
-                              </div>
-                              <input
-                                type="text"
-                                placeholder="Drag &amp; drop image here or paste URL /images/products/..."
-                                value={v.image}
-                                onChange={(e) => handleUpdateVariant(idx, 'image', e.target.value)}
-                                className="admin-form-input"
-                                style={{ height: '32px', fontSize: '11.5px' }}
-                              />
-                            </div>
-                          </div>
+                        <div>
+                          <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ color: '#D97706', fontWeight: 800 }}>Amazon</span> Product URL
+                          </label>
+                          <input
+                            type="url"
+                            className="admin-form-input"
+                            placeholder="https://www.amazon.in/..."
+                            value={amazonUrl}
+                            onChange={(e) => setAmazonUrl(e.target.value)}
+                            style={{ height: '34px', fontSize: '12px' }}
+                          />
                         </div>
-                      );
-                    })
-                  )}
-                </div>
+
+                        <div>
+                          <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ color: '#9A1672', fontWeight: 800 }}>Meesho</span> Product URL
+                          </label>
+                          <input
+                            type="url"
+                            className="admin-form-input"
+                            placeholder="https://www.meesho.com/..."
+                            value={meeshoUrl}
+                            onChange={(e) => setMeeshoUrl(e.target.value)}
+                            style={{ height: '34px', fontSize: '12px' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
 
                 <div className="admin-form-group">
                   <label className="admin-form-label">Description</label>

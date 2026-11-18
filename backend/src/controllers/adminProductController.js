@@ -244,17 +244,24 @@ const createProduct = async (req, res, next) => {
       finalId = `${baseSlug}_${Date.now().toString().slice(-4)}`;
     }
 
-    // Auto-generate SKU if not provided
-    const finalSku = (sku || `SKU-${finalId.toUpperCase()}`).trim();
-    const existingSku = await Product.findOne({ sku: finalSku });
-    if (existingSku) {
-      return res.status(400).json({
-        success: false,
-        message: `SKU '${finalSku}' already exists. Please choose a unique SKU.`
-      });
+    // Auto-generate SKU if not provided, ensuring no collision
+    let finalSku = (sku || '').trim();
+    if (finalSku) {
+      const existingSku = await Product.findOne({ sku: finalSku });
+      if (existingSku) {
+        return res.status(400).json({
+          success: false,
+          message: `SKU '${finalSku}' already exists. Please choose a unique SKU.`
+        });
+      }
+    } else {
+      let candidate = `SKU-${finalId.toUpperCase()}`;
+      const existingSku = await Product.findOne({ sku: candidate });
+      if (existingSku) {
+        candidate = `${candidate}-${Date.now().toString().slice(-4)}`;
+      }
+      finalSku = candidate;
     }
-
-    const discountPercent = numMRP > numPrice ? Math.round(((numMRP - numPrice) / numMRP) * 100) : 0;
 
     let normalizedSizes = [];
     if (Array.isArray(availableSizes) && availableSizes.length > 0) {
@@ -263,6 +270,23 @@ const createProduct = async (req, res, next) => {
         const sMRP = Number(s.originalPrice || sPrice);
         const sStock = s.stockQuantity !== undefined ? Math.max(0, parseInt(s.stockQuantity, 10) || 0) : numStock;
         const sDisc = sMRP > sPrice ? `${Math.round(((sMRP - sPrice) / sMRP) * 100)}% off` : (s.discount || '');
+
+        // Support up to 3 images per variant
+        let varImages = [];
+        if (Array.isArray(s.images) && s.images.length > 0) {
+          varImages = s.images
+            .map((img) => (typeof img === 'string' ? img.trim() : ''))
+            .filter((img) => img && isValidImageUrl(img))
+            .slice(0, 3);
+        }
+        if (varImages.length === 0 && s.image && isValidImageUrl(s.image)) {
+          varImages = [s.image.trim()];
+        }
+        if (varImages.length === 0 && primaryImage) {
+          varImages = [primaryImage];
+        }
+        const varPrimaryImage = varImages[0] || primaryImage;
+
         return {
           size: (s.size || `Variant ${idx + 1}`).trim(),
           sku: (s.sku || `${finalSku}-${idx + 1}`).trim(),
@@ -271,12 +295,35 @@ const createProduct = async (req, res, next) => {
           discount: sDisc,
           stockQuantity: sStock,
           inStock: sStock > 0,
-          image: (s.image || image || '').trim()
+          image: varPrimaryImage,
+          images: varImages
         };
       });
     } else {
       normalizedSizes = [];
     }
+
+    // If variants exist, synchronize parent product defaults with the main (first) variant
+    let finalSellingPrice = numPrice;
+    let finalMRP = numMRP;
+    let finalSize = size;
+    let finalPrimaryImage = primaryImage;
+    let finalGalleryImages = cleanImages;
+    let finalTotalStock = numStock;
+
+    if (normalizedSizes.length > 0) {
+      const mainVar = normalizedSizes[0];
+      finalSellingPrice = mainVar.price;
+      finalMRP = mainVar.originalPrice;
+      finalSize = mainVar.size;
+      finalPrimaryImage = mainVar.image || primaryImage;
+      finalGalleryImages = mainVar.images.length > 0 ? mainVar.images : cleanImages;
+      finalTotalStock = normalizedSizes.reduce((sum, v) => sum + (v.stockQuantity || 0), 0);
+    }
+
+    const discountPercent = finalMRP > finalSellingPrice
+      ? Math.round(((finalMRP - finalSellingPrice) / finalMRP) * 100)
+      : 0;
 
     const cleanHighlights = Array.isArray(highlights)
       ? highlights.map((h) => String(h).trim()).filter(Boolean)
@@ -301,17 +348,17 @@ const createProduct = async (req, res, next) => {
       sku: finalSku,
       category: category.trim(),
       section,
-      size,
-      price: numPrice,
-      originalPrice: numMRP,
+      size: finalSize,
+      price: finalSellingPrice,
+      originalPrice: finalMRP,
       costPrice: Number(costPrice) || 0,
       discountPercent,
-      stockQuantity: numStock,
+      stockQuantity: finalTotalStock,
       reservedQuantity: 0,
       lowStockThreshold: Math.max(0, parseInt(lowStockThreshold, 10) || 5),
-      inStock: numStock > 0,
-      image: primaryImage,
-      images: cleanImages,
+      inStock: finalTotalStock > 0,
+      image: finalPrimaryImage,
+      images: finalGalleryImages,
       marketplaceLinks: cleanMarketplaceLinks,
       description,
       availableSizes: normalizedSizes,
@@ -547,20 +594,27 @@ const updateProduct = async (req, res, next) => {
     }
 
     if (availableSizes !== undefined && Array.isArray(availableSizes)) {
-      for (const s of availableSizes) {
-        if (s.image && !isValidImageUrl(s.image)) {
-          return res.status(400).json({
-            success: false,
-            message: `Invalid image URL for size variant '${s.size || 'unknown'}'. Must be an approved HTTPS URL or local /images/ path.`
-          });
-        }
-      }
-
       product.availableSizes = availableSizes.map((s, idx) => {
         const sPrice = Number(s.price || product.price);
         const sMRP = Number(s.originalPrice || sPrice);
         const sStock = s.stockQuantity !== undefined ? Math.max(0, parseInt(s.stockQuantity, 10) || 0) : (product.stockQuantity || 0);
         const sDisc = sMRP > sPrice ? `${Math.round(((sMRP - sPrice) / sMRP) * 100)}% off` : (s.discount || '');
+
+        let varImages = [];
+        if (Array.isArray(s.images) && s.images.length > 0) {
+          varImages = s.images
+            .map((img) => (typeof img === 'string' ? img.trim() : ''))
+            .filter((img) => img && isValidImageUrl(img))
+            .slice(0, 3);
+        }
+        if (varImages.length === 0 && s.image && isValidImageUrl(s.image)) {
+          varImages = [s.image.trim()];
+        }
+        if (varImages.length === 0 && product.image) {
+          varImages = [product.image];
+        }
+        const varPrimaryImage = varImages[0] || product.image;
+
         return {
           size: (s.size || `Variant ${idx + 1}`).trim(),
           sku: (s.sku || `${product.sku || 'SKU'}-${idx + 1}`).trim(),
@@ -569,9 +623,28 @@ const updateProduct = async (req, res, next) => {
           discount: sDisc,
           stockQuantity: sStock,
           inStock: sStock > 0,
-          image: (s.image || product.image || '').trim()
+          image: varPrimaryImage,
+          images: varImages
         };
       });
+
+      // Synchronize parent product defaults with the main (first) variant
+      if (product.availableSizes.length > 0) {
+        const mainVar = product.availableSizes[0];
+        product.size = mainVar.size;
+        product.price = mainVar.price;
+        product.originalPrice = mainVar.originalPrice;
+        product.discountPercent = mainVar.originalPrice > mainVar.price
+          ? Math.round(((mainVar.originalPrice - mainVar.price) / mainVar.originalPrice) * 100)
+          : 0;
+        product.image = mainVar.image || product.image;
+        if (mainVar.images && mainVar.images.length > 0) {
+          product.images = mainVar.images;
+        }
+        product.stockQuantity = product.availableSizes.reduce((sum, v) => sum + (v.stockQuantity || 0), 0);
+        product.inStock = product.stockQuantity > 0;
+      }
+      product.markModified('availableSizes');
     }
 
     // Auto-sync inStock with stockQuantity if stock is 0
