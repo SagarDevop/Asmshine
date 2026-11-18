@@ -435,6 +435,16 @@
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
   }
 
+  /* ASM Shine Trending Now Banner on Desktop */
+  .asm-trending-banner-section {
+    margin: 24px 0;
+  }
+
+  .asm-trending-banner-wrap {
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+  }
+
   /* Festive Mega Sale on Desktop */
   .fk-diwali-section {
     margin: 24px 0;

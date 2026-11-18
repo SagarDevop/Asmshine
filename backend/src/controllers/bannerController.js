@@ -53,7 +53,13 @@ const getBanners = async (req, res, next) => {
       data: {
         ...initialBanners,
         heroSlides: validHeroSlides.length > 0 ? validHeroSlides : (initialBanners.heroSlides || []).slice(0, 2),
-        festiveProducts: formattedFestive
+        festiveProducts: formattedFestive,
+        trendingBanner: {
+          image: '/images/banners/trending_now_banner.jpg',
+          category: 'hand_hygiene',
+          title: 'Trending Now - Popular choices. Trusted care.',
+          ctaText: 'Shop Now'
+        }
       }
     });
   } catch (error) {

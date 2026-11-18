@@ -5,7 +5,7 @@ import { DesktopNav } from '../components/navigation/DesktopNav';
 import { BottomNav } from '../components/navigation/BottomNav';
 import { HeroBanner } from '../components/ui/HeroBanner';
 import { DealsForYou } from '../components/ui/DealsForYou';
-import { DiwaliSaleSection } from '../components/ui/DiwaliSaleSection';
+import { TrendingNowBanner } from '../components/ui/TrendingNowBanner';
 import { ProductSection } from '../components/ui/ProductSection';
 import { FlipkartPromoBanners } from '../components/ui/FlipkartPromoBanners';
 import { Footer } from '../components/layout/Footer';
@@ -152,12 +152,13 @@ export const HomePage = () => {
             onNavigateAll={() => handleSwitchTab('categories')}
           />
 
-          {/* 3. Diwali Mega Sale (Festive Deep Cleaning Specials) */}
-          <DiwaliSaleSection
+          {/* 3. ASM Shine Trending Now Promotional Banner */}
+          <TrendingNowBanner
             banners={banners}
-            products={allProducts}
-            onSelectProduct={handleSelectProduct}
-            onNavigateAll={() => handleSwitchTab('categories')}
+            onNavigateCategory={(catId) => {
+              const target = catId || 'hand_hygiene';
+              navigate(`/categories?category=${target}`, { state: { category: target } });
+            }}
           />
 
           {/* 4. Bestsellers Cleaning Essentials */}
