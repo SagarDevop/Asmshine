@@ -6,6 +6,7 @@ const { sanitizeSearchQuery } = require('../utils/sanitize');
 
 // In-memory cache & fallback store
 let memoryProducts = [...initialProducts];
+let hasCheckedSeed = false;
 
 const removeMemoryProduct = (id) => {
   memoryProducts = memoryProducts.filter((p) => p.id !== id && p._id?.toString() !== id);
@@ -15,16 +16,19 @@ const getAllProducts = async (filters = {}) => {
   const { connected } = getDbStatus();
   if (connected) {
     try {
-      const count = await Product.countDocuments();
-      if (count === 0) {
-        for (const prod of initialProducts) {
-          await Product.findOneAndUpdate(
-            { id: prod.id },
-            { $set: prod },
-            { upsert: true, new: true, setDefaultsOnInsert: true }
-          );
+      if (!hasCheckedSeed) {
+        hasCheckedSeed = true;
+        const count = await Product.countDocuments();
+        if (count === 0) {
+          for (const prod of initialProducts) {
+            await Product.findOneAndUpdate(
+              { id: prod.id },
+              { $set: prod },
+              { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+          }
+          console.log('[Database] Auto-seeded initial ASM Shine products to MongoDB');
         }
-        console.log('[Database] Auto-seeded initial ASM Shine products to MongoDB');
       }
 
       // Strictly return ACTIVE products only. Exclude any inactive or archived items.
@@ -56,7 +60,8 @@ const getAllProducts = async (filters = {}) => {
         ];
       }
 
-      const products = await Product.find(query, { _id: 0, __v: 0 }).sort({ createdAt: -1 }).lean();
+      // Project out heavy reviews array from catalog listings to save DB I/O & bandwidth
+      const products = await Product.find(query, { _id: 0, __v: 0, reviews: 0 }).sort({ createdAt: -1 }).lean();
       return products;
     } catch (e) {
       console.warn('[ProductService] DB query failed, fallback to in-memory:', e.message);

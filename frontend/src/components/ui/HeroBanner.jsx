@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { getOptimizedImageUrl } from '../../utils/imageOptimizer';
 
 export const HeroBanner = ({ banners, products = [], onExplore, onSelectProduct }) => {
   const initialSlides = banners?.heroSlides && banners.heroSlides.length > 0
@@ -92,10 +93,12 @@ export const HeroBanner = ({ banners, products = [], onExplore, onSelectProduct 
       {/* Pure Flipkart-Style Graphic Poster Banner without HTML text overlay */}
       <div className="fk-hero-full-slide" onClick={handleCtaClick}>
         <img
-          src={currentSlide?.image || 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938228/asm-shine/banners/banner_diwali_toilet.png'}
+          src={getOptimizedImageUrl(currentSlide?.image || 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938228/asm-shine/banners/banner_diwali_toilet.png', { width: 1200 })}
           alt={currentSlide?.title || 'ASM Shine Promotional Poster'}
           className="fk-hero-full-img"
           loading="eager"
+          fetchpriority="high"
+          decoding="async"
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = '/images/banners/banner_diwali_toilet.png';

@@ -406,25 +406,34 @@ export const CartWishlistProvider = ({ children }) => {
     }
   };
 
+  const contextValue = React.useMemo(
+    () => ({
+      cartCount,
+      cartData,
+      isCartLoading,
+      wishlist,
+      toggleWishlist,
+      addToCart,
+      updateCartQuantity,
+      removeFromCart,
+      clearCart,
+      addComboToCart,
+      refreshCart,
+      refreshWishlist,
+      toastMessage,
+      showToast
+    }),
+    [
+      cartCount,
+      cartData,
+      isCartLoading,
+      wishlist,
+      toastMessage
+    ]
+  );
+
   return (
-    <CartWishlistContext.Provider
-      value={{
-        cartCount,
-        cartData,
-        isCartLoading,
-        wishlist,
-        toggleWishlist,
-        addToCart,
-        updateCartQuantity,
-        removeFromCart,
-        clearCart,
-        addComboToCart,
-        refreshCart,
-        refreshWishlist,
-        toastMessage,
-        showToast
-      }}
-    >
+    <CartWishlistContext.Provider value={contextValue}>
       {children}
     </CartWishlistContext.Provider>
   );

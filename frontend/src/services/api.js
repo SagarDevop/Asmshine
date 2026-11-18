@@ -36,6 +36,25 @@ const apiFetch = (endpoint, options = {}) => {
   });
 };
 
+// Client-side in-memory cache for static/semi-static data (Categories, Banners, Coupons)
+const clientMemoryCache = new Map();
+
+export const clearApiClientCache = (key) => {
+  if (key) {
+    clientMemoryCache.delete(key);
+  } else {
+    clientMemoryCache.clear();
+  }
+};
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (event) => {
+    if (event?.data?.type === 'asm_admin_sync') {
+      clearApiClientCache();
+    }
+  });
+}
+
 // API Service Layer (Connected to Express REST API & MongoDB Database)
 export const api = {
   // -------------------------------------------------------------
@@ -511,26 +530,38 @@ export const api = {
     return res.json();
   },
 
-  getCategories: async () => {
+  getCategories: async (forceFresh = false) => {
+    const cached = clientMemoryCache.get('categories');
+    if (!forceFresh && cached && Date.now() - cached.timestamp < 180000) {
+      return cached.data;
+    }
     const res = await apiFetch('/api/v1/categories', {
       headers: { 'Accept': 'application/json' }
     });
     if (!res.ok) {
-      return [];
+      return cached?.data || [];
     }
     const result = await res.json();
-    return result.data || [];
+    const data = result.data || [];
+    clientMemoryCache.set('categories', { data, timestamp: Date.now() });
+    return data;
   },
 
-  getBanners: async () => {
+  getBanners: async (forceFresh = false) => {
+    const cached = clientMemoryCache.get('banners');
+    if (!forceFresh && cached && Date.now() - cached.timestamp < 120000) {
+      return cached.data;
+    }
     const res = await apiFetch('/api/v1/banners', {
       headers: { 'Accept': 'application/json' }
     });
     if (!res.ok) {
-      return null;
+      return cached?.data || null;
     }
     const result = await res.json();
-    return result.data || null;
+    const data = result.data || null;
+    clientMemoryCache.set('banners', { data, timestamp: Date.now() });
+    return data;
   },
 
   // -------------------------------------------------------------
@@ -903,17 +934,23 @@ export const api = {
   // -------------------------------------------------------------
   // Dynamic Coupons (Controlled via Admin Panel & Backend)
   // -------------------------------------------------------------
-  getAvailableCoupons: async () => {
+  getAvailableCoupons: async (forceFresh = false) => {
+    const cached = clientMemoryCache.get('coupons');
+    if (!forceFresh && cached && Date.now() - cached.timestamp < 120000) {
+      return cached.data;
+    }
     try {
       const res = await apiFetch('/api/v1/coupons/available', {
         headers: { 'Accept': 'application/json' }
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) return [];
-      return Array.isArray(data.data) ? data.data : [];
+      if (!res.ok) return cached?.data || [];
+      const list = Array.isArray(data.data) ? data.data : [];
+      clientMemoryCache.set('coupons', { data: list, timestamp: Date.now() });
+      return list;
     } catch (e) {
       console.warn('[API] Failed to fetch coupons:', e);
-      return [];
+      return cached?.data || [];
     }
   },
 

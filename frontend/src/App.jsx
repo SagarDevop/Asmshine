@@ -1,22 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, RefreshCw } from 'lucide-react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './context/AuthContext';
 import { CartWishlistProvider, useCartWishlist } from './context/CartWishlistContext';
 import { HomePage } from './pages/HomePage';
 import { CategoriesPage } from './pages/CategoriesPage';
-import { AboutPage } from './pages/AboutPage';
-import { CartPage } from './pages/CartPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
-import { CheckoutPage } from './pages/CheckoutPage';
-import { AuthPage } from './pages/AuthPage';
-import { AccountPage } from './pages/AccountPage';
-import { OrderTrackingPage } from './pages/OrderTrackingPage';
-import { CancelOrderPage } from './pages/CancelOrderPage';
-import { TermsPage } from './pages/TermsPage';
-import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
-import { RefundPolicyPage } from './pages/RefundPolicyPage';
 import { Footer } from './components/layout/Footer';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { DesktopNav } from './components/navigation/DesktopNav';
@@ -25,18 +15,42 @@ import './styles/global.css';
 import './styles/responsive.css';
 import './styles/skeleton.css';
 import './styles/auth.css';
-import { AdminAuthProvider } from './admin/context/AdminAuthContext';
-import { AdminLayout } from './admin/components/AdminLayout';
-import { AdminLoginPage } from './admin/pages/AdminLoginPage';
-import { AdminDashboardPage } from './admin/pages/AdminDashboardPage';
-import { AdminOrdersPage } from './admin/pages/AdminOrdersPage';
-import { AdminProductsPage } from './admin/pages/AdminProductsPage';
-import { AdminInventoryPage } from './admin/pages/AdminInventoryPage';
-import { AdminCustomersPage } from './admin/pages/AdminCustomersPage';
-import { AdminCouponsPage } from './admin/pages/AdminCouponsPage';
-import { AdminSettingsPage } from './admin/pages/AdminSettingsPage';
-import { AdminPoliciesPage } from './admin/pages/AdminPoliciesPage';
-import { AdminAboutPage } from './admin/pages/AdminAboutPage';
+
+// Lazy-loaded customer routes (Code-splitting for faster initial page load)
+const CartPage = lazy(() => import('./pages/CartPage').then((m) => ({ default: m.CartPage })));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then((m) => ({ default: m.CheckoutPage })));
+const AuthPage = lazy(() => import('./pages/AuthPage').then((m) => ({ default: m.AuthPage })));
+const AccountPage = lazy(() => import('./pages/AccountPage').then((m) => ({ default: m.AccountPage })));
+const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage').then((m) => ({ default: m.OrderTrackingPage })));
+const CancelOrderPage = lazy(() => import('./pages/CancelOrderPage').then((m) => ({ default: m.CancelOrderPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })));
+const TermsPage = lazy(() => import('./pages/TermsPage').then((m) => ({ default: m.TermsPage })));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage').then((m) => ({ default: m.PrivacyPolicyPage })));
+const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage').then((m) => ({ default: m.RefundPolicyPage })));
+
+// Lazy-loaded Admin-only routes (Keeps admin code completely out of customer bundle)
+const AdminAuthProvider = lazy(() => import('./admin/context/AdminAuthContext').then((m) => ({ default: m.AdminAuthProvider })));
+const AdminLayout = lazy(() => import('./admin/components/AdminLayout').then((m) => ({ default: m.AdminLayout })));
+const AdminLoginPage = lazy(() => import('./admin/pages/AdminLoginPage').then((m) => ({ default: m.AdminLoginPage })));
+const AdminDashboardPage = lazy(() => import('./admin/pages/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage })));
+const AdminOrdersPage = lazy(() => import('./admin/pages/AdminOrdersPage').then((m) => ({ default: m.AdminOrdersPage })));
+const AdminProductsPage = lazy(() => import('./admin/pages/AdminProductsPage').then((m) => ({ default: m.AdminProductsPage })));
+const AdminInventoryPage = lazy(() => import('./admin/pages/AdminInventoryPage').then((m) => ({ default: m.AdminInventoryPage })));
+const AdminCustomersPage = lazy(() => import('./admin/pages/AdminCustomersPage').then((m) => ({ default: m.AdminCustomersPage })));
+const AdminCouponsPage = lazy(() => import('./admin/pages/AdminCouponsPage').then((m) => ({ default: m.AdminCouponsPage })));
+const AdminSettingsPage = lazy(() => import('./admin/pages/AdminSettingsPage').then((m) => ({ default: m.AdminSettingsPage })));
+const AdminPoliciesPage = lazy(() => import('./admin/pages/AdminPoliciesPage').then((m) => ({ default: m.AdminPoliciesPage })));
+const AdminAboutPage = lazy(() => import('./admin/pages/AdminAboutPage').then((m) => ({ default: m.AdminAboutPage })));
+
+// Lightweight non-blocking page transition spinner
+const PageLoadingFallback = () => (
+  <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#1C8E8F', fontWeight: 600, fontSize: '13px' }}>
+      <RefreshCw size={20} className="animate-spin" />
+      <span>Loading ASM Shine...</span>
+    </div>
+  </div>
+);
 
 /**
  * HashRedirectHandler:
@@ -269,15 +283,33 @@ export function App() {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AdminAuthProvider>
-          <AuthProvider>
-            <CartWishlistProvider>
-              <HashRedirectHandler />
-              <ScrollToTop />
+        <AuthProvider>
+          <CartWishlistProvider>
+            <HashRedirectHandler />
+            <ScrollToTop />
+            <Suspense fallback={<PageLoadingFallback />}>
               <Routes>
-                {/* Dedicated Secure Admin Subsystem */}
-                <Route path="/admin/login" element={<AdminLoginPage />} />
-                <Route path="/admin" element={<AdminLayout />}>
+                {/* Dedicated Secure Admin Subsystem (Lazy-loaded isolated bundle) */}
+                <Route
+                  path="/admin/login"
+                  element={
+                    <Suspense fallback={<PageLoadingFallback />}>
+                      <AdminAuthProvider>
+                        <AdminLoginPage />
+                      </AdminAuthProvider>
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <Suspense fallback={<PageLoadingFallback />}>
+                      <AdminAuthProvider>
+                        <AdminLayout />
+                      </AdminAuthProvider>
+                    </Suspense>
+                  }
+                >
                   <Route index element={<AdminDashboardPage />} />
                   <Route path="orders" element={<AdminOrdersPage />} />
                   <Route path="products" element={<AdminProductsPage />} />
@@ -318,10 +350,10 @@ export function App() {
                 {/* Wildcard redirect to home */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
-              <GlobalToast />
-            </CartWishlistProvider>
-          </AuthProvider>
-        </AdminAuthProvider>
+            </Suspense>
+            <GlobalToast />
+          </CartWishlistProvider>
+        </AuthProvider>
       </BrowserRouter>
     </GoogleOAuthProvider>
   );

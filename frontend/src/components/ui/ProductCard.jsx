@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getOptimizedImageUrl } from '../../utils/imageOptimizer';
 
-export const ProductCard = ({ product, showRating = true, sizePosition = 'below', onSelectProduct }) => {
+export const ProductCard = memo(({ product, showRating = true, sizePosition = 'below', onSelectProduct }) => {
   const navigate = useNavigate();
   const [imgLoaded, setImgLoaded] = React.useState(false);
 
@@ -20,6 +21,8 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
     product.status === 'archived' ||
     product.status === 'inactive';
 
+  const optimizedSrc = getOptimizedImageUrl(product.image, { width: 360 });
+
   return (
     <article
       className={`product-card clickable ${isOutOfStock ? 'out-of-stock' : ''}`}
@@ -35,17 +38,20 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
       }}
     >
       {/* Product Image Area with overlays */}
-      <div className="product-media-container img-container-placeholder" style={{ position: 'relative' }}>
+      <div className="product-media-container img-container-placeholder" style={{ position: 'relative', aspectRatio: '1/1' }}>
         {isOutOfStock && (
           <span className="product-stock-overlay-badge">
             Out of Stock
           </span>
         )}
         <img
-          src={product.image}
+          src={optimizedSrc}
           alt={product.name}
+          width="180"
+          height="180"
           className={`product-img img-fade ${imgLoaded ? 'loaded' : ''}`}
           loading="lazy"
+          decoding="async"
           onLoad={() => setImgLoaded(true)}
         />
 
@@ -97,4 +103,6 @@ export const ProductCard = ({ product, showRating = true, sizePosition = 'below'
       </div>
     </article>
   );
-};
+});
+
+ProductCard.displayName = 'ProductCard';

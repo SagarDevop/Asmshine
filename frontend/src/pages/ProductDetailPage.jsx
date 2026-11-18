@@ -31,6 +31,7 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import { ProductDetailSkeleton } from '../components/ui/ProductDetailSkeleton';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
+import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 
 // Authentic Vector Logos for Marketplaces
 const AmazonLogo = () => (
@@ -572,10 +573,14 @@ export const ProductDetailPage = ({
       <div className="pdp-content-container">
         {/* 2. Hero Product Media Showcase with Flipkart-Style Gallery */}
         <div className="pdp-media-card">
-          <div className="pdp-image-viewport img-container-placeholder">
+          <div className="pdp-image-viewport img-container-placeholder" style={{ aspectRatio: '1/1' }}>
             <img
-              src={galleryImages[activeImageIndex] || galleryImages[0]}
+              src={getOptimizedImageUrl(galleryImages[activeImageIndex] || galleryImages[0], { width: 800 })}
               alt={product.name}
+              width="450"
+              height="450"
+              fetchpriority="high"
+              decoding="async"
               className={`pdp-main-image img-fade ${mainImgLoaded ? 'loaded' : ''}`}
               onLoad={() => setMainImgLoaded(true)}
             />
@@ -656,8 +661,12 @@ export const ProductDetailPage = ({
                     aria-label={`View image ${idx + 1}`}
                   >
                     <img
-                      src={thumbUrl}
+                      src={getOptimizedImageUrl(thumbUrl, { width: 140 })}
                       alt={`${product.name} thumbnail ${idx + 1}`}
+                      width="60"
+                      height="60"
+                      loading="lazy"
+                      decoding="async"
                       className="pdp-thumbnail-img"
                       onError={(e) => { e.target.src = '/favicon.svg'; }}
                     />

@@ -8,7 +8,15 @@ const { initialBanners } = require('../data/seedData');
  */
 const getBanners = async (req, res, next) => {
   try {
-    const activeProducts = await Product.find({ status: 'active' }).sort({ updatedAt: -1 }).lean();
+    res.set('Cache-Control', 'public, max-age=180, stale-while-revalidate=360');
+
+    // Only project fields needed for banner slides & festive deal display
+    const activeProducts = await Product.find(
+      { status: 'active' },
+      'id name shortName size price originalPrice discountPercent image inStock stockQuantity isFestiveDeal festiveBadge'
+    )
+      .sort({ updatedAt: -1 })
+      .lean();
     const activeIds = new Set(activeProducts.map((p) => p.id));
 
     // 1. Curate Festive Diwali Products (Controlled by Admin via isFestiveDeal flag or active catalog)

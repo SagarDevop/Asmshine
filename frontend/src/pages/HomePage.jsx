@@ -46,7 +46,7 @@ export const HomePage = () => {
   useEffect(() => {
     fetchData();
 
-    // Cross-tab and focus sync so when admin deletes or updates product, home view updates immediately
+    // Cross-tab broadcast sync: updates immediately when admin updates catalog in another tab
     const handleSync = (e) => {
       if (e.data?.type === 'PRODUCTS_UPDATED') {
         fetchData();
@@ -59,14 +59,8 @@ export const HomePage = () => {
       channel.addEventListener('message', handleSync);
     } catch {}
 
-    const handleFocus = () => {
-      fetchData();
-    };
-    window.addEventListener('focus', handleFocus);
-
     return () => {
       if (channel) channel.close();
-      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 

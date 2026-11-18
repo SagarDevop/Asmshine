@@ -147,15 +147,9 @@ export const CategoriesPage = ({
       channel.addEventListener('message', handleSync);
     } catch {}
 
-    const handleFocus = () => {
-      fetchCategoryProducts();
-    };
-    window.addEventListener('focus', handleFocus);
-
     return () => {
       isMounted = false;
       if (channel) channel.close();
-      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 

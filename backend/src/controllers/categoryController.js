@@ -2,19 +2,27 @@ const Category = require('../models/Category');
 const { initialCategories } = require('../data/seedData');
 const { getDbStatus } = require('../config/db');
 
+let categoriesSeeded = false;
+
 const getCategories = async (req, res, next) => {
   try {
+    // Set lightweight browser/CDN cache headers for fast category rendering
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+
     const { connected } = getDbStatus();
     if (connected) {
       try {
-        const count = await Category.countDocuments();
-        if (count === 0) {
-          for (const cat of initialCategories) {
-            await Category.findOneAndUpdate(
-              { id: cat.id },
-              { $set: cat },
-              { upsert: true, new: true, setDefaultsOnInsert: true }
-            );
+        if (!categoriesSeeded) {
+          categoriesSeeded = true;
+          const count = await Category.countDocuments();
+          if (count === 0) {
+            for (const cat of initialCategories) {
+              await Category.findOneAndUpdate(
+                { id: cat.id },
+                { $set: cat },
+                { upsert: true, new: true, setDefaultsOnInsert: true }
+              );
+            }
           }
         }
         const categories = await Category.find({}, { _id: 0, __v: 0 }).sort({ createdAt: 1 }).lean();
