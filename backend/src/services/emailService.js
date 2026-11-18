@@ -130,6 +130,7 @@ exports.sendOtpEmail = async ({ to, name, otp, purpose = 'SIGNUP' }) => {
               <!-- Brand Header Strip -->
               <tr>
                 <td style="background: linear-gradient(135deg, #1C8E8F 0%, #0D6E6F 100%); padding: 24px 28px; text-align: center;">
+                  <img src="https://www.asmshine.com/images/logo.png" alt="ASM SHINE" width="56" height="56" style="margin-bottom: 8px; border-radius: 8px; vertical-align: middle;" />
                   <h1 style="margin: 0; color: #FFFFFF; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">ASM SHINE</h1>
                   <p style="margin: 4px 0 0 0; color: #E0F2FE; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">Pure Home Hygiene &amp; Clean Care</p>
                 </td>

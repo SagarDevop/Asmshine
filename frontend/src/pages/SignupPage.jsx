@@ -104,7 +104,7 @@ export const SignupPage = () => {
         {/* Brand Header */}
         <div className="auth-brand-header">
           <img
-            src="/favicon.svg"
+            src="/images/logo.png"
             alt="ASM SHINE"
             className="auth-brand-logo"
           />

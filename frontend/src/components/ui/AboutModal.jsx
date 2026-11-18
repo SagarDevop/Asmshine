@@ -9,7 +9,7 @@ export const AboutModal = ({ isOpen, onClose }) => {
       <div className="about-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="about-modal-header">
           <div className="about-brand-row">
-            <img src="/favicon.svg" alt="ASM SHINE Logo" className="about-logo" style={{ borderRadius: '10px' }} />
+            <img src="/images/logo.png" alt="ASM SHINE Logo" className="about-logo" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
             <div>
               <h3 className="about-title">About ASM SHINE</h3>
               <p className="about-subtitle">Hygiene &amp; Cleaning Solutions</p>

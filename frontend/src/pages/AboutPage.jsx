@@ -217,7 +217,7 @@ export const AboutPage = ({ onExploreCatalog }) => {
       '@type': 'Organization',
       name: 'ASM Shine',
       url: 'https://www.asmshine.com',
-      logo: 'https://www.asmshine.com/favicon.svg',
+      logo: 'https://www.asmshine.com/images/logo.png',
       description: seo.metaDescription,
       contactPoint: {
         '@type': 'ContactPoint',

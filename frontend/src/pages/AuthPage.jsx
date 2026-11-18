@@ -488,7 +488,7 @@ export const AuthPage = ({ initialTab = 'login' }) => {
           {/* Header */}
           <div className="minimal-auth-header">
             <div className="minimal-auth-logo-badge">
-              <img src="/favicon.svg" alt="ASM Shine" className="minimal-auth-logo-img" />
+              <img src="/images/logo.png" alt="ASM Shine" className="minimal-auth-logo-img" />
             </div>
             <h1 className="minimal-auth-title">
               {activeTab === 'forgot'

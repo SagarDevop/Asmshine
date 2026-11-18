@@ -462,7 +462,7 @@ export const CheckoutPage = () => {
           currency: razorpayOrder.currency || 'INR',
           name: 'ASM Shine',
           description: 'Hygiene & Cleaning Solutions',
-          image: '/favicon.svg',
+          image: '/images/logo.png',
           order_id: razorpayOrder.order_id,
           prefill: {
             name: cleanName,

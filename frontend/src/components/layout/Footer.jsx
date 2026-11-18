@@ -8,8 +8,8 @@ export const Footer = () => {
       <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '32px', marginBottom: '32px' }}>
         {/* Col 1: Brand & Promise */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <img src="/favicon.svg" alt="ASM Shine" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+            <img src="/images/logo.png" alt="ASM Shine" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
             <span style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>
               ASM SHINE
             </span>

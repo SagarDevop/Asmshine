@@ -31,7 +31,7 @@ export const ProductDetailSkeleton = ({ onBack }) => {
         </button>
 
         <div className="pdp-header-brand" onClick={() => navigate('/')}>
-          <img src="/favicon.svg" alt="ASM SHINE" className="pdp-logo-mini" style={{ borderRadius: '8px' }} />
+          <img src="/images/logo.png" alt="ASM SHINE" className="pdp-logo-mini" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
           <span className="pdp-brand-text">ASM SHINE</span>
         </div>
 

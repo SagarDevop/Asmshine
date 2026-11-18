@@ -69,9 +69,9 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
             style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
           >
             <img 
-              src="/favicon.svg" 
+              src="/images/logo.png" 
               alt="ASM SHINE Logo" 
-              style={{ width: '40px', height: '40px', borderRadius: '10px', objectFit: 'contain' }} 
+              style={{ width: '46px', height: '46px', objectFit: 'contain' }} 
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{ fontSize: '1.25rem', fontWeight: '900', letterSpacing: '0.8px', color: '#1E293B', lineHeight: 1.1 }}>

@@ -152,7 +152,9 @@ export const Header = ({
             type="button"
             className={`fk-top-pill-btn ${activeMode === 'asm_shine' ? 'pill-yellow' : 'pill-white'}`}
             onClick={() => handleModeChange('asm_shine')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
+            <img src="/images/logo.png" alt="ASM Shine" style={{ width: '22px', height: '22px', objectFit: 'contain', flexShrink: 0 }} />
             <div className="fk-brand-pill-text">
               <span className="fk-pill-asm">ASM</span>
               <span className="fk-pill-shine">SHINE</span>

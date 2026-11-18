@@ -173,7 +173,7 @@ const AdminLayoutInner = () => {
       {/* 1. Left Obsidian Sidebar */}
       <aside className={`admin-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
-          <img src="/favicon.svg" alt="ASM Shine" className="admin-sidebar-logo" />
+          <img src="/images/logo.png" alt="ASM Shine" className="admin-sidebar-logo" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div className="admin-sidebar-brand-name">ASM SHINE</div>
             <span className="admin-sidebar-brand-badge">ADMIN CONSOLE</span>
