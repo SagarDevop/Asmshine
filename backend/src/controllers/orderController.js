@@ -347,6 +347,12 @@ const createOrder = async (req, res, next) => {
       await inventoryService.deductOrderStock(verifiedItems, orderId, req.user);
     }
 
+    // Compute dynamic expected delivery date (Order date + 8 calendar days in Asia/Kolkata IST)
+    const orderNow = new Date();
+    const istDateString = orderNow.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+    const expectedDeliveryDate = new Date(istDateString);
+    expectedDeliveryDate.setDate(expectedDeliveryDate.getDate() + 8);
+
     // 10. Create and save Order in MongoDB
     const newOrder = new Order({
       orderId,
@@ -360,6 +366,9 @@ const createOrder = async (req, res, next) => {
         city,
         state,
         type: ['HOME', 'WORK', 'OTHER'].includes(type) ? type : 'HOME'
+      },
+      shippingDetails: {
+        expectedDeliveryDate
       },
       pricing: {
         totalMRP,

@@ -15,19 +15,22 @@ const isValidImageUrl = (url) => {
   if (trimmed.startsWith('/images/')) return true;
   // Disallow hazardous schemes (javascript:, data:, file:)
   if (/^(javascript|data|file|vbscript):/i.test(trimmed)) return false;
-  // External URLs must use secure HTTPS protocol
+  // External URLs must use HTTP/HTTPS protocol
   try {
     const parsed = new URL(trimmed);
-    if (parsed.protocol !== 'https:') return false;
-    // Approved CDNs & domains
-    const allowedDomains = [
-      'res.cloudinary.com',
-      'cloudinary.com',
-      'images.unsplash.com',
-      'localhost',
-      '127.0.0.1'
-    ];
-    return allowedDomains.some((d) => parsed.hostname === d || parsed.hostname.endsWith(`.${d}`));
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+  } catch (e) {
+    return false;
+  }
+};
+
+const isValidWebUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  if (/^(javascript|data|file|vbscript):/i.test(trimmed)) return false;
+  try {
+    const parsed = new URL(trimmed);
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:';
   } catch (e) {
     return false;
   }
@@ -155,6 +158,8 @@ const createProduct = async (req, res, next) => {
       stockQuantity = 20,
       lowStockThreshold = 5,
       image,
+      images = [],
+      marketplaceLinks = {},
       description = '',
       highlights = [],
       specifications = {},
@@ -183,13 +188,37 @@ const createProduct = async (req, res, next) => {
       });
     }
 
-    // Validate primary image URL
-    if (image && !isValidImageUrl(image)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid product image URL. Must be an approved HTTPS URL (Cloudinary) or local /images/ path.'
-      });
+    // Process and validate gallery images (up to 4 images)
+    let cleanImages = [];
+    if (Array.isArray(images) && images.length > 0) {
+      for (const imgUrl of images.slice(0, 4)) {
+        if (imgUrl && typeof imgUrl === 'string' && imgUrl.trim()) {
+          const trimmed = imgUrl.trim();
+          if (!isValidImageUrl(trimmed)) {
+            return res.status(400).json({
+              success: false,
+              message: `Invalid product image URL '${trimmed}'. Must be a valid HTTPS URL or /images/ path.`
+            });
+          }
+          cleanImages.push(trimmed);
+        }
+      }
     }
+    if (cleanImages.length === 0 && image && isValidImageUrl(image)) {
+      cleanImages.push(image.trim());
+    }
+    const primaryImage = cleanImages[0] || (image && isValidImageUrl(image) ? image.trim() : '/images/products/all_shine_dishwash_gel_500ml.png');
+    if (!cleanImages.includes(primaryImage)) {
+      cleanImages.unshift(primaryImage);
+    }
+    cleanImages = cleanImages.slice(0, 4);
+
+    // Validate marketplace links
+    const cleanMarketplaceLinks = {
+      flipkart: (marketplaceLinks?.flipkart && isValidWebUrl(marketplaceLinks.flipkart)) ? marketplaceLinks.flipkart.trim() : '',
+      amazon: (marketplaceLinks?.amazon && isValidWebUrl(marketplaceLinks.amazon)) ? marketplaceLinks.amazon.trim() : '',
+      meesho: (marketplaceLinks?.meesho && isValidWebUrl(marketplaceLinks.meesho)) ? marketplaceLinks.meesho.trim() : ''
+    };
 
     // Validate available size variant image URLs
     if (Array.isArray(availableSizes)) {
@@ -281,7 +310,9 @@ const createProduct = async (req, res, next) => {
       reservedQuantity: 0,
       lowStockThreshold: Math.max(0, parseInt(lowStockThreshold, 10) || 5),
       inStock: numStock > 0,
-      image: image || '/images/products/all_shine_dishwash_gel_500ml.png',
+      image: primaryImage,
+      images: cleanImages,
+      marketplaceLinks: cleanMarketplaceLinks,
       description,
       availableSizes: normalizedSizes,
       highlights: cleanHighlights,
@@ -356,6 +387,8 @@ const updateProduct = async (req, res, next) => {
       stockQuantity,
       lowStockThreshold,
       image,
+      images,
+      marketplaceLinks,
       description,
       highlights,
       specifications,
@@ -376,14 +409,53 @@ const updateProduct = async (req, res, next) => {
     if (badge !== undefined) product.badge = badge.trim();
     if (isFestiveDeal !== undefined) product.isFestiveDeal = Boolean(isFestiveDeal);
     if (festiveBadge !== undefined) product.festiveBadge = String(festiveBadge).trim();
-    if (image) {
+
+    // Update gallery images (max 4 images)
+    if (images !== undefined) {
+      if (Array.isArray(images)) {
+        const cleanImgs = [];
+        for (const imgUrl of images.slice(0, 4)) {
+          if (imgUrl && typeof imgUrl === 'string' && imgUrl.trim()) {
+            const trimmed = imgUrl.trim();
+            if (!isValidImageUrl(trimmed)) {
+              return res.status(400).json({
+                success: false,
+                message: `Invalid product image URL '${trimmed}'. Must be a valid HTTPS URL or /images/ path.`
+              });
+            }
+            cleanImgs.push(trimmed);
+          }
+        }
+        product.images = cleanImgs;
+        if (cleanImgs.length > 0) {
+          product.image = cleanImgs[0];
+        }
+        product.markModified('images');
+      }
+    } else if (image) {
       if (!isValidImageUrl(image)) {
         return res.status(400).json({
           success: false,
-          message: 'Invalid product image URL. Must be an approved HTTPS URL (Cloudinary) or local /images/ path.'
+          message: 'Invalid product image URL. Must be an approved HTTPS URL or local /images/ path.'
         });
       }
-      product.image = image;
+      product.image = image.trim();
+      if (!product.images || product.images.length === 0) {
+        product.images = [product.image];
+      } else {
+        product.images[0] = product.image;
+      }
+      product.markModified('images');
+    }
+
+    // Update external marketplace links
+    if (marketplaceLinks !== undefined && typeof marketplaceLinks === 'object') {
+      product.marketplaceLinks = {
+        flipkart: (marketplaceLinks.flipkart && isValidWebUrl(marketplaceLinks.flipkart)) ? marketplaceLinks.flipkart.trim() : '',
+        amazon: (marketplaceLinks.amazon && isValidWebUrl(marketplaceLinks.amazon)) ? marketplaceLinks.amazon.trim() : '',
+        meesho: (marketplaceLinks.meesho && isValidWebUrl(marketplaceLinks.meesho)) ? marketplaceLinks.meesho.trim() : ''
+      };
+      product.markModified('marketplaceLinks');
     }
     if (status) product.status = status;
     if (highlights !== undefined) {

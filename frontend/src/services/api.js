@@ -481,24 +481,34 @@ export const api = {
       }
       if (!companionProduct) return null;
 
-      const combinedOriginal = (mainProduct.originalPrice || mainProduct.price) + (companionProduct.originalPrice || companionProduct.price);
-      const combinedStandardPrice = mainProduct.price + companionProduct.price;
-      const discount = mainProduct.comboDiscount || 50;
-      const comboPrice = Math.max(combinedStandardPrice - discount, 149);
-      const totalSavings = combinedOriginal - comboPrice;
+      const combinedPrice = (Number(mainProduct.price) || 0) + (Number(companionProduct.price) || 0);
 
       return {
         mainProduct,
         companionProduct,
-        combinedOriginal,
-        combinedStandardPrice,
-        comboPrice,
-        totalSavings,
-        discount
+        combinedPrice,
+        comboPrice: combinedPrice,
+        combinedStandardPrice: combinedPrice,
+        combinedOriginal: combinedPrice,
+        totalSavings: 0,
+        discount: 0
       };
     } catch (e) {
       return null;
     }
+  },
+
+  addProductReview: async (productId, reviewData) => {
+    const res = await apiFetch(`/api/v1/products/${productId}/reviews`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reviewData)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to submit review');
+    }
+    return res.json();
   },
 
   getCategories: async () => {

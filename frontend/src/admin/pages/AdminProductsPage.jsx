@@ -63,6 +63,14 @@ export const AdminProductsPage = () => {
   const [specifications, setSpecifications] = useState([]);
   const [activeTab, setActiveTab] = useState('general'); // 'general' | 'specs'
 
+  // 4-Slot Gallery and Marketplace Link States
+  const [galleryImages, setGalleryImages] = useState(['', '', '', '']);
+  const [slotUploadingIdx, setSlotUploadingIdx] = useState(null);
+  const [dragOverSlot, setDragOverSlot] = useState(null);
+  const [flipkartUrl, setFlipkartUrl] = useState('');
+  const [amazonUrl, setAmazonUrl] = useState('');
+  const [meeshoUrl, setMeeshoUrl] = useState('');
+
   // Image Uploading & Drag/Drop States
   const [mainImageUploading, setMainImageUploading] = useState(false);
   const [variantUploadingIdx, setVariantUploadingIdx] = useState(null);
@@ -96,38 +104,58 @@ export const AdminProductsPage = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleMainImageDrop = async (e) => {
-    e.preventDefault();
-    setDragOverMain(false);
-    const file = e.dataTransfer?.files?.[0];
+  const handleSlotImageSelect = (slotIdx, e) => {
+    const file = e.target.files?.[0];
     if (file) {
-      setMainImageUploading(true);
+      setSlotUploadingIdx(slotIdx);
       setFormError('');
-      try {
-        handleFileUpload(file, (url) => {
-          setImage(url);
-          setMainImageUploading(false);
+      handleFileUpload(file, (url) => {
+        setGalleryImages((prev) => {
+          const next = [...prev];
+          next[slotIdx] = url;
+          return next;
         });
-      } catch {
-        setMainImageUploading(false);
-      }
+        if (slotIdx === 0) setImage(url);
+        setSlotUploadingIdx(null);
+      });
     }
   };
 
-  const handleMainImageSelect = (e) => {
-    const file = e.target.files?.[0];
+  const handleSlotImageDrop = (slotIdx, e) => {
+    e.preventDefault();
+    setDragOverSlot(null);
+    const file = e.dataTransfer?.files?.[0];
     if (file) {
-      setMainImageUploading(true);
+      setSlotUploadingIdx(slotIdx);
       setFormError('');
-      try {
-        handleFileUpload(file, (url) => {
-          setImage(url);
-          setMainImageUploading(false);
+      handleFileUpload(file, (url) => {
+        setGalleryImages((prev) => {
+          const next = [...prev];
+          next[slotIdx] = url;
+          return next;
         });
-      } catch {
-        setMainImageUploading(false);
-      }
+        if (slotIdx === 0) setImage(url);
+        setSlotUploadingIdx(null);
+      });
     }
+  };
+
+  const handleRemoveSlotImage = (slotIdx) => {
+    setGalleryImages((prev) => {
+      const next = [...prev];
+      next[slotIdx] = '';
+      return next;
+    });
+    if (slotIdx === 0) setImage('');
+  };
+
+  const handleSlotUrlChange = (slotIdx, val) => {
+    setGalleryImages((prev) => {
+      const next = [...prev];
+      next[slotIdx] = val;
+      return next;
+    });
+    if (slotIdx === 0) setImage(val);
   };
 
   const handleVariantImageSelect = (idx, e) => {
@@ -342,7 +370,12 @@ export const AdminProductsPage = () => {
     setStockQuantity('20');
     setLowStockThreshold('5');
     setSize('500ml');
-    setImage('/images/products/all_shine_dishwash_gel_500ml.png');
+    const defaultImg = '/images/products/all_shine_dishwash_gel_500ml.png';
+    setImage(defaultImg);
+    setGalleryImages([defaultImg, '', '', '']);
+    setFlipkartUrl('');
+    setAmazonUrl('');
+    setMeeshoUrl('');
     setDescription('');
     setBadge('BEST SELLER');
     setIsFestiveDeal(false);
@@ -383,7 +416,18 @@ export const AdminProductsPage = () => {
     setStockQuantity(String(p.stockQuantity || '0'));
     setLowStockThreshold(String(p.lowStockThreshold || '5'));
     setSize(p.size || '500ml');
-    setImage(p.image || '');
+
+    const pImgs = Array.isArray(p.images) && p.images.length > 0
+      ? [...p.images]
+      : (p.image ? [p.image] : []);
+    while (pImgs.length < 4) pImgs.push('');
+    const fourImgs = pImgs.slice(0, 4);
+    setGalleryImages(fourImgs);
+    setImage(fourImgs[0] || p.image || '');
+    setFlipkartUrl(p.marketplaceLinks?.flipkart || '');
+    setAmazonUrl(p.marketplaceLinks?.amazon || '');
+    setMeeshoUrl(p.marketplaceLinks?.meesho || '');
+
     setDescription(p.description || '');
     setBadge(p.badge || '');
     setIsFestiveDeal(Boolean(p.isFestiveDeal));
@@ -442,6 +486,13 @@ export const AdminProductsPage = () => {
       return;
     }
 
+    const cleanImgs = galleryImages.map((s) => (s || '').trim()).filter(Boolean).slice(0, 4);
+    if (cleanImgs.length === 0 && !image.trim()) {
+      setFormError('Please provide at least the Main Product Image (Slot 1).');
+      return;
+    }
+    const primaryImg = cleanImgs[0] || image.trim();
+
     setFormSubmitting(true);
     try {
       const cleanStock = parseInt(stockQuantity, 10) || 0;
@@ -467,7 +518,13 @@ export const AdminProductsPage = () => {
         stockQuantity: cleanStock,
         lowStockThreshold: parseInt(lowStockThreshold, 10) || 5,
         size: size.trim(),
-        image: image.trim(),
+        image: primaryImg,
+        images: cleanImgs.length > 0 ? cleanImgs : [primaryImg],
+        marketplaceLinks: {
+          flipkart: flipkartUrl.trim(),
+          amazon: amazonUrl.trim(),
+          meesho: meeshoUrl.trim()
+        },
         description: description.trim(),
         badge: badge.trim(),
         isFestiveDeal: Boolean(isFestiveDeal),
@@ -1158,113 +1215,202 @@ export const AdminProductsPage = () => {
                   </div>
                 </div>
 
-                {/* Primary Image Upload & Gallery Drag-Drop Zone */}
-                <div className="admin-form-group">
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                    <label className="admin-form-label" style={{ fontWeight: 700, margin: 0 }}>
-                      Primary Product Image *
-                    </label>
-                    <span style={{ fontSize: '11px', color: '#64748B' }}>
-                      Drag &amp; drop from computer or pick from gallery (Cloudinary Upload)
-                    </span>
-                  </div>
-
-                  <div
-                    onDragOver={(e) => { e.preventDefault(); setDragOverMain(true); }}
-                    onDragLeave={() => setDragOverMain(false)}
-                    onDrop={handleMainImageDrop}
-                    style={{
-                      border: `2px dashed ${dragOverMain ? '#2563EB' : image ? '#10B981' : '#CBD5E1'}`,
-                      borderRadius: '10px',
-                      background: dragOverMain ? '#EFF6FF' : '#F8FAFC',
-                      padding: '16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '16px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      position: 'relative'
-                    }}
-                    onClick={() => document.getElementById('main-product-file-input')?.click()}
-                  >
-                    <input
-                      id="main-product-file-input"
-                      type="file"
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      onChange={handleMainImageSelect}
-                    />
-
-                    {/* Image Preview Box */}
-                    <div style={{
-                      width: '74px',
-                      height: '74px',
-                      borderRadius: '8px',
-                      border: '1px solid #E2E8F0',
-                      background: '#FFFFFF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      overflow: 'hidden',
-                      flexShrink: 0
-                    }}>
-                      {mainImageUploading ? (
-                        <RefreshCw size={24} className="animate-spin" color="#2563EB" />
-                      ) : image ? (
-                        <img
-                          src={image}
-                          alt="Main Product"
-                          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                          onError={(e) => { e.target.src = '/favicon.svg'; }}
-                        />
-                      ) : (
-                        <ImageIcon size={30} color="#94A3B8" />
-                      )}
-                    </div>
-
-                    {/* Upload Text & Actions */}
-                    <div style={{ flex: 1 }}>
-                      {mainImageUploading ? (
-                        <div>
-                          <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#2563EB', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <RefreshCw size={14} className="animate-spin" />
-                            Uploading directly to Cloudinary...
-                          </div>
-                          <p style={{ fontSize: '11.5px', color: '#64748B', margin: '3px 0 0 0' }}>
-                            Optimizing image format and generating high-speed CDN URL...
-                          </p>
-                        </div>
-                      ) : (
-                        <div>
-                          <div style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Upload size={15} color="#2563EB" />
-                            <span>Drag &amp; Drop Image from PC, or <span style={{ color: '#2563EB', textDecoration: 'underline' }}>Browse Local Files / Gallery</span></span>
-                          </div>
-                          <p style={{ fontSize: '11.5px', color: '#64748B', margin: '3px 0 0 0' }}>
-                            Supports PNG, JPG, WEBP • Automatically stored in Cloudinary
-                          </p>
-                          {image && (
-                            <div style={{ marginTop: '5px', fontSize: '11px', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <CheckCircle size={12} />
-                              <span>Image Connected ({image.startsWith('http') ? 'Cloudinary CDN' : 'Local File'})</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                {/* 4 Product Gallery Image Slots (Flipkart-Style Multi-Image Support) */}
+                <div className="admin-form-group" style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <div>
+                      <div style={{ fontWeight: 800, margin: 0, fontSize: '14px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <ImageIcon size={18} color="#2563EB" />
+                        <span>Product Image Gallery (Up to 4 Images)</span>
+                      </div>
+                      <p style={{ fontSize: '11.5px', color: '#64748B', margin: '3px 0 0 0' }}>
+                        <strong>Slot 1</strong> is the primary main image (required). <strong>Slots 2, 3, 4</strong> are optional additional images shown as thumbnails on the customer product page.
+                      </p>
                     </div>
                   </div>
 
-                  {/* Manual URL input fallback */}
-                  <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '11px', color: '#64748B', whiteSpace: 'nowrap' }}>Or Image Path / URL:</span>
-                    <input
-                      type="text"
-                      className="admin-form-input"
-                      style={{ height: '32px', fontSize: '12px', flex: 1 }}
-                      placeholder="https://res.cloudinary.com/... or /images/products/..."
-                      value={image}
-                      onChange={(e) => setImage(e.target.value)}
-                    />
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
+                    {[0, 1, 2, 3].map((slotIdx) => {
+                      const isMain = slotIdx === 0;
+                      const imgVal = galleryImages[slotIdx] || '';
+                      const isUploading = slotUploadingIdx === slotIdx;
+                      const isDragging = dragOverSlot === slotIdx;
+                      const slotLabel = isMain ? 'Slot 1: Main Image (Required)' : `Slot ${slotIdx + 1}: Image ${slotIdx + 1} (Optional)`;
+
+                      return (
+                        <div
+                          key={slotIdx}
+                          style={{
+                            border: `1.5px solid ${isMain ? (imgVal ? '#2563EB' : '#EF4444') : (imgVal ? '#10B981' : '#CBD5E1')}`,
+                            borderRadius: '10px',
+                            background: isDragging ? '#EFF6FF' : (isMain ? '#FFFFFF' : '#FFFFFF'),
+                            padding: '12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                            position: 'relative',
+                            boxShadow: isMain ? '0 2px 6px rgba(37,99,235,0.08)' : '0 1px 2px rgba(0,0,0,0.03)'
+                          }}
+                          onDragOver={(e) => { e.preventDefault(); setDragOverSlot(slotIdx); }}
+                          onDragLeave={() => setDragOverSlot(null)}
+                          onDrop={(e) => handleSlotImageDrop(slotIdx, e)}
+                        >
+                          {/* Header Badge */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <span style={{
+                              fontSize: '11px',
+                              fontWeight: 800,
+                              padding: '2px 7px',
+                              borderRadius: '4px',
+                              background: isMain ? '#DBEAFE' : '#F1F5F9',
+                              color: isMain ? '#1D4ED8' : '#475569'
+                            }}>
+                              {slotLabel}
+                            </span>
+                            {imgVal && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveSlotImage(slotIdx)}
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  color: '#EF4444',
+                                  fontSize: '11px',
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                  padding: '2px 4px'
+                                }}
+                                title={isMain ? 'Clear slot' : 'Remove image'}
+                              >
+                                Clear
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Image Preview Box & Upload Trigger */}
+                          <div
+                            onClick={() => document.getElementById(`gallery-slot-input-${slotIdx}`)?.click()}
+                            style={{
+                              height: '110px',
+                              borderRadius: '8px',
+                              border: `1px dashed ${isDragging ? '#2563EB' : '#CBD5E1'}`,
+                              background: imgVal ? '#FFFFFF' : '#F8FAFC',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              overflow: 'hidden',
+                              position: 'relative'
+                            }}
+                          >
+                            {isUploading ? (
+                              <div style={{ textAlign: 'center', padding: '10px' }}>
+                                <RefreshCw size={22} className="animate-spin" color="#2563EB" />
+                                <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: 700, marginTop: '4px' }}>Uploading to Cloudinary...</div>
+                              </div>
+                            ) : imgVal ? (
+                              <img
+                                src={imgVal}
+                                alt={`Slot ${slotIdx + 1}`}
+                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                onError={(e) => { e.target.src = '/favicon.svg'; }}
+                              />
+                            ) : (
+                              <div style={{ textAlign: 'center', padding: '8px' }}>
+                                <Upload size={20} color="#94A3B8" />
+                                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: 600, marginTop: '4px' }}>
+                                  Click or Drop to Upload
+                                </div>
+                              </div>
+                            )}
+                            <input
+                              id={`gallery-slot-input-${slotIdx}`}
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              disabled={isUploading}
+                              onChange={(e) => handleSlotImageSelect(slotIdx, e)}
+                            />
+                          </div>
+
+                          {/* URL text input */}
+                          <input
+                            type="text"
+                            className="admin-form-input"
+                            style={{ height: '28px', fontSize: '11px', padding: '4px 8px' }}
+                            placeholder={isMain ? "Image URL / path (Required)" : "Image URL / path (Optional)"}
+                            value={imgVal}
+                            onChange={(e) => handleSlotUrlChange(slotIdx, e.target.value)}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* External Marketplace Purchase Links (Flipkart, Amazon, Meesho) */}
+                <div style={{
+                  padding: '16px',
+                  borderRadius: '12px',
+                  background: '#F8FAFC',
+                  border: '1px solid #E2E8F0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <ExternalLink size={16} color="#2563EB" />
+                      <span>External Marketplace Purchase Links (Optional)</span>
+                    </div>
+                    <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
+                      Configure official product URLs for external marketplaces. When set, official &ldquo;Buy on Flipkart/Amazon/Meesho&rdquo; buttons appear on the customer product page. Leave blank to hide.
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+                    <div>
+                      <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ color: '#1C8E8F', fontWeight: 800 }}>Flipkart</span> Product URL
+                      </label>
+                      <input
+                        type="url"
+                        className="admin-form-input"
+                        placeholder="https://www.flipkart.com/..."
+                        value={flipkartUrl}
+                        onChange={(e) => setFlipkartUrl(e.target.value)}
+                        style={{ height: '34px', fontSize: '12px' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ color: '#D97706', fontWeight: 800 }}>Amazon</span> Product URL
+                      </label>
+                      <input
+                        type="url"
+                        className="admin-form-input"
+                        placeholder="https://www.amazon.in/..."
+                        value={amazonUrl}
+                        onChange={(e) => setAmazonUrl(e.target.value)}
+                        style={{ height: '34px', fontSize: '12px' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="admin-form-label" style={{ fontSize: '11.5px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ color: '#9A1672', fontWeight: 800 }}>Meesho</span> Product URL
+                      </label>
+                      <input
+                        type="url"
+                        className="admin-form-input"
+                        placeholder="https://www.meesho.com/..."
+                        value={meeshoUrl}
+                        onChange={(e) => setMeeshoUrl(e.target.value)}
+                        style={{ height: '34px', fontSize: '12px' }}
+                      />
+                    </div>
                   </div>
                 </div>
 

@@ -184,6 +184,7 @@ const orderSchema = new mongoose.Schema(
       carrier: { type: String, default: '' },
       trackingNumber: { type: String, default: '' },
       trackingUrl: { type: String, default: '' },
+      expectedDeliveryDate: { type: Date },
       shippedAt: { type: Date },
       deliveredAt: { type: Date }
     },

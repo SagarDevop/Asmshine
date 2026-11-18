@@ -53,8 +53,14 @@ const productSchema = new mongoose.Schema({
   reviewCount: { type: String, default: '1k' },
   ratingsCount: { type: String },
   image: { type: String, required: true }, // Primary HTTPS URL (or local path fallback)
+  images: [{ type: String }],               // Up to 4 product gallery images (index 0 = main)
   imageData: imageMetaSchema,               // Full Cloudinary metadata
   gallery: [imageMetaSchema],               // Optional gallery images
+  marketplaceLinks: {
+    flipkart: { type: String, default: '', trim: true },
+    amazon: { type: String, default: '', trim: true },
+    meesho: { type: String, default: '', trim: true }
+  },
   badge: { type: String }, // 'BEST SELLER', 'TRENDING', 'HOT', etc.
   isFestiveDeal: { type: Boolean, default: false, index: true },
   festiveBadge: { type: String, default: '' },
@@ -90,6 +96,19 @@ productSchema.index({ name: 'text', description: 'text', brand: 'text' });
 // Virtual for available stock (onHand - reserved)
 productSchema.virtual('availableStock').get(function () {
   return Math.max(0, (this.stockQuantity || 0) - (this.reservedQuantity || 0));
+});
+
+// Pre-save hook: guarantee backward compatibility between primary image and images[]
+productSchema.pre('save', function (next) {
+  if (Array.isArray(this.images) && this.images.length > 0) {
+    this.images = this.images.map((img) => (typeof img === 'string' ? img.trim() : '')).filter(Boolean).slice(0, 4);
+    if (this.images[0]) {
+      this.image = this.images[0];
+    }
+  } else if (this.image) {
+    this.images = [this.image];
+  }
+  next();
 });
 
 module.exports = mongoose.model('Product', productSchema);
