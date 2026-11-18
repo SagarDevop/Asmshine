@@ -154,12 +154,24 @@ export const Header = ({
             onClick={() => handleModeChange('asm_shine')}
             aria-label="ASM Shine Official Store"
             title="ASM Shine Official Store"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 6px' }}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              padding: '4px',
+              overflow: 'hidden'
+            }}
           >
             <img
               src="/images/logo.png"
               alt="ASM Shine"
-              style={{ maxHeight: '38px', maxWidth: '100%', width: 'auto', height: 'auto', objectFit: 'contain' }}
+              style={{ 
+                height: '36px', 
+                width: '36px', 
+                objectFit: 'contain', 
+                borderRadius: '8px',
+                display: 'block'
+              }}
             />
           </button>
 
