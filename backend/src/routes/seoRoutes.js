@@ -8,3 +8,4 @@ router.get('/robots.txt', getRobotsTxt);
 router.get('/merchant-feed', getMerchantFeed);
 
 module.exports = router;
+

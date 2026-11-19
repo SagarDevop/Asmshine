@@ -426,3 +426,4 @@ run().catch(err => {
   console.error('[Prerender SEO] Error:', err);
   process.exit(1);
 });
+

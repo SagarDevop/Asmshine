@@ -152,3 +152,4 @@ export function buildProductSchema(product, selectedVariant = null) {
 
   return schema;
 }
+
