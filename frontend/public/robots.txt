@@ -1,0 +1,26 @@
+# ASM Shine Official Robots.txt
+# Notice: Legitimate search crawlers are allowed across all public customer storefront pages.
+# Private account, authentication, checkout, and admin routes are protected.
+
+User-agent: *
+Allow: /
+Allow: /images/
+Allow: /favicon.svg
+Allow: /manifest.webmanifest
+Allow: /assets/
+Allow: /*.js
+Allow: /*.css
+
+Disallow: /admin
+Disallow: /admin/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /account
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /order/
+Disallow: /track-order
+Disallow: /api/
+
+Sitemap: https://www.asmshine.com/sitemap.xml

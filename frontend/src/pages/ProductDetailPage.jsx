@@ -25,13 +25,15 @@ import {
   Send,
   CheckCircle2
 } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import { ProductDetailSkeleton } from '../components/ui/ProductDetailSkeleton';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 import { getOptimizedImageUrl } from '../utils/imageOptimizer';
+import { SEOHead } from '../components/seo/SEOHead';
+import { buildProductSchema, buildBreadcrumbSchema } from '../utils/seoHelpers';
 
 // Authentic Vector Logos for Marketplaces
 const AmazonLogo = () => (
@@ -333,6 +335,39 @@ export const ProductDetailPage = ({
     }
   };
 
+  // Dynamic SEO Metadata & Schema.org JSON-LD
+  const seoTitle = useMemo(() => {
+    if (!product) return 'Product | ASM Shine';
+    const variantSuffix = selectedVariant?.size ? ` (${selectedVariant.size})` : '';
+    return `${product.name}${variantSuffix} — Buy Online at Best Price | ASM Shine`;
+  }, [product, selectedVariant]);
+
+  const seoDescription = useMemo(() => {
+    if (!product) return "Official ASM Shine Hygiene & Cleaning Products. Hospital-grade cleanliness and powerful hygiene.";
+    const currentPrice = selectedVariant?.price || product.price;
+    const rawDesc = (product.description || '')
+      .replace(/<[^>]*>?/gm, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    const clean = rawDesc.slice(0, 150);
+    return clean
+      ? `${clean}... Buy online for ₹${currentPrice} with fast pan-India delivery.`
+      : `Buy ${product.name} online at ₹${currentPrice} by ASM Shine. High-performance hospital-grade hygiene formulation.`;
+  }, [product, selectedVariant]);
+
+  const productStructuredData = useMemo(() => {
+    if (!product) return null;
+    const prodSchema = buildProductSchema(product, selectedVariant);
+    const catName = product.category ? product.category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Cleaners';
+    const breadcrumbSchema = buildBreadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'All Products', url: '/products' },
+      { name: catName, url: `/categories/${product.category || 'all'}` },
+      { name: product.name, url: `/product/${product.id}` }
+    ]);
+    return [prodSchema, breadcrumbSchema];
+  }, [product, selectedVariant]);
+
   // Dynamic Expected Delivery Date: Current Date + 8 Calendar Days in Asia/Kolkata (IST)
   const deliveryDate = useMemo(() => {
     try {
@@ -551,6 +586,14 @@ export const ProductDetailPage = ({
 
   return (
     <div className="pdp-page">
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`/product/${product.id}`}
+        ogImage={product.image}
+        ogType="product"
+        structuredData={productStructuredData}
+      />
       {/* 1. Flipkart Top Navigation Bar */}
       <header className="pdp-top-header">
         <button
@@ -587,6 +630,31 @@ export const ProductDetailPage = ({
           </div>
         </div>
       </header>
+
+      {/* Crawlable Semantic Breadcrumbs */}
+      <nav aria-label="Breadcrumb" className="pdp-breadcrumbs" style={{
+        padding: '8px 16px',
+        fontSize: '12px',
+        color: '#64748B',
+        background: '#F8FAFC',
+        borderBottom: '1px solid #E2E8F0',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '6px',
+        flexWrap: 'wrap'
+      }}>
+        <Link to="/" style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>Home</Link>
+        <span style={{ color: '#94A3B8' }}>/</span>
+        <Link to="/products" style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>All Products</Link>
+        <span style={{ color: '#94A3B8' }}>/</span>
+        <Link to={`/categories/${product.category || 'all'}`} style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>
+          {product.category ? product.category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) : 'Cleaners'}
+        </Link>
+        <span style={{ color: '#94A3B8' }}>/</span>
+        <span style={{ color: '#0F172A', fontWeight: 600, maxWidth: '240px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {product.name}
+        </span>
+      </nav>
 
       {/* Main PDP Container */}
       <div className="pdp-content-container">

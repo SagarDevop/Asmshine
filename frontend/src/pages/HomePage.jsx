@@ -9,6 +9,8 @@ import { TrendingNowBanner } from '../components/ui/TrendingNowBanner';
 import { ProductSection } from '../components/ui/ProductSection';
 import { FlipkartPromoBanners } from '../components/ui/FlipkartPromoBanners';
 import { Footer } from '../components/layout/Footer';
+import { SEOHead } from '../components/seo/SEOHead';
+import { buildOrganizationSchema } from '../utils/seoHelpers';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { api } from '../services/api';
 
@@ -101,8 +103,17 @@ export const HomePage = () => {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const organizationSchema = React.useMemo(() => buildOrganizationSchema(), []);
+
   return (
     <div className="app-shell">
+      <SEOHead
+        title="ASM Shine — Sparkling Clean & Powerful Hygiene | Official Store"
+        description="ASM Shine: India's premier home hygiene brand. High-performance toilet cleaners, Colin-style glass sprays, bathroom descalers, floor disinfectants, and dishwash gels."
+        canonical="/"
+        ogImage="/images/banners/hero_banner_photo.png"
+        structuredData={organizationSchema}
+      />
       {/* Desktop Navigation */}
       <DesktopNav
         onSearch={setSearchQuery}

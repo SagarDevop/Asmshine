@@ -8,6 +8,8 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 const path = require('path');
+const { getSitemap, getRobotsTxt } = require('./controllers/seoController');
+const seoRoutes = require('./routes/seoRoutes');
 
 // Trust reverse proxy (Render / Vercel load balancers) for accurate client IP in rate limiters
 app.set('trust proxy', 1);
@@ -87,8 +89,13 @@ const publicImagesPath = path.join(__dirname, '../../frontend/public/images');
 app.use('/images', express.static(publicImagesPath));
 
 
+// Search Engine Discovery & Crawling Endpoints (Direct Root Access)
+app.get('/sitemap.xml', getSitemap);
+app.get('/robots.txt', getRobotsTxt);
+
 // Mount API v1
 app.use('/api/v1', apiRoutes);
+app.use('/api/v1/seo', seoRoutes);
 
 // Mount payment routes under /api for Razorpay standard web checkout (/api/create-order, /api/verify-payment)
 app.use('/api', paymentRoutes);

@@ -53,7 +53,7 @@ export const DesktopNav = ({ onSearch, onSwitchTab }) => {
     }
     if (tab === 'home') navigate('/');
     else if (tab === 'cart') navigate('/cart');
-    else if (tab === 'about') navigate('/about');
+    else if (tab === 'about') navigate('/about-us');
     else if (tab === 'categories') navigate('/categories');
   };
 

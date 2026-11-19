@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { DEFAULT_POLICIES } from '../data/defaultPolicies';
+import { SEOHead } from '../components/seo/SEOHead';
 
 /**
  * Utility to parse inline markdown (bold text, email addresses, hyperlinks)
@@ -113,8 +114,20 @@ export const LegalPolicyPage = ({ policyType, fallbackTitle }) => {
     .map((block) => block.trim())
     .filter(Boolean);
 
+  const canonicalMap = {
+    terms_and_conditions: '/terms-and-conditions',
+    privacy_policy: '/privacy-policy',
+    refund_policy: '/refund-policy'
+  };
+  const canonicalPath = canonicalMap[policyType] || '/terms-and-conditions';
+
   return (
     <div className="legal-document-wrapper">
+      <SEOHead
+        title={`${pageTitle} — ASM Shine`}
+        description={`Read ASM Shine's official ${pageTitle}. Published policies for online ordering, customer data protection, delivery, and refunds.`}
+        canonical={canonicalPath}
+      />
       <style>{`
         /* Standalone White Document Styles */
         html, body {

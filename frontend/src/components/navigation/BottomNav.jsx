@@ -13,8 +13,8 @@ export const BottomNav = ({ activeTab: activeTabProp, onTabChange }) => {
   // Determine current active tab from pathname if not explicitly passed
   let activeTab = activeTabProp;
   if (!activeTab) {
-    if (location.pathname === '/categories') activeTab = 'categories';
-    else if (location.pathname === '/about') activeTab = 'about';
+    if (location.pathname === '/categories' || location.pathname === '/products') activeTab = 'categories';
+    else if (location.pathname === '/about' || location.pathname === '/about-us') activeTab = 'about';
     else if (location.pathname === '/cart') activeTab = 'cart';
     else if (location.pathname === '/account' || location.pathname === '/login' || location.pathname === '/signup') activeTab = 'account';
     else if (location.pathname === '/') activeTab = 'home';
@@ -35,7 +35,7 @@ export const BottomNav = ({ activeTab: activeTabProp, onTabChange }) => {
 
     if (tabId === 'home') navigate('/');
     else if (tabId === 'categories') navigate('/categories');
-    else if (tabId === 'about') navigate('/about');
+    else if (tabId === 'about') navigate('/about-us');
     else if (tabId === 'cart') navigate('/cart');
   };
 

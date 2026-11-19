@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ShieldCheck,
   SprayCan,
@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api';
+import { SEOHead } from '../components/seo/SEOHead';
+import { buildOrganizationSchema } from '../utils/seoHelpers';
 
 // Icon map for dynamic pillars and categories
 const ICON_MAP = {
@@ -178,69 +180,8 @@ export const AboutPage = ({ onExploreCatalog }) => {
     };
   }, []);
 
-  // SEO: Update Page Title, Meta Tags & Injected Structured Data
-  useEffect(() => {
-    const seo = content.seo || DEFAULT_ABOUT.seo;
-    document.title = seo.metaTitle || 'About Us — The ASM Shine Standard of Hygiene & Cleanliness';
-
-    // Meta Description
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta');
-      metaDesc.name = 'description';
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.content =
-      seo.metaDescription ||
-      'Discover how ASM Shine engineers high-performance toilet cleaners, surface sprays, and kitchen degreasers for Indian hard water with zero harsh acid fumes.';
-
-    // Canonical link
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.rel = 'canonical';
-      document.head.appendChild(canonical);
-    }
-    canonical.href = seo.canonicalUrl || 'https://www.asmshine.com/about';
-
-    // JSON-LD Structured Data for Organization
-    const scriptId = 'asm-shine-org-structured-data';
-    let script = document.getElementById(scriptId);
-    if (!script) {
-      script = document.createElement('script');
-      script.id = scriptId;
-      script.type = 'application/ld+json';
-      document.head.appendChild(script);
-    }
-    script.text = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      name: 'ASM Shine',
-      url: 'https://www.asmshine.com',
-      logo: 'https://www.asmshine.com/images/logo.png',
-      description: seo.metaDescription,
-      contactPoint: {
-        '@type': 'ContactPoint',
-        telephone: '+91-8901-271-271',
-        contactType: 'Customer Support',
-        email: content.contact?.email || 'support@asmshine.com',
-        areaServed: 'IN'
-      },
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Shop No. 11, Paras Enclave',
-        addressLocality: 'Kurukshetra',
-        addressRegion: 'Haryana',
-        postalCode: '136118',
-        addressCountry: 'IN'
-      }
-    });
-
-    return () => {
-      const existingScript = document.getElementById(scriptId);
-      if (existingScript) existingScript.remove();
-    };
-  }, [content]);
+  const seo = content.seo || DEFAULT_ABOUT.seo;
+  const organizationSchema = useMemo(() => buildOrganizationSchema(content), [content]);
 
   const handleExplore = () => {
     if (onExploreCatalog) onExploreCatalog();
@@ -258,6 +199,13 @@ export const AboutPage = ({ onExploreCatalog }) => {
 
   return (
     <div className="about-us-experience">
+      <SEOHead
+        title={seo.metaTitle || 'About Us — The ASM Shine Standard of Hygiene & Cleanliness'}
+        description={seo.metaDescription || 'Discover how ASM Shine engineers high-performance toilet cleaners, surface sprays, and kitchen degreasers for Indian hard water with zero harsh acid fumes.'}
+        canonical="/about-us"
+        ogImage={seo.ogImage || '/images/banners/hero_banner_photo.png'}
+        structuredData={organizationSchema}
+      />
       <style>{`
         .about-us-experience {
           background-color: #FFFFFF;

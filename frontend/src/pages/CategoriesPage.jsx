@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft,
@@ -17,11 +18,13 @@ import {
   Droplets,
   X
 } from 'lucide-react';
-import { useNavigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, useSearchParams, Link } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { api } from '../services/api';
 import { SearchOverlay } from '../components/search/SearchOverlay';
 import { CatProductCardSkeleton } from '../components/ui/CatProductCardSkeleton';
+import { SEOHead } from '../components/seo/SEOHead';
+import { buildBreadcrumbSchema } from '../utils/seoHelpers';
 
 const categoryIconMap = {
   all: Layers,
@@ -176,8 +179,41 @@ export const CategoriesPage = ({
     return true;
   });
 
+  const isProductsListing = location.pathname === '/products';
+  const pageTitle = isProductsListing || selectedCat === 'all'
+    ? 'All Products — ASM Shine Cleaning & Hygiene Essentials | Official Store'
+    : `${currentCategoryObj.name} — Buy Authentic Cleaners Online | ASM Shine`;
+
+  const pageDescription = isProductsListing || selectedCat === 'all'
+    ? "Explore ASM Shine's complete collection of hospital-grade home cleaning essentials. High-performance toilet cleaners, floor cleaners, glass sprays, dishwash gels, and laundry detergents."
+    : `Shop authentic ASM Shine ${currentCategoryObj.name}. Advanced limescale removal, 99.9% germ protection, and hospital-grade home freshness formulated for Indian homes.`;
+
+  const canonicalUrl = isProductsListing
+    ? '/products'
+    : (selectedCat === 'all' ? '/categories' : `/categories/${selectedCat}`);
+
+  const breadcrumbs = React.useMemo(() => {
+    const list = [{ name: 'Home', url: '/' }];
+    if (isProductsListing) {
+      list.push({ name: 'All Products', url: '/products' });
+    } else {
+      list.push({ name: 'Categories', url: '/categories' });
+      if (selectedCat !== 'all') {
+        list.push({ name: currentCategoryObj.name, url: `/categories/${selectedCat}` });
+      }
+    }
+    return buildBreadcrumbSchema(list);
+  }, [isProductsListing, selectedCat, currentCategoryObj.name]);
+
   return (
     <div className="categories-page-view">
+      <SEOHead
+        title={pageTitle}
+        description={pageDescription}
+        canonical={canonicalUrl}
+        ogImage="/images/banners/hero_banner_photo.png"
+        structuredData={breadcrumbs}
+      />
       {/* 1. Flipkart-style Top Bar */}
       <header className="page-top-header">
         <button
@@ -270,7 +306,7 @@ export const CategoriesPage = ({
           {/* Active Category Header Banner */}
           <div className="cat-banner-card">
             <div className="cat-banner-tag">AUTHENTIC ASM SHINE HYGIENE</div>
-            <h2 className="cat-banner-title">{currentCategoryObj.name}</h2>
+            <h1 className="cat-banner-title">{currentCategoryObj.name}</h1>
             <p className="cat-banner-sub">
               {loading ? 'Loading authentic collection...' : `${filteredProducts.length} varieties available in collection`}
             </p>
@@ -304,10 +340,11 @@ export const CategoriesPage = ({
                 const isOutOfStock = product.inStock === false || (product.stockQuantity !== undefined && product.stockQuantity <= 0);
 
                 return (
-                  <div
+                  <Link
                     key={product.id}
+                    to={`/product/${product.id}`}
                     className={`cat-product-card ${isOutOfStock ? 'out-of-stock' : ''}`}
-                    onClick={() => handleSelectProduct(product)}
+                    style={{ textDecoration: 'none', color: 'inherit', display: 'flex' }}
                   >
                     <div className="cat-prod-img-wrap img-container-placeholder" style={{ position: 'relative' }}>
                       {isOutOfStock && (
@@ -317,7 +354,7 @@ export const CategoriesPage = ({
                       )}
                       <img
                         src={product.image}
-                        alt={product.name}
+                        alt={`${product.name} - ASM Shine`}
                         className="cat-prod-img"
                         loading="lazy"
                       />
@@ -346,7 +383,7 @@ export const CategoriesPage = ({
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
             </div>

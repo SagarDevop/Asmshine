@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Core Storefront Pages -->
+  <url>
+    <loc>https://www.asmshine.com/</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/products</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/categories</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/about-us</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/contact</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/terms-and-conditions</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/privacy-policy</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/refund-policy</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Category Pages -->
+  <url>
+    <loc>https://www.asmshine.com/categories/toilet_care</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/categories/bathroom_care</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/categories/glass_care</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/categories/floor_care</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/categories/dishwash</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/categories/kitchen_care</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/categories/laundry_care</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/categories/hand_hygiene</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Published Individual Product URLs -->
+  <url>
+    <loc>https://www.asmshine.com/product/asm_glass_1</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/glass_cleaner_front.png</image:loc>
+      <image:title>ASM Shine Crystal Clear Glass &amp; Multi-Surface Cleaner Spray (Streak-Free)</image:title>
+      <image:caption>ASM Shine Crystal Clear Glass Cleaner - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_bath_1</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/bathroom_cleaner_front.png</image:loc>
+      <image:title>ASM Shine Heavy-Duty Bathroom &amp; Ceramic Tiles Descaler Cleaner</image:title>
+      <image:caption>ASM Shine Heavy-Duty Bathroom Cleaner - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_floor_1</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/floor_cleaner_front.png</image:loc>
+      <image:title>ASM Shine Lemon Fresh Surface &amp; Floor Cleaner Liquid Disinfectant</image:title>
+      <image:caption>ASM Shine Lemon Fresh Floor Cleaner - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_kitchen_1</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/kitchen_cleaner_front.png</image:loc>
+      <image:title>ASM Shine Multipurpose Kitchen &amp; Surface Cleaner Spray (Lemon Power)</image:title>
+      <image:caption>ASM Shine Multipurpose Kitchen Cleaner - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_laundry_1</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/laundry_front.png</image:loc>
+      <image:title>ASM Shine Matic Ultra Laundry Detergent Liquid (Stain Defender)</image:title>
+      <image:caption>ASM Shine Matic Ultra Laundry Detergent - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_hand_1</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/handwash_lavender_front.png</image:loc>
+      <image:title>ASM Shine PureShield Antibacterial Liquid Handwash (Lavender Care)</image:title>
+      <image:caption>ASM Shine Handwash Lavender - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_pine_1</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/white_floor_cleaner_front.png</image:loc>
+      <image:title>ASM Shine White Floor Cleaner (Clean Floors, Brighter Homes)</image:title>
+      <image:caption>ASM Shine White Floor Cleaner - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_drain_1</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/drain_cleaner_front.png</image:loc>
+      <image:title>ASM Shine RapidAction Drain Unclogger &amp; Odor Eliminator Gel</image:title>
+      <image:caption>ASM Shine RapidAction Drain Cleaner - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_floor_apple</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/floor_cleaner_apple_front.png</image:loc>
+      <image:title>ASM Shine Green Apple Surface &amp; Floor Cleaner Liquid Disinfectant</image:title>
+      <image:caption>ASM Shine Green Apple Floor Cleaner - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_hand_rose</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/handwash_rose_front.png</image:loc>
+      <image:title>ASM Shine PureShield Antibacterial Liquid Handwash (Rose Care)</image:title>
+      <image:caption>ASM Shine Handwash Rose - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/pure_dish_wash</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/dishwash_front.png</image:loc>
+      <image:title>Pure Dish Wash</image:title>
+      <image:caption>Pure Dish Wash - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_shine_toilet_cleaner</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/toilet_cleaner_front.png</image:loc>
+      <image:title>ASM Shine Toilet Cleaner</image:title>
+      <image:caption>ASM Shine Toilet Cleaner - Official Product</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.asmshine.com/product/asm_shine_black_floor_cleaner</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/products/black_floor_cleaner_front.png</image:loc>
+      <image:title>ASM Shine Black Floor Cleaner</image:title>
+      <image:caption>ASM Shine Black Floor Cleaner - Official Product</image:caption>
+    </image:image>
+  </url>
+</urlset>

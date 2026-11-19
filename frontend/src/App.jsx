@@ -73,8 +73,12 @@ function HashRedirectHandler() {
         const queryIndex = hash.indexOf('?');
         const query = queryIndex !== -1 ? hash.substring(queryIndex) : '';
         navigate(`/categories${query}`, { replace: true });
-      } else if (hash === '#about') {
-        navigate('/about', { replace: true });
+      } else if (hash === '#about' || hash === '#about-us') {
+        navigate('/about-us', { replace: true });
+      } else if (hash === '#products') {
+        navigate('/products', { replace: true });
+      } else if (hash === '#contact' || hash === '#contact-us') {
+        navigate('/contact', { replace: true });
       } else if (hash === '#cart') {
         navigate('/cart', { replace: true });
       } else if (hash.startsWith('#order/')) {
@@ -323,9 +327,13 @@ export function App() {
 
                 {/* Customer Storefront Routes */}
                 <Route path="/" element={<HomePage />} />
+                <Route path="/products" element={<CategoriesRoute />} />
                 <Route path="/categories" element={<CategoriesRoute />} />
                 <Route path="/categories/:categoryId" element={<CategoriesRoute />} />
-                <Route path="/about" element={<AboutRoute />} />
+                <Route path="/about-us" element={<AboutRoute />} />
+                <Route path="/about" element={<Navigate to="/about-us" replace />} />
+                <Route path="/contact" element={<AboutRoute />} />
+                <Route path="/contact-us" element={<Navigate to="/contact" replace />} />
                 <Route path="/cart" element={<CartRoute />} />
                 <Route path="/product/:id" element={<ProductDetailRoute />} />
                 <Route path="/checkout" element={<CheckoutRoute />} />

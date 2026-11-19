@@ -30,23 +30,23 @@ export const Footer = () => {
           </h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '9px', fontSize: '13px' }}>
             <li>
-              <Link to="/categories" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s' }}>
-                All Products &amp; Combos
+              <Link to="/products" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s' }}>
+                All Products &amp; Cleaners
               </Link>
             </li>
             <li>
-              <Link to="/about" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s' }}>
+              <Link to="/about-us" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s' }}>
                 About ASM Shine Labs
               </Link>
             </li>
             <li>
-              <Link to="/cart" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s' }}>
-                Shopping Cart
+              <Link to="/contact" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s' }}>
+                Contact &amp; Customer Support
               </Link>
             </li>
             <li>
-              <Link to="/account" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s' }}>
-                My Account &amp; Orders
+              <Link to="/categories" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.15s' }}>
+                Browse by Category
               </Link>
             </li>
             <li>
