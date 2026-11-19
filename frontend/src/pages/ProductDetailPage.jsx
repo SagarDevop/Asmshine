@@ -98,7 +98,7 @@ export const ProductDetailPage = ({
   const [product, setProduct] = useState(productProp || null);
   const [loading, setLoading] = useState(!productProp);
   const { cartCount, cartData, wishlist, toggleWishlist, addToCart, addComboToCart, showToast } = useCartWishlist();
-  const { selectedAddress } = useAuth();
+  const { user, selectedAddress } = useAuth();
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -264,37 +264,55 @@ export const ProductDetailPage = ({
 
   // Review submission state
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [reviewAuthor, setReviewAuthor] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
-  const [reviewTitle, setReviewTitle] = useState('');
   const [reviewComment, setReviewComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
 
+  // Auto-derived location for logged-in reviewer
+  const reviewerLocation = useMemo(() => {
+    if (selectedAddress?.city && selectedAddress?.state) {
+      return `${selectedAddress.city}, ${selectedAddress.state}`;
+    }
+    if (selectedAddress?.city) {
+      return selectedAddress.city;
+    }
+    if (user?.addresses && user.addresses.length > 0) {
+      const def = user.addresses.find((a) => a.isDefault) || user.addresses[0];
+      if (def?.city && def?.state) return `${def.city}, ${def.state}`;
+      if (def?.city) return def.city;
+    }
+    return 'India';
+  }, [selectedAddress, user]);
+
   const handleOpenReviewModal = () => {
-    setReviewAuthor('');
+    if (!user) {
+      showToast('Please log in to write a review');
+      navigate('/login', { state: { from: window.location.pathname } });
+      return;
+    }
     setReviewRating(5);
-    setReviewTitle('');
     setReviewComment('');
     setReviewModalOpen(true);
   };
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
-    if (!reviewAuthor.trim()) {
-      showToast('Please enter your name');
+    if (!user) {
+      showToast('Please log in to write a review');
+      navigate('/login', { state: { from: window.location.pathname } });
       return;
     }
     if (!reviewComment.trim()) {
-      showToast('Please enter your review feedback');
+      showToast('Please write your review feedback');
       return;
     }
     setSubmittingReview(true);
     try {
       const res = await api.addProductReview(product.id, {
-        author: reviewAuthor.trim(),
         rating: reviewRating,
-        title: reviewTitle.trim() || 'Verified Experience',
-        comment: reviewComment.trim()
+        comment: reviewComment.trim(),
+        author: user.name || 'Verified Customer',
+        location: reviewerLocation
       });
       if (res?.success) {
         setProduct((prev) => ({
@@ -306,6 +324,7 @@ export const ProductDetailPage = ({
         }));
         showToast('Thank you! Your review has been submitted.');
         setReviewModalOpen(false);
+        setReviewComment('');
       }
     } catch (err) {
       showToast(err.message || 'Could not submit review. Please try again.');
@@ -1294,7 +1313,60 @@ export const ProductDetailPage = ({
               </button>
             </div>
 
-            <form onSubmit={handleSubmitReview} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <form onSubmit={handleSubmitReview} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Auto-filled User Identity & Location */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: '#F8FAFC',
+                border: '1px solid #E2E8F0',
+                borderRadius: '10px',
+                padding: '10px 14px'
+              }}>
+                <div style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #1C8E8F, #0E7490)',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  fontSize: '15px',
+                  flexShrink: 0,
+                  boxShadow: '0 2px 4px rgba(14, 116, 144, 0.2)'
+                }}>
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#0F172A' }}>
+                      {user?.name || 'Verified Customer'}
+                    </span>
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: '#15803D',
+                      background: '#DCFCE7',
+                      padding: '1px 6px',
+                      borderRadius: '4px'
+                    }}>
+                      <Check size={11} strokeWidth={3} /> Verified Buyer
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                    <MapPin size={12} color="#0284C7" />
+                    <span>{reviewerLocation}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Star Rating Selection */}
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
                   Overall Rating *
@@ -1313,47 +1385,22 @@ export const ProductDetailPage = ({
                         transform: reviewRating >= starVal ? 'scale(1.1)' : 'scale(1)',
                         transition: 'transform 0.15s ease'
                       }}
+                      title={`${starVal} Star`}
                     >
                       <Star
-                        size={28}
+                        size={30}
                         fill={reviewRating >= starVal ? '#F59E0B' : '#E2E8F0'}
                         color={reviewRating >= starVal ? '#F59E0B' : '#CBD5E1'}
                       />
                     </button>
                   ))}
                   <span style={{ fontSize: '13px', fontWeight: 800, color: '#F59E0B', marginLeft: '6px' }}>
-                    {reviewRating} of 5 Stars
+                    {reviewRating} of 5 Stars &bull; {['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][reviewRating]}
                   </span>
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
-                  Your Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Ramesh Kumar"
-                  value={reviewAuthor}
-                  onChange={(e) => setReviewAuthor(e.target.value)}
-                  style={{ width: '100%', height: '38px', padding: '0 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
-                  Review Headline
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Cleans deep and smells amazing"
-                  value={reviewTitle}
-                  onChange={(e) => setReviewTitle(e.target.value)}
-                  style={{ width: '100%', height: '38px', padding: '0 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
-                />
-              </div>
-
+              {/* Review Textarea */}
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
                   Your Review *
@@ -1361,7 +1408,7 @@ export const ProductDetailPage = ({
                 <textarea
                   required
                   rows={4}
-                  placeholder="Write your honest feedback about the product's quality, cleaning results, and fragrance..."
+                  placeholder="Share your experience with this product — quality, performance, fragrance, packaging..."
                   value={reviewComment}
                   onChange={(e) => setReviewComment(e.target.value)}
                   style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', resize: 'vertical', boxSizing: 'border-box' }}

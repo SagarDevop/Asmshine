@@ -45,7 +45,7 @@ const getProductById = async (req, res, next) => {
 const addProductReview = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { author, location, rating = 5, title, comment } = req.body;
+    const { rating = 5, title, comment } = req.body;
 
     if (!id || typeof id !== 'string' || !id.trim()) {
       return res.status(400).json({
@@ -54,18 +54,41 @@ const addProductReview = async (req, res, next) => {
       });
     }
 
-    if (!author || !author.trim()) {
-      return res.status(400).json({
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({
         success: false,
-        message: 'Reviewer name is required'
+        message: 'Please log in to write a review'
       });
     }
 
-    const numRating = Math.min(5, Math.max(1, Number(rating) || 5));
     const cleanComment = (comment || '').trim();
-    const cleanTitle = (title || '').trim();
-    const cleanAuthor = author.trim();
-    const cleanLocation = (location || 'Verified Buyer').trim();
+    if (!cleanComment) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide your review feedback'
+      });
+    }
+
+    // Auto-resolve author name from authenticated user profile
+    const cleanAuthor = (user.name || req.body.author || 'Verified Customer').trim();
+
+    // Auto-resolve location: provided by client, or from user's saved addresses, or default
+    let cleanLocation = (req.body.location || '').trim();
+    if (!cleanLocation && user.addresses && user.addresses.length > 0) {
+      const defAddr = user.addresses.find((a) => a.isDefault) || user.addresses[0];
+      if (defAddr.city && defAddr.state) {
+        cleanLocation = `${defAddr.city}, ${defAddr.state}`;
+      } else if (defAddr.city) {
+        cleanLocation = defAddr.city;
+      }
+    }
+    if (!cleanLocation) {
+      cleanLocation = 'Verified Buyer';
+    }
+
+    const numRating = Math.min(5, Math.max(1, Number(rating) || 5));
+    const cleanTitle = (title || '').trim() || (numRating >= 4 ? 'Great Quality!' : 'Customer Review');
 
     const isObjectId = mongoose.isValidObjectId(id);
     const product = await Product.findOne({
@@ -85,7 +108,7 @@ const addProductReview = async (req, res, next) => {
       location: cleanLocation,
       rating: numRating,
       date: 'Today',
-      title: cleanTitle || 'Verified Experience',
+      title: cleanTitle,
       comment: cleanComment
     };
 
