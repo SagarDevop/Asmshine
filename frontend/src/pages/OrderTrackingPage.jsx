@@ -234,8 +234,14 @@ export const OrderTrackingPage = () => {
   };
 
   const getEstimatedDate = (createdDate) => {
+    if (order?.shippingDetails?.expectedDeliveryDate) {
+      const ed = new Date(order.shippingDetails.expectedDeliveryDate);
+      if (!isNaN(ed.getTime())) {
+        return ed.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+      }
+    }
     const base = createdDate ? new Date(createdDate) : new Date();
-    base.setDate(base.getDate() + 2);
+    base.setDate(base.getDate() + 8);
     return base.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
   };
 

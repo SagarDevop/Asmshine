@@ -214,14 +214,7 @@ const getFormattedDeliveryDate = (daysOffset) => {
   const options = { weekday: 'short', month: 'short', day: 'numeric' };
   const formatted = d.toLocaleDateString('en-IN', options);
 
-  let badge = '';
-  if (daysOffset <= 1) {
-    badge = 'Tomorrow, by 5:00 PM';
-  } else if (daysOffset === 2) {
-    badge = `In 2 Days (${formatted})`;
-  } else {
-    badge = `By ${formatted}`;
-  }
+  const badge = `By ${formatted}`;
 
   return {
     date: d.toISOString(),

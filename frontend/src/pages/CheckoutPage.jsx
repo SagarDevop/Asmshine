@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   ArrowLeft,
   ShieldCheck,
@@ -54,6 +54,24 @@ export const CheckoutPage = () => {
     freeShippingThreshold: 499,
     standardDeliveryFee: 49
   });
+
+  // Dynamic Expected Delivery Date: Current Date + 8 Calendar Days in Asia/Kolkata (IST)
+  const deliveryDate = useMemo(() => {
+    try {
+      const now = new Date();
+      const istString = now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+      const istDate = new Date(istString);
+      istDate.setDate(istDate.getDate() + 8);
+      const weekday = istDate.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Asia/Kolkata' });
+      const day = istDate.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'Asia/Kolkata' });
+      const month = istDate.toLocaleDateString('en-US', { month: 'short', timeZone: 'Asia/Kolkata' });
+      return `${weekday}, ${day} ${month}`;
+    } catch (e) {
+      const d = new Date();
+      d.setDate(d.getDate() + 8);
+      return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+    }
+  }, []);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [placedOrderData, setPlacedOrderData] = useState(null);
@@ -633,17 +651,8 @@ export const CheckoutPage = () => {
       ? placedOrderData.items
       : checkoutItems;
 
-    // Dynamic Delivery Date Estimate (3-4 business days)
-    const getEstimateDateStr = () => {
-      const d = new Date();
-      d.setDate(d.getDate() + 3);
-      if (d.getDay() === 0) d.setDate(d.getDate() + 1);
-      return d.toLocaleDateString('en-IN', {
-        weekday: 'short',
-        day: 'numeric',
-        month: 'short'
-      });
-    };
+    // Dynamic Delivery Date Estimate (8 calendar days in Asia/Kolkata IST)
+    const getEstimateDateStr = () => deliveryDate;
 
     return (
       <div className="asm-order-success-canvas">
@@ -1096,8 +1105,8 @@ export const CheckoutPage = () => {
                   </div>
 
                   <div className="fk-item-delivery-pill">
-                    <Truck size={12} color="#15803D" />
-                    <span>Free Delivery by Tomorrow, 8 PM</span>
+                    <Truck size={12} color={isFreeDelivery ? "#15803D" : "#0284C7"} />
+                    <span>{isFreeDelivery ? 'Free Delivery' : 'Standard Delivery'} by {deliveryDate}</span>
                   </div>
 
                   {/* Qty Switcher */}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ArrowLeft,
   Trash2,
@@ -156,6 +156,24 @@ export const CartPage = ({
     freeShippingThreshold: 499,
     standardDeliveryFee: 49
   });
+
+  // Dynamic Expected Delivery Date: Current Date + 8 Calendar Days in Asia/Kolkata (IST)
+  const deliveryDate = useMemo(() => {
+    try {
+      const now = new Date();
+      const istString = now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+      const istDate = new Date(istString);
+      istDate.setDate(istDate.getDate() + 8);
+      const weekday = istDate.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Asia/Kolkata' });
+      const day = istDate.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'Asia/Kolkata' });
+      const month = istDate.toLocaleDateString('en-US', { month: 'short', timeZone: 'Asia/Kolkata' });
+      return `${weekday}, ${day} ${month}`;
+    } catch (e) {
+      const d = new Date();
+      d.setDate(d.getDate() + 8);
+      return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+    }
+  }, []);
 
   // Fetch active coupons & delivery rules from backend on mount
   useEffect(() => {
@@ -386,7 +404,7 @@ export const CartPage = ({
           <div className="order-summary-box">
             <div className="order-summary-row">
               <span>Delivery by:</span>
-              <strong>Tomorrow by 5:00 PM (Express)</strong>
+              <strong>{deliveryDate}</strong>
             </div>
             <div className="order-summary-row">
               <span>Delivery Address:</span>
@@ -512,7 +530,7 @@ export const CartPage = ({
 
                     <div className="cart-delivery-tag" style={{ color: isFreeDelivery ? '#059669' : '#0284C7' }}>
                       <Truck size={13} color={isFreeDelivery ? '#059669' : '#0284C7'} />
-                      <span>{isFreeDelivery ? 'Free Delivery' : 'Standard Delivery'} by Tomorrow</span>
+                      <span>{isFreeDelivery ? 'Free Delivery' : 'Standard Delivery'} by {deliveryDate}</span>
                     </div>
                   </div>
                 </div>
