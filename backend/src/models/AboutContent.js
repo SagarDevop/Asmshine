@@ -83,7 +83,10 @@ const aboutContentSchema = new mongoose.Schema(
       heading: { type: String, default: 'The ASM Shine Standard' },
       tagline: { type: String, default: 'SPOTLESS CLEAN • SPARKLING SHINE' },
       badge: { type: String, default: 'ADVANCED HYGIENE & CLEANING' },
-      image: { type: String, default: '/images/banners/hero_banner_photo.png' },
+      image: {
+        type: String,
+        default: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/banners/hero_banner_photo.png'
+      },
       imageAlt: { type: String, default: 'ASM Shine Hygiene Formulations' },
       metaChips: {
         type: [String],
@@ -112,7 +115,10 @@ const aboutContentSchema = new mongoose.Schema(
         default:
           'To deliver laboratory-grade disinfection without hazardous chemical fumes, ensuring every Indian family enjoys hospital-grade hygiene, sparkling surfaces, and long-lasting freshness.'
       },
-      image: { type: String, default: '/images/banners/hero_banner_photo.png' },
+      image: {
+        type: String,
+        default: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/banners/hero_banner_photo.png'
+      },
       isVisible: { type: Boolean, default: true }
     },
     vision: {
@@ -240,6 +246,13 @@ aboutContentSchema.statics.getPublishedContent = async function () {
     dirty = true;
   }
 
+  // Ensure hero image uses fast CDN URL
+  if (!content.hero?.image || content.hero.image === '/images/banners/hero_banner_photo.png') {
+    content.hero = content.hero || {};
+    content.hero.image = 'https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/banners/hero_banner_photo.png';
+    dirty = true;
+  }
+
   // Auto-migrate legacy/dummy contact details to real manufacturer details
   const contact = content.contact || {};
   if (
@@ -306,6 +319,12 @@ aboutContentSchema.statics.getDraftContent = async function () {
       };
       await draft.save();
       console.log('[AboutContent] Auto-migrated draft contact info to Kurukshetra details.');
+    }
+
+    if (!draft.hero?.image || draft.hero.image === '/images/banners/hero_banner_photo.png') {
+      draft.hero = draft.hero || {};
+      draft.hero.image = 'https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/banners/hero_banner_photo.png';
+      await draft.save();
     }
   }
   return draft;

@@ -45,7 +45,7 @@ const DEFAULT_ABOUT = {
     heading: 'The ASM Shine Standard',
     tagline: 'SPOTLESS CLEAN • SPARKLING SHINE',
     badge: 'ADVANCED HYGIENE & CLEANING',
-    image: '/images/banners/hero_banner_photo.png',
+    image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/banners/hero_banner_photo.png',
     imageAlt: 'ASM Shine Advanced Hygiene Formulations',
     metaChips: ['99.9% Certified Germ Kill', '10X Limescale Cutter', 'Zero Harsh Acid Fumes'],
     isVisible: true
@@ -733,6 +733,15 @@ export const AboutPage = ({ onExploreCatalog }) => {
                   src={hero.image}
                   alt={hero.imageAlt || hero.heading}
                   loading="lazy"
+                  onError={(e) => {
+                    const cdnUrl = 'https://res.cloudinary.com/dheyj35ys/image/upload/v1795069455/asm-shine/banners/hero_banner_photo.png';
+                    const localUrl = '/images/banners/hero_banner_photo.png';
+                    if (e.currentTarget.src !== cdnUrl) {
+                      e.currentTarget.src = cdnUrl;
+                    } else if (e.currentTarget.src !== localUrl) {
+                      e.currentTarget.src = localUrl;
+                    }
+                  }}
                 />
               </div>
             )}
