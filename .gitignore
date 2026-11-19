@@ -33,4 +33,6 @@ stich_reference/
 # Local MongoDB data directory
 data_db/
 backend/data_db/
+backups/
+backend/backups/
 *.lock
