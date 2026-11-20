@@ -93,6 +93,16 @@ app.use('/images', express.static(publicImagesPath));
 app.get('/sitemap.xml', getSitemap);
 app.get('/robots.txt', getRobotsTxt);
 
+// Direct root keep-alive ping for external uptime monitors & Render sleep prevention
+app.get('/ping', (req, res) => {
+  res.status(200).json({
+    status: 'active',
+    message: 'ASM Shine backend is awake and active',
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(process.uptime())
+  });
+});
+
 // Mount API v1
 app.use('/api/v1', apiRoutes);
 app.use('/api/v1/seo', seoRoutes);

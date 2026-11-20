@@ -25,6 +25,25 @@ router.get('/health', (req, res) => {
   });
 });
 
+// Ultra-lightweight Keep-Alive / Ping endpoints (Zero DB overhead to prevent Render sleep)
+router.get('/ping', (req, res) => {
+  res.status(200).json({
+    status: 'active',
+    message: 'ASM Shine backend is awake and active',
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(process.uptime())
+  });
+});
+
+router.get('/keep-alive', (req, res) => {
+  res.status(200).json({
+    status: 'active',
+    message: 'ASM Shine backend is awake and active',
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(process.uptime())
+  });
+});
+
 // Resources
 router.use('/auth', authRoutes);
 router.use('/admin', adminRoutes);
