@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense, lazy } from 'react';
+import React, { useEffect, useRef, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { CheckCircle2, RefreshCw } from 'lucide-react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -117,6 +117,30 @@ function ScrollToTop() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
+
+  return null;
+}
+
+/**
+ * MetaPixelTracker:
+ * Tracks SPA route changes for Meta Pixel without duplicate PageView on initial page load.
+ */
+function MetaPixelTracker() {
+  const location = useLocation();
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    // Avoid duplicate PageView on initial mount because index.html already executed it
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    // Fire PageView safely on client-side route changes
+    if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
+      window.fbq('track', 'PageView');
+    }
+  }, [location.pathname, location.search]);
 
   return null;
 }
@@ -291,6 +315,7 @@ export function App() {
           <CartWishlistProvider>
             <HashRedirectHandler />
             <ScrollToTop />
+            <MetaPixelTracker />
             <Suspense fallback={<PageLoadingFallback />}>
               <Routes>
                 {/* Dedicated Secure Admin Subsystem (Lazy-loaded isolated bundle) */}
