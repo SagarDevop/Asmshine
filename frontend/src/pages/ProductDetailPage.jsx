@@ -34,6 +34,7 @@ import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 import { SEOHead } from '../components/seo/SEOHead';
 import { buildProductSchema, buildBreadcrumbSchema } from '../utils/seoHelpers';
+import { getCategoryDisplayName } from '../config/categories';
 
 // Authentic Vector Logos for Marketplaces
 const AmazonLogo = () => (
@@ -358,11 +359,11 @@ export const ProductDetailPage = ({
   const productStructuredData = useMemo(() => {
     if (!product) return null;
     const prodSchema = buildProductSchema(product, selectedVariant);
-    const catName = product.category ? product.category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Cleaners';
+    const catName = getCategoryDisplayName(product.category) || 'Cleaners';
     const breadcrumbSchema = buildBreadcrumbSchema([
       { name: 'Home', url: '/' },
       { name: 'All Products', url: '/products' },
-      { name: catName, url: `/categories/${product.category || 'all'}` },
+      { name: catName, url: `/categories/${product.category || 'all-products'}` },
       { name: product.name, url: `/product/${product.id}` }
     ]);
     return [prodSchema, breadcrumbSchema];
@@ -647,8 +648,8 @@ export const ProductDetailPage = ({
         <span style={{ color: '#94A3B8' }}>/</span>
         <Link to="/products" style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>All Products</Link>
         <span style={{ color: '#94A3B8' }}>/</span>
-        <Link to={`/categories/${product.category || 'all'}`} style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>
-          {product.category ? product.category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) : 'Cleaners'}
+        <Link to={`/categories/${product.category || 'all-products'}`} style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>
+          {getCategoryDisplayName(product.category) || 'Cleaners'}
         </Link>
         <span style={{ color: '#94A3B8' }}>/</span>
         <span style={{ color: '#0F172A', fontWeight: 600, maxWidth: '240px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

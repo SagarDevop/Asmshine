@@ -44,7 +44,7 @@ const getAllProducts = async (filters = {}) => {
         query.section = filters.section;
       }
 
-      if (filters.category && filters.category !== 'all') {
+      if (filters.category && filters.category !== 'all' && filters.category !== 'all-products') {
         query.category = filters.category;
       }
 
@@ -72,7 +72,7 @@ const getAllProducts = async (filters = {}) => {
   return memoryProducts.filter((p) => {
     if (p.status && p.status !== 'active') return false;
     if (filters.section && p.section !== filters.section) return false;
-    if (filters.category && filters.category !== 'all' && p.category !== filters.category) return false;
+    if (filters.category && filters.category !== 'all' && filters.category !== 'all-products' && p.category !== filters.category) return false;
     if (filters.search && filters.search.trim()) {
       const q = filters.search.trim().toLowerCase();
       const matchName = p.name?.toLowerCase().includes(q);

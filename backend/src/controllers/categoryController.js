@@ -14,22 +14,22 @@ const getCategories = async (req, res, next) => {
       try {
         if (!categoriesSeeded) {
           categoriesSeeded = true;
-          const count = await Category.countDocuments();
-          if (count === 0) {
-            for (const cat of initialCategories) {
-              await Category.findOneAndUpdate(
-                { id: cat.id },
-                { $set: cat },
-                { upsert: true, new: true, setDefaultsOnInsert: true }
-              );
-            }
+          for (const cat of initialCategories) {
+            await Category.findOneAndUpdate(
+              { id: cat.id },
+              { $set: cat },
+              { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
           }
         }
-        const categories = await Category.find({}, { _id: 0, __v: 0 }).sort({ createdAt: 1 }).lean();
+        const officialIds = initialCategories.map((c) => c.id);
+        const categories = await Category.find({ id: { $in: officialIds } }, { _id: 0, __v: 0 }).lean();
+        categories.sort((a, b) => officialIds.indexOf(a.id) - officialIds.indexOf(b.id));
+
         return res.status(200).json({
           success: true,
-          count: categories.length,
-          data: categories
+          count: categories.length > 0 ? categories.length : initialCategories.length,
+          data: categories.length > 0 ? categories : initialCategories
         });
       } catch (err) {
         console.warn('[CategoryController] DB fetch failed, falling back to in-memory:', err.message);

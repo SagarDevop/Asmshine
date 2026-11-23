@@ -59,7 +59,7 @@ const getProducts = async (req, res, next) => {
       query.$or = [{ name: reg }, { id: reg }, { sku: reg }, { category: reg }];
     }
 
-    if (category) {
+    if (category && category !== 'all' && category !== 'all-products') {
       query.category = category;
     }
 
@@ -174,6 +174,13 @@ const createProduct = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: 'Product name, category, and selling price are required.'
+      });
+    }
+
+    if (category.trim() === 'all' || category.trim() === 'all-products') {
+      return res.status(400).json({
+        success: false,
+        message: 'All Products is a filter and cannot be assigned to an individual product.'
       });
     }
 
@@ -449,7 +456,16 @@ const updateProduct = async (req, res, next) => {
     } = req.body;
 
     if (name) product.name = name.trim();
-    if (category) product.category = category.trim();
+    if (category) {
+      const cleanCat = category.trim();
+      if (cleanCat === 'all' || cleanCat === 'all-products') {
+        return res.status(400).json({
+          success: false,
+          message: 'All Products is a filter and cannot be assigned to an individual product.'
+        });
+      }
+      product.category = cleanCat;
+    }
     if (section) product.section = section;
     if (size) product.size = size;
     if (description !== undefined) product.description = description;

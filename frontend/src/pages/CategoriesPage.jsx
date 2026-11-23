@@ -24,17 +24,30 @@ import { SearchOverlay } from '../components/search/SearchOverlay';
 import { CatProductCardSkeleton } from '../components/ui/CatProductCardSkeleton';
 import { SEOHead } from '../components/seo/SEOHead';
 import { buildBreadcrumbSchema } from '../utils/seoHelpers';
+import {
+  OFFICIAL_CATEGORIES,
+  FRONTEND_FILTER_CATEGORIES,
+  getCategoryDisplayName
+} from '../config/categories';
 
 const categoryIconMap = {
   all: Layers,
+  'all-products': Layers,
+  'toilet-cleaner': ShieldCheck,
+  'bathroom-tiles': Bath,
+  'glass-colin': SprayCan,
+  'floor-cleaner': Brush,
+  'dish-wash-gel': Utensils,
+  'kitchen-chimney': CookingPot,
+  'laundry-detergent': Shirt,
+  'hand-hygiene': Droplets,
   toilet_care: ShieldCheck,
   bathroom_care: Bath,
   glass_care: SprayCan,
   floor_care: Brush,
   dishwash: Utensils,
   kitchen_care: CookingPot,
-  laundry_care: Shirt,
-  hand_hygiene: Droplets
+  laundry_care: Shirt
 };
 
 export const CategoriesPage = ({
@@ -48,11 +61,14 @@ export const CategoriesPage = ({
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Resolve active category with priority: route param > query param > location state > prop default
-  const resolvedCategory =
+  const normalizeCat = (c) => (c === 'all' || !c ? 'all-products' : c);
+  const rawCat =
     routeCatId ||
     searchParams.get('category') ||
     location.state?.category ||
     initialCategory;
+
+  const resolvedCategory = normalizeCat(rawCat);
 
   const [selectedCat, setSelectedCat] = useState(resolvedCategory);
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,8 +82,8 @@ export const CategoriesPage = ({
       routeCatId ||
       searchParams.get('category') ||
       location.state?.category;
-    if (current && current !== selectedCat) {
-      setSelectedCat(current);
+    if (current && normalizeCat(current) !== selectedCat) {
+      setSelectedCat(normalizeCat(current));
     }
   }, [routeCatId, searchParams, location.state]);
 
@@ -105,7 +121,7 @@ export const CategoriesPage = ({
     setSearchParams({ category: catId }, { replace: true });
   };
 
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(OFFICIAL_CATEGORIES);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
 
@@ -156,11 +172,11 @@ export const CategoriesPage = ({
   }, []);
 
   const distinctCategories = categories.filter(
-    (c) => c && c.id && c.id !== 'all' && c.name
+    (c) => c && c.id && c.id !== 'all' && c.id !== 'all-products' && c.name
   );
 
   const allCategoriesList = [
-    { id: 'all', name: 'All Products', desc: 'ASM Shine Home Hygiene & Cleaning Collection' },
+    { id: 'all-products', name: 'All Products', desc: 'ASM Shine Home Hygiene & Cleaning Collection' },
     ...distinctCategories
   ];
 
@@ -168,8 +184,10 @@ export const CategoriesPage = ({
 
   const filteredProducts = products.filter((p) => {
     if (p.status === 'archived' || p.status === 'inactive') return false;
-    if (selectedCat !== 'all' && p.category !== selectedCat) {
-      return false;
+    if (selectedCat !== 'all' && selectedCat !== 'all-products') {
+      if (p.category !== selectedCat) {
+        return false;
+      }
     }
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -179,17 +197,18 @@ export const CategoriesPage = ({
   });
 
   const isProductsListing = location.pathname === '/products';
-  const pageTitle = isProductsListing || selectedCat === 'all'
+  const isAll = selectedCat === 'all' || selectedCat === 'all-products';
+  const pageTitle = isProductsListing || isAll
     ? 'All Products — ASM Shine Cleaning & Hygiene Essentials | Official Store'
     : `${currentCategoryObj.name} — Buy Authentic Cleaners Online | ASM Shine`;
 
-  const pageDescription = isProductsListing || selectedCat === 'all'
+  const pageDescription = isProductsListing || isAll
     ? "Explore ASM Shine's complete collection of hospital-grade home cleaning essentials. High-performance toilet cleaners, floor cleaners, glass sprays, dishwash gels, and laundry detergents."
     : `Shop authentic ASM Shine ${currentCategoryObj.name}. Advanced limescale removal, 99.9% germ protection, and hospital-grade home freshness formulated for Indian homes.`;
 
   const canonicalUrl = isProductsListing
     ? '/products'
-    : (selectedCat === 'all' ? '/categories' : `/categories/${selectedCat}`);
+    : (isAll ? '/categories' : `/categories/${selectedCat}`);
 
   const breadcrumbs = React.useMemo(() => {
     const list = [{ name: 'Home', url: '/' }];
@@ -197,12 +216,12 @@ export const CategoriesPage = ({
       list.push({ name: 'All Products', url: '/products' });
     } else {
       list.push({ name: 'Categories', url: '/categories' });
-      if (selectedCat !== 'all') {
+      if (!isAll) {
         list.push({ name: currentCategoryObj.name, url: `/categories/${selectedCat}` });
       }
     }
     return buildBreadcrumbSchema(list);
-  }, [isProductsListing, selectedCat, currentCategoryObj.name]);
+  }, [isProductsListing, selectedCat, isAll, currentCategoryObj.name]);
 
   return (
     <div className="categories-page-view">

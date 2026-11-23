@@ -25,48 +25,48 @@ import { useAuth } from '../../context/AuthContext';
 
 const CATEGORY_TABS = [
   {
-    id: 'all',
-    label: 'All Shine',
+    id: 'all-products',
+    label: 'All Products',
     image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938241/asm-shine/categories/all.jpg'
   },
   {
-    id: 'toilet_care',
-    label: 'Toilet',
+    id: 'toilet-cleaner',
+    label: 'Toilet Cleaner',
     image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938256/asm-shine/categories/toilet_care.jpg'
   },
   {
-    id: 'bathroom_care',
-    label: 'Bathroom',
+    id: 'bathroom-tiles',
+    label: 'Bathroom & Tiles',
     image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938242/asm-shine/categories/bathroom_care.jpg'
   },
   {
-    id: 'glass_care',
+    id: 'glass-colin',
     label: 'Glass & Colin',
     image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938247/asm-shine/categories/glass_care.jpg'
   },
   {
-    id: 'floor_care',
+    id: 'floor-cleaner',
     label: 'Floor Cleaner',
     image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938246/asm-shine/categories/floor_care.jpg'
   },
   {
-    id: 'dishwash',
-    label: 'Dishwash',
+    id: 'dish-wash-gel',
+    label: 'Dish Wash Gel',
     image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938244/asm-shine/categories/dishwash.jpg'
   },
   {
-    id: 'kitchen_care',
-    label: 'Kitchen Care',
+    id: 'kitchen-chimney',
+    label: 'Kitchen & Chimney',
     image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938253/asm-shine/categories/kitchen_care.jpg'
   },
   {
-    id: 'laundry_care',
-    label: 'Laundry Care',
+    id: 'laundry-detergent',
+    label: 'Laundry Detergent',
     image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938254/asm-shine/categories/laundry_care.jpg'
   },
   {
-    id: 'hand_hygiene',
-    label: 'Hand Wash',
+    id: 'hand-hygiene',
+    label: 'Hand Hygiene',
     image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938250/asm-shine/categories/hand_hygiene.jpg'
   }
 ];

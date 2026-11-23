@@ -724,64 +724,7 @@ const initialProducts = [
   }
 ];
 
-const initialCategories = [
-  {
-    "id": "toilet_care",
-    "name": "Toilet Cleaner",
-    "icon": "ShieldCheck",
-    "desc": "Power Disinfectant & Hard Limescale Remover",
-    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938256/asm-shine/categories/toilet_care.jpg"
-  },
-  {
-    "id": "bathroom_care",
-    "name": "Bathroom & Tiles",
-    "icon": "Bath",
-    "desc": "Hard Water Descaler & Soap Scum Removal",
-    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938242/asm-shine/categories/bathroom_care.jpg"
-  },
-  {
-    "id": "glass_care",
-    "name": "Glass & Surface",
-    "icon": "SprayCan",
-    "desc": "Streak-Free Crystal Shine Spray (Colin Style)",
-    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938247/asm-shine/categories/glass_care.jpg"
-  },
-  {
-    "id": "floor_care",
-    "name": "Floor Cleaner",
-    "icon": "Brush",
-    "desc": "Citrus & Pine Disinfectant Surface Cleansers",
-    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938246/asm-shine/categories/floor_care.jpg"
-  },
-  {
-    "id": "dishwash",
-    "name": "Dishwash Gel",
-    "icon": "Utensils",
-    "desc": "Concentrated Turbo Lemon Anti-Grease Gel",
-    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938244/asm-shine/categories/dishwash.jpg"
-  },
-  {
-    "id": "kitchen_care",
-    "name": "Kitchen & Chimney",
-    "icon": "CookingPot",
-    "desc": "Heavy-Duty Degreaser & Burnt Oil Remover",
-    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938253/asm-shine/categories/kitchen_care.jpg"
-  },
-  {
-    "id": "laundry_care",
-    "name": "Laundry Detergent",
-    "icon": "Shirt",
-    "desc": "Ultra Fabric Care Liquid Detergent & Brightener",
-    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938254/asm-shine/categories/laundry_care.jpg"
-  },
-  {
-    "id": "hand_hygiene",
-    "name": "Hand Hygiene",
-    "icon": "Droplets",
-    "desc": "Antibacterial Aloe & Vitamin E Handwash",
-    "image": "https://res.cloudinary.com/dheyj35ys/image/upload/v1792938250/asm-shine/categories/hand_hygiene.jpg"
-  }
-];
+const { OFFICIAL_CATEGORIES: initialCategories } = require('../config/categories');
 
 const initialBanners = {
   "announcement": {

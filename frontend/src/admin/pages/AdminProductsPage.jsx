@@ -25,6 +25,12 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { adminApi } from '../services/adminApi';
+import {
+  OFFICIAL_CATEGORIES,
+  LEGACY_CATEGORY_MAP,
+  isLegacyCategory,
+  getCategoryDisplayName
+} from '../../config/categories';
 
 export const AdminProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -274,7 +280,7 @@ export const AdminProductsPage = () => {
   const openCreateModal = () => {
     setEditingProduct(null);
     setName('');
-    setCat('everyday_essentials');
+    setCat('toilet-cleaner');
     setDescription('');
     setBadge('BEST SELLER');
     setIsFestiveDeal(false);
@@ -318,7 +324,7 @@ export const AdminProductsPage = () => {
   const openEditModal = (p) => {
     setEditingProduct(p);
     setName(p.name || '');
-    setCat(p.category || 'everyday_essentials');
+    setCat(p.category || 'toilet-cleaner');
     setDescription(p.description || '');
     setBadge(p.badge || '');
     setIsFestiveDeal(Boolean(p.isFestiveDeal));
@@ -636,12 +642,18 @@ export const AdminProductsPage = () => {
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <select className="admin-select" value={category} onChange={(e) => setCategory(e.target.value)}>
               <option value="">All Categories</option>
-              <option value="everyday_essentials">Everyday Essentials</option>
-              <option value="dishwash_solutions">Dishwash Solutions</option>
-              <option value="laundry_fabrics">Laundry &amp; Fabrics</option>
-              <option value="bathroom_surfaces">Bathroom &amp; Surfaces</option>
-              <option value="floor_care">Floor Care</option>
-              <option value="glass_care">Glass Care</option>
+              {OFFICIAL_CATEGORIES.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+              <optgroup label="Legacy Categories (Need Update)">
+                {Object.entries(LEGACY_CATEGORY_MAP).map(([slug, name]) => (
+                  <option key={slug} value={slug}>
+                    {name} (Legacy)
+                  </option>
+                ))}
+              </optgroup>
             </select>
 
             <select className="admin-select" value={stockFilter} onChange={(e) => setStockFilter(e.target.value)}>
@@ -755,9 +767,26 @@ export const AdminProductsPage = () => {
                       </code>
                     </td>
                     <td>
-                      <span style={{ fontSize: '12px', textTransform: 'capitalize' }}>
-                        {(p.category || '').replace(/_/g, ' ')}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#1E293B' }}>
+                          {getCategoryDisplayName(p.category)}
+                        </span>
+                        {isLegacyCategory(p.category) && (
+                          <span
+                            style={{
+                              fontSize: '10px',
+                              fontWeight: 700,
+                              background: '#FEE2E2',
+                              color: '#DC2626',
+                              padding: '1px 5px',
+                              borderRadius: '3px'
+                            }}
+                            title="Legacy category - please edit product to recategorize"
+                          >
+                            Legacy
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td>
                       <div style={{ fontWeight: 800, color: '#0F172A' }}>₹{p.price}</div>
@@ -986,13 +1015,38 @@ export const AdminProductsPage = () => {
                             onChange={(e) => setCat(e.target.value)}
                             required
                           >
-                            <option value="everyday_essentials">Everyday Essentials</option>
-                            <option value="dishwash_solutions">Dishwash Solutions</option>
-                            <option value="laundry_fabrics">Laundry &amp; Fabrics</option>
-                            <option value="bathroom_surfaces">Bathroom &amp; Surfaces</option>
-                            <option value="floor_care">Floor Care</option>
-                            <option value="glass_care">Glass Care</option>
+                            {isLegacyCategory(cat) && (
+                              <option value={cat} style={{ color: '#DC2626', fontWeight: 700 }}>
+                                ⚠️ Current: {getCategoryDisplayName(cat)} (Legacy - Please Update)
+                              </option>
+                            )}
+                            {OFFICIAL_CATEGORIES.map((c) => (
+                              <option key={c.id} value={c.id}>
+                                {c.name}
+                              </option>
+                            ))}
                           </select>
+                          {isLegacyCategory(cat) && (
+                            <div
+                              style={{
+                                marginTop: '6px',
+                                padding: '8px 12px',
+                                background: '#FEF2F2',
+                                border: '1px solid #FECACA',
+                                borderRadius: '6px',
+                                fontSize: '12px',
+                                color: '#991B1B',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                              }}
+                            >
+                              <AlertCircle size={14} color="#DC2626" />
+                              <span>
+                                This product is currently in a <strong>Legacy Category ({getCategoryDisplayName(cat)})</strong>. Please select one of the 8 official categories above to update it.
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
 

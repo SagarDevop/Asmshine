@@ -24,15 +24,15 @@ import { SearchOverlay } from '../search/SearchOverlay';
 import { AddressSelectModal } from '../ui/AddressSelectModal';
 
 const CATEGORY_ITEMS = [
-  { id: 'all', label: 'All Formulations', icon: Layers },
-  { id: 'toilet_care', label: 'Toilet Cleaner', icon: ShieldCheck },
-  { id: 'bathroom_care', label: 'Bathroom & Tiles', icon: Bath },
-  { id: 'glass_care', label: 'Glass & Colin', icon: SprayCan },
-  { id: 'floor_care', label: 'Floor Cleaner', icon: Brush },
-  { id: 'dishwash', label: 'Dishwash Gel', icon: Utensils },
-  { id: 'kitchen_care', label: 'Kitchen & Chimney', icon: CookingPot },
-  { id: 'laundry_care', label: 'Laundry Detergent', icon: Shirt },
-  { id: 'hand_hygiene', label: 'Hand Hygiene', icon: Droplets }
+  { id: 'all-products', label: 'All Products', icon: Layers },
+  { id: 'toilet-cleaner', label: 'Toilet Cleaner', icon: ShieldCheck },
+  { id: 'bathroom-tiles', label: 'Bathroom & Tiles', icon: Bath },
+  { id: 'glass-colin', label: 'Glass & Colin', icon: SprayCan },
+  { id: 'floor-cleaner', label: 'Floor Cleaner', icon: Brush },
+  { id: 'dish-wash-gel', label: 'Dish Wash Gel', icon: Utensils },
+  { id: 'kitchen-chimney', label: 'Kitchen & Chimney', icon: CookingPot },
+  { id: 'laundry-detergent', label: 'Laundry Detergent', icon: Shirt },
+  { id: 'hand-hygiene', label: 'Hand Hygiene', icon: Droplets }
 ];
 
 export const DesktopNav = ({ onSearch, onSwitchTab }) => {

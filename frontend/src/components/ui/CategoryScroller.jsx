@@ -13,25 +13,42 @@ import {
 
 const imageMap = {
   all: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938241/asm-shine/categories/all.jpg',
+  'all-products': 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938241/asm-shine/categories/all.jpg',
+  'toilet-cleaner': 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938256/asm-shine/categories/toilet_care.jpg',
+  'bathroom-tiles': 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938242/asm-shine/categories/bathroom_care.jpg',
+  'glass-colin': 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938247/asm-shine/categories/glass_care.jpg',
+  'floor-cleaner': 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938246/asm-shine/categories/floor_care.jpg',
+  'dish-wash-gel': 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938244/asm-shine/categories/dishwash.jpg',
+  'kitchen-chimney': 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938253/asm-shine/categories/kitchen_care.jpg',
+  'laundry-detergent': 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938254/asm-shine/categories/laundry_care.jpg',
+  'hand-hygiene': 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938250/asm-shine/categories/hand_hygiene.jpg',
+  // Legacy keys fallback
   toilet_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938256/asm-shine/categories/toilet_care.jpg',
   bathroom_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938242/asm-shine/categories/bathroom_care.jpg',
   glass_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938247/asm-shine/categories/glass_care.jpg',
   floor_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938246/asm-shine/categories/floor_care.jpg',
   dishwash: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938244/asm-shine/categories/dishwash.jpg',
   kitchen_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938253/asm-shine/categories/kitchen_care.jpg',
-  laundry_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938254/asm-shine/categories/laundry_care.jpg',
-  hand_hygiene: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938250/asm-shine/categories/hand_hygiene.jpg'
+  laundry_care: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792938254/asm-shine/categories/laundry_care.jpg'
 };
 
 const iconMap = {
+  'toilet-cleaner': ShieldCheck,
+  'bathroom-tiles': Bath,
+  'glass-colin': SprayCan,
+  'floor-cleaner': Brush,
+  'dish-wash-gel': Utensils,
+  'kitchen-chimney': CookingPot,
+  'laundry-detergent': Shirt,
+  'hand-hygiene': Droplets,
+  // Legacy keys fallback
   toilet_care: ShieldCheck,
   bathroom_care: Bath,
   glass_care: SprayCan,
   floor_care: Brush,
   dishwash: Utensils,
   kitchen_care: CookingPot,
-  laundry_care: Shirt,
-  hand_hygiene: Droplets
+  laundry_care: Shirt
 };
 
 export const CategoryScroller = ({ categories = [], selectedCategory, onSelectCategory }) => {

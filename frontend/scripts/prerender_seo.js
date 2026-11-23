@@ -149,14 +149,14 @@ const FALLBACK_PRODUCTS = [
 ];
 
 const CATEGORIES = [
-  { id: 'toilet_care', name: 'Toilet Cleaner' },
-  { id: 'bathroom_care', name: 'Bathroom & Tiles' },
-  { id: 'glass_care', name: 'Glass & Surface' },
-  { id: 'floor_care', name: 'Floor Cleaner' },
-  { id: 'dishwash', name: 'Dishwash Gel' },
-  { id: 'kitchen_care', name: 'Kitchen & Chimney' },
-  { id: 'laundry_care', name: 'Laundry Detergent' },
-  { id: 'hand_hygiene', name: 'Hand Hygiene' }
+  { id: 'toilet-cleaner', name: 'Toilet Cleaner' },
+  { id: 'bathroom-tiles', name: 'Bathroom & Tiles' },
+  { id: 'glass-colin', name: 'Glass & Colin' },
+  { id: 'floor-cleaner', name: 'Floor Cleaner' },
+  { id: 'dish-wash-gel', name: 'Dish Wash Gel' },
+  { id: 'kitchen-chimney', name: 'Kitchen & Chimney' },
+  { id: 'laundry-detergent', name: 'Laundry Detergent' },
+  { id: 'hand-hygiene', name: 'Hand Hygiene' }
 ];
 
 function escapeHtml(str) {
@@ -331,7 +331,8 @@ async function run() {
 
   // 4. Category Pages Snapshot (/categories/:id)
   for (const cat of CATEGORIES) {
-    const catProds = FALLBACK_PRODUCTS.filter(p => p.category === cat.id || p.category.includes(cat.id.split('_')[0]));
+    const catPrefix = cat.id.split('-')[0];
+    const catProds = FALLBACK_PRODUCTS.filter(p => p.category === cat.id || p.category.includes(catPrefix));
     const catHtml = injectMeta(baseHtml, {
       title: `${cat.name} — Buy Authentic Cleaners Online | ASM Shine`,
       description: `Shop authentic ASM Shine ${cat.name}. Advanced limescale removal, 99.9% germ protection, and hospital-grade home freshness formulated for Indian homes.`,
