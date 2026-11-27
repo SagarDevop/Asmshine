@@ -1,29 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { api } from '../../services/api';
 
+export const FlipkartPromoBanners = ({ products: productsProp, onSelectProduct, onNavigateCategories }) => {
+  const [liveProducts, setLiveProducts] = useState(productsProp || []);
 
-export const FlipkartPromoBanners = ({ onSelectProduct, onNavigateCategories }) => {
-  // Exactly 2 curated essentials for the Super Saver combo poster
+  useEffect(() => {
+    if (Array.isArray(productsProp) && productsProp.length > 0) {
+      setLiveProducts(productsProp);
+    } else {
+      let isMounted = true;
+      api.getProducts().then((data) => {
+        if (isMounted && Array.isArray(data)) {
+          setLiveProducts(data);
+        }
+      }).catch(() => {});
+      return () => { isMounted = false; };
+    }
+  }, [productsProp]);
+
+  const bathProd = liveProducts.find((p) => (p.id || p._id) === 'asm_bath_1') || {};
+  const glassProd = liveProducts.find((p) => (p.id || p._id) === 'asm_glass_1') || {};
+
+  // Exactly 2 curated essentials for the Super Saver combo poster (dynamic from catalog)
   const comboProducts = [
     {
       id: 'asm_bath_1',
-      badge: 'DESCALER ₹89',
-      title: 'ASM Heavy-Duty Bathroom Cleaner',
-      size: '500 ml Bottle',
-      price: 89,
-      mrp: 179,
-      discount: '50% off',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936165/asm-shine/products/asm_tile_cleaner_500ml.jpg'
+      badge: bathProd.badge || 'DESCALER ₹89',
+      title: bathProd.shortName || bathProd.name || 'ASM Heavy-Duty Bathroom Cleaner',
+      size: bathProd.size || '500 ml Bottle',
+      price: bathProd.price !== undefined ? bathProd.price : 89,
+      mrp: bathProd.originalPrice || 179,
+      discount: bathProd.discountPercent ? `${bathProd.discountPercent}% off` : '50% off',
+      image: bathProd.image || 'https://res.cloudinary.com/dheyj35ys/image/upload/v1795804371/asm-shine/products/x9elgknpg6sqzc2dmz2z.png'
     },
     {
       id: 'asm_glass_1',
-      badge: 'SPARKLE ₹79',
-      title: 'ASM Crystal Clear Glass Cleaner',
-      size: '500 ml Trigger Spray',
-      price: 79,
-      mrp: 165,
-      discount: '52% off',
-      image: 'https://res.cloudinary.com/dheyj35ys/image/upload/v1792936169/asm-shine/products/asm_glass_cleaner_500ml.jpg'
+      badge: glassProd.badge || 'SPARKLE ₹79',
+      title: glassProd.shortName || glassProd.name || 'ASM Crystal Clear Glass Cleaner',
+      size: glassProd.size || '500 ml Trigger Spray',
+      price: glassProd.price !== undefined ? glassProd.price : 79,
+      mrp: glassProd.originalPrice || 165,
+      discount: glassProd.discountPercent ? `${glassProd.discountPercent}% off` : '52% off',
+      image: glassProd.image || 'https://res.cloudinary.com/dheyj35ys/image/upload/v1795804757/asm-shine/products/ohf9as5wyjn0su6c8jl3.png'
     }
   ];
 

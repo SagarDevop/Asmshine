@@ -189,6 +189,7 @@ export const HomePage = () => {
 
           {/* 5. Clean Trust & Assurance Strip */}
           <FlipkartPromoBanners
+            products={allProducts}
             onSelectProduct={handleSelectProduct}
             onNavigateCategories={() => handleSwitchTab('categories')}
           />
