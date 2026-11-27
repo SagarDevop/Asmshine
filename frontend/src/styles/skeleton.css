@@ -72,8 +72,11 @@
   background-color: #FFFFFF;
 }
 
-.product-card.skeleton-card .product-media-container {
-  background-color: #F8FAFC;
+.product-card.skeleton-card .product-media-container,
+.cat-product-card.skeleton-card .cat-prod-img-wrap,
+.pdp-skeleton-viewport {
+  background-color: #F8FAFC !important;
+  background-image: none !important;
 }
 
 .product-card.skeleton-card .product-media-container::before,
