@@ -150,7 +150,7 @@ export const Header = ({
           {/* Active Yellow Brand Pill: Official ASM Shine Logo */}
           <button
             type="button"
-            className={`fk-top-pill-btn ${activeMode === 'asm_shine' ? 'pill-yellow' : 'pill-white'}`}
+            className={`fk-top-pill-btn ${activeMode === 'asm_shine' ? 'pill-white' : 'pill-yellow'}`}
             onClick={() => handleModeChange('asm_shine')}
             aria-label="ASM Shine Official Store"
             title="ASM Shine Official Store"
