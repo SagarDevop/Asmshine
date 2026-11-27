@@ -11,6 +11,7 @@ import { Footer } from './components/layout/Footer';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { DesktopNav } from './components/navigation/DesktopNav';
 import { BottomNav } from './components/navigation/BottomNav';
+import { FloatingWhatsApp } from './components/ui/FloatingWhatsApp';
 import './styles/global.css';
 import './styles/responsive.css';
 import './styles/skeleton.css';
@@ -385,6 +386,7 @@ export function App() {
               </Routes>
             </Suspense>
             <GlobalToast />
+            <FloatingWhatsApp />
           </CartWishlistProvider>
         </AuthProvider>
       </BrowserRouter>
