@@ -28,6 +28,7 @@ import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 import { api } from '../services/api';
 import { resolvePincodeLocal } from '../utils/pincodeData';
 import { loadRazorpayScript } from '../utils/razorpay';
+import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 import '../styles/skeleton.css';
 import '../styles/orderTracking.css';
 
@@ -1079,9 +1080,11 @@ export const CheckoutPage = () => {
               <div className="fk-checkout-item-row" key={item.product.id}>
                 <div className="fk-item-thumb-box">
                   <img
-                    src={item.product.image}
+                    src={getOptimizedImageUrl(item.product.image, { width: 140 })}
                     alt={item.product.name}
                     className="fk-item-thumb-img"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { api } from '../../services/api';
+import { getOptimizedImageUrl } from '../../utils/imageOptimizer';
 
 export const FlipkartPromoBanners = ({ products: productsProp, onSelectProduct, onNavigateCategories }) => {
   const [liveProducts, setLiveProducts] = useState(productsProp || []);
@@ -109,10 +110,11 @@ export const FlipkartPromoBanners = ({ products: productsProp, onSelectProduct, 
                 {/* Product Thumbnail */}
                 <div className="fk-poster-card-img-wrap">
                   <img
-                    src={product.image}
+                    src={getOptimizedImageUrl(product.image, { width: 280 })}
                     alt={product.title}
                     className="fk-poster-card-img"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, ChevronRight } from 'lucide-react';
 import { api } from '../../services/api';
+import { getOptimizedImageUrl } from '../../utils/imageOptimizer';
 
 export const DealsForYou = ({ products: productsProp, onSelectProduct, onNavigateAll }) => {
   const [deals, setDeals] = useState([]);
@@ -117,10 +118,11 @@ export const DealsForYou = ({ products: productsProp, onSelectProduct, onNavigat
             {/* Product Thumbnail */}
             <div className="fk-deal-img-wrap">
               <img
-                src={deal.image}
+                src={getOptimizedImageUrl(deal.image, { width: 220 })}
                 alt={deal.name}
                 className="fk-deal-img"
                 loading="lazy"
+                decoding="async"
               />
             </div>
 

@@ -6,6 +6,7 @@ const policyService = require('../services/policyService');
  */
 exports.getPublicPolicies = async (req, res, next) => {
   try {
+    res.set('Cache-Control', 'public, max-age=600, stale-while-revalidate=3600');
     const policies = await policyService.getPublicPolicies();
     res.status(200).json({
       success: true,
@@ -25,6 +26,7 @@ exports.getPublicPolicy = async (req, res, next) => {
     const { policyType } = req.params;
     const { version } = req.query;
 
+    res.set('Cache-Control', 'public, max-age=600, stale-while-revalidate=3600');
     const normalizedType = policyType.replace(/-/g, '_');
     const policy = await policyService.getPublicPolicyContent(normalizedType, version);
 

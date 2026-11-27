@@ -230,7 +230,7 @@ const getFormattedDeliveryDate = (daysOffset) => {
 const getDeliverySettings = async (req, res, next) => {
   try {
     const settings = await StoreSettings.getSettings();
-
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=1200');
     res.status(200).json({
       success: true,
       data: {

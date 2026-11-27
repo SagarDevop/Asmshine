@@ -20,6 +20,7 @@ import {
 import { useNavigate, useLocation, useParams, useSearchParams, Link } from 'react-router-dom';
 import { useCartWishlist } from '../context/CartWishlistContext';
 import { api } from '../services/api';
+import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 import { SearchOverlay } from '../components/search/SearchOverlay';
 import { CatProductCardSkeleton } from '../components/ui/CatProductCardSkeleton';
 import { SEOHead } from '../components/seo/SEOHead';
@@ -371,10 +372,11 @@ export const CategoriesPage = ({
                         </span>
                       )}
                       <img
-                        src={product.image}
+                        src={getOptimizedImageUrl(product.image, { width: 220 })}
                         alt={`${product.name} - ASM Shine`}
                         className="cat-prod-img"
                         loading="lazy"
+                        decoding="async"
                       />
                     </div>
 

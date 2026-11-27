@@ -443,33 +443,72 @@ export const api = {
   // Dynamic Catalog API (Pure Backend MongoDB - Zero Hardcoded Data)
   // -------------------------------------------------------------
 
-  getProducts: async (filters = {}) => {
+  getProducts: async (filters = {}, forceFresh = false) => {
     const { category, search } = filters;
+    const cacheKey = `products_${category || 'all'}_${search || ''}`;
+    const cached = clientMemoryCache.get(cacheKey);
+    const CACHE_TTL = 180000; // 3 minutes
+
+    if (!forceFresh && cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      return cached.data;
+    }
+
     const params = new URLSearchParams();
     if (category && category !== 'all') params.append('category', category);
     if (search) params.append('search', search);
     const queryString = params.toString() ? `?${params.toString()}` : '';
 
-    const res = await apiFetch(`/api/v1/products${queryString}`, {
-      headers: { 'Accept': 'application/json' }
-    });
-    if (!res.ok) {
-      throw new Error(`Failed to fetch products (HTTP ${res.status})`);
+    try {
+      const res = await apiFetch(`/api/v1/products${queryString}`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) {
+        if (cached?.data) return cached.data;
+        throw new Error(`Failed to fetch products (HTTP ${res.status})`);
+      }
+      const result = await res.json();
+      const products = result.data || [];
+      clientMemoryCache.set(cacheKey, { data: products, timestamp: Date.now() });
+
+      // Index individual products in memory so getProductById is instantaneous (0ms)
+      products.forEach((p) => {
+        if (p.id) clientMemoryCache.set(`product_${p.id}`, { data: p, timestamp: Date.now() });
+        if (p._id) clientMemoryCache.set(`product_${p._id}`, { data: p, timestamp: Date.now() });
+      });
+
+      return products;
+    } catch (e) {
+      if (cached?.data) return cached.data;
+      throw e;
     }
-    const result = await res.json();
-    return result.data || [];
   },
 
-  getProductById: async (id) => {
+  getProductById: async (id, forceFresh = false) => {
     if (!id) return null;
-    const res = await apiFetch(`/api/v1/products/${encodeURIComponent(id)}`, {
-      headers: { 'Accept': 'application/json' }
-    });
-    if (!res.ok) {
-      return null;
+    const cacheKey = `product_${id}`;
+    const cached = clientMemoryCache.get(cacheKey);
+    const CACHE_TTL = 180000;
+
+    if (!forceFresh && cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      return cached.data;
     }
-    const result = await res.json();
-    return result.data || null;
+
+    try {
+      const res = await apiFetch(`/api/v1/products/${encodeURIComponent(id)}`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) {
+        return cached?.data || null;
+      }
+      const result = await res.json();
+      const product = result.data || null;
+      if (product) {
+        clientMemoryCache.set(cacheKey, { data: product, timestamp: Date.now() });
+      }
+      return product;
+    } catch (e) {
+      return cached?.data || null;
+    }
   },
 
   getSimilarProducts: async (productId, category) => {
@@ -973,14 +1012,21 @@ export const api = {
   // -------------------------------------------------------------
   // Dynamic Delivery & Shipping Services
   // -------------------------------------------------------------
-  getDeliverySettings: async () => {
+  getDeliverySettings: async (forceFresh = false) => {
+    const cached = clientMemoryCache.get('delivery_settings');
+    if (!forceFresh && cached && Date.now() - cached.timestamp < 300000) {
+      return cached.data;
+    }
     try {
       const res = await apiFetch('/api/v1/delivery/settings');
       const data = await res.json().catch(() => ({}));
-      if (res.ok && data.data) return data.data;
-      return { freeShippingThreshold: 499, standardDeliveryFee: 49 };
+      if (res.ok && data.data) {
+        clientMemoryCache.set('delivery_settings', { data: data.data, timestamp: Date.now() });
+        return data.data;
+      }
+      return cached?.data || { freeShippingThreshold: 499, standardDeliveryFee: 49 };
     } catch (e) {
-      return { freeShippingThreshold: 499, standardDeliveryFee: 49 };
+      return cached?.data || { freeShippingThreshold: 499, standardDeliveryFee: 49 };
     }
   },
 

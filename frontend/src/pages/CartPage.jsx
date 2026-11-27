@@ -20,6 +20,7 @@ import { useAuth } from '../context/AuthContext';
 import { AddressSelectModal } from '../components/ui/AddressSelectModal';
 import { resolvePincodeLocal } from '../utils/pincodeData';
 import { api } from '../services/api';
+import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 import '../styles/skeleton.css';
 
 /**
@@ -495,7 +496,13 @@ export const CartPage = ({
                     className="cart-item-img-wrap"
                     onClick={() => handleSelectProduct(product)}
                   >
-                    <img src={product.image} alt={product.name} className="cart-item-img" />
+                    <img
+                      src={getOptimizedImageUrl(product.image, { width: 140 })}
+                      alt={product.name}
+                      className="cart-item-img"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
 
                   <div className="cart-item-info">

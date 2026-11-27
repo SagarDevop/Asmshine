@@ -1010,9 +1010,11 @@ export const ProductDetailPage = ({
               <div className="pdp-combo-item-card">
                 <div className="pdp-combo-thumb-box">
                   <img
-                    src={combo.mainProduct.image}
+                    src={getOptimizedImageUrl(combo.mainProduct.image, { width: 160 })}
                     alt={combo.mainProduct.name}
                     className="pdp-combo-thumb"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div className="pdp-combo-item-details">
@@ -1037,9 +1039,11 @@ export const ProductDetailPage = ({
               >
                 <div className="pdp-combo-thumb-box">
                   <img
-                    src={combo.companionProduct.image}
+                    src={getOptimizedImageUrl(combo.companionProduct.image, { width: 160 })}
                     alt={combo.companionProduct.name}
                     className="pdp-combo-thumb"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div className="pdp-combo-item-details">
@@ -1093,7 +1097,13 @@ export const ProductDetailPage = ({
                   onClick={() => handleSelectProduct(simProd)}
                 >
                   <div className="pdp-sim-img-wrap">
-                    <img src={simProd.image} alt={simProd.name} className="pdp-sim-img" />
+                    <img
+                      src={getOptimizedImageUrl(simProd.image, { width: 200 })}
+                      alt={simProd.name}
+                      className="pdp-sim-img"
+                      loading="lazy"
+                      decoding="async"
+                    />
                     {simProd.size && <span className="pdp-sim-size">{simProd.size}</span>}
                   </div>
 

@@ -5,6 +5,7 @@ const productService = require('../services/productService');
 const getProducts = async (req, res, next) => {
   try {
     const { section, category, search } = req.query;
+    res.set('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
     const products = await productService.getAllProducts({ section, category, search });
     res.status(200).json({
       success: true,
@@ -26,6 +27,7 @@ const getProductById = async (req, res, next) => {
       });
     }
 
+    res.set('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
     const product = await productService.getProductById(id.trim());
     if (!product) {
       return res.status(404).json({

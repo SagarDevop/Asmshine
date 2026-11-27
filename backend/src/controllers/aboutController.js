@@ -10,6 +10,7 @@ const { initialCategories } = require('../data/seedData');
  */
 exports.getPublicAbout = async (req, res, next) => {
   try {
+    res.set('Cache-Control', 'public, max-age=600, stale-while-revalidate=3600');
     const published = await AboutContent.getPublishedContent();
 
     // Fetch live product categories to dynamically showcase on About Us

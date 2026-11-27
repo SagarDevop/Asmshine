@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
+import { getOptimizedImageUrl } from '../../utils/imageOptimizer';
 
 const TRENDING_SEARCHES = [
   { text: 'Power Toilet Cleaner (Harpic Power)', query: 'Toilet' },
@@ -196,10 +197,11 @@ export const SearchOverlay = ({ isOpen, onClose, initialQuery = '' }) => {
                 >
                   <div className="fk-result-thumb-box img-container-placeholder">
                     <img
-                      src={prod.image}
+                      src={getOptimizedImageUrl(prod.image, { width: 120 })}
                       alt={prod.name}
                       className="fk-result-thumb-img"
                       loading="lazy"
+                      decoding="async"
                     />
                   </div>
 
