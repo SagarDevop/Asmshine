@@ -76,6 +76,15 @@
   background-color: #F8FAFC;
 }
 
+.product-card.skeleton-card .product-media-container::before,
+.product-card.skeleton-card .product-media-container::after,
+.cat-product-card.skeleton-card .cat-prod-img-wrap::before,
+.cat-product-card.skeleton-card .cat-prod-img-wrap::after,
+.pdp-skeleton-viewport::before,
+.pdp-skeleton-viewport::after {
+  display: none !important;
+}
+
 .skeleton-media-box {
   position: absolute;
   top: 0;
